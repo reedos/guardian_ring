@@ -74,7 +74,7 @@
       <section class="level-study" id="satellite" aria-labelledby="satellite-title">
         <header class="study-heading"><p class="eyebrow">02 / The satellite</p><h2 id="satellite-title">A sensor needs<br>a spacecraft.</h2><p class="section-lede">The payload observes. The spacecraft supports it with power, communications, and paths for heat to leave.</p></header>
         <figure class="study-figure">
-          <picture><source media="(max-width: 700px)" srcset="look/satellite-phone.webp" width="780" height="960"><img src="look/satellite.webp" width="1600" height="1000" alt="Representative spacecraft with a central bus, extended solar arrays, payload housing, antennas, and radiator surfaces." loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width: 700px)" srcset="look/satellite-phone.webp?v=2" width="780" height="960"><img src="look/satellite.webp?v=2" width="1600" height="1000" alt="Open representative spacecraft bus with solar-cell strings, array drives, battery and avionics equipment, reaction wheels, a propellant tank, antennas, and a displaced radiator." loading="lazy" decoding="async"></picture>
           <figcaption>Representative spacecraft, as drawn. Component layout and proportions are illustrative. <button type="button" class="chip assumed" data-src="story:schematic" aria-expanded="false" aria-label="Assumed: what backs the spacecraft illustration">Assumed</button></figcaption>
         </figure>
         <div class="layer-notes">
@@ -83,20 +83,66 @@
           <div><span class="mini-label heat">Heat</span><p>Thermal paths move heat toward radiators. ABI provides a published example of a radiator releasing instrument energy to space. <button type="button" class="chip spec" data-src="story:abi-radiator-role" aria-expanded="false" aria-label="Spec: source for ABI's radiator role">Spec</button></p></div>
         </div>
         <p class="quiet-note"><a class="text-link" href="visualizer.html?view=1.light.instrument">Explore the spacecraft <span aria-hidden="true">↗</span></a></p>
+        <div class="engineering-map" aria-labelledby="services-title">
+          <header><p class="eyebrow">Inside the vehicle / A published civil example</p><h3 id="services-title">The systems behind the sensor.</h3><p>GOES-R documents how a spacecraft supplies, points, and cools its instruments. Follow a component below to inspect its role in the representative cutaway.</p></header>
+          <div class="service-grid">
+            <article class="service-path power-path">
+              <h4>Generate, regulate, distribute</h4>
+              <ol aria-label="GOES-R power path">
+                <li><a href="visualizer.html?view=1.light.solar-array"><strong>Solar cells and strings</strong><span>Light becomes electrical current</span></a></li>
+                <li><a href="visualizer.html?view=1.heat.power"><strong>Regulator and protected feeds</strong><span>Manage the supply and deliver it to loads</span></a></li>
+                <li><a href="visualizer.html?view=2.heat.digitizer"><strong>Instrument electronics</strong><span>Convert the supply into required rails</span></a></li>
+              </ol>
+              <p class="service-branch"><span aria-hidden="true">↔</span> <a href="visualizer.html?view=1.heat.battery"><strong>Battery branch</strong> · Charge from available array power; support eclipse and peak demand.</a></p>
+              <button type="button" class="chip spec" data-src="story:spacecraft-power" aria-expanded="false" aria-label="Spec: GOES-R power architecture sources">Spec</button>
+            </article>
+            <article class="service-path pointing-path">
+              <h4>Measure orientation, then control it</h4>
+              <ol aria-label="GOES-R attitude-control responsibilities">
+                <li><a href="visualizer.html?view=1.data.attitude"><strong>Star trackers and inertial sensors</strong><span>Measure attitude and motion</span></a></li>
+                <li><a href="visualizer.html?view=1.data.computer"><strong>Flight computer</strong><span>Run the spacecraft control software</span></a></li>
+                <li><a href="visualizer.html?view=1.data.wheels"><strong>Reaction wheels</strong><span>Change attitude by exchanging momentum</span></a></li>
+              </ol>
+              <p class="service-branch"><span aria-hidden="true">↺</span> <a href="visualizer.html?view=1.data.propulsion"><strong>Momentum management</strong> · Propulsion also supports attitude and orbital control.</a></p>
+              <button type="button" class="chip spec" data-src="story:spacecraft-pointing" aria-expanded="false" aria-label="Spec: GOES-R pointing equipment sources">Spec</button>
+            </article>
+            <article class="service-path heat-path">
+              <h4>Give heat a deliberate way out</h4>
+              <ol aria-label="GOES-R thermal responsibilities">
+                <li><a href="visualizer.html?view=1.heat.computer"><strong>Electronic equipment</strong><span>Mount to a planned thermal interface</span></a></li>
+                <li><a href="visualizer.html?view=1.heat.structure"><strong>Panels and heat pipes</strong><span>Carry and spread heat</span></a></li>
+                <li><a href="visualizer.html?view=1.heat.radiator"><strong>Radiators</strong><span>Reject energy by radiation to space</span></a></li>
+              </ol>
+              <p class="service-branch"><span aria-hidden="true">⊥</span> <a href="visualizer.html?view=1.heat.instrument"><strong>Isolation and blankets</strong> · Limit unwanted exchange while preserving the intended rejection path.</a></p>
+              <button type="button" class="chip spec" data-src="story:spacecraft-thermal" aria-expanded="false" aria-label="Spec: GOES-R thermal design sources">Spec</button>
+            </article>
+          </div>
+        </div>
       </section>
       <section class="level-study" id="payload" aria-labelledby="payload-title">
         <header class="study-heading"><p class="eyebrow">03 / The payload</p><h2 id="payload-title">Guide the light.<br>Form an image.</h2><p class="section-lede">Optics give incoming light a path to the focal plane. This cutaway shows the roles of optical surfaces, baffles, and the detector region.</p></header>
         <figure class="study-figure">
-          <picture><source media="(max-width: 700px)" srcset="look/payload-phone.webp" width="780" height="960"><img src="look/payload.webp" width="1600" height="1000" alt="Schematic telescope cutaway with representative optical surfaces, internal baffles, and a highlighted path toward the detector region." loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width: 700px)" srcset="look/payload-phone.webp?v=2" width="780" height="960"><img src="look/payload.webp?v=2" width="1600" height="1000" alt="Representative telescope cutaway beside a detector package and flex, open readout and digitizer boards, an instrument-control card cage, cooler, and radiator." loading="lazy" decoding="async"></picture>
           <figcaption>Representative optical cutaway, as drawn. Ray paths and internal geometry are schematic. <button type="button" class="chip assumed" data-src="story:schematic" aria-expanded="false" aria-label="Assumed: what backs the payload illustration">Assumed</button></figcaption>
         </figure>
         <div class="study-caption"><span class="mini-label">An optical path</span><p>The drawing connects the telescope to the detector. In the named ABI instrument, the telescope forms a scene image at the focal-plane detectors. <button type="button" class="chip spec" data-src="story:abi-image-role" aria-expanded="false" aria-label="Spec: source for ABI's image-forming telescope role">Spec</button></p></div>
         <p class="quiet-note"><a class="text-link" href="visualizer.html?view=2.light.optics">Follow the optical path <span aria-hidden="true">↗</span></a></p>
+        <div class="engineering-map signal-map" aria-labelledby="signal-title">
+          <header><p class="eyebrow">ABI / The electronics behind the image</p><h3 id="signal-title">The telescope is only the beginning.</h3><p>ABI’s public electronics description separates the detector interface, digitization, and packet handling. Readout timing, instrument commands, and cooler control support that signal path.</p></header>
+          <ol class="signal-chain" aria-label="ABI detector data path">
+            <li><a href="visualizer.html?view=3.data.array"><span>Focal-plane array</span><strong>Detector + ROIC</strong><small>Electrical detector response</small></a></li>
+            <li><a href="visualizer.html?view=2.data.readout"><span>Sensor Unit Electronics</span><strong>Video processing</strong><small>Bias, timing, and samples</small></a></li>
+            <li><a href="visualizer.html?view=2.data.digitizer"><span>Sensor Unit Electronics</span><strong>Digitization</strong><small>Analog data becomes digital</small></a></li>
+            <li><a href="visualizer.html?view=2.data.digitizer"><span>Electronics Unit</span><strong>Packets and interface</strong><small>Data Processor → High Speed I/O</small></a></li>
+          </ol>
+          <div class="signal-support"><p><a href="visualizer.html?view=2.data.controller">Instrument controller and clocks</a> coordinate operation.</p><p><a href="visualizer.html?view=2.data.thermal">Cryocooler control</a> closes a separate temperature-feedback loop.</p></div>
+          <p class="quiet-note">The blocks show functional responsibilities; their spacing and the linked cutaway are representative. <button type="button" class="chip spec" data-src="story:payload-electronics" aria-expanded="false" aria-label="Spec: ABI electronics architecture sources">Spec</button></p>
+        </div>
       </section>
       <section class="level-study" id="focal-plane" aria-labelledby="focal-plane-title">
         <header class="study-heading"><p class="eyebrow">04 / The focal plane</p><h2 id="focal-plane-title">Hold the image.<br>Manage the heat.</h2><p class="section-lede">At the focal plane, light becomes an electrical signal. Cooling can reduce thermal noise, a benefit described in NIST's cryocooler review. <button type="button" class="chip reported" data-src="story:cryogenic-noise-role" aria-expanded="false" aria-label="Reported: source for the thermal-noise benefit of cryogenic cooling">Reported</button></p></header>
         <figure class="study-figure">
-          <picture><source media="(max-width: 700px)" srcset="look/focal-plane-phone.webp" width="780" height="960"><img src="look/focal-plane.webp" width="1600" height="1000" alt="Representative detector assembly mounted on a cold stage, with supports, electrical connections, and thermal links." loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width: 700px)" srcset="look/focal-plane-phone.webp?v=2" width="780" height="960"><img src="look/focal-plane.webp?v=2" width="1600" height="1000" alt="Representative detector and readout package inside an open cold shield, with mounting standoffs, a gold flex interconnect, thermal strap, cooler, and separate warm video board." loading="lazy" decoding="async"></picture>
           <figcaption>Representative detector assembly, as drawn. The depicted arrangement is an illustrative layout. <button type="button" class="chip assumed" data-src="story:schematic" aria-expanded="false" aria-label="Assumed: what backs the focal-plane illustration">Assumed</button></figcaption>
         </figure>
         <div class="study-caption"><span class="mini-label">The cold region</span><p>Supports, electrical connections, and thermal paths meet at the detector assembly. ABI's published design moves heat from its focal planes through the cooler toward loop heat pipes and a radiator. The assembly above remains representative. <button type="button" class="chip spec" data-src="story:abi-cooler-role" aria-expanded="false" aria-label="Spec: source for ABI's cooler heat path">Spec</button></p></div>

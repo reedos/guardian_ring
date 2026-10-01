@@ -2,36 +2,36 @@
 
 Recorded 10/01/2026. Built preview: `http://127.0.0.1:47601/`. All browser results below postdate this production build and include all 10 implemented levels. Scoped development runs and reserved scenes are rejected.
 
-Build SHA-256 (sorted relative paths and bytes): `9217b29505e20abb559a84b8a518a98fa99db07e36793b274abba8ac67df3c9d`.
+Build SHA-256 (sorted relative paths and bytes): `048deff8ba914d4d1d50fa12a1c6ac144ae42ba95f6d356c894b475cf248c60e`.
 
 Recorded renderer: ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11). Software rendering rejected.
 
 | Gate | Form | Checked states | Result |
 |---|---|---:|---|
-| cycle | desktop | 8640 | PASS |
-| parts | desktop | 8640 | PASS |
-| views | desktop | 90 | PASS |
-| views | phone | 90 | PASS |
-| ui | desktop | 78 | PASS |
-| ui | phone | 80 | PASS |
+| cycle | desktop | 13248 | PASS |
+| parts | desktop | 13248 | PASS |
+| views | desktop | 138 | PASS |
+| views | phone | 138 | PASS |
+| ui | desktop | 204 | PASS |
+| ui | phone | 208 | PASS |
 | coplanar | desktop | 30 | PASS |
-| flights | desktop | 270 | PASS |
-| flights | phone | 270 | PASS |
+| flights | desktop | 876 | PASS |
+| flights | phone | 876 | PASS |
 | govern | desktop | 11 | PASS |
 | govern | phone | 11 | PASS |
-| links | desktop | 10 | PASS |
-| perf | desktop | 30 | PASS; worst p95 0.80 ms |
-| perf | phone | 30 | PASS; worst p95 0.70 ms |
-| look: story | desktop | 21 evidence dialogs | PASS |
-| look: story | phone | 21 evidence dialogs | PASS |
-| pages: evidence | desktop | 186 evidence dialogs | PASS |
+| links | desktop | 12 | PASS |
+| perf | desktop | 30 | PASS; worst p95 0.90 ms |
+| perf | phone | 30 | PASS; worst p95 0.90 ms |
+| look: story | desktop | 25 evidence dialogs | PASS |
+| look: story | phone | 25 evidence dialogs | PASS |
+| pages: evidence | desktop | 365 evidence dialogs | PASS |
 | pages: method | desktop | 0 evidence dialogs | PASS |
 | pages: glossary | desktop | 0 evidence dialogs | PASS |
-| pages: evidence | phone | 186 evidence dialogs | PASS |
+| pages: evidence | phone | 365 evidence dialogs | PASS |
 | pages: method | phone | 0 evidence dialogs | PASS |
 | pages: glossary | phone | 0 evidence dialogs | PASS |
 
-16/16 browser gate commands passed: 14 geometry/UI runs plus story and reference-page checks on both forms. Typecheck passed. 69/69 unit tests passed. Strict evidence audit: 0 problems across 186 site claims (17760 scenario instances), 96 scenarios, and 34 research facts.
+16/16 browser gate commands passed: 14 geometry/UI runs plus story and reference-page checks on both forms. Typecheck passed. 75/75 unit tests passed. Strict evidence audit: 0 problems across 365 site claims (34944 scenario instances), 96 scenarios, and 85 research facts.
 
 Cycle and parts cover every scenario × level × layer. UI includes open menus, visible keyboard focus, scenarios and sheet states. Quality checks compare reported resolution with the renderer, canvas and actual WebGL drawing buffer. Performance is held at tier 0; budgets are 15 ms desktop / 7 ms phone p95. Flights cover the overview to each part and every ordered distinct part pair within each level/layer on both forms. Story and reference pages check their evidence dialogs, links, phone layout and noindex metadata.
 

@@ -15,6 +15,6 @@ document.getElementById('share-btn')?.addEventListener('click', async () => {
   query.set('view', [scene, mode, selected].filter(value => value !== null).join('.'));
   const url = `${location.origin}${location.pathname}?${query}`;
   let copied = false; try { await navigator.clipboard.writeText(url); copied = true; } catch { /* display selectable URL */ }
-  const toast = document.getElementById('toast'); toast.textContent = copied ? 'Link copied: it opens this scenario, level and part.' : url;
+  const toast = document.getElementById('toast'); toast.textContent = copied ? 'Link copied: it opens this scenario and view.' : url;
   toast.hidden = false; toast.classList.toggle('select', !copied); setTimeout(() => { toast.hidden = true; }, copied ? 2600 : 9000);
 });

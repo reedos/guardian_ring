@@ -1,8 +1,8 @@
-// Preparatory content only: integrate a level after the preceding scene passes
-// its gates. No DOM, geometry, source retrieval, or model calculations live here.
+// Source-reviewed level cards. No DOM, geometry, source retrieval, or model calculations live here.
 // Numerical rows preserve research/verified-facts.json. Additional qualitative
 // civil component roles are reviewed in research/LEVELS-CONTENT-REVIEW.md.
 // Civil facts stay on their named instruments; drawings use look-model.
+import { SPACECRAFT_FACTS, spacecraftContent } from './spacecraft-content.js';
 const FACTS = {
   'satellite-components': ['Public architecture', 'Bus, infrared payload, mission processor, communications', 'reported', { refs: [['gao-26-107085', 'PWSA-Enabling Technologies and Processes, opening description.']] }],
   'forge-public-role': ['FORGE role', 'Spacecraft operations and mission-data processing', 'reported', { refs: [['gao-21-105249', 'Printed p. 1 (PDF p. 5), opening paragraph; printed p. 8 (PDF p. 12), acquisition-strategy paragraph.']] }],
@@ -38,7 +38,7 @@ const FACTS = {
 
 const asDrawn = () => ['Drawing', 'Representative / not to scale', 'assumed', { assume: 'look-model' }];
 const fact = id => {
-  const [label, value, basis, ev] = FACTS[id];
+  const [label, value, basis, ev] = FACTS[id] || SPACECRAFT_FACTS[id];
   return [label, value, basis, { refs: ev.refs.map(ref => [...ref]) }];
 };
 // IF's drill field is a numeric scene index. Root wires these destinations only
@@ -50,63 +50,7 @@ const card = (id, title, kicker, body, facts = [], drill) => ({
 
 export function remainingContent(_model) {
   return {
-    satellite: {
-      intro: 'A representative spacecraft connects an observing payload to structure, electrical power, communications, and thermal paths. The arrangement is a teaching model.',
-      scale: 'Spacecraft · representative proportions',
-      light: [
-        card('instrument', 'Give the instrument a view', 'The payload opening', 'The opening marks where the representative instrument receives light. The housing, shade, and baffles illustrate component roles. The ABI civil example provides a separately identified published optical design.', [], 7),
-        card('structure', 'Support the optical assembly', 'The spacecraft bus', 'The bus provides the structure that carries the payload and supporting equipment. Within the named ABI instrument, an optical bench supports its sensor subsystems. The generic drawing chooses its own clearances and mounting points.', ['abi-support-role']),
-        card('links', 'Separate observing from communicating', 'Different paths', 'The payload receives radiation for observation. Antennas and communication terminals carry information. The drawn connections distinguish those functions without assigning a real spacecraft configuration.'),
-      ],
-      data: [
-        card('instrument', 'Read the observation', 'Payload and processor', 'GAO’s public PWSA description names an infrared payload, mission processor, and communications equipment. Those component roles guide this schematic; the representative spacecraft is not a model of PWSA hardware.', ['satellite-components']),
-        card('structure', 'Connect the electronics', 'Representative internal paths', 'Internal connections carry electrical signals between equipment. The drawing groups electronics by role, without specifying bus protocols, processing rates, or a real spacecraft wiring layout.'),
-        card('links', 'Pass information onward', 'Communications equipment', 'A communications interface connects spacecraft information to another part of the architecture. Follow the ground example for the publicly described operations and mission-data-processing roles.', [], 6),
-      ],
-      heat: [
-        card('instrument', 'Connect the payload to a thermal path', 'Heat at the instrument', 'A payload needs a thermal design as well as an optical design. The drawn links show that relationship. The named TIRS-2 example supplies published temperatures for its own civil instrument.', [], 8),
-        card('structure', 'Supply electrical power', 'Arrays and equipment', 'Solar arrays supply electrical energy. Equipment uses that energy and produces heat during operation. The routes here explain those roles without setting an electrical or thermal budget.'),
-        card('links', 'Let heat leave the spacecraft', 'Representative radiator', 'A radiator releases thermal energy as radiation. ABI supplies a published civil example: its radiator rejects excess instrument energy to space. The generic surface and outgoing paths assign no area, orientation requirement, or operating temperature.', ['abi-radiator-role']),
-      ],
-    },
-    payload: {
-      intro: 'A representative optical cutaway connects the entrance, optical surfaces, and detector region. Published civil instruments provide the detailed examples in the side levels.',
-      scale: 'Optical assembly · schematic geometry',
-      light: [
-        card('optics', 'Guide the incoming light', 'Representative optical surfaces', 'Optical surfaces direct incoming radiation toward an image plane. ABI’s published component table identifies this image-forming role for its telescope. The generic surfaces and rays explain the role without specifying an optical prescription.', ['abi-image-role'], 7),
-        card('detector', 'Place the image at the detector', 'The focal-plane region', 'The focal plane is where the optical image meets detector elements. ABI’s published telescope description supplies a named civil example. This generic drawing assigns no military field of view or detector format.', ['abi-image-role'], 3),
-        card('thermal', 'Keep the surrounding structure visible', 'Baffles and enclosure', 'The housing and internal baffles belong to the optical assembly as well as its mechanical structure. Their representative placement makes the entrance, interior, and detector region legible.'),
-      ],
-      data: [
-        card('optics', 'Keep light paths distinct from wires', 'Before the readout', 'The illustrated optical path brings radiation to the detector. Electrical information begins with the detector and its readout; a drawn ray is not a data packet.'),
-        card('detector', 'Take the signal to the readout', 'At the image plane', 'Detector elements produce electrical responses that readout electronics can measure. ABI’s published component roles provide a named example of this conversion and readout. The generic drawing separates them from later processing and communication.', ['abi-detector-role', 'abi-readout-role']),
-        card('thermal', 'Route connections through the assembly', 'Mechanical and electrical interfaces', 'Electrical connections must be supported through the payload structure. Their route is representative; the cutaway does not specify connector types, harness geometry, or processing electronics.'),
-      ],
-      heat: [
-        card('optics', 'Include the telescope in the thermal design', 'Optics have temperature too', 'The optical assembly and the detector can belong to different thermal regions. The named TIRS-2 example publishes separate design temperatures for its telescope and focal plane.', [], 8),
-        card('detector', 'Support the cold region', 'Representative cold stage', 'A cooled detector is connected to a cold stage. Supports, electrical leads, and thermal links meet there. Their geometry explains relationships without setting a heat load or temperature.'),
-        card('thermal', 'Carry heat toward rejection', 'Cold side and warm side', 'A cooler moves heat from a cold region toward a warmer rejection path while using input power. ABI’s published cooler path connects its focal planes to loop heat pipes and a radiator. The cutaway illustrates those roles without copying its hardware layout.', ['abi-cooler-role'], 7),
-      ],
-    },
-    'focal-plane': {
-      intro: 'A representative cooled detector assembly brings together the detector, readout, supports, and cold stage. Detailed material, format, and temperature figures remain attached to named civil instruments.',
-      scale: 'Detector assembly · representative proportions',
-      light: [
-        card('array', 'Put detector elements in the image', 'Representative array', 'The dark detector face marks the region receiving an optical image. Its package and connections are illustrative and do not specify an actual sensor format. TIRS-2 provides a published civil array example.', [], 8),
-        card('readout', 'Connect each response to electronics', 'Below the absorbing region', 'An electrical response must reach a readout circuit. ABI’s component table identifies detector conversion and readout as separate roles. The generic layered drawing separates the absorbing region from its measuring electronics.', ['abi-detector-role', 'abi-readout-role']),
-        card('cold-stage', 'Place the array on a support', 'The detector mount', 'The detector assembly needs physical support. The plate and mounting features here explain that support while leaving material choices and dimensions representative.'),
-      ],
-      data: [
-        card('array', 'Distinguish physical and read-out layouts', 'A named civil example', 'An instrument’s physical detector layout and the data used to form an image need not be identical. The TIRS-2 side level keeps its published physical arrays and effective science row separately labeled.', [], 8),
-        card('readout', 'Measure the electrical response', 'Readout electronics', 'Readout electronics turn a detector response into information that can be processed. ABI supplies a published example of electronics reading its detector arrays. This generic schematic sets no frame rate, bit depth, or output data rate.', ['abi-readout-role']),
-        card('cold-stage', 'Carry signals across the interface', 'Representative connections', 'Electrical leads connect the detector region with the surrounding electronics. The drawn flex and contact paths show connectivity, without representing an actual harness or interface standard.'),
-      ],
-      heat: [
-        card('array', 'Reduce thermal noise', 'Cooling the detector', 'NIST identifies low thermal noise as a benefit of cryogenic temperatures. This general reason for cooling sets no material-wide operating temperature. Named civil examples provide instrument-specific values.', ['cryogenic-noise-role'], 8),
-        card('readout', 'Account for electronics heat', 'A neighboring thermal role', 'Readout and support electronics also belong in the thermal design. The warm and cold colors distinguish roles in the drawing; they are not a calibrated temperature map.'),
-        card('cold-stage', 'Join the detector to the cooler', 'Representative thermal link', 'The cold stage provides a thermal connection to the detector assembly. ABI’s published cooler path gives a named civil example of moving heat toward a radiator. The generic link and supports set no heat lift or input power.', ['abi-cooler-role']),
-      ],
-    },
+    ...spacecraftContent(),
     pixel: {
       intro: 'An enlarged conceptual detector element separates the absorbing region, electrical contact, and readout cell. Its layer stack and proportions are representative.',
       scale: 'Detector element · enlarged conceptual view',
@@ -173,9 +117,9 @@ export function remainingContent(_model) {
         card('focal-planes', 'Identify ABI’s infrared detector material', 'Published civil hardware', 'The Data Book identifies the material used for ABI’s infrared channels. That civil-instrument specification stays with ABI; it does not identify any military detector material.', ['abi-detector-material']),
       ],
       data: [
-        card('telescope', 'Distinguish the image regions', 'ABI scan products', 'NOAA describes different cadences for ABI’s full-disk and mainland U.S. images. These are image-acquisition descriptions for the named weather instrument, not warning-system timings.', ['abi-full-disk', 'abi-conus']),
-        card('bands', 'Keep channel identity with the data', 'ABI spectral information', 'Each ABI channel contributes a different spectral observation. Preserve the channel identity when comparing the instrument’s images and their physical meaning.', ['abi-bands']),
-        card('focal-planes', 'Read the smaller-area cadence in context', 'ABI mesoscale images', 'NOAA describes imaging of one or two smaller areas of the hemisphere. The published cadence is tied to that ABI observation mode; it is not a focal-plane readout rate.', ['abi-meso']),
+        card('telescope', 'Coordinate the scan with the instrument clock', 'Controller, motor drivers and encoders', 'ABI’s instrument controller operates the instrument, while its Telemetry and Timing card supplies system clocks. Motor-driver circuitry moves the scan mirrors and encoder processors determine their position. The published full-disk and regional image cadences describe completed observations; they are different from the electronics’ detector-readout timing.', ['abi-controller', 'abi-timing', 'abi-scanners', 'abi-full-disk', 'abi-conus']),
+        card('bands', 'Turn detector samples into instrument packets', 'Video processor → Data Processor → SpaceWire', 'ABI’s video processors generate focal-plane timing and bias, collect detector samples, and format them for the Electronics Unit. The Sensor Unit Electronics digitizes the focal-plane data. The Electronics Unit’s Data Processor then formats and packetizes those data, and its High Speed I/O card communicates with the spacecraft using SpaceWire.', ['abi-video', 'abi-digitize', 'abi-packets']),
+        card('focal-planes', 'Read each spectral channel through its ROIC', 'Detector array and readout circuit', 'An ABI focal-plane module contains filtered spectral channels; each focal-plane array combines a detector array with a readout integrated circuit. The module converts the image to analog electrical signals for the video processors. The published mesoscale cadence describes acquisition of image areas, not the time to read a single detector element.', ['abi-roic', 'abi-analog', 'abi-meso']),
       ],
       heat: [
         card('telescope', 'Keep ABI’s thermal regions distinct', 'VNIR design context', 'The Data Book distinguishes the visible/near-infrared optics and focal-plane region, including a stated GOES-R focal-plane exception. The full qualifier stays with the published temperature row.', ['abi-vnir-temp']),

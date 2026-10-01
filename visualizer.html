@@ -30,10 +30,13 @@
       <button type="button" class="level-pick" id="level-pick" aria-haspopup="true" aria-expanded="false" aria-controls="level-menu"><span class="lp-k" id="lp-k">Level 1 of 6</span><span class="lp-t" id="lp-t">The ring</span><i aria-hidden="true"></i></button>
       <div class="pop level-menu" id="level-menu" role="group" aria-label="Levels" hidden></div>
       <div class="mode-slot" id="mode-slot"></div>
-      <button type="button" class="more-btn" id="more-btn" aria-haspopup="true" aria-expanded="false" aria-controls="more-menu" aria-label="More: share and quality"><span aria-hidden="true">⋯</span></button>
+      <button type="button" class="more-btn" id="more-btn" aria-haspopup="true" aria-expanded="false" aria-controls="more-menu" aria-label="More: view, share and quality"><span aria-hidden="true">⋯</span></button>
       <div class="pop more-menu" id="more-menu" role="group" aria-label="More" hidden>
         <p class="mm-h">This view</p><button type="button" class="mm-item" id="share-btn">Share this view</button>
         <label class="quality-label" for="quality">Rendering quality<select id="quality"><option value="max">Max quality</option><option value="auto">Auto quality</option><option value="laptop">Battery saver</option></select></label>
+        <button type="button" class="mm-item" id="reset-view">Overview</button>
+        <button type="button" class="mm-item" id="presentation-view" aria-pressed="false">Present</button>
+        <button type="button" class="mm-item" id="inspector-toggle" aria-expanded="true" aria-controls="inspector">Hide details</button>
         <p class="mm-note">Public-source educational model. Drawing choices and mathematical examples are identified.</p>
       </div>
     </div>
@@ -54,13 +57,14 @@
         <div class="hud-btns" id="hud-btns">
           <button type="button" class="btn" id="back-out" hidden>← The ring</button>
           <div class="part-transport" role="group" aria-label="Part navigation and auto-cycle">
-            <button type="button" class="btn" id="card-prev" aria-label="Previous part">‹ Previous</button>
+            <label class="view-part" for="part-select"><span>Part</span><select id="part-select" aria-label="Selected part"><option value="">0. Overview</option></select></label>
+            <button type="button" class="btn" id="card-prev" aria-label="Previous part"><span aria-hidden="true">‹</span><span class="pn-t">Previous</span></button>
             <button type="button" class="btn" id="part-play" aria-pressed="false">Auto-cycle</button>
-            <button type="button" class="btn" id="card-next" aria-label="Next part">Next ›</button>
+            <button type="button" class="btn" id="card-next" aria-label="Next part"><span class="pn-t">Next</span><span aria-hidden="true">›</span></button>
           </div>
         </div>
       </div>
-      <aside class="panel" aria-label="Components">
+      <aside class="panel" id="inspector" aria-label="Components">
         <div class="pane-tabs" role="tablist" aria-label="Side pane"><button type="button" class="sheet-toggle" id="sheet-toggle" aria-expanded="false" aria-label="Expand the panel"><i aria-hidden="true"></i></button><button type="button" role="tab" id="tab-parts" data-pane="parts" aria-controls="pane-parts" aria-selected="true">Parts<span class="tab-n" id="parts-n"></span></button><button type="button" role="tab" id="tab-scenario" data-pane="scenario" aria-controls="pane-scenario" aria-selected="false" tabindex="-1">Scenario</button><span class="pane-sum" id="pane-sum">GEO · MWIR</span></div>
         <div class="panel-scroll">
           <section class="scenario pane-scenario" id="pane-scenario" role="tabpanel" aria-labelledby="tab-scenario" hidden>
@@ -69,7 +73,7 @@
             <div class="sc-compare"><button type="button" class="btn" id="sc-pin" aria-pressed="false">Pin to compare</button><span id="sc-pinned"></span></div>
           </section>
           <section class="pane-parts" id="pane-parts" role="tabpanel" aria-labelledby="tab-parts">
-          <p class="intro" id="intro"></p><div class="parts-head"><span class="eyebrow">Numbered in the view</span></div><ul class="parts" id="parts"></ul>
+          <p class="intro" id="intro"></p><button type="button" class="intro-more" id="intro-more" aria-controls="intro" aria-expanded="false" hidden>Read overview</button><div class="parts-head"><span class="eyebrow">Numbered in the view</span></div><ul class="parts" id="parts"></ul>
           <article class="card" id="card" hidden><span class="k" id="card-k"></span><h3 id="card-t"></h3><p id="card-b"></p><dl class="specs" id="card-s"></dl><button type="button" class="btn" id="card-drill" hidden></button></article>
           <section class="side-levels"><h3 class="eyebrow">Side levels</h3><div id="side-levels"></div></section>
           </section>

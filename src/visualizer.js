@@ -8,12 +8,13 @@ import './app/sources-ui.js';
 import './app/site.js';
 import './app/toprow.js';
 import './app/orbit-controls.js';
+import './app/view-controls.js';
 
 window.grx = {
   store, setScenario, pin, state: store.ui, go: stage.go, select: stage.select, setMode: stage.setMode,
   camera: stage.camera, controls: stage.controls, composers: stage.composers, built: stage.built, settle: stage.settle,
   renderer: stage.getRenderer, renderScale: stage.renderScale, quality: stage.qualityInfo, forceTier: stage.forceTier, setTransitions: stage.setTransitions,
-  show: stage.show, THREE, clearance: stage.clearanceStats, occupancy: stage.occupancy, scenarioOptions: SCENARIO_OPTIONS,
+  show: stage.show, overview: stage.overview, THREE, clearance: stage.clearanceStats, occupancy: stage.occupancy, scenarioOptions: SCENARIO_OPTIONS,
   setQualityPreference: stage.setQualityPreference, isBusy: stage.isBusy, isCameraMoving: stage.isCameraMoving,
 };
 stage.start();

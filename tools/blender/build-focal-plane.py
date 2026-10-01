@@ -1,4 +1,4 @@
-"""Level 4 focal-plane carrier GLB, version 1.
+"""Level 4 focal-plane carrier GLB, version 2.
 
 Run: Blender 5.2 --background --python tools/blender/build-focal-plane.py
 
@@ -14,7 +14,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 1
+VERSION = 2
 OUT.mkdir(parents=True, exist_ok=True)
 
 
@@ -38,9 +38,10 @@ def group(name, parent=None, **metadata):
 
 def role_for(obj):
     name = obj.name.lower()
+    if 'shield' in name or 'cold stop' in name: return 'ColdShield'
     if 'flex' in name: return 'FlexConnection'
     if any(term in name for term in ['cooler', 'cold finger', 'thermal strap']): return 'CoolingAssembly'
-    if any(term in name for term in ['warm', 'readout', 'pcb gold']): return 'WarmReadout'
+    if any(term in name for term in ['warm', 'video', 'pcb gold']): return 'WarmReadout'
     if any(term in name for term in ['detector package', 'representative detector', 'package bond']):
         return 'DetectorPackage'
     if 'fastener' in name and obj.location.x > 1: return 'WarmReadout'
@@ -50,7 +51,44 @@ def role_for(obj):
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.context.scene.unit_settings.system = 'NONE'
 builders = load_look_builders()
-builders['focal_plane'](builders['palette']())
+m = builders['palette']()
+builders['focal_plane'](m)
+box, cylinder, line = builders['box'], builders['cylinder'], builders['line']
+# Role correction: the cold ROIC belongs to the detector package. The external
+# board contains representative warm video electronics, not the pixel ROIC.
+for obj in list(bpy.context.scene.objects):
+    if 'readout' in obj.name.lower(): obj.name = obj.name.replace('readout', 'video').replace('Readout', 'Video')
+box('Detector package ROIC edge',(-.65,0,.325),(1.52,1.42,.032),m['ceramic'],.007)
+# Open-sided cold enclosure. The missing front and right walls are deliberate
+# cutaways so the optical surface, package perimeter and ribbon remain legible.
+box('Cold shield back wall',(-.65,.83,.74),(1.88,.05,.91),m['cyan'],.014)
+box('Cold shield left wall',(-1.565,.02,.74),(.05,1.57,.91),m['cyan'],.014)
+for x in [-1.565,.265]:
+    box('Cold stop top edge',(x,0,1.20),(.065,1.70,.05),m['dark'],.008)
+for y in [-.825,.825]:
+    box('Cold stop top edge',(-.65,y,1.20),(1.88,.065,.05),m['dark'],.008)
+# Mounts are representative, with a clear gap below the carrier.
+for x in [-1.58,.28]:
+    for y in [-.82,.82]:
+        cylinder('Carrier isolation standoff',(x,y,-.28),.065,.25,m['ceramic'],vertices=16)
+        cylinder('Carrier mounting washer',(x,y,-.405),.115,.035,m['silver'],vertices=24)
+box('Carrier structural base',(-.65,0,-.50),(2.48,2.25,.12),m['silver'],.025)
+# Connector shells, strain relief and decoupling/passive packages make the
+# external board legible as electronics, without a real circuit schematic.
+for x in [1.47,2.66]:
+    box('Warm video connector shell',(x,-.79,.16),(.18,.30,.16),m['silver'],.015)
+    box('Warm video connector insert',(x,-.795,.248),(.12,.23,.023),m['dark'],.004)
+    for j in range(5):
+        cylinder('Warm video connector contact',(x,-.88+j*.041,.267),.012,.025,m['trace'],vertices=8,bevel=0)
+for x in [1.74,2.38,2.54]:
+    for j in range(6):
+        y=-.53+j*.19
+        box('Warm video passive body',(x,y,.105),(.075,.095,.034),m['ceramic'],.003)
+        for dx in [-.043,.043]: box('Warm video passive termination',(x+dx,y,.105),(.018,.095,.034),m['silver'],.002)
+for x in [.25,1.40]:
+    box('Flex strain relief',(x,-.26,.345 if x<1 else .18),(.10,.74,.07),m['dark'],.009)
+for y in [-.55,.03]:
+    builders['fastener']((.25,y,.395),m['bright'],radius=.033)
 for mat in bpy.data.materials:
     if not mat.use_nodes: continue
     for node in list(mat.node_tree.nodes):
@@ -70,12 +108,12 @@ bpy.ops.object.convert(target='MESH')
 root = group('GuardianFocalPlane', version=VERSION, level='focal-plane',
     representative=True, physicalScale=False, assumption='look-model',
     units='Arbitrary drawing units, not meters.',
-    description='Representative blank detector package, cold carrier, thermal strap, cooler, flex and warm readout.',
-    sourceGeometry='tools/blender/build-hardware-look.py: focal_plane()',
+    description='Open cold shield, detector/ROIC package, carrier mounts, thermal strap, cooler, flex and warm video electronics.',
+    sourceGeometry='tools/blender/build-focal-plane.py and build-hardware-look.py: focal_plane()',
     upAxis='Y', detectorFacing='+Y', noPixelFormat=True,
     defaultCamera=[6.0, 6.0, 8.0], defaultTarget=[.48, .25, -.25])
 roles = {name: group(name, root, role=name, representative=True)
-         for name in ['DetectorPackage', 'ColdCarrier', 'WarmReadout', 'CoolingAssembly', 'FlexConnection']}
+         for name in ['DetectorPackage', 'ColdCarrier', 'ColdShield', 'WarmReadout', 'CoolingAssembly', 'FlexConnection']}
 
 batches = {}
 for obj in list(bpy.context.scene.objects):
@@ -99,6 +137,9 @@ anchor_specs = {
     'AnchorArray': ((-.65, 0, .49), 'Blank representative detector entrance face'),
     'AnchorReadout': ((2.11, .29, .247), 'Warm readout cover'),
     'AnchorColdStage': ((-.65, 1.08, .18), 'Thermal strap near cold finger'),
+    'AnchorShield': ((-.65, .805, .88), 'Cutaway cold optical enclosure'),
+    'AnchorFlex': ((.84, -.26, .07), 'Representative package ribbon interconnect'),
+    'AnchorCarrier': ((-.65, -.96, -.43), 'Carrier and supporting standoffs'),
 }
 for name, (point, role) in anchor_specs.items():
     anchor = group(name, anchors, role=role, representative=True,

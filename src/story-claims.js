@@ -1,7 +1,17 @@
 // Cited story figures and component roles. Numerical rows preserve the reviewed
 // fact ledger; additional roles are documented in research/LEVELS-CONTENT-REVIEW.md.
 // No story claim is an output or performance estimate for a real sensor.
+import { SPACECRAFT_FACTS } from './spacecraft-content.js';
+const architecture = (key,label,value,ids) => ({
+  key:`story:${key}`,group:'story',label,value,basis:'spec',
+  ev:{refs:ids.flatMap(id=>SPACECRAFT_FACTS[id][3].refs)},
+  scope:'Named GOES-R / ABI civil engineering example. Linked 3D components use representative geometry, not a GOES-R or military hardware layout.',
+});
 export const STORY_CLAIMS = [
+  architecture('spacecraft-power','GOES-R electrical power path','Array regulation, protected load distribution, and rechargeable battery support',['solar-strings','power-regulation','power-distribution','battery-support','abi-power']),
+  architecture('spacecraft-pointing','GOES-R pointing equipment','Star trackers, inertial reference, flight software, reaction wheels, and momentum management',['attitude-sensors','flight-computer','wheel-control']),
+  architecture('spacecraft-thermal','GOES-R heat paths','Isolation and blankets control unwanted transfer; panels, heat pipes, and radiators reject heat',['mli','equipment-thermal','radiator','instrument-isolation']),
+  architecture('payload-electronics','ABI signal and control chain','Detector/ROIC, video processing, digitization, packetization, and spacecraft interface',['abi-roic','abi-video','abi-digitize','abi-packets','abi-timing','abi-controller','abi-cce']),
   {
     key: 'story:geo-altitude', group: 'story',
     label: 'Geostationary altitude', value: '35,786 km', basis: 'reported',

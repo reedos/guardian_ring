@@ -22,6 +22,9 @@ const checkPart=({scene,mode,id})=>{
   if(matches[0]?.querySelector('.num')?.textContent.trim()!==String(i+1)||rows[0]?.querySelector('.pn')?.textContent.trim()!==String(i+1))bad.push(`${part.id}: incorrect part number`);
  });
  const selected=list.find(part=>part.id===id),card=document.getElementById('card'),pin=pins.find(p=>p.dataset.id===id),button=buttons.find(p=>p.dataset.id===id);
+ const picker=document.getElementById('part-select'),expectedOptions=[['','0. Overview'],...list.map((part,i)=>[part.id,`${i+1}. ${part.title}`])];
+ if(!picker||JSON.stringify([...picker.options].map(option=>[option.value,option.textContent]))!==JSON.stringify(expectedOptions))bad.push('part picker options do not match this level/layer');
+ if(picker?.value!==id)bad.push('part picker is not synchronized with selected card');
  if(!rendered(card))bad.push('selected card is hidden');
  if(!selected||document.getElementById('card-t')?.textContent!==selected.title||document.getElementById('card-b')?.textContent!==selected.body)bad.push('card content does not match selected part');
  if(!rendered(pin)||pin?.classList.contains('off'))bad.push('selected pin is hidden');
@@ -68,7 +71,33 @@ export async function run(name,form=process.argv[2]||'desktop'){
  if(name==='cycle'||name==='parts'){
   const combos=await page.evaluate(()=>{const options=grx.scenarioOptions;return Object.entries(options).reduce((rows,[key,vs])=>rows.flatMap(row=>vs.map(v=>({...row,[key]:v.id}))),[{}]);});
   if(!combos.length)throw new Error('No scenario combinations to audit');
-  for(const [scenarioIndex,scenario] of combos.entries()){if(scenarioIndex%12===0)console.log(`${name}: scenarios ${scenarioIndex+1}–${Math.min(scenarioIndex+12,combos.length)} of ${combos.length}`);await page.evaluate(async s=>{await grx.setScenario(s);},scenario);for(const sc of scenes)for(const mode of MODES){await show(page,sc.i,mode);const ids=await page.locator('#parts button[data-id]').evaluateAll(bs=>bs.map(b=>b.dataset.id));if(!ids.length)fail.push(`${sc.id}/${mode}: no parts`);for(let i=0;i<ids.length;i++){const id=ids[i];if(name==='parts'){await page.locator('#parts button[data-id]').nth(i).click();await page.evaluate(()=>grx.settle());}else await show(page,sc.i,mode,id);states++;const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});fail.push(...result.map(error=>`${JSON.stringify(scenario)}/${sc.id}/${mode}/${id}: ${error}`));}}}
+  const textureCounts=[];
+  for(const [scenarioIndex,scenario] of combos.entries()){
+   if(scenarioIndex%12===0)console.log(`${name}: scenarios ${scenarioIndex+1}–${Math.min(scenarioIndex+12,combos.length)} of ${combos.length}`);
+   await page.evaluate(async s=>{await grx.setScenario(s);},scenario);
+   for(const sc of scenes)for(const mode of MODES){
+    await show(page,sc.i,mode);
+    const ids=await page.locator('#parts button[data-id]').evaluateAll(bs=>bs.map(b=>b.dataset.id));
+    if(!ids.length)fail.push(`${sc.id}/${mode}: no parts`);
+    for(let i=0;i<ids.length;i++){
+     const id=ids[i];
+     if(name==='parts'){await page.locator('#parts button[data-id]').nth(i).click();await page.evaluate(()=>grx.settle());}
+     else await show(page,sc.i,mode,id);
+     states++;
+     const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});
+     fail.push(...result.map(error=>`${JSON.stringify(scenario)}/${sc.id}/${mode}/${id}: ${error}`));
+    }
+   }
+   if(name==='cycle'){
+    // The first complete traversal uploads every scene's textures. Each
+    // scenario rebuild must then replace its printed labels without growth.
+    const textures=await page.evaluate(()=>grx.renderer().info.memory.textures);
+    textureCounts.push(textures);
+    if(!Number.isInteger(textures)||textures<0)fail.push(`scenario ${scenarioIndex+1}: invalid texture count ${textures}`);
+    else if(textures!==textureCounts[0])fail.push(`scenario ${scenarioIndex+1}: ${textures} textures after complete traversal; baseline ${textureCounts[0]}`);
+   }
+  }
+  if(name==='cycle'){details.textureBaseline=textureCounts[0];details.textureCounts=textureCounts;}
   details.scenarios=combos.length;
  } else if(name==='views'||name==='flights'||name==='coplanar'){
   if(name==='flights')await page.evaluate(()=>grx.setTransitions('quick'));
@@ -82,7 +111,10 @@ export async function run(name,form=process.argv[2]||'desktop'){
      await show(page,sc.i,mode,from);
      await page.evaluate(()=>grx.setTransitions('quick'));
      const r=await page.evaluate(fly,{id:to});states++;
-     if(r.hits||(r.motionRequired&&r.frames<2))fail.push(`${sc.id}/${mode}/${from||'overview'} → ${to}: ${JSON.stringify(r)}`);
+     if(r.hits||(r.motionRequired&&r.frames<2)){
+      const problem=`${sc.id}/${mode}/${from||'overview'} → ${to}: ${JSON.stringify(r)}`;
+      fail.push(problem);console.error(problem);
+     }
     }
    }else for(const id of parts){states++;await show(page,sc.i,mode,id);const r=await page.evaluate(checkView);if(r.err||r.blocked||r.covers.length)fail.push(`${sc.id}/${mode}: ${JSON.stringify(r)}`);}
   }
@@ -90,7 +122,20 @@ export async function run(name,form=process.argv[2]||'desktop'){
  } else if(name==='ui'){
   const audited=[];
   const audit=async(label,selector)=>{await settleLayout(page);states++;audited.push(label);const result=await page.evaluate(checkUI,{selector});fail.push(...result.map(error=>`${label}: ${error}`));};
-  for(const sc of scenes)for(const mode of MODES){await show(page,sc.i,mode,'placeholder');await audit(`${sc.id}/${mode}/parts`);}
+  for(const sc of scenes)for(const mode of MODES){
+   await show(page,sc.i,mode);await audit(`${sc.id}/${mode}/parts`);
+   // Exercise the native picker against every distinct level/layer list, then
+   // check both transport directions from an unselected overview.
+   const ids=await page.locator('#parts button[data-id]').evaluateAll(bs=>bs.map(button=>button.dataset.id));
+   const inspect=async(id,label)=>{await page.evaluate(()=>grx.settle());const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});states++;audited.push(`${sc.id}/${mode}/${label}`);fail.push(...result.map(error=>`${sc.id}/${mode}/${label}: ${error}`));};
+   await page.getByRole('combobox',{name:'Selected part'}).selectOption(ids.at(-1));await inspect(ids.at(-1),'pick last part');
+   await page.locator('#part-select').selectOption('');await page.evaluate(()=>grx.settle());
+   const overview=await page.evaluate(()=>({selected:grx.state.selected,cardHidden:document.getElementById('card').hidden,pressed:document.querySelectorAll('#parts [aria-pressed="true"],#pins [aria-pressed="true"]').length,camera:grx.camera.position.toArray(),expected:grx.built[grx.state.scene].camera.pos}));
+   states++;audited.push(`${sc.id}/${mode}/overview`);
+   if(overview.selected!==null||!overview.cardHidden||overview.pressed||overview.camera.some((v,i)=>Math.abs(v-overview.expected[i])>1e-6))fail.push(`${sc.id}/${mode}: overview did not restore camera and clear part/card/pins`);
+   await page.locator('#card-prev').click();await inspect(ids.at(-1),'previous from overview');
+   await page.locator('#card-next').click();await inspect(ids[0],'next wraps to first');
+  }
   // Use the actual layer controls: layers may have different part IDs. A layer
   // switch must choose a valid card rather than leave a stale selection hidden.
   for(const sc of scenes){
@@ -144,21 +189,59 @@ export async function run(name,form=process.argv[2]||'desktop'){
   states++;await page.keyboard.press('Escape');await page.locator('#sc-pin').click();
   if(await page.locator('#sc-comparison').isVisible())fail.push('unpin did not hide comparison');
   await page.locator('[data-pane="parts"]').click();await audit('parts after scenario');
-  // Use real playback and its actual dwell: a source dialog must not survive
-  // the auto-cycle replacing the card and disconnecting the original chip.
+  // IF holds the playback clock while someone reads evidence. Use the actual
+  // dwell so a regression cannot replace the claim while its source is open.
   await show(page,0,'light');
   const beforeCycle=await page.evaluate(()=>grx.state.selected);
   await page.locator('#part-play').click();
   try{
    await page.locator('#card-s [data-src]').first().click();await pop.waitFor({state:'visible'});
+   await page.waitForTimeout(8500);
+   if(await page.evaluate(()=>grx.state.selected)!==beforeCycle||!await pop.isVisible())fail.push('auto-cycle advanced while reading evidence');
+   if(await page.locator('#part-play').getAttribute('aria-pressed')!=='true')fail.push('source-reading hold stopped rather than paused playback');
+   await pop.getByRole('button',{name:'Close',exact:true}).click();
    await page.waitForFunction(id=>grx.state.selected!==id,beforeCycle,{timeout:20000});
-   if(await pop.isVisible())fail.push('auto-cycle left stale card evidence open');
    const selected=await page.evaluate(()=>grx.state.selected),result=await page.evaluate(checkPart,{scene:0,mode:'light',id:selected});
-   states++;audited.push('auto-cycle closes replaced card evidence');
+   states++;audited.push('auto-cycle waits for source reading and resumes');
    fail.push(...result.map(error=>`auto-cycle: ${error}`));
   }finally{
    await page.keyboard.press('Escape');
    if(await page.locator('#part-play').getAttribute('aria-pressed')==='true')await page.locator('#part-play').click();
+  }
+  if(await page.locator('#part-play').getAttribute('aria-pressed')!=='false')fail.push('Escape did not stop auto-cycle');
+  await page.locator('#part-play').click();
+  await page.locator('#part-select').selectOption({index:1});
+  if(await page.locator('#part-play').getAttribute('aria-pressed')!=='false')fail.push('manual picker choice did not stop auto-cycle');
+  await page.locator('#part-play').click();await page.locator('[data-mode="data"]').click();
+  if(await page.locator('#part-play').getAttribute('aria-pressed')!=='false')fail.push('layer change did not stop auto-cycle');
+  states++;audited.push('manual choice and layer change stop auto-cycle');
+  await page.locator('#part-select').focus();const focusedScene=await page.evaluate(()=>grx.state.scene);
+  await page.keyboard.press('2');
+  if(await page.evaluate(()=>grx.state.scene)!==focusedScene)fail.push('picker keyboard input triggered a level shortcut');
+  // Present and Hide details retain the always-visible picker and transport;
+  // Escape restores the previous detail visibility, as in IF.
+  const moreChoice=async id=>{await page.locator('#more-btn').click();await page.locator(id).click();await settleLayout(page);};
+  await moreChoice('#presentation-view');await audit('presentation');
+  if(await page.locator('#inspector').isVisible())fail.push('Present did not hide details');
+  await page.locator('#card-next').click();
+  if(await page.locator('#inspector').isVisible())fail.push('part navigation unexpectedly ended Present');
+  await page.keyboard.press('Escape');await audit('exit presentation');
+  if(!await page.locator('#inspector').isVisible())fail.push('Escape did not restore details');
+  await moreChoice('#inspector-toggle');await audit('hide details');
+  await moreChoice('#presentation-view');await page.keyboard.press('Escape');
+  if(await page.locator('#inspector').isVisible())fail.push('Present forgot previously hidden details');
+  await page.locator('#part-select').selectOption({index:1});await audit('part choice restores details');
+  if(!await page.locator('#inspector').isVisible())fail.push('part picker did not reveal details');
+  await moreChoice('#reset-view');
+  if(await page.locator('#part-select').inputValue()!==''||await page.evaluate(()=>grx.state.selected)!==null)fail.push('More Overview did not reset selection');
+  states++;audited.push('More Overview');
+  if(await page.locator('#intro-more').isVisible()){
+   await page.locator('#intro-more').click();await audit('expanded overview prose');
+   if(await page.locator('#intro-more').getAttribute('aria-expanded')!=='true'||!await page.locator('#intro').evaluate(el=>el.classList.contains('open')))fail.push('Read overview did not reveal complete introduction');
+   await page.locator('#intro-more').click();
+  }
+  if(form==='phone'){
+   const viewport=page.viewportSize();await page.setViewportSize({width:320,height:844});await audit('320 px phone controls');await page.setViewportSize(viewport);
   }
   if(await page.locator('#sheet-toggle').isVisible()){await page.locator('#sheet-toggle').click();await audit('collapsed sheet');await page.locator('#sheet-toggle').click();await audit('expanded sheet');}
   details.uiStates=audited;
@@ -183,12 +266,13 @@ export async function run(name,form=process.argv[2]||'desktop'){
   await page.locator('#more-btn').click();const select=page.getByRole('combobox',{name:'Rendering quality'});for(const pref of ['laptop','max','auto']){await select.selectOption(pref);await inspect(pref==='laptop'?4:0,`preference ${pref}`,pref);}
   await select.selectOption('laptop');await page.reload();await page.waitForFunction(()=>window.grx?.built[grx.state.scene]);await page.locator('#more-btn').click();if(await select.inputValue()!=='laptop')fail.push('battery-saver preference did not persist');await inspect(4,'persisted battery saver','laptop');await select.selectOption('auto');details.renderChecks=rows;
  } else if(name==='links'){
-  for(const file of ['index.html','visualizer.html','evidence.html','method.html','glossary.html']){await page.goto(new URL(file,BASE).href);states++;if(!/noindex/.test(await page.locator('meta[name=robots]').getAttribute('content')))fail.push(`${file}: missing noindex`);if(await page.locator('h1').count()!==1)fail.push(`${file}: requires one h1`);const links=await page.locator('a[href]').evaluateAll(as=>as.map(a=>a.getAttribute('href')).filter(h=>h&&!/^(https?:|mailto:)/.test(h)));for(const href of links){const url=new URL(href,new URL(file,BASE));const response=await page.request.get(url.href);if(!response.ok())fail.push(`${file}: ${href} HTTP ${response.status()}`);if(url.searchParams.has('view')){await page.goto(url.href);await page.waitForFunction(()=>window.grx?.built[grx.state.scene]);const expected=url.searchParams.get('view').split('.');const state=await page.evaluate(()=>grx.state);if(state.scene!==Number(expected[0])||state.mode!==expected[1]||state.selected!==expected[2])fail.push(`${href}: did not land on the part`);}}}
+  for(const file of ['index.html','visualizer.html','evidence.html','method.html','glossary.html']){await page.goto(new URL(file,BASE).href);states++;if(!/noindex/.test(await page.locator('meta[name=robots]').getAttribute('content')))fail.push(`${file}: missing noindex`);if(await page.locator('h1').count()!==1)fail.push(`${file}: requires one h1`);const links=await page.locator('a[href]').evaluateAll(as=>as.map(a=>a.getAttribute('href')).filter(h=>h&&!/^(https?:|mailto:)/.test(h)));for(const href of links){const url=new URL(href,new URL(file,BASE));const response=await page.request.get(url.href);if(!response.ok())fail.push(`${file}: ${href} HTTP ${response.status()}`);if(url.searchParams.has('view')){await page.goto(url.href);await page.waitForFunction(()=>window.grx?.built[grx.state.scene]&&!grx.isBusy());const expected=url.searchParams.get('view').split('.');const state=await page.evaluate(()=>grx.state);if(state.scene!==Number(expected[0])||state.mode!==expected[1]||state.selected!==(expected[2]||null))fail.push(`${href}: did not land on the requested view`);}}}
 
   // A source-reading detour must retain all four scenario choices.
   const wanted={orbit:'leo',aperture:'civil',band:'lwir',detector:'qwip'};
   await page.goto(new URL('visualizer.html?'+new URLSearchParams(wanted),BASE).href);
   await page.waitForFunction(()=>window.grx?.built[grx.state.scene]);
+  if(!await page.evaluate(()=>grx.state.selected))fail.push('URL without view lost its first-card default');
   for(const file of ['index.html','evidence.html','method.html','glossary.html','visualizer.html']){
    const link=page.locator('nav a[href^="'+file+'"]').first();
    // Use the phone's real navigation affordance before following its hidden link.
@@ -201,6 +285,34 @@ export async function run(name,form=process.argv[2]||'desktop'){
   await page.waitForFunction(()=>window.grx?.built[grx.state.scene]);
   const restored=await page.evaluate(()=>grx.store.scenario);
   for(const [key,value]of Object.entries(wanted))if(restored[key]!==value)fail.push('return to explorer: '+key+' not restored');
+
+  // Share the real picker-selected Overview. Capture only the clipboard write,
+  // avoiding OS clipboard permissions while exercising the actual Share button.
+  await show(page,1,'data');
+  if(!await page.evaluate(()=>grx.state.selected))fail.push('show() without a part lost its first-card default');
+  await page.locator('#part-select').selectOption('');await page.evaluate(()=>grx.settle());
+  await page.waitForFunction(()=>new URLSearchParams(location.search).get('view')==='1.data');
+  await page.evaluate(()=>{Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async url=>{document.body.dataset.sharedUrl=url;}}});});
+  await page.locator('#more-btn').click();await page.locator('#share-btn').click();
+  const sharedURL=await page.locator('body').getAttribute('data-shared-url'),sharedQuery=new URL(sharedURL).searchParams;
+  if(sharedQuery.get('view')!=='1.data')fail.push('Overview share link contains a selected part');
+  for(const [key,value]of Object.entries(wanted))if(sharedQuery.get(key)!==value)fail.push('Overview share link lost '+key);
+  for(const action of ['shared link','reload']){
+   if(action==='shared link')await page.goto(sharedURL);else await page.reload();
+   await page.waitForFunction(()=>window.grx?.built[1]&&!grx.isBusy()&&grx.state.scene===1);
+   await page.evaluate(()=>{grx.setTransitions('instant');grx.settle();});await settleLayout(page);
+   const result=await page.evaluate(()=>{
+    const preset=grx.built[1].camera;
+    return {state:{...grx.state},scenario:{...grx.store.scenario},picker:document.getElementById('part-select').value,
+     cardHidden:document.getElementById('card').hidden,pressed:document.querySelectorAll('#parts [aria-pressed="true"],#pins [aria-pressed="true"]').length,
+     camera:grx.camera.position.toArray(),target:grx.controls.target.toArray(),preset};
+   });
+   states++;
+   if(result.state.scene!==1||result.state.mode!=='data'||result.state.selected!==null||result.picker!==''||!result.cardHidden||result.pressed)fail.push(`Overview ${action}: selected state/card/pins were not restored`);
+   if(result.camera.some((v,i)=>Math.abs(v-result.preset.pos[i])>1e-6)||result.target.some((v,i)=>Math.abs(v-result.preset.target[i])>1e-6))fail.push(`Overview ${action}: overview camera was not restored`);
+   for(const [key,value]of Object.entries(wanted))if(result.scenario[key]!==value)fail.push(`Overview ${action}: ${key} not restored`);
+  }
+  details.overviewRestores=['shared link','reload'];
  } else if(name==='shot'){fs.mkdirSync('shots',{recursive:true});await page.screenshot({path:`shots/scaffold-${form}.png`,fullPage:true});states++;}
  else throw new Error(`Unknown gate: ${name}`);
  } catch(e){fail.push(e.stack||String(e));}

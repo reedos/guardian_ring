@@ -1092,10 +1092,23 @@ body.story .pane-note { display: none; }
 /* Guardian Ring scaffold additions; shared IF tokens and viewer layout above. */
 .ring-mark { width: 24px; height: 24px; border: 2px solid var(--accent); border-radius: 50%; display: inline-block; }
 .scaffold-badge { position: absolute; right: 22px; bottom: 24px; color: var(--faint); font: 400 10px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .1em; pointer-events: none; text-align: right; }
-.part-transport { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 8px; width: min(420px, 100%); }
+.part-transport { display: grid; grid-template-columns: minmax(140px, 1fr) auto auto auto; align-items: end; gap: 8px; width: min(700px, 100%); min-width: 0; }
 .part-transport .btn { justify-content: center; min-width: 0; padding: 0 10px; }
+.part-transport #part-play { white-space: nowrap; }
+.view-part { display: grid; gap: 5px; min-width: 0; color: var(--muted); font: 400 9px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.view-part select { width: 100%; min-width: 0; min-height: 40px; border: 1px solid var(--line-2); border-radius: 0; background: var(--ground); color: var(--ink); padding: 6px 9px; font: 500 12px/1.2 var(--sans); }
+.view-part select:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
+.part-transport .btn[aria-pressed='true'] { color: var(--ground); background: var(--accent); border-color: var(--accent); }
 .btn:disabled { cursor: default; color: var(--faint); border-color: var(--line); }
-body.app #hud-btns { position: static; flex: none; pointer-events: auto; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 14px; background: var(--ground); border-top: 1px solid var(--line); min-height: 60px; }
+body.app #hud-btns { position: static; flex: none; pointer-events: auto; display: flex; align-items: end; justify-content: center; gap: 8px; padding: 8px 14px; background: var(--ground); border-top: 1px solid var(--line); min-height: 60px; }
+body.app.inspector-collapsed .stage .body { grid-template-columns: minmax(0, 1fr); }
+body.app.inspector-collapsed .panel { display: none; }
+body.app.presentation-view .pin:not(.on), body.app.presentation-view .hint, body.app.presentation-view .hud.tl { display: none; }
+/* Component subtitles explain the title; they never squeeze it into a thin column. */
+body.app #inspector .parts button { grid-template-columns: 22px minmax(0, 1fr); gap: 3px 10px; min-height: 44px; padding: 8px 4px; }
+body.app #inspector .parts .pn { grid-column: 1; grid-row: 1 / span 2; }
+body.app #inspector .parts .pt { grid-column: 2; grid-row: 1; }
+body.app #inspector .parts .pk { grid-column: 2; grid-row: 2; text-align: left; line-height: 1.4; }
 .side-levels { display: grid; gap: 12px; }
 #side-levels { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
 #side-levels .btn { padding: 10px 12px; font-size: 11px; }
@@ -1109,12 +1122,18 @@ body.app .panel-scroll > * { min-width: 0; }
   body.app .viewer { min-height: 0; }
   body.app .view { min-height: 170px; height: 43dvh; }
   body.app.sheet-open .view { min-height: 140px; height: 23dvh; }
+  body.app.inspector-collapsed .viewer { flex: 1 1 0; }
+  body.app.inspector-collapsed .view { flex: 1 1 0; height: auto; }
 }
 @media (max-width: 760px) {
   .scaffold-badge { left: 14px; right: auto; bottom: 10px; font-size: 8px; text-align: left; }
-  body.app #hud-btns { padding: 6px 12px; min-height: 52px; }
-  .part-transport { gap: 6px; }
-  .part-transport .btn { min-height: 38px; font-size: 10px; padding: 0 6px; }
+  body.app #hud-btns { flex-wrap: wrap; padding: 6px 12px; min-height: 52px; }
+  .part-transport { grid-template-columns: minmax(0, 1fr) 44px 76px 44px; gap: 4px; width: 100%; }
+  .part-transport .btn, .view-part select { min-height: 44px; font-size: 10px; padding: 0 6px; }
+  .part-transport #part-play { font-size: 9px; letter-spacing: .04em; }
+  .part-transport .pn-t { display: none; }
+  .part-transport :is(#card-prev, #card-next) { font-size: 22px; }
+  body.app #back-out { min-height: 36px; margin-right: auto; }
   body.app .view .hint { display: none; }
   body.app .hud.tl { top: 14px; left: 14px; }
   body.app .hud.tl .ttl { font-size: 24px; }

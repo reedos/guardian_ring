@@ -2,6 +2,7 @@
 // here are drawing coordinates; evidence and physical inputs live in the model.
 import * as THREE from 'three';
 import { copyModel, litScene, preloadModel, teachingLine } from './model-scene.js';
+import { printDecals, textTexture } from './print-kit.js';
 
 const COLORS = { light:'#e6ba82', data:'#a6f35a', heat:'#ff6b78' };
 export function illustrated(config) {
@@ -17,6 +18,13 @@ export function illustrated(config) {
         return anchor.getWorldPosition(new THREE.Vector3()).toArray();
       };
       const camera = {near:.025,far:150,min:2,max:28,...config.camera,...(quality.mobile?config.cameraPhone:{})};
+      // Surface labels use IF's printed adapter, separate from selectable pins.
+      // No catalog numbers or ratings: these name the teaching component roles.
+      for (const label of config.labels || []) {
+        const {text,anchor,p,size,face='top',...placement}=label;
+        printDecals(asset, {texture:textTexture([text],{aspect:size[0]/size[1],ink:'#eaf1f6',plate:'#0b1015',px:64}),
+          size,placements:[{p:anchor?resolve(anchor):p,face,...placement}],lift:.003,name:`Role label: ${text}`});
+      }
       const direction = new THREE.Vector3(...camera.pos).sub(new THREE.Vector3(...camera.target)).normalize();
       const make = (positions,views=config.views||{}) => Object.fromEntries(Object.entries(positions).map(([id,point]) => {
         const pos = resolve(point), authored = views[id];
@@ -35,7 +43,7 @@ export function illustrated(config) {
         }
         return [mode,group];
       }));
-      const solids=[];asset.traverse(o=>{if(o.isMesh&&!o.userData.teachingOverlay)solids.push(o);});
+      const solids=[];asset.traverse(o=>{if(o.isMesh&&!o.userData.teachingOverlay&&!o.userData.printed&&o.userData.solidForCamera!==false)solids.push(o);});
       const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
       return { scene,asset,quality,model,camera,hotspots,dataHotspots,heatHotspots,solids,
         flows:groups.light.children,dataFlows:groups.data.children,heatFlows:groups.heat.children,

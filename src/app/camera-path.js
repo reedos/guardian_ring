@@ -11,6 +11,7 @@
 //        clear (one whose end framing sits in among things, reachable only by backing out and coming back in)
 // None of these touches the ends: at u = 0 and u = 1 the camera sits exactly on its start and end framing.
 import * as THREE from 'three';
+import { constrainCameraPose } from './camera-clearance.js';
 
 export const ease = u => (u < 0.5 ? 4 * u ** 3 : 1 - Math.pow(-2 * u + 2, 3) / 2);
 const _s = new THREE.Spherical(), _v = new THREE.Vector3();
@@ -39,6 +40,7 @@ export function poseAt(m, u, pos = new THREE.Vector3(), target = new THREE.Vecto
       }
     }
   }
+  constrainCameraPose(pos, target, m.limits);
   return { pos, target };
 }
 

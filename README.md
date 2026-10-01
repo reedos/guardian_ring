@@ -10,6 +10,8 @@ The main journey moves through six scenes: the ring, spacecraft, optical payload
 
 The explainer includes a visual story, an interactive explorer, an Evidence register, a Method page, and a Glossary. Independent calculation examples cover orbit geometry, vacuum light travel, photon energy, ideal diffraction, and blackbody radiation. Pin a scenario to compare its values and evidence with another.
 
+The spacecraft cutaway exposes solar cells and deployment hardware, power regulation, batteries, attitude sensors and reaction wheels, propulsion, onboard computers, communications, and heat rejection. The payload and focal-plane views follow detector readout, video electronics, digitization, instrument control, and cooling. A persistent part selector, Overview, and presentation controls make these assemblies navigable on desktop and phone.
+
 This edition is under review. The site is unlisted and retains noindex; its review link is shared directly with the reviewer.
 
 ## Follow the evidence
@@ -20,6 +22,7 @@ Hardware, orbit positions, plume shapes, and animated paths are schematic. Publi
 
 - [Verified facts and source gaps](research/verified-facts.md)
 - [Physics model and assumptions](research/model-review.md)
+- [Spacecraft and payload engineering sources](research/spacecraft-review.md)
 - [Build review and supported scope](research/BUILD-REVIEW.md)
 - [Browser and unit-test acceptance record](research/gate-results.md)
 - [Asset provenance and credits](THIRD_PARTY_NOTICES.md)

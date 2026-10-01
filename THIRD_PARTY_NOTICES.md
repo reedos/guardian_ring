@@ -23,9 +23,9 @@ The following files are original Blender-authored geometry or renders. The NASA-
 | Interactive asset | Builder | Image/geometry provenance |
 |---|---|---|
 | `public/models/earth-orbits.glb` | `tools/blender/build-orbits.py` | Original globe/orbit/proxy geometry; embedded NASA image derivatives |
-| `public/models/satellite.glb` | `tools/blender/build-satellite.py` | Original representative hardware from the approved look builder |
-| `public/models/payload.glb` | `tools/blender/build-payload.py` | Original representative cutaway from the approved look builder |
-| `public/models/focal-plane.glb` | `tools/blender/build-focal-plane.py` | Original representative carrier and readout from the approved look builder |
+| `public/models/satellite.glb` | `tools/blender/build-satellite.py` | Original detailed spacecraft cutaway; shared procedural hardware helpers |
+| `public/models/payload.glb` | `tools/blender/build-payload.py` | Original optical/electronics cutaway; shared procedural hardware helpers |
+| `public/models/focal-plane.glb` | `tools/blender/build-focal-plane.py` | Original cold enclosure, detector/ROIC carrier, interconnect and video-board geometry |
 | `public/models/pixel.glb` | `tools/blender/build-pixel.py` | Original exploded conceptual stack from the approved look builder |
 | `public/models/plume.glb` | `tools/blender/build-plume.py` | Original surfaces, molecular symbols and procedural texture |
 | `public/models/ground.glb` | `tools/blender/build-ground.py` | Original representative facility/equipment composition |
@@ -36,9 +36,9 @@ The following files are original Blender-authored geometry or renders. The NASA-
 | Story files under `public/look/` | Source builder | Image provenance |
 |---|---|---|
 | `ring.webp`, `ring-phone.webp` | `tools/blender/build-orbit-look.py` | Original render with NASA Earth textures |
-| `satellite.webp`, `satellite-phone.webp` | `tools/blender/build-hardware-look.py` | Original procedural render |
-| `payload.webp`, `payload-phone.webp` | `tools/blender/build-hardware-look.py` | Original procedural render |
-| `focal-plane.webp`, `focal-plane-phone.webp` | `tools/blender/build-hardware-look.py` | Original procedural render |
+| `satellite.webp`, `satellite-phone.webp` | `tools/blender/render-authored.py` | Original render of the shipped spacecraft GLB |
+| `payload.webp`, `payload-phone.webp` | `tools/blender/render-authored.py` | Original render of the shipped payload GLB |
+| `focal-plane.webp`, `focal-plane-phone.webp` | `tools/blender/render-authored.py` | Original render of the shipped focal-plane GLB |
 | `pixel.webp`, `pixel-phone.webp` | `tools/blender/build-hardware-look.py` | Original procedural render |
 | `plume.webp`, `plume-phone.webp` | `tools/blender/build-plume-look.py` | Original procedural geometry and volume shading |
 

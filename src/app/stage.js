@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { store, on, emit } from './store.js';
 import { TIERS, qualityPressure } from './render-quality.js';
 import { poseAt, clearPath } from './camera-path.js';
+import { createCameraClearance, constrainCameraPose, CLEARANCE_BAND } from './camera-clearance.js';
 import { occupancyBuilder } from './occupancy.js';
 import { createPartCycle } from './part-cycle.js';
 import { declutterPins } from './pin-layout.js';
@@ -72,12 +73,19 @@ export function settle() {
   controls.update(); camera.updateMatrixWorld(); updatePins();
 }
 export function flyTo(pos, target, duration = .9) {
-  const move = { p0: camera.position.clone(), t0: controls.target.clone(), p1: new THREE.Vector3(...pos), t1: new THREE.Vector3(...target), start: performance.now(), duration: duration * TRANSITIONS[transitions] * 1000 };
+  const limits = { minDistance: controls.minDistance, maxDistance: controls.maxDistance, minPolarAngle: controls.minPolarAngle, maxPolarAngle: controls.maxPolarAngle };
+  const move = { p0: camera.position.clone(), t0: controls.target.clone(), p1: new THREE.Vector3(...pos), t1: new THREE.Vector3(...target), limits, start: 0, duration: duration * TRANSITIONS[transitions] * 1000 };
+  constrainCameraPose(move.p1, move.t1, limits);
+  // Instant and reduced-motion views have no intermediate flight to plan.
+  if (!move.duration) { tween = move; settle(); return; }
   const map = occupancy(), start = performance.now();
-  const result = clearPath(move, (a, b) => map?.segment(a.pos, b.pos, .08) ? 100 : 0, { n: 24, maxTries: 128 });
-  clearanceStats.plans++; clearanceStats.planMs = performance.now() - start; clearanceStats.clear = result.clear; clearanceStats.costs = result.costs;
+  const result = clearPath(move, createCameraClearance(move, map, limits), { n: 32, maxTries: 320, through: 100, goodEnough: CLEARANCE_BAND });
+  clearanceStats.plans++; clearanceStats.planMs = performance.now() - start; clearanceStats.clear = result.good; clearanceStats.costs = result.costs;
+  clearanceStats.tries = result.tries; clearanceStats.chosen = move.via ? { via: move.via.length } : move.hop || null;
+  move.duration *= Math.min(1.6, 1 + .6 * Math.max(0, result.stretch - 1));
+  // Planning time must not consume the beginning of the checked flight.
+  move.start = performance.now();
   tween = move;
-  if (!move.duration) settle();
 }
 function resize() {
   if (!renderer) return;
@@ -135,10 +143,11 @@ function updateCycle() {
   const available = partCount(ui.scene) > 1;
   for (const id of ['card-prev', 'card-next', 'part-play']) $(id).disabled = !available;
   $('part-play').setAttribute('aria-pressed', String(partCycle.playing)); $('part-play').textContent = partCycle.playing ? 'Pause' : 'Auto-cycle';
-  $('part-play').title = available ? 'Cycle through the parts' : 'Available when this level has several parts';
+  $('part-play').title = available ? 'Cycle through the parts, holding each for 8 seconds after the camera arrives. Reading sources pauses the clock; choosing a part stops it.' : 'Available when this level has several parts';
 }
 export function select(id, fly = true) {
   const part = partsFor(ui.scene).find(candidate => candidate.id === id); if (!part) return;
+  if (!partCycle.selecting) partCycle.stop();
   if (fly) { built[ui.scene]?.setMotion?.(false); emit('scene-settings'); }
   ui.selected = id; $('card').hidden = false; $('card-k').textContent = part.kicker; $('card-t').textContent = part.title; $('card-b').textContent = part.body;
   $('card-s').replaceChildren();
@@ -158,15 +167,27 @@ export function select(id, fly = true) {
   });
   const spot = hotspotsFor(ui.scene)[id]; if (fly && spot?.view) flyTo(spot.view.pos, spot.view.target);
   emit('select', id); updateCycle();
+  if (fly) emit('part-inspect', id);
 }
-export function deselect() { ui.selected = null; $('card').hidden = true; emit('select', null); }
+export function deselect() {
+  ui.selected = null; $('card').hidden = true;
+  document.querySelectorAll('#parts button, #pins button').forEach(button => { button.setAttribute('aria-pressed', 'false'); button.classList.remove('on'); });
+  emit('select', null);
+}
+export function overview() {
+  const preset = built[ui.scene]?.camera; if (!preset) return;
+  partCycle.stop(); deselect(); flyTo(preset.pos, preset.target);
+}
 export function cycle(direction) {
   const parts = partsFor(ui.scene); if (!parts.length) return;
-  const index = parts.findIndex(part => part.id === ui.selected); select(parts[(index + direction + parts.length) % parts.length].id);
+  const index = parts.findIndex(part => part.id === ui.selected);
+  select(parts[index < 0 ? direction < 0 ? parts.length - 1 : 0 : (index + direction + parts.length) % parts.length].id);
 }
-const partCycle = createPartCycle({ parts: () => partsFor(ui.scene).map(part => part.id), selected: () => ui.selected, select, ready: () => !isCameraMoving(), changed: updateCycle });
+const partCycle = createPartCycle({ parts: () => partsFor(ui.scene).map(part => part.id), selected: () => ui.selected, select,
+  ready: () => !document.hidden && !isCameraMoving() && $('src-pop')?.hidden !== false, changed: updateCycle });
 export function setMode(mode) {
   if (!modes.includes(mode)) return;
+  partCycle.stop();
   ui.mode = mode; document.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
   if (ui.scene >= 0) { built[ui.scene]?.setMode(mode); const id = hasPart(ui.scene,ui.selected) ? ui.selected : partsFor(ui.scene)[0]?.id; buildPanel(); if (id) select(id, false); }
   emit('mode', mode);
@@ -230,6 +251,7 @@ export function start() {
   controls.addEventListener('start', () => { tween = null; partCycle.stop(); });
   new ResizeObserver(resize).observe(view);
   document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && partCycle.playing) partCycle.stop();
     if (!stageActive() || /INPUT|SELECT|TEXTAREA/.test(event.target.tagName)) return;
     if (/^[1-6]$/.test(event.key)) void go(Number(event.key) - 1);
     else if (['l', 'd', 'h'].includes(event.key.toLowerCase())) setMode({ l: 'light', d: 'data', h: 'heat' }[event.key.toLowerCase()]);
@@ -247,6 +269,12 @@ export function start() {
     frameObservers.forEach(fn => fn({ frame: dt * 1000, cpu })); govern(now);
   });
   const [level, mode, part] = (new URLSearchParams(location.search).get('view') || '').split('.');
-  if (/^\d$/.test(level) && modes.includes(mode)) void show({ scene: Number(level), mode, part: part || null });
+  if (/^\d$/.test(level) && modes.includes(mode)) {
+    void show({ scene: Number(level), mode, part: part || null }).then(() => {
+      // A shared two-field view explicitly means Overview. Keep show()'s
+      // first-card default for ordinary navigation and the test-hook contract.
+      if (!part && ui.scene === Number(level) && ui.mode === mode) overview();
+    });
+  }
   else void go(0);
 }
