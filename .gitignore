@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vite/
+shots/
+*.log
+.local/
+research/**/downloads/
+research/**/*.pdf
+research/**/*.txt
+research/**/*.png
+research/**/fetch-*.json

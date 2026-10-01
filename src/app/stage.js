@@ -1,0 +1,226 @@
+// IF's viewer contract with a deliberately neutral Phase 0 scene.
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { store, on, emit } from './store.js';
+import { TIERS, qualityPressure } from './render-quality.js';
+import { poseAt, clearPath } from './camera-path.js';
+import { occupancyBuilder } from './occupancy.js';
+import { createPartCycle } from './part-cycle.js';
+import { chip } from '../evidence.js';
+import { disposeScene } from '../fx.js';
+import * as orbits from '../scenes/orbits.js';
+import * as satellite from '../scenes/satellite.js';
+import * as payload from '../scenes/payload.js';
+import * as focalPlane from '../scenes/focal-plane.js';
+import * as pixel from '../scenes/pixel.js';
+import * as plume from '../scenes/plume.js';
+import * as ground from '../scenes/side-ground.js';
+import * as abi from '../scenes/side-abi.js';
+import * as tirs2 from '../scenes/side-tirs2.js';
+import * as atmosphere from '../scenes/side-atmosphere.js';
+
+const BUILDERS = [orbits, satellite, payload, focalPlane, pixel, plume, ground, abi, tirs2, atmosphere];
+export const MAIN_LEVELS = 6, sceneCount = BUILDERS.length;
+export const isSide = i => i >= MAIN_LEVELS;
+const $ = id => document.getElementById(id), ui = store.ui, view = $('view'), canvas = $('gl');
+const modes = ['light', 'data', 'heat'], keys = { light: 'PARTS', data: 'PARTS_DATA', heat: 'PARTS_HEAT' };
+export const built = [], composers = [];
+export const camera = new THREE.PerspectiveCamera(35, 1, .05, 100);
+export const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true; controls.dampingFactor = .1; controls.minDistance = 3; controls.maxDistance = 20;
+export const mobile = matchMedia('(max-width: 760px), (pointer: coarse)').matches;
+export const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const clearanceStats = { builds: 0, buildMs: 0, standIn: 0, unplanned: 0, plans: 0, planMs: 0, hits: 0, prefetched: 0, clear: true, pending: false };
+let renderer, started = false, busy = false, tween = null, transitions = reduced ? 'instant' : 'full', buildEpoch = 0;
+let ratio = 1, gpu = 'Unavailable', preference = 'auto', governorAt = 0, frameSamples = [], cpuSamples = [], judged = null;
+const tiers = Array(sceneCount).fill(0), ceilings = Array(sceneCount).fill(0), held = new Set(), frameObservers = new Set(), tickers = new Set();
+try { const saved = localStorage.getItem('grx-render-preference'); if (['auto', 'max', 'laptop'].includes(saved)) preference = saved; } catch { /* optional */ }
+export const getRenderer = () => renderer;
+export const renderScale = () => ratio;
+export const qualityInfo = () => ({ gpu, integrated: /intel|radeon.*graphics/i.test(gpu), timers: false, governing: preference !== 'max',
+  tiers: [...tiers], ceilings: [...ceilings], ratio, preference, bloom: false, particleFraction: TIERS[tiers[Math.max(0, ui.scene)]].particles,
+  cpuMs: judged?.cpu ?? null, gpuMs: null, drawMs: judged?.cpu ?? null, composerRatio: ratio, ao: false, judged, pending: 0, quietFor: 0, window: frameSamples.length });
+export function setQualityPreference(value) {
+  if (!['auto', 'max', 'laptop'].includes(value)) return;
+  preference = value; held.clear();
+  try { localStorage.setItem('grx-render-preference', value); } catch { /* optional */ }
+  tiers.fill(value === 'laptop' ? 4 : 0); ceilings.fill(value === 'laptop' ? 4 : 0);
+  $('quality') && ($('quality').value = value); resize(); emit('render-quality');
+}
+export function forceTier(n, { hold = false, i = ui.scene } = {}) {
+  if (!Number.isInteger(n) || n < 0 || n >= TIERS.length || i < 0 || i >= sceneCount) return;
+  tiers[i] = n; ceilings[i] = hold ? n : 0; if (hold) held.add(i); else held.delete(i); resize();
+}
+export const partsFor = (i, mode = ui.mode) => store.C[keys[mode]]?.[store.C.SCENES[i]?.id] || [];
+export const pinNumber = (i, id, mode = ui.mode) => { const index = partsFor(i, mode).findIndex(part => part.id === id); return index < 0 ? null : index + 1; };
+export const partCount = (i, mode = ui.mode) => partsFor(i, mode).length;
+export const hasPart = (i, id, mode = ui.mode) => partsFor(i, mode).some(part => part.id === id);
+const hotspotsFor = i => built[i]?.[ui.mode === 'data' ? 'dataHotspots' : ui.mode === 'heat' ? 'heatHotspots' : 'hotspots'] || {};
+export const occupancy = () => built[ui.scene]?.occupancy || null;
+export const isBusy = () => busy;
+export const isCameraMoving = () => busy || !!tween;
+export const destination = () => ui.scene;
+export const stageActive = () => $('viewer').contains(document.activeElement) || $('viewer').matches(':hover');
+export const observeFrame = fn => { frameObservers.add(fn); return () => frameObservers.delete(fn); };
+export const onTick = fn => { tickers.add(fn); return () => tickers.delete(fn); };
+export const TRANSITIONS = { full: 1, quick: .6, instant: 0 };
+export function setTransitions(value) { if (value in TRANSITIONS) { transitions = value; if (value === 'instant') settle(); } }
+export const getTransitions = () => transitions;
+export function settle() {
+  if (tween) { camera.position.copy(tween.p1); controls.target.copy(tween.t1); tween = null; }
+  controls.update(); camera.updateMatrixWorld(); updatePins();
+}
+export function flyTo(pos, target, duration = .9) {
+  const move = { p0: camera.position.clone(), t0: controls.target.clone(), p1: new THREE.Vector3(...pos), t1: new THREE.Vector3(...target), start: performance.now(), duration: duration * TRANSITIONS[transitions] * 1000 };
+  const map = occupancy(), start = performance.now();
+  const result = clearPath(move, (a, b) => map?.segment(a.pos, b.pos, .08) ? 100 : 0, { n: 24, maxTries: 128 });
+  clearanceStats.plans++; clearanceStats.planMs = performance.now() - start; clearanceStats.clear = result.clear; clearanceStats.costs = result.costs;
+  tween = move;
+  if (!move.duration) settle();
+}
+function resize() {
+  if (!renderer) return;
+  const width = Math.max(1, view.clientWidth), height = Math.max(1, view.clientHeight);
+  ratio = Math.min(devicePixelRatio || 1, TIERS[tiers[Math.max(0, ui.scene)]].ratio);
+  renderer.setPixelRatio(ratio); renderer.setSize(width, height, false);
+  camera.aspect = width / height; camera.fov = camera.aspect < .9 ? 48 : 35; camera.updateProjectionMatrix(); updatePins();
+}
+function updatePins() {
+  if (ui.scene < 0) return;
+  camera.updateMatrixWorld();
+  for (const button of $('pins').querySelectorAll('button')) {
+    const spot = hotspotsFor(ui.scene)[button.dataset.id]; if (!spot) continue;
+    const p = new THREE.Vector3(...spot.pos).project(camera);
+    button.style.left = `${(p.x + 1) / 2 * view.clientWidth}px`; button.style.top = `${(1 - p.y) / 2 * view.clientHeight}px`;
+    button.hidden = p.z < -1 || p.z > 1;
+  }
+}
+function buildPanel() {
+  const scene = store.C.SCENES[ui.scene], parts = partsFor(ui.scene);
+  $('hud-title').textContent = scene.title; $('hud-sub').textContent = scene.scale;
+  $('intro').textContent = scene.intro; $('parts-n').textContent = ` ${parts.length}`;
+  $('lp-k').textContent = isSide(ui.scene) ? 'Side level' : `Level ${ui.scene + 1} of ${MAIN_LEVELS}`;
+  $('lp-t').textContent = scene.title; $('back-out').hidden = !isSide(ui.scene);
+  document.querySelectorAll('[data-level]').forEach(button => button.setAttribute('aria-current', +button.dataset.level === ui.scene ? 'step' : 'false'));
+  $('parts').replaceChildren(); $('pins').replaceChildren();
+  parts.forEach((part, index) => {
+    const li = document.createElement('li'), row = document.createElement('button'); row.type = 'button'; row.dataset.id = part.id;
+    const number = document.createElement('span'); number.className = 'pn'; number.textContent = String(index + 1);
+    const title = document.createElement('span'); title.className = 'pt'; title.textContent = part.title;
+    const kicker = document.createElement('span'); kicker.className = 'pk'; kicker.textContent = 'Empty';
+    row.append(number, title, kicker); row.addEventListener('click', () => select(part.id)); li.append(row); $('parts').append(li);
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'pin'; button.dataset.id = part.id; button.setAttribute('aria-label', part.title);
+    button.innerHTML = `<span class="num">${index + 1}</span><span class="lbl">Placeholder</span>`; button.addEventListener('click', () => select(part.id)); $('pins').append(button);
+  });
+  $('card').hidden = true; updateCycle(); updatePins();
+}
+function updateCycle() {
+  const available = partCount(ui.scene) > 1;
+  for (const id of ['card-prev', 'card-next', 'part-play']) $(id).disabled = !available;
+  $('part-play').setAttribute('aria-pressed', String(partCycle.playing)); $('part-play').textContent = partCycle.playing ? 'Pause' : 'Auto-cycle';
+  $('part-play').title = available ? 'Cycle through the parts' : 'Available when this level has several parts';
+}
+export function select(id, fly = true) {
+  const part = partsFor(ui.scene).find(candidate => candidate.id === id); if (!part) return;
+  ui.selected = id; $('card').hidden = false; $('card-k').textContent = part.kicker; $('card-t').textContent = part.title; $('card-b').textContent = part.body;
+  $('card-s').replaceChildren();
+  part.specs.forEach((row, index) => {
+    const entry = document.createElement('div'), dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = row[0]; dd.textContent = row[1];
+    entry.append(dt, dd); entry.insertAdjacentHTML('beforeend', chip(row[2], `card:${ui.mode}:${store.C.SCENES[ui.scene].id}:${id}:${index}`)); $('card-s').append(entry);
+  });
+  $('card-s').hidden = !part.specs.length;
+  document.querySelectorAll('#parts button, #pins button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.id === id)));
+  const spot = hotspotsFor(ui.scene)[id]; if (fly && spot?.view) flyTo(spot.view.pos, spot.view.target);
+  emit('select', id); updateCycle();
+}
+export function deselect() { ui.selected = null; $('card').hidden = true; emit('select', null); }
+export function cycle(direction) {
+  const parts = partsFor(ui.scene); if (!parts.length) return;
+  const index = parts.findIndex(part => part.id === ui.selected); select(parts[(index + direction + parts.length) % parts.length].id);
+}
+const partCycle = createPartCycle({ parts: () => partsFor(ui.scene).map(part => part.id), selected: () => ui.selected, select, ready: () => !isCameraMoving(), changed: updateCycle });
+export function setMode(mode) {
+  if (!modes.includes(mode)) return;
+  ui.mode = mode; document.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
+  if (ui.scene >= 0) { built[ui.scene]?.setMode(mode); const id = ui.selected; buildPanel(); if (id) select(id, false); }
+  emit('mode', mode);
+}
+export async function go(index) {
+  if (typeof index === 'string') index = store.C.SCENES.findIndex(scene => scene.id === index);
+  if (!Number.isInteger(index) || index < 0 || index >= sceneCount) return;
+  const epoch = ++buildEpoch; busy = true; partCycle.stop(); $('veil').hidden = false; $('veil').classList.remove('off'); $('veil').textContent = 'Preparing the placeholder…';
+  try {
+    if (!built[index]) {
+      await BUILDERS[index].preload(); if (epoch !== buildEpoch) return;
+      built[index] = BUILDERS[index].build({ quality: { ...TIERS[tiers[index]], mobile }, model: store.M });
+      built[index].scene.updateMatrixWorld(true);
+      const start = performance.now(), builder = occupancyBuilder(built[index].solids, { maxCells: 64_000 }); builder.step();
+      built[index].occupancy = builder.result; clearanceStats.builds++; clearanceStats.buildMs = performance.now() - start;
+    }
+    if (epoch !== buildEpoch) return;
+    ui.scene = index; ui.selected = null; tween = null;
+    const preset = built[index].camera; camera.position.set(...preset.pos); controls.target.set(...preset.target); camera.near = preset.near; camera.far = preset.far; controls.minDistance = preset.min; controls.maxDistance = preset.max;
+    controls.update(); built[index].setMode(ui.mode); buildPanel(); resize(); emit('scene', index);
+    select(partsFor(index)[0]?.id, false); $('veil').hidden = true;
+  } catch (error) { $('veil').textContent = 'The viewer could not start. Reload to try again; the source and method pages remain available.'; throw error; }
+  finally { if (epoch === buildEpoch) busy = false; }
+}
+export async function show({ scene = ui.scene, mode = ui.mode, part = null }) { if (modes.includes(mode)) ui.mode = mode; await go(scene); setMode(mode); if (part) select(part); }
+export async function backOut() { await go(0); }
+on('scenario', () => {
+  if (!started) return;
+  built.forEach(item => item && disposeScene(item.scene)); built.length = 0;
+  return go(Math.max(0, ui.scene));
+});
+function median(values) { const sorted = [...values].sort((a, b) => a - b); return sorted[Math.floor(sorted.length / 2)] || 0; }
+function govern(now) {
+  if (now - governorAt < 2000 || frameSamples.length < 30) return;
+  judged = { frame: median(frameSamples), cpu: median(cpuSamples), gpu: null };
+  if (preference !== 'max' && !held.has(ui.scene)) {
+    const pressure = qualityPressure(judged), floor = preference === 'laptop' ? 4 : 0;
+    if (pressure > 0 && tiers[ui.scene] < TIERS.length - 1) { tiers[ui.scene] = Math.min(TIERS.length - 1, tiers[ui.scene] + pressure); resize(); }
+    else if (pressure < 0 && tiers[ui.scene] > floor) { tiers[ui.scene]--; resize(); }
+  }
+  governorAt = now; frameSamples = []; cpuSamples = [];
+}
+export function start() {
+  if (started) return; started = true;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    const gl = renderer.getContext(), debug = gl.getExtension('WEBGL_debug_renderer_info'); gpu = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+  } catch { $('veil').textContent = 'WebGL is unavailable. The source and method pages remain available.'; busy = false; return; }
+  setQualityPreference(preference);
+  store.C.SCENES.forEach((scene, index) => {
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'step'; button.dataset.level = String(index); button.style.setProperty('--c', 'var(--accent)');
+    button.innerHTML = `<span class="top"><span class="n">${index < MAIN_LEVELS ? index + 1 : '↳'}</span><span class="t"></span></span><span class="meta">Scaffold</span>`;
+    button.querySelector('.t').textContent = scene.short; button.addEventListener('click', () => void go(index));
+    $('level-menu').append(button);
+    if (index < MAIN_LEVELS) { const desktop = button.cloneNode(true); desktop.addEventListener('click', () => void go(index)); $('steps').append(desktop); }
+    else { const side = document.createElement('button'); side.className = 'btn'; side.type = 'button'; side.textContent = scene.title; side.dataset.level = String(index); side.addEventListener('click', () => void go(index)); $('side-levels').append(side); }
+  });
+  document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
+  $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('part-play').addEventListener('click', () => partCycle.toggle()); $('back-out').addEventListener('click', backOut);
+  $('quality').addEventListener('change', event => setQualityPreference(event.target.value));
+  controls.addEventListener('start', () => { tween = null; partCycle.stop(); });
+  new ResizeObserver(resize).observe(view);
+  document.addEventListener('keydown', event => {
+    if (!stageActive() || /INPUT|SELECT|TEXTAREA/.test(event.target.tagName)) return;
+    if (/^[1-6]$/.test(event.key)) void go(Number(event.key) - 1);
+    else if (['l', 'd', 'h'].includes(event.key.toLowerCase())) setMode({ l: 'light', d: 'data', h: 'heat' }[event.key.toLowerCase()]);
+    else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); cycle(event.key === 'ArrowLeft' ? -1 : 1); }
+  });
+  let last = performance.now();
+  renderer.setAnimationLoop(now => {
+    const dt = Math.max(0, (now - last) / 1000); last = now;
+    if (document.hidden || ui.scene < 0 || !built[ui.scene]) return;
+    const cpuStart = performance.now();
+    if (tween) { const u = Math.min(1, (now - tween.start) / tween.duration); poseAt(tween, u, camera.position, controls.target); if (u >= 1) tween = null; }
+    controls.update(); built[ui.scene].update(now / 1000); partCycle.tick(dt); tickers.forEach(fn => fn(now / 1000, dt)); updatePins();
+    renderer.render(built[ui.scene].scene, camera);
+    const cpu = performance.now() - cpuStart; if (dt < .25) { frameSamples.push(dt * 1000); cpuSamples.push(cpu); }
+    frameObservers.forEach(fn => fn({ frame: dt * 1000, cpu })); govern(now);
+  });
+  const [level, mode, part] = (new URLSearchParams(location.search).get('view') || '').split('.');
+  if (/^\d$/.test(level) && modes.includes(mode)) void show({ scene: Number(level), mode, part: part || null });
+  else void go(0);
+}

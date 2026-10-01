@@ -1,0 +1,966 @@
+{
+  "accessed": "10/01/2026",
+  "phase": 1,
+  "scope": "Civil twins, physics, and general orbit references only",
+  "sources": {
+    "goes-r-databook": {
+      "id": "goes-r-databook",
+      "title": "GOES-R Series Data Book, Revision A",
+      "publisher": "NASA GOES-R Series Program / NOAA OSPO",
+      "url": "https://www.ospo.noaa.gov/resources/documents/GOES-RSeriesDataBook.pdf",
+      "dated": "05/2019",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "Chapter 3, printed pp. 3-8, 3-11, 3-14; PDF pp. 36, 39, 42",
+      "quote": "The LWIR and MWIR optics and FPMs are maintained at approximately 60K.",
+      "note": "Downloaded directly; all cited pages visually inspected. The seed aperture claim was not found. System raw and rebroadcast link rates are not ABI detector rates.",
+      "local": "research/physics/GOES-RSeriesDataBook.pdf",
+      "bytes": 12628931,
+      "sha256": "6483b6811606bc2cafea3a04eedfbe4b0809dce371be05e8fefb9da4486c546e"
+    },
+    "noaa-abi-page": {
+      "id": "noaa-abi-page",
+      "title": "Advanced Baseline Imager (ABI)",
+      "publisher": "NOAA/NESDIS",
+      "url": "https://www.nesdis.noaa.gov/our-satellites/currently-flying/goes-east-west/advanced-baseline-imager-abi",
+      "dated": "Undated live page",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "Main instrument description",
+      "quote": "It detects visible and infrared light using 16 spectral bands, with each band capturing a different set of data.",
+      "note": ""
+    },
+    "landsat9-tirs2-nasa": {
+      "id": "landsat9-tirs2-nasa",
+      "title": "Thermal Infrared Sensor (TIRS)",
+      "publisher": "NASA Science",
+      "url": "https://science.nasa.gov/mission/landsat/tirs/",
+      "dated": "Undated live page",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "Design; Spectral Bands",
+      "quote": "TIRS employs Quantum Well Infrared Photodetectors (QWIPs) to detect long wavelengths of light",
+      "note": "This shared page mixes Landsat 8 and 9, and its 640-detector image caption explicitly names Landsat 8. Dedicated TIRS-2 sources below corroborate L9 facts."
+    },
+    "nasa-tirs2-build": {
+      "id": "nasa-tirs2-build",
+      "title": "TIRS-2 Testing: A Landsat 9 Instrument Takes Shape",
+      "publisher": "NASA Landsat Project Science Support",
+      "url": "https://science.nasa.gov/missions/landsat/tirs-2-testing-a-landsat-9-instrument-takes-shape/",
+      "dated": "03/01/2018",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "Instrument design paragraphs following test photographs",
+      "quote": "A two-stage mechanical cryocooler will cool TIRS-2’s focal plane.",
+      "note": "Historical prelaunch design article; its anticipated launch date is not a current schedule claim."
+    },
+    "nasa-tirs2-spectral": {
+      "id": "nasa-tirs2-spectral",
+      "title": "Landsat 9 Thermal Infrared Sensor 2 Subsystem-Level Spectral Test Results",
+      "publisher": "NASA NTRS / instrument team",
+      "url": "https://ntrs.nasa.gov/api/citations/20180004892/downloads/20180004892.pdf",
+      "dated": "2018",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "PDF p. 1, Introduction",
+      "quote": "The three SCAs (SCA-A, B, and C) have 640 × 512 pixels each",
+      "note": "Science mode combines two rows per channel into one effective row; do not compute data rate from every physical array element. Source labels the second channel B12 inconsistently; use NASA's shared-page Bands 10 and 11 designation.",
+      "local": "research/physics/nasa-tirs2-spectral-20180004892.pdf",
+      "bytes": 323275,
+      "sha256": "7309e05070bcd8994ca6b45601a48d10c0996e029446263d332ca6879f283d99"
+    },
+    "nasa-irdetectors-ntrs": {
+      "id": "nasa-irdetectors-ntrs",
+      "title": "Infrared Detectors Overview in the Short Wave Infrared to Far Infrared for CLARREO Mission",
+      "publisher": "NASA Langley / NTRS",
+      "url": "https://ntrs.nasa.gov/api/citations/20100030592/downloads/20100030592.pdf",
+      "dated": "2010 (PDF creation metadata; exact publication date unconfirmed)",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "PDF pp. 3-7, sections A.1-A.3 and Table 1",
+      "quote": "The dual band InSb/HgCdTe sandwich detector operates at 77°K",
+      "note": "Material names do not define universal operating temperatures. Values in this review are tied to specific civil instruments or laboratory devices. AIRS prose and Table 1 differ (60 K vs. 58 K); omit a single AIRS value. T2SL default remains unresolved.",
+      "local": "research/physics/nasa-irdetectors-20100030592.pdf",
+      "bytes": 379381,
+      "sha256": "6975d74bba6ed572c49cf68667327c286ff818bf49e4837165f82da98d0c395a"
+    },
+    "nist-cryocooler-2009": {
+      "id": "nist-cryocooler-2009",
+      "title": "Cryocoolers: the state of the art and recent developments",
+      "publisher": "NIST / Ray Radebaugh",
+      "url": "https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=901013",
+      "dated": "03/31/2009",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "PDF p. 4, section 4",
+      "quote": "Efficiencies at 80 K can be as high as about 20% of Carnot for some of the best space cryocoolers",
+      "note": "A dated review, not a specification for ABI, TIRS-2, or any military instrument.",
+      "local": "research/physics/nist-radebaugh-2009.pdf",
+      "bytes": 794026,
+      "sha256": "f76b520526750e3ee5f94fd35ef3388c0a0b74d94c97952e788b0db372c76dc0"
+    },
+    "nist-refrigeration-2020": {
+      "id": "nist-refrigeration-2020",
+      "title": "Review of Refrigeration Methods (submitted chapter)",
+      "publisher": "NIST / Ray Radebaugh",
+      "url": "https://trc.nist.gov/cryogenics/Papers/Review/2020-Review_of_Refrigeration_Methods.pdf",
+      "dated": "2020 (submitted version)",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "PDF pp. 2-3, equation (1) and following paragraph",
+      "quote": "The actual COP of a real refrigerator can be expressed as a percentage of the Carnot COP",
+      "note": "Equation (1): COP_Carnot = Tc / (Th - Tc). Any future heat lift, hot temperature, or efficiency selected for the schematic remains Assumed. No engine implementation in Phase 1.",
+      "local": "research/physics/nist-refrigeration-review-2020.pdf",
+      "bytes": 2891338,
+      "sha256": "a094b119b30f998b4c2dad36c84b568d81e2eb7e353018d598c41ae877275265"
+    },
+    "nasa-combustion-bands": {
+      "id": "nasa-combustion-bands",
+      "title": "Determination of primary-zone smoke concentrations from spectral radiance measurements in gas turbine combustors",
+      "publisher": "NASA Lewis / Carl T. Norgren",
+      "url": "https://ntrs.nasa.gov/api/citations/19710021767/downloads/19710021767.pdf",
+      "dated": "07/1971",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "Printed p. 5; PDF p. 7, gaseous combustion products paragraph",
+      "quote": "they absorb and emit radiation only within discrete wavelengths.",
+      "note": "Use only general molecular-band physics. This civil gas-turbine source establishes H2O and CO2 emission bands, not a rocket intensity, temperature, atmospheric transmission model, or real sensor response.",
+      "local": "research/physics/nasa-combustion-bands-19710021767.pdf",
+      "bytes": 2705447,
+      "sha256": "46b7543f7f91e421556d9c0aa4c4b7c5233679b688aafda7336d660ac87f5a3f"
+    },
+    "nasa-atmospheric-windows": {
+      "id": "nasa-atmospheric-windows",
+      "title": "Remote Sensing",
+      "publisher": "NASA Earth Observatory",
+      "url": "https://science.nasa.gov/earth/earth-observatory/remote-sensing/",
+      "dated": "09/17/1999",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "Absorption Bands and Atmospheric Windows",
+      "quote": "The gases that comprise our atmosphere absorb radiation in certain wavelengths while allowing radiation with differing wavelengths to pass through.",
+      "note": "Use the qualitative definition only; no quantitative transmission or altitude-dependent claim was verified."
+    },
+    "nasa-orbit-catalog": {
+      "id": "nasa-orbit-catalog",
+      "title": "Catalog of Earth Satellite Orbits",
+      "publisher": "NASA Earth Observatory",
+      "url": "https://science.nasa.gov/earth/earth-observatory/catalog-of-earth-satellite-orbits/",
+      "dated": "09/04/2009",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "High Earth Orbit; Medium Earth Orbit",
+      "quote": "A satellite in a circular geosynchronous orbit directly over the equator (eccentricity and inclination at zero) will have a geostationary orbit",
+      "note": "General orbit definitions only. Historical mission examples in this article are not current status. Molniya values describe a generic orbit, not actual warning-satellite elements."
+    },
+    "noaa-geo-definition": {
+      "id": "noaa-geo-definition",
+      "title": "Geostationary Earth Orbit Satellite (GEO)",
+      "publisher": "NOAA CoastWatch",
+      "url": "https://coastwatch.noaa.gov/cwn/platform-types/geostationary-earth-orbit-satellite-geo.html",
+      "dated": "Undated live page",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "verified",
+      "marketing": false,
+      "section": "Definition paragraph",
+      "quote": "35,786 kilometers above the Equator, rotating with the Earth as both move through space.",
+      "note": ""
+    },
+    "bams-abi-paper": {
+      "id": "bams-abi-paper",
+      "title": "A Closer Look at the ABI on the GOES-R Series",
+      "publisher": "AMS BAMS / Schmit et al.",
+      "url": "https://journals.ametsoc.org/view/journals/bams/98/4/bams-d-15-00230.1.xml",
+      "dated": "2017",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "status": "unchecked",
+      "marketing": false,
+      "reason": "Fresh direct web request returned HTTP 403 Forbidden. Stopped this source and reported it; no alternate tool or mirror retry. Not cited by any fact."
+    },
+    "detector-operating-temps-aggregate": {
+      "id": "detector-operating-temps-aggregate",
+      "kind": "secondary",
+      "status": "unchecked",
+      "accessed": "10/01/2026",
+      "reason": "Original snippet mixture has no page URLs. Specific civil examples are verified separately; no universal HgCdTe/InSb/QWIP/T2SL default was established.",
+      "resolvedBy": [
+        "nasa-irdetectors-ntrs",
+        "goes-r-databook",
+        "nasa-tirs2-build"
+      ]
+    },
+    "plume-ir-emission-aggregate": {
+      "id": "plume-ir-emission-aggregate",
+      "kind": "secondary",
+      "status": "unchecked",
+      "accessed": "10/01/2026",
+      "reason": "Original snippet mixture has no page URLs. Generic H2O/CO2 bands are supported by an opened NASA combustion paper; no rocket intensity or temperature was established.",
+      "resolvedBy": [
+        "nasa-combustion-bands"
+      ]
+    },
+    "atmospheric-windows-aggregate": {
+      "id": "atmospheric-windows-aggregate",
+      "kind": "secondary",
+      "status": "unchecked",
+      "accessed": "10/01/2026",
+      "reason": "Original snippet mixture has no page URLs. General absorption/window definitions are verified separately; numeric window boundaries and transmission remain unverified.",
+      "resolvedBy": [
+        "nasa-atmospheric-windows"
+      ]
+    },
+    "cryocooler-aggregate": {
+      "id": "cryocooler-aggregate",
+      "kind": "secondary",
+      "status": "unchecked",
+      "accessed": "10/01/2026",
+      "reason": "Original snippet mixture has no page URLs. NIST review PDFs were resolved, opened, downloaded and quoted directly; original aggregate is not a citation.",
+      "resolvedBy": [
+        "nist-cryocooler-2009",
+        "nist-refrigeration-2020"
+      ]
+    },
+    "orbit-definitions-aggregate": {
+      "id": "orbit-definitions-aggregate",
+      "kind": "secondary",
+      "status": "unchecked",
+      "accessed": "10/01/2026",
+      "reason": "Original snippet mixture has no page URLs. Recommended NASA catalog opened directly, and NOAA confirms GEO altitude; original aggregate is not a citation.",
+      "resolvedBy": [
+        "nasa-orbit-catalog",
+        "noaa-geo-definition"
+      ]
+    }
+  },
+  "facts": [
+    {
+      "id": "abi-bands",
+      "levels": [
+        "abi"
+      ],
+      "row": [
+        "ABI spectral channels",
+        "16",
+        "spec",
+        {
+          "refs": [
+            [
+              "noaa-abi-page",
+              "Instrument description"
+            ]
+          ]
+        }
+      ],
+      "section": "Instrument description",
+      "scope": "GOES-R ABI civil twin only; never a military payload figure."
+    },
+    {
+      "id": "abi-full-disk",
+      "levels": [
+        "abi"
+      ],
+      "row": [
+        "ABI full-disk cadence",
+        "10 min",
+        "spec",
+        {
+          "refs": [
+            [
+              "noaa-abi-page",
+              "Instrument description"
+            ]
+          ]
+        }
+      ],
+      "section": "Instrument description",
+      "scope": "GOES-R ABI civil twin only; never a military payload figure."
+    },
+    {
+      "id": "abi-conus",
+      "levels": [
+        "abi"
+      ],
+      "row": [
+        "ABI mainland U.S. cadence",
+        "5 min",
+        "spec",
+        {
+          "refs": [
+            [
+              "noaa-abi-page",
+              "Instrument description"
+            ]
+          ]
+        }
+      ],
+      "section": "Instrument description",
+      "scope": "GOES-R ABI civil twin only; never a military payload figure."
+    },
+    {
+      "id": "abi-meso",
+      "levels": [
+        "abi"
+      ],
+      "row": [
+        "ABI mesoscale cadence",
+        "30-60 s",
+        "spec",
+        {
+          "refs": [
+            [
+              "noaa-abi-page",
+              "One or two smaller areas, instrument description"
+            ]
+          ]
+        }
+      ],
+      "section": "One or two smaller areas, instrument description",
+      "scope": "GOES-R ABI civil twin only; never a military payload figure."
+    },
+    {
+      "id": "abi-optics",
+      "levels": [
+        "payload",
+        "abi"
+      ],
+      "row": [
+        "ABI telescope",
+        "Four mirrors; three focal-plane modules",
+        "spec",
+        {
+          "refs": [
+            [
+              "goes-r-databook",
+              "Printed p. 3-8 / PDF p. 36"
+            ]
+          ]
+        }
+      ],
+      "section": "Printed p. 3-8 / PDF p. 36",
+      "scope": "GOES-R ABI civil twin only; never a military payload figure."
+    },
+    {
+      "id": "abi-detector-material",
+      "levels": [
+        "focal-plane",
+        "pixel",
+        "abi"
+      ],
+      "row": [
+        "ABI infrared channels",
+        "HgCdTe",
+        "spec",
+        {
+          "refs": [
+            [
+              "goes-r-databook",
+              "Table 3-5, printed p. 3-11 / PDF p. 39"
+            ]
+          ]
+        }
+      ],
+      "section": "Table 3-5, printed p. 3-11 / PDF p. 39",
+      "scope": "GOES-R ABI civil twin only; never a military payload figure."
+    },
+    {
+      "id": "abi-ir-temp",
+      "levels": [
+        "focal-plane",
+        "abi"
+      ],
+      "row": [
+        "ABI MWIR/LWIR optics and focal planes",
+        "Approximately 60 K",
+        "spec",
+        {
+          "refs": [
+            [
+              "goes-r-databook",
+              "Printed p. 3-8 / PDF p. 36"
+            ]
+          ]
+        }
+      ],
+      "section": "Printed p. 3-8 / PDF p. 36",
+      "scope": "GOES-R ABI civil twin only; never a military payload figure."
+    },
+    {
+      "id": "abi-vnir-temp",
+      "levels": [
+        "focal-plane",
+        "abi"
+      ],
+      "row": [
+        "ABI VNIR optics and focal plane",
+        "Approximately 170 K; GOES-R FPM 180 K",
+        "spec",
+        {
+          "refs": [
+            [
+              "goes-r-databook",
+              "Printed p. 3-8 / PDF p. 36"
+            ]
+          ]
+        }
+      ],
+      "section": "Printed p. 3-8 / PDF p. 36",
+      "scope": "GOES-R ABI civil twin only; never a military payload figure."
+    },
+    {
+      "id": "abi-cooling",
+      "levels": [
+        "focal-plane",
+        "abi"
+      ],
+      "row": [
+        "ABI cryocooler design",
+        "Two redundant two-stage pulse-tube coolers",
+        "spec",
+        {
+          "refs": [
+            [
+              "goes-r-databook",
+              "Printed p. 3-14 / PDF p. 42"
+            ]
+          ]
+        }
+      ],
+      "section": "Printed p. 3-14 / PDF p. 42",
+      "scope": "GOES-R ABI civil twin only; never a military payload figure."
+    },
+    {
+      "id": "tirs2-detectors",
+      "levels": [
+        "focal-plane",
+        "pixel",
+        "tirs2"
+      ],
+      "row": [
+        "TIRS-2 detector assemblies",
+        "Three QWIP arrays; 640 × 512 physical pixels each",
+        "spec",
+        {
+          "refs": [
+            [
+              "nasa-tirs2-spectral",
+              "PDF p. 1, Introduction"
+            ]
+          ]
+        }
+      ],
+      "section": "PDF p. 1, Introduction",
+      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
+    },
+    {
+      "id": "tirs2-effective",
+      "levels": [
+        "focal-plane",
+        "tirs2"
+      ],
+      "row": [
+        "TIRS-2 effective science row",
+        "1,850 cross-track pixels",
+        "spec",
+        {
+          "refs": [
+            [
+              "nasa-tirs2-spectral",
+              "PDF p. 1; two physical rows combined per channel and inter-array overlap"
+            ]
+          ]
+        }
+      ],
+      "section": "PDF p. 1; two physical rows combined per channel and inter-array overlap",
+      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
+    },
+    {
+      "id": "tirs2-swath",
+      "levels": [
+        "tirs2"
+      ],
+      "row": [
+        "TIRS-2 swath",
+        "185 km",
+        "spec",
+        {
+          "refs": [
+            [
+              "nasa-tirs2-build",
+              "Instrument design paragraphs"
+            ]
+          ]
+        }
+      ],
+      "section": "Instrument design paragraphs",
+      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
+    },
+    {
+      "id": "tirs2-gsd",
+      "levels": [
+        "tirs2"
+      ],
+      "row": [
+        "TIRS-2 ground sampling",
+        "100 m",
+        "spec",
+        {
+          "refs": [
+            [
+              "nasa-tirs2-build",
+              "Instrument design paragraphs"
+            ]
+          ]
+        }
+      ],
+      "section": "Instrument design paragraphs",
+      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
+    },
+    {
+      "id": "tirs2-optics",
+      "levels": [
+        "payload",
+        "tirs2"
+      ],
+      "row": [
+        "TIRS-2 refractive telescope",
+        "Four elements; f/1.64",
+        "spec",
+        {
+          "refs": [
+            [
+              "nasa-tirs2-build",
+              "Instrument design paragraphs"
+            ]
+          ]
+        }
+      ],
+      "section": "Instrument design paragraphs",
+      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
+    },
+    {
+      "id": "tirs2-fov",
+      "levels": [
+        "tirs2"
+      ],
+      "row": [
+        "TIRS-2 field of view",
+        "15 degrees",
+        "spec",
+        {
+          "refs": [
+            [
+              "nasa-tirs2-spectral",
+              "PDF p. 1, Introduction"
+            ]
+          ]
+        }
+      ],
+      "section": "PDF p. 1, Introduction",
+      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
+    },
+    {
+      "id": "tirs2-cold",
+      "levels": [
+        "focal-plane",
+        "tirs2"
+      ],
+      "row": [
+        "TIRS-2 focal-plane design temperature",
+        "43 K",
+        "spec",
+        {
+          "refs": [
+            [
+              "nasa-tirs2-build",
+              "Two-stage cryocooler paragraph"
+            ]
+          ]
+        }
+      ],
+      "section": "Two-stage cryocooler paragraph",
+      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
+    },
+    {
+      "id": "tirs2-telescope-temp",
+      "levels": [
+        "payload",
+        "tirs2"
+      ],
+      "row": [
+        "TIRS-2 telescope design temperature",
+        "185 K",
+        "spec",
+        {
+          "refs": [
+            [
+              "nasa-tirs2-build",
+              "Radiators paragraph"
+            ]
+          ]
+        }
+      ],
+      "section": "Radiators paragraph",
+      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
+    },
+    {
+      "id": "tirs-bands",
+      "levels": [
+        "tirs2"
+      ],
+      "row": [
+        "TIRS thermal bands",
+        "10.6-11.2 μm; 11.5-12.5 μm",
+        "spec",
+        {
+          "refs": [
+            [
+              "landsat9-tirs2-nasa",
+              "Spectral Bands table, bands 10 and 11"
+            ]
+          ]
+        }
+      ],
+      "section": "Spectral Bands table, bands 10 and 11",
+      "scope": "Shared NASA TIRS-family spectral-band description."
+    },
+    {
+      "id": "lab-insb-hgcdte",
+      "levels": [
+        "focal-plane"
+      ],
+      "row": [
+        "Reviewed dual-band InSb/HgCdTe device temperature",
+        "77 K",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-irdetectors-ntrs",
+              "PDF p. 3, section A.1"
+            ]
+          ]
+        }
+      ],
+      "section": "PDF p. 3, section A.1",
+      "scope": "Specific reviewed device only, not a material-wide default."
+    },
+    {
+      "id": "lab-qwip",
+      "levels": [
+        "focal-plane"
+      ],
+      "row": [
+        "Reviewed four-band laboratory QWIP array temperature",
+        "45 K",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-irdetectors-ntrs",
+              "PDF p. 7, section A.3"
+            ]
+          ]
+        }
+      ],
+      "section": "PDF p. 7, section A.3",
+      "scope": "Specific NASA Earth-science research array only."
+    },
+    {
+      "id": "nist-efficiency",
+      "levels": [
+        "focal-plane"
+      ],
+      "row": [
+        "Historical cryocooler review at 80 K",
+        "Up to about 20% of Carnot for some space coolers",
+        "reported",
+        {
+          "refs": [
+            [
+              "nist-cryocooler-2009",
+              "PDF p. 4, section 4"
+            ]
+          ]
+        }
+      ],
+      "section": "PDF p. 4, section 4",
+      "scope": "Dated review context only; no selected scenario efficiency."
+    },
+    {
+      "id": "co2-band",
+      "levels": [
+        "plume",
+        "atmosphere"
+      ],
+      "row": [
+        "CO2 molecular emission band",
+        "Near 4.3 μm",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-combustion-bands",
+              "Printed p. 5 / PDF p. 7"
+            ]
+          ]
+        }
+      ],
+      "section": "Printed p. 5 / PDF p. 7",
+      "scope": "General molecular spectroscopy in a civil combustion study; no system performance implication."
+    },
+    {
+      "id": "h2o-band",
+      "levels": [
+        "plume",
+        "atmosphere"
+      ],
+      "row": [
+        "H2O molecular emission band",
+        "Near 2.7 μm",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-combustion-bands",
+              "Printed p. 5 / PDF p. 7"
+            ]
+          ]
+        }
+      ],
+      "section": "Printed p. 5 / PDF p. 7",
+      "scope": "General molecular spectroscopy in a civil combustion study; no system performance implication."
+    },
+    {
+      "id": "geo-altitude",
+      "levels": [
+        "orbits"
+      ],
+      "row": [
+        "Geostationary altitude",
+        "35,786 km",
+        "reported",
+        {
+          "refs": [
+            [
+              "noaa-geo-definition",
+              "Definition paragraph"
+            ]
+          ]
+        }
+      ],
+      "section": "Definition paragraph",
+      "scope": "General circular equatorial GEO definition; no slot positions."
+    },
+    {
+      "id": "geo-period",
+      "levels": [
+        "orbits"
+      ],
+      "row": [
+        "Geosynchronous period",
+        "23 h 56 min 4 s",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-orbit-catalog",
+              "Introductory altitude-and-period example"
+            ]
+          ]
+        }
+      ],
+      "section": "Introductory altitude-and-period example",
+      "scope": "General orbital reference value."
+    },
+    {
+      "id": "molniya-inclination",
+      "levels": [
+        "orbits"
+      ],
+      "row": [
+        "Generic Molniya inclination",
+        "63.4 degrees",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-orbit-catalog",
+              "Medium Earth Orbit"
+            ]
+          ]
+        }
+      ],
+      "section": "Medium Earth Orbit",
+      "scope": "Generic textbook orbit, not real constellation elements."
+    },
+    {
+      "id": "molniya-period",
+      "levels": [
+        "orbits"
+      ],
+      "row": [
+        "Generic Molniya period",
+        "About 12 h",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-orbit-catalog",
+              "Medium Earth Orbit"
+            ]
+          ]
+        }
+      ],
+      "section": "Medium Earth Orbit",
+      "scope": "Generic textbook orbit, not real constellation elements."
+    },
+    {
+      "id": "atmospheric-absorption",
+      "levels": [
+        "atmosphere",
+        "plume"
+      ],
+      "row": [
+        "Atmospheric absorption",
+        "Gases absorb some wavelengths while transmitting others",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-atmospheric-windows",
+              "Absorption Bands and Atmospheric Windows, first two paragraphs"
+            ]
+          ]
+        }
+      ],
+      "section": "Absorption Bands and Atmospheric Windows, first two paragraphs",
+      "scope": "Qualitative molecular physics only; not a quantitative transmission or altitude-dependent model."
+    },
+    {
+      "id": "carnot-reference",
+      "levels": [
+        "focal-plane"
+      ],
+      "row": [
+        "Published ideal refrigerator coefficient of performance",
+        "COP_Carnot = Tc / (Th - Tc)",
+        "reported",
+        {
+          "refs": [
+            [
+              "nist-refrigeration-2020",
+              "PDF pp. 2-3, equation (1) and temperature definitions"
+            ]
+          ]
+        }
+      ],
+      "section": "PDF pp. 2-3, equation (1) and temperature definitions",
+      "scope": "Published thermodynamic identity; Tc and Th are absolute cold and hot temperatures. No calculated result or selected scenario efficiency."
+    }
+  ],
+  "seedCoverage": [
+    {
+      "id": "noaa-abi-page",
+      "section": "B",
+      "status": "verified",
+      "record": "noaa-abi-page"
+    },
+    {
+      "id": "goes-r-databook",
+      "section": "B",
+      "status": "verified",
+      "record": "goes-r-databook"
+    },
+    {
+      "id": "bams-abi-paper",
+      "section": "B",
+      "status": "unchecked",
+      "record": "bams-abi-paper"
+    },
+    {
+      "id": "landsat9-tirs2-nasa",
+      "section": "B",
+      "status": "verified",
+      "record": "landsat9-tirs2-nasa"
+    },
+    {
+      "id": "nasa-irdetectors-ntrs",
+      "section": "C",
+      "status": "verified",
+      "record": "nasa-irdetectors-ntrs"
+    },
+    {
+      "id": "detector-operating-temps-aggregate",
+      "section": "C",
+      "status": "unchecked",
+      "record": "detector-operating-temps-aggregate"
+    },
+    {
+      "id": "plume-ir-emission-aggregate",
+      "section": "C",
+      "status": "unchecked",
+      "record": "plume-ir-emission-aggregate"
+    },
+    {
+      "id": "atmospheric-windows-aggregate",
+      "section": "C",
+      "status": "unchecked",
+      "record": "atmospheric-windows-aggregate"
+    },
+    {
+      "id": "cryocooler-aggregate",
+      "section": "C",
+      "status": "unchecked",
+      "record": "cryocooler-aggregate"
+    },
+    {
+      "id": "orbit-definitions-aggregate",
+      "section": "E",
+      "status": "unchecked",
+      "record": "orbit-definitions-aggregate"
+    },
+    {
+      "id": "sda-tracking-layer-leo-altitude",
+      "section": "E",
+      "status": "pointer",
+      "canonicalSource": "gao-26-107085",
+      "owner": "research/systems-facts.json",
+      "evidence": "research/systems/source-notes.md#gao-26-107085",
+      "note": "Seed alias to GAO-26, not an independently citable source. Systems review identifies the approximate altitude as contractor-attributed narrative, not an authoritative orbital specification; no altitude fact imported into this ledger."
+    }
+  ],
+  "gaps": [
+    "ABI aperture: seed's approximately 0.313 m value was not located in the downloaded Data Book. Do not cite or implement as Spec.",
+    "ABI standalone detector/output data rate: not established. Data Book spacecraft raw and GRB broadcast rates must not be relabeled as ABI rates.",
+    "No universal detector operating-temperature table; T2SL remains unresolved, and device-specific evidence must remain device-specific.",
+    "No rocket plume intensity, temperature, pixel photon budget, real-system threshold, or altitude-dependent atmospheric model has been established.",
+    "The sources support qualitative atmospheric absorption, not a quantitative transmission curve.",
+    "The current TIRS page is mixed L8/L9; dedicated L9 sources are required for array/design claims.",
+    "NASA catalog treats generic Molniya as a medium Earth orbit example. Use highly elliptical as shape terminology; do not confuse HEO with its high Earth orbit altitude category.",
+    "AMS blocked source and original search aggregates remain unchecked and uncited."
+  ]
+}

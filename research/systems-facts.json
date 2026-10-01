@@ -1,0 +1,394 @@
+{
+  "reviewed": "10/01/2026",
+  "scope": "Phase 1 research only. Public architecture; no operational performance. HBTSS inclusion pending Reed.",
+  "sourceNotes": "research/systems/source-notes.md",
+  "sources": [
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "crs-nc3-primer",
+      "title": "Defense Primer: Nuclear Command, Control, and Communications (NC3)",
+      "publisher": "Congressional Research Service",
+      "url": "https://www.congress.gov/crs_external_products/IF/PDF/IF11697/IF11697.9.pdf",
+      "published": "01/08/2026 (seed date; not reverified)",
+      "status": "unchecked",
+      "reason": "Direct web open returned Failed to fetch restricted URL. Stopped; no alternate retrieval.",
+      "sourceType": "government primary"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "ssc-sbirs-factsheet",
+      "title": "Space Based Infrared System",
+      "publisher": "U.S. Space Force",
+      "url": "https://www.spaceforce.mil/about-us/fact-sheets/article/2197746/space-based-infrared-system/",
+      "published": null,
+      "status": "unchecked",
+      "reason": "Direct web open returned HTTP 403 Forbidden. Stopped; no alternate retrieval.",
+      "sourceType": "government primary"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "af-sbirs-factsheet-pdf",
+      "title": "Factsheet: Space Based Infrared System (SBIRS)",
+      "publisher": "U.S. Air Force / media.defense.gov",
+      "url": "https://media.defense.gov/2022/Apr/08/2002973444/-1/-1/1/SBIRS%20FACTSHEET.PDF",
+      "published": null,
+      "status": "unchecked",
+      "reason": "Direct web open returned HTTP 403 Forbidden. URL date is not verified document publication date. Stopped; no alternate retrieval.",
+      "sourceType": "government primary"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "af-sbirs-article",
+      "title": "SBIRS constellation forms under one roof",
+      "publisher": "U.S. Air Force",
+      "url": "https://www.af.mil/News/Article-Display/Article/566632/sbirs-constellation-forms-under-one-roof/",
+      "published": null,
+      "status": "unchecked",
+      "reason": "Direct web open returned HTTP 403 Forbidden. Stopped; no alternate retrieval.",
+      "sourceType": "government primary"
+    },
+    {
+      "kind": "secondary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "ngopir-wikipedia",
+      "title": "Next-Generation Overhead Persistent Infrared",
+      "publisher": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Next-Generation_Overhead_Persistent_Infrared",
+      "published": null,
+      "status": "pointer",
+      "reason": "Opened directly. Not an approved primary technical citation; launch chronology remains unverified.",
+      "sourceType": "tertiary"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "gao-21-105249",
+      "title": "Missile Warning Satellites: Comprehensive Cost and Schedule Information Would Enhance Congressional Oversight",
+      "publisher": "Government Accountability Office",
+      "url": "https://www.gao.gov/assets/gao-21-105249.pdf",
+      "published": "09/22/2021",
+      "status": "verified",
+      "evidence": "research/systems/source-notes.md#gao-21-105249",
+      "download": {
+        "status": "blocked",
+        "reason": "Web PDF reader opened successfully. Optional Invoke-WebRequest download denied permission by GAO server; stopped, no local file.",
+        "path": null,
+        "sha256": null
+      },
+      "scope": "Historical public architecture; not current status.",
+      "sourceType": "government primary"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "gao-26-107085",
+      "title": "Missile Warning Satellites: Space Development Agency Should Be More Realistic and Transparent About Risks to Capability Delivery",
+      "publisher": "Government Accountability Office",
+      "url": "https://files.gao.gov/reports/GAO-26-107085/index.html",
+      "published": "01/28/2026",
+      "revised": "02/02/2026",
+      "status": "verified",
+      "evidence": "research/systems/source-notes.md#gao-26-107085",
+      "scope": "Public architecture and dated plans. No system-specific performance claims.",
+      "download": {
+        "status": "unchecked",
+        "reason": "HTML opened; linked PDF returned unspecified Internal Error. No download.",
+        "path": null,
+        "sha256": null
+      },
+      "sourceType": "government primary"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "sda-tranche1-award",
+      "title": "Space Development Agency Makes Awards for 28 Satellites to Build Tranche 1 Tracking Layer",
+      "publisher": "Space Development Agency",
+      "url": "https://www.sda.mil/space-development-agency-makes-awards-for-28-satellites-to-build-tranche-1-tracking-layer/",
+      "published": "07/18/2022",
+      "status": "verified",
+      "evidence": "research/systems/source-notes.md#sda-tranche1-award",
+      "scope": "Dated award description only, not operational inventory.",
+      "sourceType": "government primary"
+    },
+    {
+      "kind": "secondary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "sda-tranche1-status-fall2026",
+      "title": "AFA NEWS: First Tranche of Space Development Agency's Missile Tracking Constellation Nearly Complete",
+      "publisher": "National Defense / NDIA",
+      "url": "https://www.nationaldefensemagazine.org/articles/2026/9/15/space-development-agency-nearing-tranche-1-completion-of-proliferated-warfighter-space-architecture",
+      "published": "09/15/2026",
+      "status": "pointer",
+      "reason": "Opened directly. No technical or operational claims admitted. Seed's specific launch dates not present in opened article.",
+      "sourceType": "trade reporting"
+    },
+    {
+      "kind": "secondary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "mda-hbtss-wikipedia",
+      "title": "Hypersonic and Ballistic Tracking Space Sensor",
+      "publisher": "Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Hypersonic_and_Ballistic_Tracking_Space_Sensor",
+      "published": null,
+      "status": "pointer",
+      "reason": "Opened directly. HBTSS scope remains pending Reed; no technical citation admitted.",
+      "sourceType": "tertiary"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "mda-hbtss-factsheet",
+      "title": "HBTSS fact sheet",
+      "publisher": "Missile Defense Agency",
+      "url": "https://www.mda.mil/global/documents/pdf/hbtss.pdf",
+      "published": null,
+      "status": "unchecked",
+      "reason": "Direct web open returned Internal Error with no diagnostic detail. No alternate retrieval. HBTSS scope pending Reed.",
+      "sourceType": "government primary"
+    },
+    {
+      "kind": "secondary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "sda-tracking-layer-overview-search",
+      "title": "SDA Tracking Layer: WFOV vs MFOV design concept",
+      "publisher": "Mixed search summaries in seed",
+      "url": null,
+      "published": null,
+      "status": "unchecked",
+      "reason": "No concrete source URL in seed; snippets cannot be opened as a source or cited. GAO-26 supplies separately verified architecture context.",
+      "sourceType": "aggregate"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "resilient-meo-mwt-ssc",
+      "title": "The first Medium Earth Orbit Resilient Missile Warning Missile Tracking Program successfully completes its critical design review and goes into production",
+      "publisher": "Space Systems Command",
+      "url": "https://www.ssc.spaceforce.mil/Portals/3/Documents/PRESS%20RELEASES/The%20first%20Medium%20Earth%20Orbit%20Resilient%20Missile%20Warning%20Missile%20Tracking%20Program%20successfully%20completes%20its%20critical%20design%20review%20and%20goes%20into%20production.pdf",
+      "published": null,
+      "status": "unchecked",
+      "reason": "Direct web open returned Internal Error with no diagnostic detail. No alternate retrieval.",
+      "sourceType": "government primary"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "nga-rmmwt-pe",
+      "title": "PB2024 RDT&E exhibit PE 1206447SF",
+      "publisher": "Department of the Air Force; hosted at third-party mirror Velos",
+      "url": "https://velosteam.com/wp-content/uploads/2023/04/Line-39_1206447SF_Resilient-Missile-Warning-Missile-Tracking-Medium-Earth-Orbit-MEO.pdf",
+      "dated": "03/2023 (month only on document)",
+      "status": "pointer",
+      "reason": "Opened directly; historical document. Official source candidate timed out; mirror fidelity not confirmed, no published claim admitted.",
+      "sourceType": "government document at third-party mirror"
+    },
+    {
+      "kind": "secondary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "forge-overview-aggregate",
+      "title": "FORGE overview",
+      "publisher": "Mixed search summaries in seed",
+      "url": null,
+      "published": null,
+      "status": "unchecked",
+      "reason": "No concrete source URL in seed; snippets cannot be opened as a source or cited. GAO-21 supplies separately verified high-level FORGE role.",
+      "sourceType": "aggregate"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "ssc-obac-forge-release",
+      "title": "Space Systems Command Achieves Operational Acceptance of OPIR Battlespace Awareness Center on FORGE",
+      "publisher": "Space Systems Command",
+      "url": "https://www.ssc.spaceforce.mil/Portals/3/Documents/PRESS%20RELEASES/Space%20Systems%20Command%20Achieves%20Operational%20Acceptance%20of%20Overhead%20Persistent%20Infrared%20(OPIR)%20Battlespace%20Awareness%20Center%20(OBAC)%20on%20Future%20Operationally.pdf",
+      "published": null,
+      "status": "unchecked",
+      "reason": "Direct web open returned Internal Error with no diagnostic detail. No alternate retrieval.",
+      "sourceType": "government primary"
+    },
+    {
+      "kind": "primary",
+      "marketing": false,
+      "accessed": "10/01/2026",
+      "id": "official-fy2024-space-force-rdte",
+      "title": "FY2024 Space Force RDT&E Budget Estimates",
+      "publisher": "Department of the Air Force",
+      "url": "https://www.saffm.hq.af.mil/Portals/84/documents/FY24/Research%20and%20Development%20Test%20and%20Evaluation/FY24%20Space%20Force%20Research%20and%20Development%20Test%20and%20Evaluation.pdf?ver=BQWN2ms9pfLNN_gvIz4mQQ%3D%3D",
+      "published": null,
+      "status": "unchecked",
+      "reason": "Direct web open returned HTTP 400 Timeout fetching. No alternate retrieval.",
+      "sourceType": "government primary"
+    }
+  ],
+  "facts": [
+    {
+      "id": "sbirs-orbit-families",
+      "levels": [
+        "orbits"
+      ],
+      "spec": [
+        "SBIRS orbit families",
+        "GEO and HEO",
+        "reported",
+        {
+          "refs": [
+            [
+              "gao-21-105249",
+              "Printed p. 4 (PDF p. 8), first paragraph; corroborated in GAO-26 Table 1."
+            ]
+          ]
+        }
+      ],
+      "locator": "Printed p. 4 (PDF p. 8), first paragraph; corroborated in GAO-26 Table 1.",
+      "qualification": "Public system architecture; no specific orbital slots, operational count, or visibility performance."
+    },
+    {
+      "id": "t1-original-award",
+      "levels": [
+        "orbits"
+      ],
+      "spec": [
+        "Tracking award, 07/18/2022",
+        "28 satellites / four planes",
+        "reported",
+        {
+          "refs": [
+            [
+              "sda-tranche1-award",
+              "Award paragraph describing space segment."
+            ]
+          ]
+        }
+      ],
+      "locator": "Award paragraph describing space segment.",
+      "qualification": "Historical award scope, not current inventory."
+    },
+    {
+      "id": "t1-original-sensor-class",
+      "levels": [
+        "orbits",
+        "satellite"
+      ],
+      "spec": [
+        "Award sensor class",
+        "Wide-field-of-view infrared",
+        "reported",
+        {
+          "refs": [
+            [
+              "sda-tranche1-award",
+              "Director quotation following award paragraphs."
+            ]
+          ]
+        }
+      ],
+      "locator": "Director quotation following award paragraphs.",
+      "qualification": "No numerical field of view, resolution, or performance implied."
+    },
+    {
+      "id": "satellite-components",
+      "levels": [
+        "satellite"
+      ],
+      "spec": [
+        "Public architecture",
+        "Bus, infrared payload, mission processor, communications",
+        "reported",
+        {
+          "refs": [
+            [
+              "gao-26-107085",
+              "PWSA-Enabling Technologies and Processes, opening description."
+            ]
+          ]
+        }
+      ],
+      "locator": "PWSA-Enabling Technologies and Processes, opening description.",
+      "qualification": "Explains component roles; representative GEO artwork must not masquerade as SDA hardware."
+    },
+    {
+      "id": "forge-public-role",
+      "levels": [
+        "ground"
+      ],
+      "spec": [
+        "FORGE role",
+        "Spacecraft operations and mission-data processing",
+        "reported",
+        {
+          "refs": [
+            [
+              "gao-21-105249",
+              "Printed p. 1 (PDF p. 5), opening paragraph; printed p. 8 (PDF p. 12), acquisition-strategy paragraph."
+            ]
+          ]
+        }
+      ],
+      "locator": "Printed p. 1 (PDF p. 5), opening paragraph; printed p. 8 (PDF p. 12), acquisition-strategy paragraph.",
+      "qualification": "Historical public high-level description; no software internals, processing latency, or current OBAC location claim."
+    }
+  ],
+  "levels": {
+    "orbits": {
+      "factIds": [
+        "sbirs-orbit-families",
+        "t1-original-award",
+        "t1-original-sensor-class"
+      ],
+      "gaps": [
+        "Specific operational satellite positions and counts omitted. Exact MEO program altitude not verified. CRS fetch blocked."
+      ]
+    },
+    "satellite": {
+      "factIds": [
+        "satellite-components",
+        "t1-original-sensor-class"
+      ],
+      "gaps": [
+        "SBIRS scanning/staring, masses, and optical descriptions remain unchecked. Dimensions must be schematic assumptions or civil-sensor facts."
+      ]
+    },
+    "payload": {
+      "factIds": [],
+      "gaps": [
+        "No verified SBIRS telescope prescription or system-specific optical figure. Use representative geometry labeled as drawn only after Phase 2 approval."
+      ]
+    },
+    "ground": {
+      "factIds": [
+        "forge-public-role"
+      ],
+      "gaps": [
+        "Requested SSC OBAC/FORGE release and AF Buckley article could not be opened. Ground depth remains Reed's decision."
+      ]
+    }
+  },
+  "restrictions": [
+    "Do not cite unchecked or pointer sources.",
+    "Do not adopt seed's FY2027 CRS budget quote.",
+    "Do not turn historical plans into current deployment statements.",
+    "Do not use civil sensor figures as military specifications.",
+    "Do not include HBTSS without Reed's scope decision."
+  ]
+}
