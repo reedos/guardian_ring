@@ -119,7 +119,10 @@ export async function run(name,form=process.argv[2]||'desktop'){
   await page.goto(new URL('visualizer.html?'+new URLSearchParams(wanted),BASE).href);
   await page.waitForFunction(()=>window.grx?.built[grx.state.scene]);
   for(const file of ['index.html','evidence.html','method.html','glossary.html','visualizer.html']){
-   await page.locator('nav a[href^="'+file+'"]').first().click();
+   const link=page.locator('nav a[href^="'+file+'"]').first();
+   // Use the phone's real navigation affordance before following its hidden link.
+   if(!await link.isVisible()&&await page.locator('#menu-btn').isVisible())await page.locator('#menu-btn').click();
+   await link.click();
    await page.waitForURL(url=>url.pathname.endsWith('/'+file));states++;
    const query=new URL(page.url()).searchParams;
    for(const [key,value]of Object.entries(wanted))if(query.get(key)!==value)fail.push(file+': lost '+key+' during navigation');

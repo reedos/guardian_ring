@@ -15,6 +15,16 @@ npm run dev
 
 Open http://127.0.0.1:47600/. Vite binds only to loopback. The five pages are Story, Explore, Evidence, Method and Glossary. `window.grx` exposes the IF viewer test contract. Light, Data and Heat each contain one placeholder card/pin at every level. The geometry has no physical scale. Scenario choices produce no physical outputs.
 
+For mobile review with Tailscale connected, open [the private preview](https://reeds-pc.tailf68402.ts.net/guardian_ring/). It serves the last build through the loopback preview on port 47601; keep that process running. After changing the site, run `npm run build`. The trailing slash in the review URL is required for relative assets.
+
+The route uses Tailscale Serve's HTTP proxy (no administrator-only folder serving). To restore this route while preserving the other services:
+
+```powershell
+tailscale serve --bg --https=443 --set-path=/guardian_ring http://127.0.0.1:47601
+```
+
+The exact Tailscale hostname is allowed in `preview.allowedHosts`; the preview still binds only to loopback.
+
 ## Checks
 
 ```powershell
