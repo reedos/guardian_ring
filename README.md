@@ -1,6 +1,6 @@
 # The Guardian Ring
 
-A local, public-source educational explainer of infrared satellite architecture. Phase 0 scaffold and Phase 1 source review are complete when the checks below pass. Phase 2 waits for Reed's review.
+A local, public-source educational explainer of infrared satellite architecture. The scaffold and source review are complete. Phase 2 adds a static story-page look prototype with six Blender studies for Reed's review before the physics engine and interactive levels.
 
 Read `AGENTS.md`, `PLAN.md`, then `research/sources-seed.md`. The seed is the original handoff, not a set of approved claims. `research/verified-facts.md` and the cluster reviews supersede its unchecked summaries.
 
@@ -54,4 +54,6 @@ Run `node tools/research.mjs` after editing either cluster's fact ledger. It val
 
 No remote, push, deployment or public repository is created by this work. All pages retain `noindex, nofollow`; `robots.txt` disallows crawling. GitHub checks are prepared but not run remotely. Pages and Cloudflare preview workflows require manual dispatch and a disabled-by-default repository variable, in addition to Reed's authorization. Cloudflare project name: `guardian-ring`.
 
-The next requested work is a look prototype only: a static story page and one still per main level, desktop and phone. Ground depth, HBTSS, real versus schematic positions and hero attribution remain Reed's decisions.
+The look prototype uses separate desktop and phone renders at all six main levels. `node tools/look.mjs` checks images, mobile navigation, evidence popovers and links against the built preview; set `GR_URL` to test through Tailscale. Source geometry comes from `tools/blender/build-*-look.py`; `encode-look.py` produces the delivery WebPs. Only the rendered WebPs ship. NASA imagery provenance is in `research/look-assets.md`.
+
+`index.html` is authored directly. `node tools/write-pages.mjs` refreshes the supporting Evidence and Method pages from the shared records without overwriting the story. Ground depth, HBTSS, real versus schematic positions and hero attribution remain Reed's decisions. The displayed constellation is a provisional schematic composition, not an adopted real-position policy. The next phase after look approval is the tested physics engine.

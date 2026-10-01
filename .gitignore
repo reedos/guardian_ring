@@ -9,3 +9,6 @@ research/**/*.pdf
 research/**/*.txt
 research/**/*.png
 research/**/fetch-*.json
+research/look/textures/
+__pycache__/
+*.pyc

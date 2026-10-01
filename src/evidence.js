@@ -43,7 +43,13 @@ export function evOf(row) {
 
 // Physical calculations are deferred to Phase 3.
 export const CALCS = {};
-export const ASSUMPTIONS = {};
+export const ASSUMPTIONS = {
+  'look-model': {
+    title: 'Illustration geometry',
+    value: 'Representative / not to scale',
+    why: 'The prototype’s geometry, layout, satellite counts and positions, and ray paths are chosen to explain component roles. They do not describe a real constellation, sensor performance, or physical dimensions.',
+  },
+};
 
 // the basis chip for one claim: a button that opens that claim's evidence (src/app/sources-ui.js)
 const attr = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
