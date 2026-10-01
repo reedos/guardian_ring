@@ -11,5 +11,5 @@ for(const scenario of scenarios){const M=compute(scenario),C=content(M);for(cons
 const research=JSON.parse(fs.readFileSync(new URL('../research/verified-facts.json',import.meta.url),'utf8')).facts;
 for(const fact of research){const [label,value,basis,ev]=fact.row;for(const p of problems({label,value,basis,ev},SOURCES,true))seen.add(`research:${fact.id}: ${p}`);}
 for(const problem of seen)console.error(problem);
-console.log(`${seen.size} problems across ${siteKeys.size} site claims (${count} scenario instances), ${scenarios.length} scenarios, and ${research.length} research facts (Phase 2: cited story figures and schematic illustrations; no physics engine).`);
+console.log(`${seen.size} problems across ${siteKeys.size} site claims (${count} scenario instances), ${scenarios.length} scenarios, and ${research.length} research facts.`);
 process.exitCode=seen.size?1:0;

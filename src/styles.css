@@ -1,4 +1,11 @@
 *, *::before, *::after { box-sizing: border-box; }
+.orbit-families { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; padding-block: 8px; }
+.orbit-families .btn { padding: 9px 5px; font-size: 11px; }
+.orbit-families [aria-pressed="true"] { color: var(--accent); border-color: var(--accent); }
+.scenario-lab { display: grid; gap: 14px; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); min-width: 0; }
+.scenario-lab h3 { margin: 0; font: 600 28px/1 var(--display); text-transform: uppercase; }
+.scenario-lab .specs dd { overflow-wrap: anywhere; }
+.scenario-lab > a { font-size: 12px; }
 html, body { margin: 0; }
 img { max-width: 100%; }
   :root {
@@ -1117,3 +1124,46 @@ body.app .panel-scroll > * { min-width: 0; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .pane-parts { display: grid; gap: 22px; min-width: 0; }
 @media (max-width: 1100px) { .pane-parts { gap: 12px; } }
+
+/* The teaching calculations read as connected steps inside the existing scenario pane. */
+.scenario-lab #math-results { display: grid; gap: 18px; min-width: 0; }
+.scenario-lab .math-section { min-width: 0; margin: 0; padding: 18px 14px; border: 1px solid var(--line); background: var(--surface); }
+.scenario-lab .math-section header { display: grid; gap: 7px; margin-bottom: 12px; }
+.scenario-lab .math-kicker { margin: 0; color: var(--accent); font: 400 9px/1.5 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.scenario-lab h4 { margin: 0; color: var(--ink); font: 500 23px/1.08 var(--display); }
+.scenario-lab .math-context, .scenario-lab .math-boundary { margin: 0 0 14px; color: var(--muted); font: 400 12px/1.55 var(--sans); }
+.scenario-lab .math-boundary { margin: 12px 0 0; }
+.scenario-lab .math-values { min-width: 0; }
+.scenario-lab .math-values dt { color: var(--muted); font-size: 9px; letter-spacing: .04em; }
+.scenario-lab .math-values dd { min-width: 0; overflow-wrap: anywhere; font-size: 12px; line-height: 1.45; }
+.scenario-lab .math-values .chip { align-self: start; margin-top: 3px; }
+.scenario-lab .math-result { padding-left: 10px; border-left: 2px solid var(--accent); background: rgba(230,186,130,.035); }
+.scenario-lab .math-result dd { color: var(--accent); }
+.scenario-lab .math-choice-link { margin: 10px 0 0; font: 400 11px/1.5 var(--sans); }
+.scenario-lab .math-choice-link a { color: var(--muted); }
+.scenario-lab .math-step { display: grid; grid-template-columns: 14px minmax(0,1fr); align-items: start; gap: 7px; padding: 14px 0; }
+.scenario-lab .math-step-arrow { color: var(--accent); font: 400 20px/1.2 var(--sans); }
+.scenario-lab .math-step p { display: grid; gap: 5px; min-width: 0; margin: 0; color: var(--muted); font: 400 11px/1.5 var(--sans); }
+.scenario-lab .math-formula { justify-self: start; color: var(--ink); font: 500 12px/1.5 var(--mono); overflow-wrap: anywhere; text-underline-offset: 3px; }
+.scenario-lab .math-unavailable { display: grid; gap: 8px; margin-top: 16px; padding: 12px; border: 1px dashed var(--line-2); }
+.scenario-lab .math-unavailable p:not(.math-kicker), .scenario-lab .math-unavailable a { margin: 0; color: var(--muted); font: 400 11px/1.5 var(--sans); }
+.scenario-lab .math-detector-note { display: grid; gap: 8px; padding: 12px 0 0; border-top: 1px solid var(--line); }
+.scenario-lab .math-detector-note h4 { font-size: 20px; }
+.scenario-lab .math-detector-note .note { margin: 0; }
+.scenario-lab .math-spectrum { min-width: 0; margin: 16px 0 0; }
+.scenario-lab .math-plot-unit { margin: 0 0 5px; color: var(--muted); font: 400 9px/1.5 var(--mono); }
+.scenario-lab .math-spectrum svg { display: block; width: 100%; height: auto; overflow: visible; }
+.scenario-lab .math-spectrum svg text { fill: var(--muted); font: 10px var(--mono); }
+.scenario-lab .math-gridline { stroke: var(--line); stroke-width: 1; }
+.scenario-lab .math-band-shade { fill: var(--accent); opacity: .12; }
+.scenario-lab .math-spectrum-line { fill: none; stroke: var(--muted); stroke-width: 1.6; }
+.scenario-lab .math-spectrum-selected { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+.scenario-lab .math-spectrum figcaption { display: grid; gap: 8px; color: var(--muted); font: 400 10px/1.5 var(--sans); }
+.scenario-lab .math-plot-evidence { display: flex; flex-wrap: wrap; gap: 6px; }
+@media (max-width: 760px) {
+  .scenario-lab .math-section { padding: 16px 12px; }
+  .scenario-lab .math-values .chip { min-height: 36px; }
+}
+/* Selected pins keep their number highlight when collision layout hides their long label. */
+.pin.on.hide-lbl .lbl { display: none; }
+.scaffold-badge { white-space: pre-line; max-width: calc(100% - 28px); text-shadow: 0 1px 5px #000; }

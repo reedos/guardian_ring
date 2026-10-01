@@ -80,6 +80,17 @@ export async function run(name,form=process.argv[2]||'desktop'){
   const audited=[];
   const audit=async(label,selector)=>{await settleLayout(page);states++;audited.push(label);const result=await page.evaluate(checkUI,{selector});fail.push(...result.map(error=>`${label}: ${error}`));};
   for(const sc of scenes)for(const mode of MODES){await show(page,sc.i,mode,'placeholder');await audit(`${sc.id}/${mode}/parts`);}
+  // Use the actual layer controls: layers may have different part IDs. A layer
+  // switch must choose a valid card rather than leave a stale selection hidden.
+  for(const sc of scenes){
+   await show(page,sc.i,'light');
+   for(const mode of ['data','heat','light']){
+    await page.locator(`[data-mode="${mode}"]`).click();
+    const id=await page.evaluate(()=>grx.state.selected);
+    const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});states++;
+    fail.push(...result.map(error=>`${sc.id}/${mode}/layer-switch: ${error}`));
+   }
+  }
   await show(page,0,'light','placeholder');
   await page.locator('#more-btn').click();await audit('more menu','#more-menu button,#more-menu select,#more-btn');await page.keyboard.press('Escape');
   if(await page.locator('#level-pick').isVisible()){await page.locator('#level-pick').click();await audit('level menu','#level-menu button,#level-pick');await page.keyboard.press('Escape');}

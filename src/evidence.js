@@ -20,6 +20,8 @@
 // A spec must cite at least one primary source (the maker, the standards body, the agency that publishes the data).
 // Sources live in src/sources.js with the date each was published (when it says) and the date it was checked.
 
+import { MODEL_CALCS, MODEL_ASSUMPTIONS } from './model/evidence.js';
+
 export const BASIS = {
   spec: { label: 'Published spec', short: 'Spec', meaning: 'The maker or a standards body publishes this figure for the named product or standard.' },
   vendor: { label: 'Vendor claim', short: 'Vendor', meaning: 'The vendor’s own comparison or performance figure, attributed to it. The site has not checked it independently.' },
@@ -41,9 +43,9 @@ export function evOf(row) {
   return row?.ev || null;
 }
 
-// Physical calculations are deferred to Phase 3.
-export const CALCS = {};
+export const CALCS = { ...MODEL_CALCS };
 export const ASSUMPTIONS = {
+  ...MODEL_ASSUMPTIONS,
   'look-model': {
     title: 'Illustration geometry',
     value: 'Representative / not to scale',

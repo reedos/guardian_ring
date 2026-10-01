@@ -1,0 +1,27 @@
+# The Guardian Ring
+
+> An educational explainer in development about infrared satellite architecture, from orbit to a detector element. Public sources explain the physics; named civil instruments supply detailed specifications.
+
+This is a development preview, not a launch announcement. The pages retain noindex and nofollow. Interactive levels are being completed and checked in sequence; the presence of a level in the explorer is not a claim that it is finished.
+
+## Pages
+
+- [Story](https://reedos.dev/guardian_ring/): The narrated journey, schematic illustrations, and evidence labels.
+- [Explorer](https://reedos.dev/guardian_ring/visualizer.html): Light, Data, and Heat views with source-linked cards and independent mathematical examples.
+- [Evidence](https://reedos.dev/guardian_ring/evidence.html): Source register, claim evidence, and verification status.
+- [Method](https://reedos.dev/guardian_ring/method.html): Formulas, assumptions, and project scope.
+- [Glossary](https://reedos.dev/guardian_ring/glossary.html): Terms used in the explainer.
+
+## Evidence and scope
+
+Figures are labeled Spec, Vendor, Reported, Calc., or Assumed. Follow each figure's evidence to its exact source location, formula, or assumption. Sources marked unchecked support no claim.
+
+GOES-R ABI and Landsat TIRS-2 specifications belong to those named civil instruments. They do not describe military sensors. Generic spacecraft, optics, detector elements, links, and orbit positions are representative and not to scale.
+
+The calculation examples concern general orbital geometry, vacuum light travel, ideal circular-aperture diffraction, and ideal blackbody radiation. Source photon radiance is not a detector count. Vacuum propagation time is not warning latency. No real sensor sensitivity, detection threshold, resolution, array format, false-alarm rate, coverage, or end-to-end performance is estimated.
+
+Atmospheric absorption is qualitative. Molecular emission-band examples come from a civil combustion study. The explainer supplies no operational visibility or quantitative transmission model. Public ground-system references identify component roles, not software internals or current operational status.
+
+## Publication statement
+
+Personal educational project based on cited public sources. Not an official publication of my employer or of the agencies or companies discussed. Models are schematic; estimates and assumptions are identified.

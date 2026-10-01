@@ -14,4 +14,4 @@ Earth textures: **NASA Earth Observatory.** Blue Marble by Reto Stöckli; Black 
 - [Black Marble credits](https://science.nasa.gov/earth/earth-observatory/night-light-maps-open-up-new-applications-90008/).
 - [NASA media usage guidance](https://www.nasa.gov/nasa-brand-center/images-and-media/).
 
-The January 2004 surface composite and 2016 night-light composite are historical imagery, not current observations. Lighting, color and brightness have been adjusted. Source URLs, access dates, file hashes and usage review are recorded in `research/look-assets.md`. Raw textures stay outside the site build; the page includes visible attribution. No NASA endorsement is implied.
+The January 2004 surface composite and 2016 night-light composite are historical imagery, not current observations. Lighting, color and brightness have been adjusted. Source URLs, access dates, file hashes and usage review are recorded in `research/look-assets.md`. Raw textures stay outside the site build; 2K color-adjusted derivatives are embedded in the interactive Earth GLB. The page includes visible attribution. No NASA endorsement is implied.

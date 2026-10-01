@@ -12,3 +12,5 @@ research/**/fetch-*.json
 research/look/textures/
 __pycache__/
 *.pyc
+research/model/*.html
+research/model/*.jpg

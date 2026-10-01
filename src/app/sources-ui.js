@@ -28,8 +28,8 @@ function body(key) {
   if (ev) {
     let html = head;
     if (ev.vs) html += `<p class="sp-note">Compared with: ${esc(ev.vs)}</p>`;
-    if (ev.calc && CALCS[ev.calc]) html += `<p class="sp-k">How it is calculated</p><p class="sp-note">${esc(CALCS[ev.calc].how)} ${methodLink(`calc-${ev.calc}`, 'Method')}</p>`;
-    if (ev.assume && ASSUMPTIONS[ev.assume]) { const a = ASSUMPTIONS[ev.assume]; html += `<p class="sp-k">What the model assumes</p><p class="sp-note">${esc(a.title)}: ${esc(a.value)}. ${esc(a.why)} ${methodLink(`assume-${ev.assume}`, 'Method')}</p>`; }
+    if (ev.calc && CALCS[ev.calc]) html += `<p class="sp-k">How it is calculated</p><p class="sp-note" data-calc="${esc(ev.calc)}">${esc(CALCS[ev.calc].how)} ${methodLink(`calc-${ev.calc}`, 'Method')}</p>`;
+    if (ev.assume && ASSUMPTIONS[ev.assume]) { const a = ASSUMPTIONS[ev.assume]; html += `<p class="sp-k">What the model assumes</p><p class="sp-note" data-assume="${esc(ev.assume)}">${esc(a.title)}: ${esc(a.value)}. ${esc(a.why)} ${methodLink(`assume-${ev.assume}`, 'Method')}</p>`; }
     if (ev.refs?.length) html += `<p class="sp-k">${ev.calc ? 'Its published inputs' : 'Sources for this figure'}</p><ul>${ev.refs.map(refItem).join('')}</ul>`;
     if (c?.label) html += `<p class="sp-all"><a href="evidence.html?q=${encodeURIComponent(c.label)}">Claims like it on the Evidence page</a></p>`;
     return html;
@@ -37,21 +37,26 @@ function body(key) {
   return head + '<p class="sp-k">Not traced to a source, a calculation or an assumption.</p>';
 }
 
-// under the chip, or above it when there is no room below, kept on screen
+// Prefer the space beside the chip, then clamp the scrollable dialog into the viewport.
+// A tall source record may fit neither above nor below a chip in the middle of the screen.
 function place(chip) {
   const r = chip.getBoundingClientRect(), w = Math.min(380, innerWidth - 24);
   pop.style.width = `${w}px`;
   const left = Math.max(12, Math.min(innerWidth - w - 12, r.left + r.width / 2 - w / 2));
   const below = r.bottom + 8, h = pop.offsetHeight;
   pop.style.left = `${left}px`;
-  pop.style.top = `${below + h > innerHeight - 12 && r.top - h - 8 > 12 ? r.top - h - 8 : below}px`;
+  const preferred = below + h > innerHeight - 12 && r.top - h - 8 >= 12 ? r.top - h - 8 : below;
+  pop.style.top = `${Math.max(12, Math.min(innerHeight - h - 12, preferred))}px`;
 }
 const more = () => pop.classList.toggle('has-more', pop.scrollHeight - pop.clientHeight - pop.scrollTop > 8);
 pop.addEventListener('scroll', more, { passive: true });
 function open(chip) {
+  if (opener && opener !== chip) opener.setAttribute('aria-expanded','false');
   pop.innerHTML = body(chip.dataset.src);
   pop.hidden = false;
   place(chip);
+  // Reset after layout: a hidden element may retain its old scroll position.
+  pop.scrollTop = 0;
   more();
   opener = chip; chip.setAttribute('aria-expanded', 'true');
   pop.querySelector('.sp-x').addEventListener('click', close);

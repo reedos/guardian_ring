@@ -2,8 +2,8 @@
 import { evOf } from './evidence.js';
 import { STORY_CLAIMS } from './story-claims.js';
 export const LAYERS = [['light', 'PARTS'], ['data', 'PARTS_DATA'], ['heat', 'PARTS_HEAT']];
-export function allClaims(_model, content) {
-  const out = [...STORY_CLAIMS];
+export function allClaims(model, content) {
+  const out = [...STORY_CLAIMS, ...Object.entries(model?.claims || {}).map(([id,row]) => ({ key:`model:${id}`, group:'model', label:row[0], value:row[1], basis:row[2], ev:evOf(row) }))];
   content.SCENES.forEach((scene, level) => {
     for (const [mode, key] of LAYERS) for (const part of content[key][scene.id] || []) {
       (part.specs || []).forEach((row, i) => out.push({ key: `card:${mode}:${scene.id}:${part.id}:${i}`, group: 'card', level, mode, scene, part,

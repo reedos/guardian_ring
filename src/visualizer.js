@@ -7,6 +7,7 @@ import './app/share.js';
 import './app/sources-ui.js';
 import './app/site.js';
 import './app/toprow.js';
+import './app/orbit-controls.js';
 
 window.grx = {
   store, setScenario, pin, state: store.ui, go: stage.go, select: stage.select, setMode: stage.setMode,

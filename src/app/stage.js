@@ -1,4 +1,4 @@
-// IF's viewer contract with a deliberately neutral Phase 0 scene.
+// IF's viewer contract, adapted for the Guardian Ring's sourced teaching scenes.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { store, on, emit } from './store.js';
@@ -6,6 +6,7 @@ import { TIERS, qualityPressure } from './render-quality.js';
 import { poseAt, clearPath } from './camera-path.js';
 import { occupancyBuilder } from './occupancy.js';
 import { createPartCycle } from './part-cycle.js';
+import { declutterPins } from './pin-layout.js';
 import { chip } from '../evidence.js';
 import { disposeScene } from '../fx.js';
 import * as orbits from '../scenes/orbits.js';
@@ -88,16 +89,32 @@ function resize() {
 function updatePins() {
   if (ui.scene < 0) return;
   camera.updateMatrixWorld();
+  const width = view.clientWidth, height = view.clientHeight;
+  const points = [];
   for (const button of $('pins').querySelectorAll('button')) {
     const spot = hotspotsFor(ui.scene)[button.dataset.id]; if (!spot) continue;
     const p = new THREE.Vector3(...spot.pos).project(camera);
-    button.style.left = `${(p.x + 1) / 2 * view.clientWidth}px`; button.style.top = `${(1 - p.y) / 2 * view.clientHeight}px`;
-    button.hidden = p.z < -1 || p.z > 1;
+    const x = (p.x + 1) / 2 * width, y = (1 - p.y) / 2 * height;
+    button.hidden = p.z < -1 || p.z > 1 || x < 12 || x > width - 12 || y < 12 || y > height - 12;
+    if (!button.hidden) points.push({ id:button.dataset.id, x, y, button });
+  }
+  // The reference viewer's fan keeps nearby parts selectable on a phone. Leaders
+  // retain the true geometry anchor when a marker moves to make room for another.
+  const { placements } = declutterPins(points, { expanded:new Set(points.map(p => p.id)) });
+  for (const point of points) {
+    const spot = placements.get(point.id), button = point.button;
+    const x = Math.max(13,Math.min(width-13,spot.x)), y = Math.max(13,Math.min(height-13,spot.y));
+    button.style.left = `${x}px`; button.style.top = `${y}px`;
+    const dx = point.x-x, dy = point.y-y, length = Math.hypot(dx,dy);
+    button.classList.toggle('fanned',length>.5);
+    button.style.setProperty('--lead-len',`${Math.max(0,length-12)}px`);
+    button.style.setProperty('--lead-a',`${Math.atan2(dy,dx)}rad`);
   }
 }
 function buildPanel() {
   const scene = store.C.SCENES[ui.scene], parts = partsFor(ui.scene);
   $('hud-title').textContent = scene.title; $('hud-sub').textContent = scene.scale;
+  if ($('scene-note')) $('scene-note').textContent = scene.id === 'orbits' ? 'Schematic orbits · not to scale\nHistorical NASA Earth textures' : scene.ready ? 'Representative geometry · not to scale\nAnimated paths are illustrative' : 'Reserved level\nViewer test object';
   $('intro').textContent = scene.intro; $('parts-n').textContent = ` ${parts.length}`;
   $('lp-k').textContent = isSide(ui.scene) ? 'Side level' : `Level ${ui.scene + 1} of ${MAIN_LEVELS}`;
   $('lp-t').textContent = scene.title; $('back-out').hidden = !isSide(ui.scene);
@@ -107,10 +124,10 @@ function buildPanel() {
     const li = document.createElement('li'), row = document.createElement('button'); row.type = 'button'; row.dataset.id = part.id;
     const number = document.createElement('span'); number.className = 'pn'; number.textContent = String(index + 1);
     const title = document.createElement('span'); title.className = 'pt'; title.textContent = part.title;
-    const kicker = document.createElement('span'); kicker.className = 'pk'; kicker.textContent = 'Empty';
+    const kicker = document.createElement('span'); kicker.className = 'pk'; kicker.textContent = part.kicker;
     row.append(number, title, kicker); row.addEventListener('click', () => select(part.id)); li.append(row); $('parts').append(li);
     const button = document.createElement('button'); button.type = 'button'; button.className = 'pin'; button.dataset.id = part.id; button.setAttribute('aria-label', part.title);
-    button.innerHTML = `<span class="num">${index + 1}</span><span class="lbl">Placeholder</span>`; button.addEventListener('click', () => select(part.id)); $('pins').append(button);
+    button.innerHTML = `<span class="num">${index + 1}</span><span class="lbl"></span>`; button.querySelector('.lbl').textContent = part.title; button.classList.add('hide-lbl'); button.addEventListener('click', () => select(part.id)); $('pins').append(button);
   });
   $('card').hidden = true; updateCycle(); updatePins();
 }
@@ -122,6 +139,7 @@ function updateCycle() {
 }
 export function select(id, fly = true) {
   const part = partsFor(ui.scene).find(candidate => candidate.id === id); if (!part) return;
+  if (fly) { built[ui.scene]?.setMotion?.(false); emit('scene-settings'); }
   ui.selected = id; $('card').hidden = false; $('card-k').textContent = part.kicker; $('card-t').textContent = part.title; $('card-b').textContent = part.body;
   $('card-s').replaceChildren();
   part.specs.forEach((row, index) => {
@@ -129,7 +147,15 @@ export function select(id, fly = true) {
     entry.append(dt, dd); entry.insertAdjacentHTML('beforeend', chip(row[2], `card:${ui.mode}:${store.C.SCENES[ui.scene].id}:${id}:${index}`)); $('card-s').append(entry);
   });
   $('card-s').hidden = !part.specs.length;
-  document.querySelectorAll('#parts button, #pins button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.id === id)));
+  const next = store.C.SCENES[part.drill];
+  $('card-drill').hidden = !next?.ready;
+  $('card-drill').textContent = next ? `Explore ${next.title.replace(/^The /,'the ')} →` : '';
+  $('card-drill').onclick = () => void go(part.drill);
+  document.querySelectorAll('#parts button, #pins button').forEach(button => {
+    const active = button.dataset.id === id;
+    button.setAttribute('aria-pressed',String(active));
+    if(button.classList.contains('pin'))button.classList.toggle('on',active);
+  });
   const spot = hotspotsFor(ui.scene)[id]; if (fly && spot?.view) flyTo(spot.view.pos, spot.view.target);
   emit('select', id); updateCycle();
 }
@@ -142,13 +168,13 @@ const partCycle = createPartCycle({ parts: () => partsFor(ui.scene).map(part => 
 export function setMode(mode) {
   if (!modes.includes(mode)) return;
   ui.mode = mode; document.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
-  if (ui.scene >= 0) { built[ui.scene]?.setMode(mode); const id = ui.selected; buildPanel(); if (id) select(id, false); }
+  if (ui.scene >= 0) { built[ui.scene]?.setMode(mode); const id = hasPart(ui.scene,ui.selected) ? ui.selected : partsFor(ui.scene)[0]?.id; buildPanel(); if (id) select(id, false); }
   emit('mode', mode);
 }
 export async function go(index) {
   if (typeof index === 'string') index = store.C.SCENES.findIndex(scene => scene.id === index);
   if (!Number.isInteger(index) || index < 0 || index >= sceneCount) return;
-  const epoch = ++buildEpoch; busy = true; partCycle.stop(); $('veil').hidden = false; $('veil').classList.remove('off'); $('veil').textContent = 'Preparing the placeholder…';
+  const epoch = ++buildEpoch; busy = true; partCycle.stop(); $('veil').hidden = false; $('veil').classList.remove('off'); $('veil').textContent = 'Preparing the scene…';
   try {
     if (!built[index]) {
       await BUILDERS[index].preload(); if (epoch !== buildEpoch) return;
@@ -192,7 +218,7 @@ export function start() {
   setQualityPreference(preference);
   store.C.SCENES.forEach((scene, index) => {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'step'; button.dataset.level = String(index); button.style.setProperty('--c', 'var(--accent)');
-    button.innerHTML = `<span class="top"><span class="n">${index < MAIN_LEVELS ? index + 1 : '↳'}</span><span class="t"></span></span><span class="meta">Scaffold</span>`;
+    button.innerHTML = `<span class="top"><span class="n">${index < MAIN_LEVELS ? index + 1 : '↳'}</span><span class="t"></span></span><span class="meta">${scene.ready?'Schematic':'Coming next'}</span>`;
     button.querySelector('.t').textContent = scene.short; button.addEventListener('click', () => void go(index));
     $('level-menu').append(button);
     if (index < MAIN_LEVELS) { const desktop = button.cloneNode(true); desktop.addEventListener('click', () => void go(index)); $('steps').append(desktop); }
