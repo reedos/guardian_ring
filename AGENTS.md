@@ -14,7 +14,7 @@ reference implementation: when unsure how something should be done, do it the wa
 - American English, month/day/year dates, plain prose.
 
 ## Code
-- Match IF's file layout, naming, scene contract and test hook (`window.twx`).
+- Match IF's file layout, naming, scene contract and test hook (`window.grx`).
 - 3D hardware comes from `tools/blender/build-*.py`; bump the GLB `?v=N` key on every rebuild.
 - Before a commit: `npx tsc --noEmit`, `npx vitest run`, `npx tsx tools/claims.mjs`; before a merge to
   main: the browser gates in PLAN.md §9 against a built preview, real GPU.

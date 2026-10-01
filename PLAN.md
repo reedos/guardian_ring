@@ -1,9 +1,9 @@
-# The Watch: build plan
+# The Guardian Ring: build plan
 
-Working title. A public, cited 3D explainer of how an overhead persistent infrared (OPIR) satellite sees a
+A public, cited 3D explainer of how an overhead persistent infrared (OPIR) satellite sees a
 rocket launch from orbit, and how that detection becomes a warning on the ground. Built to the standard of
 **The Intelligence Factory** (`C:\Users\reedo\projects\intelligence_factory`, live at
-https://reedos.dev/intelligence_factory/), and published at `https://reedos.dev/the_watch/` when Reed says so.
+https://reedos.dev/intelligence_factory/), and published at `https://reedos.dev/guardian_ring/` when Reed says so.
 
 Plan written 10/01/2026 for Codex to build from. Owner: Reed. Read `AGENTS.md` before any work.
 
@@ -34,7 +34,7 @@ What the reader should leave knowing:
 
 The Intelligence Factory (IF) is the reference implementation. Match it in structure, rigor, polish and
 code conventions. Copy its scaffolding, not its git history: start a fresh repo and bring files over
-deliberately, renaming `ifx` to `twx` and IF-specific content out.
+deliberately, renaming `ifx` to `grx` and IF-specific content out.
 
 Study these first (paths relative to the IF repo):
 
@@ -46,11 +46,11 @@ Study these first (paths relative to the IF repo):
 | Cards | `src/data.js` (`PARTS[sceneId] = [{ id, title, kicker, body, specs, drill? }]`) | Same shape and voice |
 | Scenes | `src/scenes/*.js` contract: `preload()`, `build({ quality, model })` → `{ scene, flows, camera, hotspots, dataHotspots, heatHotspots, look, update(t) }` | Same contract; layer names change (§4) |
 | Viewer | `src/app/stage.js`, `store.js`, `render-quality.js` (quality governor, TIERS), `camera-path.js` + `occupancy.js` (flights that avoid geometry), `part-cycle.js`, `sources-ui.js`, `share.js` | Copy and adapt. Keep Max quality / Auto quality / Battery saver, part nav beside the auto-cycle, previous/next always in view |
-| Test hook | `window.ifx` in `src/visualizer.js` (`show`, `settle`, `setTransitions`, `quality`, `built`, ...) | `window.twx` with the same members from day one |
+| Test hook | `window.ifx` in `src/visualizer.js` (`show`, `settle`, `setTransitions`, `quality`, `built`, ...) | `window.grx` with the same members from day one |
 | Gates | `tools/cycle.mjs`, `views.mjs`, `parts.mjs`, `ui.mjs`, `coplanar.mjs`, `perf.mjs`, `flights.mjs`, `links.mjs`, `govern.mjs`, `claims.mjs` | All of them, adapted; see §9 |
 | 3D assets | `tools/blender/build-*.py` run headless, GLBs in `public/models/*.glb` loaded with `?v=N`, printed labels via `src/scenes/print-kit.js` (`userData.printed`) | Same pipeline. Nothing detailed is hand-modeled in JS |
 | Design | `src/styles.css` tokens: `--ground #000`, `--surface #0b1015`, `--ink #f0f0fa`, `--muted #aab2b9`, **`--accent #e6ba82`**; Barlow Condensed (display), Manrope (body), IBM Plex Mono (eyebrows, kickers, labels) | **Same tokens and type.** Reed's explainers share one signature look; no per-site accent. Only the domain color classes change (§7) |
-| Deploy | `.github/workflows/pages.yml` (manual dispatch: tsc, test, build, Pages), `preview.yml` (Cloudflare Pages branch previews) | Same two workflows; preview project name `the-watch` |
+| Deploy | `.github/workflows/pages.yml` (manual dispatch: tsc, test, build, Pages), `preview.yml` (Cloudflare Pages branch previews) | Same two workflows; preview project name `guardian-ring` |
 | Crawlers | canonical links, noindex until launch, prerendered text for Evidence/Method/Glossary, `llms.txt`, JSON-LD (being added to IF on branch `seo/static-text` as of 10/01/2026; copy once merged) | Same, but **noindex stays on until Reed launches** |
 
 Things IF learned the hard way, so do them from the start:
@@ -59,7 +59,7 @@ Things IF learned the hard way, so do them from the start:
 - Phone layouts: grid and flex children default to `min-content`; set `min-width: 0` / `min-height: 0` where panes share a track.
 - Every GLB URL carries `?v=N`; bump it on every rebuild (Cloudflare caches `.glb` at the edge for a day).
 - A part's camera view must never sit inside geometry; `flights.mjs` checks every move between parts.
-- Real-GPU Playwright for gates: `chromium.launch({ channel: 'chrome', headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] })`, then `twx.setTransitions('instant')`, `twx.show({ scene, mode, part })`, `twx.settle()`.
+- Real-GPU Playwright for gates: `chromium.launch({ channel: 'chrome', headless: true, args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] })`, then `grx.setTransitions('instant')`, `grx.show({ scene, mode, part })`, `grx.settle()`.
 
 ## 3. Scope rules (non-negotiable)
 
@@ -98,7 +98,7 @@ Every level has parts in all three layers, like IF.
 
 Each entry lists scale, what is drawn, and starter parts per layer. Parts become numbered pins and cards.
 
-**1. The watch (orbits), about 100,000 km.** The Earth with the constellation: GEO ring, two highly
+**1. The ring (orbits), about 100,000 km.** The Earth with the constellation: GEO ring, two highly
 elliptical (Molniya-type) orbits over the pole, the MEO epoch planes, the LEO tracking planes. Coverage
 cones, the launch event (a generic plume rising from a generic site, never a real country's launch
 complex), detection lines from satellites to the plume.
@@ -275,7 +275,7 @@ page plus one 3D still per main level, in IF's tokens.
 ## 8. Architecture
 
 ```
-the_watch/
+guardian_ring/
   index.html  visualizer.html  evidence.html  method.html  glossary.html
   src/
     app/        stage.js store.js render-quality.js camera-path.js occupancy.js part-cycle.js sources-ui.js share.js ...
@@ -294,7 +294,7 @@ the_watch/
 
 - Vite + TypeScript + Three.js at IF's versions (`three@^0.183.2`, Vite 8, Vitest 5), `base: './'`.
 - Dev server `127.0.0.1:47600`, preview `47601` (IF uses 47400/47401).
-- `window.twx` mirrors IF's `window.ifx`.
+- `window.grx` mirrors IF's `window.ifx`.
 - Physics in `src/model/radiometry.ts` (Planck in-band radiance, photon flux, diffraction) and
   `src/model/orbits.ts` (period, footprint, visibility, slant range), both pure and tested against
   textbook values.
@@ -322,8 +322,8 @@ PC, real GPU).
 
 ## 10. Phases (stop for Reed at each ★)
 
-0. **Scaffold.** Fresh repo, IF scaffolding copied and renamed, empty levels, `window.twx`, gates running
-   on a placeholder scene, CI green. Private GitHub repo `reedos/the_watch` only if Reed asks; local first.
+0. **Scaffold.** Fresh repo, IF scaffolding copied and renamed, empty levels, `window.grx`, gates running
+   on a placeholder scene, CI green. Private GitHub repo `reedos/guardian_ring` only if Reed asks; local first.
 1. **Sources.** Open every unverified source in §6 directly and quote it into `research/`. Download the
    GOES-R Data Book. Produce a verified-fact table per level. ★ Reed reviews what is and isn't public.
 2. **Look prototype.** Static story-page mock and one 3D still per main level in IF's look, shown at
@@ -334,14 +334,13 @@ PC, real GPU).
 5. **Side levels.** Ground segment, ABI, TIRS-2, atmosphere.
 6. **Story page, Evidence, Method, Glossary**, prerendered text, `llms.txt`, JSON-LD (noindex still on).
 7. **Fidelity and polish pass**: Blender detail, camera flights, phone pass, performance. ★ Reed's phone check.
-8. **Launch** only on Reed's go: public repo, Pages deploy to `reedos.dev/the_watch/`, noindex off,
+8. **Launch** only on Reed's go: public repo, Pages deploy to `reedos.dev/guardian_ring/`, noindex off,
    sitemap entry added to the root `reedos.dev/sitemap.xml` (portfolio repo), portfolio card.
 
 ## 11. Open questions for Reed
 
-1. Name: "The Watch" or something else.
-2. Depth of the ground segment: a full side level, or a short data-layer coda on level 1.
-3. Include MDA's HBTSS (medium field of view, fire-control-quality tracking) or keep to warning.
-4. Show real constellation positions (public orbital elements) or a schematic constellation only.
+1. Depth of the ground segment: a full side level, or a short data-layer coda on level 1.
+2. Include MDA's HBTSS (medium field of view, fire-control-quality tracking) or keep to warning.
+3. Show real constellation positions (public orbital elements) or a schematic constellation only.
    The plan assumes schematic.
-5. Whether to say which agencies' public documents the site leans on in the hero, or only in the footer.
+4. Whether to say which agencies' public documents the site leans on in the hero, or only in the footer.
