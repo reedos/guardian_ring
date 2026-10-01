@@ -111,6 +111,16 @@ complex), detection lines from satellites to the plume.
   IR sensors (`sda-tranche1-award`); GEO 35,786 km; Molniya 63.4° inclination, about 12 h period.
 - Calcs: orbital period from altitude, visible Earth fraction and footprint per orbit, revisit, satellites
   needed for continuous coverage at a minimum elevation.
+- **Centerpiece view: the geosynchronous constellation (Reed, 10/01/2026).** The opening shot of the
+  visualizer and of the story page. The Earth turns under a ring of GEO satellites that hold still over
+  their spots, so the reader sees "geosynchronous" instead of reading it: a day passes in seconds, city
+  lights sweep under the ring, and each satellite's coverage footprint (the Earth disk it sees) stays
+  fixed on the ground. Satellites are spaced around the belt for worldwide coverage, with one footprint
+  over the Americas so a US reader finds home first. The highly elliptical orbits loop over the North Pole
+  to fill the gap GEO cannot see; the MEO and LEO layers fade in as a second beat ("the next
+  architecture"). Overlap zones are where two satellites see the same launch. Slot longitudes are
+  **schematic** unless an official public source gives them (amateur tracking does not count); say so on
+  the card. Controls: play/pause the day, toggle each orbit family, tap a satellite to fly to level 2.
 
 **2. The satellite, about 15 m.** A representative GEO OPIR spacecraft: bus, solar arrays, radiators,
 sunshade, the payload, antennas.
