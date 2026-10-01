@@ -2,10 +2,45 @@ import * as THREE from 'three';
 import { copyModel, litScene, preloadModel, teachingLine } from './model-scene.js';
 
 const URL = 'models/earth-orbits.glb?v=2';
+// A fixed lighting direction for the illustration, unrelated to a date or ephemeris.
+const ILLUSTRATIVE_SUN = new THREE.Vector3(-5, 2, 1).normalize();
+
+function shadeHistoricalNightMap(material) {
+  if (!material.isMeshStandardMaterial || !material.emissiveMap) return;
+  material.onBeforeCompile = shader => {
+    const common = '#include <common>', normal = '#include <normal_vertex>', emission = '#include <emissivemap_fragment>';
+    // Fail explicitly if a future Three.js upgrade changes the shader contract.
+    if (!shader.vertexShader.includes(common) || !shader.vertexShader.includes(normal)
+      || !shader.fragmentShader.includes(common) || !shader.fragmentShader.includes(emission)) {
+      throw new Error('The Earth night-map shader needs the standard normal and emissive chunks.');
+    }
+    shader.uniforms.grSunDirectionWorld = { value: ILLUSTRATIVE_SUN };
+    shader.vertexShader = shader.vertexShader
+      .replace(common, `${common}\nvarying vec3 vGrWorldNormal;`)
+      .replace(normal, `${normal}\nvGrWorldNormal = inverseTransformDirection( transformedNormal, viewMatrix );`);
+    shader.fragmentShader = shader.fragmentShader
+      .replace(common, `${common}\nvarying vec3 vGrWorldNormal;\nuniform vec3 grSunDirectionWorld;`)
+      .replace(emission, `${emission}
+        // This softened day/night boundary is a drawing choice, not an atmospheric model.
+        float grSunFacing = dot( normalize( vGrWorldNormal ), grSunDirectionWorld );
+        float grNight = 1.0 - smoothstep( -0.08, 0.08, grSunFacing );
+        totalEmissiveRadiance *= grNight;
+      `);
+  };
+  material.customProgramCacheKey = () => 'guardian-ring-historical-night-mask-v1';
+  material.needsUpdate = true;
+}
+
 export const preload = () => preloadModel(URL);
 export function build({ quality, model }) {
   const scene = litScene(), asset = copyModel(URL); scene.add(asset);
   const spin = asset.getObjectByName('EarthSpin'), earth = asset.getObjectByName('earth');
+  // Keep this darker fill local to the ring; hardware levels retain their product lighting.
+  for (const light of scene.children.filter(object => object.isHemisphereLight)) light.intensity = .22;
+  const [sun, fill] = scene.children.filter(object => object.isDirectionalLight);
+  sun.position.copy(ILLUSTRATIVE_SUN).multiplyScalar(10);
+  if (fill) fill.intensity = .06;
+  for (const material of Array.isArray(earth.material) ? earth.material : [earth.material]) shadeHistoricalNightMap(material);
   const family = Object.fromEntries(['geo','heo','meo','leo'].map(id => [id, asset.getObjectByName(id.toUpperCase() + 'Family')]));
   family.heo.visible = false; family.meo.visible = false; family.leo.visible = false;
   const satellites = []; asset.traverse(o => { if (o.userData.role === 'representative-satellite') satellites.push(o); });

@@ -38,7 +38,8 @@ document.addEventListener('click', e => { if (nav?.classList.contains('open') &&
 const crossPage = a => { const h = a.getAttribute('href'); return h && !/^#|^https?:|^mailto:/.test(h); };
 for (const type of ['click', 'auxclick']) document.addEventListener(type, e => {
   const a = e.target.closest?.('a[href]');
-  if (a && crossPage(a)) a.href = withScenario(location.search, a.getAttribute('href'));
+  // Pinned evidence links already carry the saved scenario, not the current one.
+  if (a && crossPage(a) && !a.hasAttribute('data-scenario-fixed')) a.href = withScenario(location.search, a.getAttribute('href'));
 });
 
 // the chapter on screen: the last chapter heading above the middle of the window

@@ -3,8 +3,9 @@
 // checked; or how the model calculates it; or what the model assumes and why.
 import { SOURCES } from '../sources.js';
 import { BASIS, CALCS, ASSUMPTIONS } from '../evidence.js';
-import { claimByKey } from '../claims.js';
-import { store } from './store.js';
+import { resolveSourceClaim, sourceScenarioSearch } from './source-claim.js';
+import { scenarioSummary } from './comparison.js';
+import { store, on } from './store.js';
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const pop = document.createElement('div');
@@ -13,7 +14,7 @@ document.body.appendChild(pop);
 let opener = null;
 
 // the method page, keeping the reader's scenario
-const methodLink = (hash, text) => `<a href="method.html${location.search}#${hash}">${text}</a>`;
+const methodLink = (hash, text, search, fixed) => `<a href="method.html?${esc(search)}#${hash}"${fixed}>${text}</a>`;
 const dated = s => [s.published && `published ${esc(s.published)}`, s.accessed && `checked ${esc(s.accessed)}`].filter(Boolean).join(' · ');
 const refItem = ([id, at]) => {
   const s = SOURCES[id]; if (!s) return '';
@@ -21,17 +22,18 @@ const refItem = ([id, at]) => {
 };
 
 function body(key) {
-  const c = claimByKey(store.M, store.C, key);
+  const c = resolveSourceClaim(store, key);
+  const search = sourceScenarioSearch(store, key, location.search), fixed = c?.pinned ? ' data-scenario-fixed' : '';
   const basis = c?.basis && BASIS[c.basis] ? c.basis : 'assumed', b = BASIS[basis], ev = c?.ev;
   const head = `<div class="sp-head"><span class="chip ${basis}">${b.short}</span><b>${b.label}</b><button type="button" class="sp-x" aria-label="Close">×</button></div>
-    ${c ? `<p class="sp-claim">${esc(c.label)}${c.value ? `: <b>${esc(c.value)}</b>` : ''}</p>` : ''}<p class="sp-mean">${b.meaning}</p>`;
+    ${c ? `<p class="sp-claim">${esc(c.label)}${c.value ? `: <b>${esc(c.value)}</b>` : ''}</p>` : ''}${c?.pinned ? `<p class="sp-note">Pinned choices: ${esc(scenarioSummary(store.pinned))}</p>` : ''}<p class="sp-mean">${b.meaning}</p>`;
   if (ev) {
     let html = head;
     if (ev.vs) html += `<p class="sp-note">Compared with: ${esc(ev.vs)}</p>`;
-    if (ev.calc && CALCS[ev.calc]) html += `<p class="sp-k">How it is calculated</p><p class="sp-note" data-calc="${esc(ev.calc)}">${esc(CALCS[ev.calc].how)} ${methodLink(`calc-${ev.calc}`, 'Method')}</p>`;
-    if (ev.assume && ASSUMPTIONS[ev.assume]) { const a = ASSUMPTIONS[ev.assume]; html += `<p class="sp-k">What the model assumes</p><p class="sp-note" data-assume="${esc(ev.assume)}">${esc(a.title)}: ${esc(a.value)}. ${esc(a.why)} ${methodLink(`assume-${ev.assume}`, 'Method')}</p>`; }
+    if (ev.calc && CALCS[ev.calc]) html += `<p class="sp-k">How it is calculated</p><p class="sp-note" data-calc="${esc(ev.calc)}">${esc(CALCS[ev.calc].how)} ${methodLink(`calc-${ev.calc}`, 'Method', search, fixed)}</p>`;
+    if (ev.assume && ASSUMPTIONS[ev.assume]) { const a = ASSUMPTIONS[ev.assume]; html += `<p class="sp-k">What the model assumes</p><p class="sp-note" data-assume="${esc(ev.assume)}">${esc(a.title)}: ${esc(a.value)}. ${esc(a.why)} ${methodLink(`assume-${ev.assume}`, 'Method', search, fixed)}</p>`; }
     if (ev.refs?.length) html += `<p class="sp-k">${ev.calc ? 'Its published inputs' : 'Sources for this figure'}</p><ul>${ev.refs.map(refItem).join('')}</ul>`;
-    if (c?.label) html += `<p class="sp-all"><a href="evidence.html?q=${encodeURIComponent(c.label)}">Claims like it on the Evidence page</a></p>`;
+    if (c?.label) { const query = new URLSearchParams(search); query.set('q', c.label); html += `<p class="sp-all"><a href="evidence.html?${esc(query.toString())}"${fixed}>Claims like it on the Evidence page</a></p>`; }
     return html;
   }
   return head + '<p class="sp-k">Not traced to a source, a calculation or an assumption.</p>';
@@ -68,6 +70,9 @@ function close() {
   if (opener) { opener.setAttribute('aria-expanded', 'false'); if (pop.contains(document.activeElement) || document.activeElement === document.body) opener.focus({ preventScroll: true }); }
   opener = null;
 }
+// Auto-cycle and model changes can replace the opener without any scroll event.
+// Close synchronously with the state change so evidence never outlives its claim.
+for (const event of ['select', 'mode', 'scene', 'scenario', 'pin']) on(event, close);
 // capture phase, so a chip inside a linked row opens its sources instead of following the row's link
 document.addEventListener('click', e => {
   const chip = e.target.closest?.('[data-src]');

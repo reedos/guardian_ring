@@ -18,7 +18,7 @@ export async function openGate(name,form='desktop') {
   gate.gpu=gpu;
   if(/swiftshader|software|basic render|unknown/i.test(gpu))throw new Error(`Real GPU required: ${gpu}`);
   console.log(`${name}/${form}: ${gpu}`);
-  let scenes=await page.evaluate(()=>grx.store.C.SCENES.map((s,i)=>({i,id:s.id})));
+  let scenes=await page.evaluate(()=>grx.store.C.SCENES.map((s,i)=>({i,id:s.id,ready:!!s.ready})));
   if(process.env.GR_LEVELS){const requested=process.env.GR_LEVELS.split(',');scenes=scenes.filter(s=>requested.includes(s.id)||requested.includes(String(s.i)));}
   if(!scenes.length)throw new Error('No scenes available for gate coverage');
   gate.scenes=scenes;return gate;
@@ -30,7 +30,7 @@ export async function openGate(name,form='desktop') {
 export async function show(page,scene,mode,part=null){await page.evaluate(async view=>{await grx.show(view,{scroll:false});grx.settle();},{scene,mode,part});await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));}
 export async function finish(gate,failures=[],details={}){
   failures.push(...gate.errors);fs.mkdirSync('.local/gates',{recursive:true});
-  const report={gate:gate.name,form:gate.form,status:failures.length?'FAIL':'PASS',date:new Date().toISOString(),url:BASE,gpu:gate.gpu,scope:process.env.GR_LEVELS||'all implemented and reserved levels',...details,failures};
+  const report={gate:gate.name,form:gate.form,status:failures.length?'FAIL':'PASS',date:new Date().toISOString(),url:BASE,gpu:gate.gpu,scope:process.env.GR_LEVELS||'all implemented and reserved levels',scenes:gate.scenes,...details,failures};
   fs.writeFileSync(`.local/gates/${gate.name}-${gate.form}.json`,JSON.stringify(report,null,2));
   if(process.env.GR_LEVELS){
     const archive=`.local/gates/levels/${process.env.GR_LEVELS.replace(/[^a-z0-9,-]/gi,'_')}`;

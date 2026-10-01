@@ -12,7 +12,10 @@ function close(p, { focus = false } = {}) {
 function open(p) {
   pops.forEach(q => q !== p && close(q));
   p.menu.hidden = false; p.btn.setAttribute('aria-expanded', 'true');
-  (p.menu.querySelector('[aria-current="step"]') || p.menu.querySelector('button:not([hidden]):not(:disabled), select'))?.focus({ preventScroll: true });
+  // Ring controls remain mounted under a hidden parent on other levels.
+  // A :not([hidden]) selector alone still finds those unfocusable buttons.
+  const choices = [...p.menu.querySelectorAll('button:not(:disabled), select:not(:disabled)')].filter(el => el.checkVisibility());
+  (choices.find(el => el.getAttribute('aria-current') === 'step') || choices[0])?.focus({ preventScroll: true });
 }
 export const closeMenus = () => pops.forEach(p => close(p));
 for (const p of pops) {

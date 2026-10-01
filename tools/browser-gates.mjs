@@ -1,4 +1,4 @@
-// Same gate roles and geometric tests as IF, scoped to the Phase 0 scene contract.
+// Same gate roles and geometric tests as IF, against the Guardian Ring scene contract.
 import { openGate,show,finish,BASE,MODES } from './gate-common.mjs';
 import { checkView,fly,checkCoplanar } from './gate-geometry.mjs';
 import { TIERS } from '../src/app/render-quality.js';
@@ -68,14 +68,25 @@ export async function run(name,form=process.argv[2]||'desktop'){
  if(name==='cycle'||name==='parts'){
   const combos=await page.evaluate(()=>{const options=grx.scenarioOptions;return Object.entries(options).reduce((rows,[key,vs])=>rows.flatMap(row=>vs.map(v=>({...row,[key]:v.id}))),[{}]);});
   if(!combos.length)throw new Error('No scenario combinations to audit');
-  for(const scenario of combos){await page.evaluate(async s=>{await grx.setScenario(s);},scenario);for(const sc of scenes)for(const mode of MODES){await show(page,sc.i,mode);const ids=await page.locator('#parts button[data-id]').evaluateAll(bs=>bs.map(b=>b.dataset.id));if(!ids.length)fail.push(`${sc.id}/${mode}: no parts`);for(let i=0;i<ids.length;i++){const id=ids[i];if(name==='parts'){await page.locator('#parts button[data-id]').nth(i).click();await page.evaluate(()=>grx.settle());}else await show(page,sc.i,mode,id);states++;const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});fail.push(...result.map(error=>`${JSON.stringify(scenario)}/${sc.id}/${mode}/${id}: ${error}`));}}}
+  for(const [scenarioIndex,scenario] of combos.entries()){if(scenarioIndex%12===0)console.log(`${name}: scenarios ${scenarioIndex+1}–${Math.min(scenarioIndex+12,combos.length)} of ${combos.length}`);await page.evaluate(async s=>{await grx.setScenario(s);},scenario);for(const sc of scenes)for(const mode of MODES){await show(page,sc.i,mode);const ids=await page.locator('#parts button[data-id]').evaluateAll(bs=>bs.map(b=>b.dataset.id));if(!ids.length)fail.push(`${sc.id}/${mode}: no parts`);for(let i=0;i<ids.length;i++){const id=ids[i];if(name==='parts'){await page.locator('#parts button[data-id]').nth(i).click();await page.evaluate(()=>grx.settle());}else await show(page,sc.i,mode,id);states++;const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});fail.push(...result.map(error=>`${JSON.stringify(scenario)}/${sc.id}/${mode}/${id}: ${error}`));}}}
   details.scenarios=combos.length;
  } else if(name==='views'||name==='flights'||name==='coplanar'){
   if(name==='flights')await page.evaluate(()=>grx.setTransitions('quick'));
-  for(const sc of scenes)for(const mode of MODES){await show(page,sc.i,mode);const parts=await page.locator('#parts button[data-id]').evaluateAll(bs=>bs.map(b=>b.dataset.id));if(!parts.length)fail.push(`${sc.id}/${mode}: no testable placeholder parts`);
+  for(const sc of scenes)for(const mode of MODES){if(name==="flights")console.log(`Flights: ${sc.id}/${mode}`);await show(page,sc.i,mode);const parts=await page.locator('#parts button[data-id]').evaluateAll(bs=>bs.map(b=>b.dataset.id));if(!parts.length)fail.push(`${sc.id}/${mode}: no testable placeholder parts`);
    if(name==='coplanar'){const r=await page.evaluate(checkCoplanar);states++;if(r.hits.length)fail.push(`${sc.id}/${mode}: ${JSON.stringify(r.hits)}`);}
-   else for(const id of parts){states++;if(name==='flights'){const r=await page.evaluate(fly,{id});if(r.hits||r.frames<2)fail.push(`${sc.id}/${mode}: ${JSON.stringify(r)}`);}else{await show(page,sc.i,mode,id);const r=await page.evaluate(checkView);if(r.err||r.blocked||r.covers.length)fail.push(`${sc.id}/${mode}: ${JSON.stringify(r)}`);}}
+   else if(name==='flights'){
+    const moves=[...parts.map(to=>({from:null,to})),...parts.flatMap(from=>parts.filter(to=>to!==from).map(to=>({from,to})))];
+    for(const {from,to}of moves){
+     // Reset the start pose immediately; only the requested flight is measured.
+     await page.evaluate(()=>grx.setTransitions('instant'));
+     await show(page,sc.i,mode,from);
+     await page.evaluate(()=>grx.setTransitions('quick'));
+     const r=await page.evaluate(fly,{id:to});states++;
+     if(r.hits||(r.motionRequired&&r.frames<2))fail.push(`${sc.id}/${mode}/${from||'overview'} → ${to}: ${JSON.stringify(r)}`);
+    }
+   }else for(const id of parts){states++;await show(page,sc.i,mode,id);const r=await page.evaluate(checkView);if(r.err||r.blocked||r.covers.length)fail.push(`${sc.id}/${mode}: ${JSON.stringify(r)}`);}
   }
+  if(name==='flights')details.flightCoverage='overview-to-each plus every ordered distinct part pair within each level/layer';
  } else if(name==='ui'){
   const audited=[];
   const audit=async(label,selector)=>{await settleLayout(page);states++;audited.push(label);const result=await page.evaluate(checkUI,{selector});fail.push(...result.map(error=>`${label}: ${error}`));};
@@ -91,15 +102,64 @@ export async function run(name,form=process.argv[2]||'desktop'){
     fail.push(...result.map(error=>`${sc.id}/${mode}/layer-switch: ${error}`));
    }
   }
+  for(const sc of scenes){
+   await show(page,sc.i,'light');await page.locator('#more-btn').focus();await page.keyboard.press('Enter');
+   const focused=await page.evaluate(()=>{const menu=document.getElementById('more-menu'),active=document.activeElement;return menu.contains(active)&&active.checkVisibility();});
+   if(!focused)fail.push(`${sc.id}: More did not focus a visible choice`);
+   await audit(`${sc.id}/more menu`,'#more-menu button,#more-menu select,#more-btn');await page.keyboard.press('Escape');
+   if(!await page.locator('#more-btn').evaluate(el=>el===document.activeElement))fail.push(`${sc.id}: Escape did not return focus to More`);
+  }
   await show(page,0,'light','placeholder');
-  await page.locator('#more-btn').click();await audit('more menu','#more-menu button,#more-menu select,#more-btn');await page.keyboard.press('Escape');
   if(await page.locator('#level-pick').isVisible()){await page.locator('#level-pick').click();await audit('level menu','#level-menu button,#level-pick');await page.keyboard.press('Escape');}
   if(await page.locator('#menu-btn').isVisible()){await page.locator('#menu-btn').click();await audit('main menu','#topnav a,#menu-btn');await page.keyboard.press('Escape');}
   await page.locator('[data-pane="scenario"]').click();await audit('scenario pane');
   const choices=await page.locator('[data-choice]').evaluateAll(bs=>bs.map(b=>({key:b.dataset.choice,value:b.dataset.value})));
   for(const {key,value} of choices){await page.locator(`[data-choice="${key}"][data-value="${value}"]`).click();await page.waitForFunction(({key,value})=>!grx.isBusy()&&grx.store.scenario[key]===value,{key,value});if(await page.locator(`[data-choice="${key}"][data-value="${value}"]`).getAttribute('aria-pressed')!=='true')fail.push(`${key}/${value}: selected choice not reflected`);}
-  await page.locator('#sc-pin').click();await audit('scenario pinned');if(await page.locator('#sc-pin').getAttribute('aria-pressed')!=='true')fail.push('scenario comparison did not pin');await page.locator('#sc-pin').click();
+  const choose=async values=>{for(const [key,value]of Object.entries(values)){await page.locator(`[data-choice="${key}"][data-value="${value}"]`).click();await page.waitForFunction(({key,value})=>!grx.isBusy()&&grx.store.scenario[key]===value,{key,value});}};
+  const savedScenario={orbit:'geo',aperture:'representative',band:'mwir',detector:'hgcdte'};
+  await choose(savedScenario);await page.locator('#sc-pin').click();await audit('scenario pinned');
+  if(await page.locator('#sc-pin').getAttribute('aria-pressed')!=='true')fail.push('scenario comparison did not pin');
+  const saved=await page.evaluate(()=>Object.fromEntries(Object.entries(grx.store.pinned.claims).map(([id,row])=>[id,row[1]])));
+  await choose({orbit:'leo',aperture:'civil',band:'lwir',detector:'qwip'});await audit('pinned comparison after changes');
+  const ids=['orbitPeriodSeconds','lightTimeSeconds','photonEnergyJ','diffractionRadians','bandRadianceWm2Sr'];
+  const current=await page.evaluate(()=>Object.fromEntries(Object.entries(grx.store.M.claims).map(([id,row])=>[id,row[1]])));
+  for(const id of ids){
+   const row=page.locator(`[data-comparison-claim="${id}"]`);
+   if(await row.locator('[data-comparison-side="pinned"] .comparison-value').innerText()!==saved[id])fail.push(`${id}: pinned value changed`);
+   const now=await row.locator('[data-comparison-side="current"] .comparison-value').innerText();
+   if(now!==(current[id]||'Unavailable'))fail.push(`${id}: current comparison value is stale`);
+   if(id==='diffractionRadians'&&await row.locator('[data-comparison-side="current"] [data-src]').count())fail.push('unavailable civil diffraction has an evidence chip');
+  }
+  for(const id of ['orbitPeriodSeconds','lightTimeSeconds','photonEnergyJ','bandRadianceWm2Sr'])if(current[id]===saved[id])fail.push(`${id}: comparison fixture did not change`);
+  const summary=await page.locator('#sc-pinned').innerText();
+  for(const label of ['GEO','Representative','MWIR','HgCdTe'])if(!summary.includes(label))fail.push(`pinned summary missing ${label}`);
+  await page.locator('#sc-comparison [data-src="pinned:model:lightTimeSeconds"]').click();
+  const pop=page.locator('#src-pop');await pop.waitFor({state:'visible'});
+  if(await pop.locator('.sp-claim b').innerText()!==saved.lightTimeSeconds)fail.push('pinned source dialog shows current light time');
+  for(const selector of ['a[href*="#calc-vacuum-light-time"]','a[href^="evidence.html"]']){
+   const link=pop.locator(selector).first(),href=await link.getAttribute('href'),query=new URL(href,BASE).searchParams;
+   for(const [key,value]of Object.entries(savedScenario))if(query.get(key)!==value)fail.push(`pinned source link lost ${key}`);
+   if(await link.getAttribute('data-scenario-fixed')===null)fail.push('pinned source link can be overwritten by active scenario');
+  }
+  states++;await page.keyboard.press('Escape');await page.locator('#sc-pin').click();
+  if(await page.locator('#sc-comparison').isVisible())fail.push('unpin did not hide comparison');
   await page.locator('[data-pane="parts"]').click();await audit('parts after scenario');
+  // Use real playback and its actual dwell: a source dialog must not survive
+  // the auto-cycle replacing the card and disconnecting the original chip.
+  await show(page,0,'light');
+  const beforeCycle=await page.evaluate(()=>grx.state.selected);
+  await page.locator('#part-play').click();
+  try{
+   await page.locator('#card-s [data-src]').first().click();await pop.waitFor({state:'visible'});
+   await page.waitForFunction(id=>grx.state.selected!==id,beforeCycle,{timeout:20000});
+   if(await pop.isVisible())fail.push('auto-cycle left stale card evidence open');
+   const selected=await page.evaluate(()=>grx.state.selected),result=await page.evaluate(checkPart,{scene:0,mode:'light',id:selected});
+   states++;audited.push('auto-cycle closes replaced card evidence');
+   fail.push(...result.map(error=>`auto-cycle: ${error}`));
+  }finally{
+   await page.keyboard.press('Escape');
+   if(await page.locator('#part-play').getAttribute('aria-pressed')==='true')await page.locator('#part-play').click();
+  }
   if(await page.locator('#sheet-toggle').isVisible()){await page.locator('#sheet-toggle').click();await audit('collapsed sheet');await page.locator('#sheet-toggle').click();await audit('expanded sheet');}
   details.uiStates=audited;
   fs.mkdirSync('shots',{recursive:true});await page.screenshot({path:`shots/scaffold-${form}.png`,fullPage:true});

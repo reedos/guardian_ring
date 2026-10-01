@@ -1167,3 +1167,17 @@ body.app .panel-scroll > * { min-width: 0; }
 /* Selected pins keep their number highlight when collision layout hides their long label. */
 .pin.on.hide-lbl .lbl { display: none; }
 .scaffold-badge { white-space: pre-line; max-width: calc(100% - 28px); text-shadow: 0 1px 5px #000; }
+
+/* Existing claims, paired vertically so both scenarios remain legible in a narrow pane. */
+.scenario-comparison { min-width: 0; padding: 16px 12px; border: 1px solid var(--line-2); background: var(--surface); }
+.scenario-comparison h3 { margin: 0 0 10px; font: 500 25px/1.1 var(--display); }
+.scenario-comparison .note { margin: 8px 0; overflow-wrap: anywhere; }
+.scenario-comparison dl { margin: 16px 0; }
+.scenario-comparison dl > div { min-width: 0; padding: 12px 0; border-top: 1px solid var(--line); }
+.scenario-comparison dt { margin-bottom: 8px; color: var(--muted); font: 400 10px/1.5 var(--mono); }
+.scenario-comparison dd { display: grid; grid-template-columns: 46px minmax(0,1fr) auto; align-items: center; gap: 8px; min-width: 0; margin: 5px 0 0; }
+.scenario-comparison .comparison-side { color: var(--muted); font: 400 10px/1.5 var(--sans); }
+.scenario-comparison .comparison-value { min-width: 0; color: var(--ink); overflow-wrap: anywhere; font: 400 12px/1.5 var(--mono); }
+.scenario-comparison [data-comparison-side='current'] .comparison-value { color: var(--accent); }
+.scenario-comparison .chip { justify-self: end; }
+@media (max-width: 760px) { .scenario-comparison .chip { min-height: 36px; } }

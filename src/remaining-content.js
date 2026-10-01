@@ -156,7 +156,7 @@ export function remainingContent(_model) {
       data: [
         card('receive', 'Connect space and ground', 'A communications role', 'The receive marker represents the interface between spacecraft information and ground equipment. The path sets no real network route, communications rate, or latency.'),
         card('process', 'Identify the public processing role', 'FORGE as publicly described', 'GAO’s public description of the planned FORGE system includes processing the mission data collected by satellites. This card names that role without describing software internals or operational algorithms.', ['forge-public-role']),
-        card('operations', 'Keep spacecraft operations distinct', 'A separate ground function', 'The same public description gives FORGE a spacecraft-operations role. Operating a spacecraft and processing its observations are distinct responsibilities within the high-level architecture.', ['forge-public-role']),
+        card('operations', 'Keep spacecraft operations distinct', 'A separate ground function', 'GAO’s public description of the planned FORGE system gives it a spacecraft-operations role. Operating a spacecraft and processing its observations are distinct responsibilities within the high-level architecture.', ['forge-public-role']),
       ],
       heat: [
         card('receive', 'Power the receiving equipment', 'Generic equipment role', 'Receiving equipment needs electrical power and produces heat during operation. The drawn energy paths are representative and carry no facility power budget.'),
@@ -168,7 +168,7 @@ export function remainingContent(_model) {
       intro: 'GOES-R ABI is a named civil instrument with published optical, spectral, scanning, and cooling specifications. The drawn optical layout and ray paths remain representative.',
       scale: 'GOES-R ABI · representative instrument layout',
       light: [
-        card('telescope', 'Follow ABI’s reflective telescope', 'Published component counts', 'The GOES-R Data Book identifies the telescope’s mirrors and focal-plane modules. These counts describe the telescope, not every mirror in the instrument. The illustration preserves those counts while keeping mirror shapes, spacing, and ray paths representative.', ['abi-optics', 'abi-image-role']),
+        card('telescope', 'Follow ABI’s reflective telescope', 'Published component counts', 'The GOES-R Data Book describes a four-mirror telescope forming images on three focal-plane modules. The mirror count applies to the telescope, not every mirror in ABI. Shapes, spacing, and ray paths in the drawing remain representative.', ['abi-optics', 'abi-image-role']),
         card('bands', 'Separate the spectral channels', 'The named ABI instrument', 'ABI observes Earth using visible and infrared channels. Its published channel count belongs to ABI, and the display’s band colors are illustrative.', ['abi-bands']),
         card('focal-planes', 'Identify ABI’s infrared detector material', 'Published civil hardware', 'The Data Book identifies the material used for ABI’s infrared channels. That civil-instrument specification stays with ABI; it does not identify any military detector material.', ['abi-detector-material']),
       ],
@@ -187,13 +187,13 @@ export function remainingContent(_model) {
       intro: 'Landsat 9 TIRS-2 supplies published civil examples of refractive optics, QWIP detector arrays, and separate telescope and focal-plane temperatures. Layout and proportions are representative.',
       scale: 'Landsat 9 TIRS-2 · representative instrument layout',
       light: [
-        card('telescope', 'Follow the refractive telescope', 'TIRS-2 optical design', 'NASA describes TIRS-2’s refractive telescope and field of view. The drawing must preserve the published element count while identifying lens shapes, distances, and ray paths as representative.', ['tirs2-optics', 'tirs2-fov']),
+        card('telescope', 'Follow the refractive telescope', 'TIRS-2 optical design', 'NASA describes TIRS-2’s refractive telescope and field of view. The drawing preserves the published element count while identifying lens shapes, distances, and ray paths as representative.', ['tirs2-optics', 'tirs2-fov']),
         card('arrays', 'Name the TIRS-2 detector assemblies', 'Published QWIP arrays', 'The published TIRS-2 description identifies its QWIP arrays and physical format. A simplified drawn pixel pattern represents that assembly; it need not draw every physical detector.', ['tirs2-detectors']),
         card('cooling', 'Keep the thermal bands instrument-specific', 'NASA’s TIRS-family description', 'NASA lists the thermal spectral bands for the TIRS instrument family. These named civil bands provide context for the cooled focal plane without assigning bands to a military sensor.', ['tirs-bands']),
       ],
       data: [
         card('telescope', 'Attach the image scale to TIRS-2', 'Civil Earth observation', 'NASA publishes TIRS-2’s swath and ground sampling. Those values describe this civil instrument and do not establish a generic telescope’s imaging performance.', ['tirs2-swath', 'tirs2-gsd']),
-        card('arrays', 'Separate the physical array from the science row', 'TIRS-2 readout context', 'The detector study explains the combination of physical rows and overlap between arrays. Its effective science row is a separately labeled quantity, not the physical array dimensions.', ['tirs2-effective', 'tirs2-detectors']),
+        card('arrays', 'Separate the physical array from the science row', 'TIRS-2 readout context', 'The detector study describes an effective science row for each channel, formed by combining physical rows and accounting for overlap between arrays. That per-channel row is separate from the physical array dimensions.', ['tirs2-effective', 'tirs2-detectors']),
         card('cooling', 'Keep channel labels with the samples', 'Named thermal-band data', 'The band identity belongs with each thermal observation. The cited spectral ranges provide that identity; the drawing assigns no sample rate, bit depth, or communications rate.', ['tirs-bands']),
       ],
       heat: [

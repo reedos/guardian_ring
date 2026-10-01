@@ -38,6 +38,8 @@ export const checkView = () => {
 export const fly = async ({ id }) => {
   const T = grx.THREE, st = grx.state, B = grx.built[st.scene], cam = grx.camera;
   const frames = [cam.position.clone()], aims = [grx.controls.target.clone()];
+  const spot = ({light:B.hotspots,data:B.dataHotspots,heat:B.heatHotspots})[st.mode]?.[id];
+  const motionRequired = !!spot?.view && (cam.position.distanceTo(new T.Vector3(...spot.view.pos)) > 1e-7 || grx.controls.target.distanceTo(new T.Vector3(...spot.view.target)) > 1e-7);
   const t0 = performance.now(), cs = grx.clearance ? { ...grx.clearance } : null;
   if (id) grx.select(id, true);
   const selectMs = performance.now() - t0, ce = grx.clearance;
@@ -46,7 +48,7 @@ export const fly = async ({ id }) => {
     let still = 0, n = 0;
     const tick = () => {
       const q = cam.position, last = frames[frames.length - 1];
-      if (q.distanceTo(last) > 1e-7) { frames.push(q.clone()); aims.push(grx.controls.target.clone()); still = 0; } else still++;
+      if (q.distanceTo(last) > 1e-7 || grx.controls.target.distanceTo(aims[aims.length - 1]) > 1e-7) { frames.push(q.clone()); aims.push(grx.controls.target.clone()); still = 0; } else still++;
       if (++n > 900 || still > 20) res(); else requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
@@ -103,7 +105,7 @@ export const fly = async ({ id }) => {
     blockedRun = h ? blockedRun + 1 : 0;
     if (blockedRun === 3) hits.push({ frame: k, kind: `view blocked (${h.distance.toFixed(2)} ahead, of ${sight.toFixed(2)} clear)`, what: name(h.object) });
   }
-  return { frames: frames.length, hits: hits.length, first: hits[0] || null, selectMs, plan };
+  return { frames: frames.length, motionRequired, hits: hits.length, first: hits[0] || null, selectMs, plan };
 };
 
 export const checkCoplanar = () => {

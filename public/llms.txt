@@ -1,16 +1,24 @@
 # The Guardian Ring
 
-> An educational explainer in development about infrared satellite architecture, from orbit to a detector element. Public sources explain the physics; named civil instruments supply detailed specifications.
+> An educational review build about infrared satellite architecture, from orbit to a detector element. Public sources explain the physics; named civil instruments supply detailed specifications.
 
-This is a development preview, not a launch announcement. The pages retain noindex and nofollow. Interactive levels are being completed and checked in sequence; the presence of a level in the explorer is not a claim that it is finished.
+This is a review build, not a launch announcement. The pages retain noindex and nofollow, and robots.txt disallows crawling. Current validation and publication status are recorded in the project README and research/gate-results.md.
 
 ## Pages
+
+These are the planned canonical addresses, not a claim that the site is publicly available.
 
 - [Story](https://reedos.dev/guardian_ring/): The narrated journey, schematic illustrations, and evidence labels.
 - [Explorer](https://reedos.dev/guardian_ring/visualizer.html): Light, Data, and Heat views with source-linked cards and independent mathematical examples.
 - [Evidence](https://reedos.dev/guardian_ring/evidence.html): Source register, claim evidence, and verification status.
 - [Method](https://reedos.dev/guardian_ring/method.html): Formulas, assumptions, and project scope.
 - [Glossary](https://reedos.dev/guardian_ring/glossary.html): Terms used in the explainer.
+
+## Explorer
+
+The main journey covers the geosynchronous ring, representative satellite, reflective payload, cooled focal-plane carrier, exploded detector pixel, and illustrative molecular-emission plume. Side levels cover the ground segment, civil GOES-R ABI, civil Landsat 9 TIRS-2, and qualitative atmospheric absorption. Each level has Light, Data, and Heat views with linked evidence.
+
+All detailed geometry is authored in Blender. Earth imagery uses credited historical NASA composites with artistic color and brightness adjustments. Hardware, orbit positions, plume shape, molecular symbols, drawing colors, and exploded spacing are schematic. The source files and asset provenance are recorded in the repository.
 
 ## Evidence and scope
 
@@ -21,6 +29,8 @@ GOES-R ABI and Landsat TIRS-2 specifications belong to those named civil instrum
 The calculation examples concern general orbital geometry, vacuum light travel, ideal circular-aperture diffraction, and ideal blackbody radiation. Source photon radiance is not a detector count. Vacuum propagation time is not warning latency. No real sensor sensitivity, detection threshold, resolution, array format, false-alarm rate, coverage, or end-to-end performance is estimated.
 
 Atmospheric absorption is qualitative. Molecular emission-band examples come from a civil combustion study. The explainer supplies no operational visibility or quantitative transmission model. Public ground-system references identify component roles, not software internals or current operational status.
+
+ABI aperture and standalone detector data rate remain unverified. Detector material alone does not select an operating temperature. Real plume temperature and intensity, quantitative atmospheric transmission, and military hardware detail are not filled with estimates. HBTSS inclusion, real constellation positions, and hero attribution remain editorial decisions for Reed. Consult the Evidence and Method pages for the admitted claims and limitations.
 
 ## Publication statement
 

@@ -1,6 +1,7 @@
 import { SCENARIO_OPTIONS } from '../model/engine.ts';
 import { store, setScenario, pin, on } from './store.js';
 import { renderMath } from './math-view.js';
+import { renderComparison, scenarioSummary } from './comparison.js';
 const root = document.getElementById('scenario-controls');
 const labels = { orbit: 'Teaching orbit', aperture: 'Optics example', band: 'Teaching band', detector: 'Detector material' };
 const query = new URLSearchParams(location.search), patch = {};
@@ -22,6 +23,7 @@ function sync() {
   const query = new URLSearchParams(location.search); for (const [key, value] of Object.entries(store.scenario)) query.set(key, value);
   history.replaceState(null, '', `${location.pathname}?${query}${location.hash}`);
   showMath();
+  showComparison();
 }
 const lab = document.createElement('section'); lab.className = 'scenario-lab';
 lab.innerHTML = '<h3>Show the math</h3><p class="note">Follow the chosen inputs through three independent examples. They do not specify the spacecraft in the drawing.</p><div id="math-results"></div><div class="math-detector-note"><h4>What detector choice means here</h4><p class="note" id="math-gap"></p></div><a href="method.html#calculations">All formulas and assumptions →</a>';
@@ -31,6 +33,14 @@ function showMath() {
   lab.querySelector('#math-gap').textContent = store.M.unavailable.detectorTemperature;
 }
 const compare = document.getElementById('sc-pin');
+const comparison = document.createElement('section'); comparison.id = 'sc-comparison'; comparison.className = 'scenario-comparison'; comparison.setAttribute('aria-labelledby', 'sc-comparison-title'); comparison.hidden = true;
+compare.closest('.sc-compare').after(comparison);
+function showComparison() {
+  const pinned = store.pinned;
+  compare.setAttribute('aria-pressed', String(!!pinned)); compare.textContent = pinned ? 'Unpin scenario' : 'Pin to compare';
+  document.getElementById('sc-pinned').textContent = pinned ? `Pinned choices: ${scenarioSummary(pinned)}` : '';
+  comparison.hidden = !pinned; comparison.innerHTML = renderComparison(store.M, pinned);
+}
 compare.addEventListener('click', () => pin(!store.pinned));
-on('pin', () => { compare.setAttribute('aria-pressed', String(!!store.pinned)); compare.textContent = store.pinned ? 'Unpin scenario' : 'Pin to compare'; document.getElementById('sc-pinned').textContent = store.pinned ? `Pinned choices: ${store.pinned.scenario.orbit.toUpperCase()} · ${store.pinned.scenario.band.toUpperCase()} · ${store.pinned.scenario.detector}` : ''; });
+on('pin', showComparison);
 on('scenario', sync); sync();

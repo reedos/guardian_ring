@@ -1,4 +1,4 @@
-/* IF type, colors, and page roles; a Phase 0 shell awaiting look approval. */
+/* IF type, colors, and supporting-page roles. */
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap');
 @import './source-popovers.css';
 :root{color-scheme:dark;--ground:#000;--surface:#0b1015;--ink:#f0f0fa;--muted:#aab2b9;--accent:#e6ba82}
