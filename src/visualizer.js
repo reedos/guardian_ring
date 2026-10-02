@@ -13,6 +13,7 @@ import './app/page-sheet.js';
 import './app/learning-journey.js';
 import { mountAnimationControls } from './app/animation-controls.js';
 import { moreCue } from './app/more-cue.js';
+import { measureInspectorLimits, mountInspectorLayout } from './app/inspector-layout.js';
 
 window.grx = {
   store, setScenario, pin, state: store.ui, go: stage.go, select: stage.select, setMode: stage.setMode,
@@ -23,6 +24,7 @@ window.grx = {
   flightProgress: stage.getFlightProgress,
 };
 const animationControls = mountAnimationControls(document.getElementById('animation-controls'), { getTeaching: stage.getTeaching, preparePlayback: stage.preparePlayback });
+mountInspectorLayout();
 for (const event of ['scene', 'mode', 'scene-settings']) on(event, () => animationControls.sync());
 const tabs = [...document.querySelectorAll('[data-pane]')], scenario = document.getElementById('pane-scenario'), sheetButton = document.getElementById('sheet-toggle');
 function setSheet(open) { document.body.style.removeProperty('--inspector-size'); document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel'); }
@@ -83,7 +85,8 @@ sheetButton.addEventListener('pointerdown', event => {
 sheetButton.addEventListener('pointermove', event => {
   if (!sheetDrag) return;
   const delta = sheetDrag.y - event.clientY; if (Math.abs(delta) > 5) dragged = true; if (!dragged) return;
-  const height = Math.max(150, Math.min(innerHeight * .62, sheetDrag.height + delta));
+  const limits = measureInspectorLimits();
+  const height = Math.max(limits.minimum, Math.min(limits.maximum, sheetDrag.height + delta));
   document.body.style.setProperty('--inspector-size', `${height}px`);
   const open = height > innerHeight * .35; document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel');
 });

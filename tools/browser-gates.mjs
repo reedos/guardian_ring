@@ -47,7 +47,7 @@ const checkPart=({scene,mode,id})=>{
 // cover background controls. Closed-state checks still cover those controls.
 const checkUI=({selector='button,select,summary,.topbar a'})=>{
  const bad=[],label=el=>el.id||el.getAttribute('aria-label')||el.textContent.trim().slice(0,70);
- const rendered=el=>{for(let p=el;p;p=p.parentElement){const s=getComputedStyle(p);if(p.hidden||s.display==='none'||s.visibility==='hidden'||Number(s.opacity)===0)return false;}const r=el.getBoundingClientRect();return r.width>0&&r.height>0;};
+ const rendered=el=>{if(!el.checkVisibility())return false;for(let p=el;p;p=p.parentElement){const s=getComputedStyle(p);if(p.hidden||s.display==='none'||s.visibility==='hidden'||Number(s.opacity)===0)return false;}const r=el.getBoundingClientRect();return r.width>0&&r.height>0;};
  const nodes=[...document.querySelectorAll(selector)].filter(rendered);
  if(!nodes.length)return ['no rendered controls in audited state'];
  const intersection=(a,b)=>({left:Math.max(a.left,b.left),right:Math.min(a.right,b.right),top:Math.max(a.top,b.top),bottom:Math.min(a.bottom,b.bottom)});
@@ -138,6 +138,23 @@ export async function run(name,form=process.argv[2]||'desktop'){
   const audit=async(label,selector)=>{await settleLayout(page);states++;audited.push(label);const result=await page.evaluate(checkUI,{selector});fail.push(...result.map(error=>`${label}: ${error}`));};
   for(const sc of scenes)for(const mode of MODES){
    await show(page,sc.i,mode);await audit(`${sc.id}/${mode}/parts`);
+   const componentSummaries=page.locator('#card-components details > summary');
+   const expandCard=await componentSummaries.count()>0&&!await componentSummaries.first().isVisible();
+   if(expandCard)await page.locator('#card-more').click();
+   for(let i=0;i<await componentSummaries.count();i++)await componentSummaries.nth(i).click();
+   if(await componentSummaries.count())await audit(`${sc.id}/${mode}/expanded component anatomy`);
+   if(expandCard)await page.locator('#sheet-toggle').click();
+   const exampleSummary=page.locator('.learning-example > summary');
+   if(await exampleSummary.isVisible()){
+    await exampleSummary.click();await audit(`${sc.id}/${mode}/civil application`);await exampleSummary.click();
+   }
+   if(await page.locator('#animation-controls [data-action="next"]').isVisible()){
+    await page.locator('#animation-controls [data-action="next"]').click();
+    const explanation=page.locator('.animation-explanation');
+    if(!await explanation.evaluate(el=>el.open))await explanation.locator('summary').click();
+    await audit(`${sc.id}/${mode}/expanded animation explanation`);
+    await show(page,sc.i,mode);
+   }
    // Exercise the native picker against every distinct level/layer list, then
    // check both transport directions from an unselected overview.
    const ids=await page.locator('#parts button[data-id]').evaluateAll(bs=>bs.map(button=>button.dataset.id));
@@ -180,6 +197,9 @@ export async function run(name,form=process.argv[2]||'desktop'){
   if(await page.locator('#level-pick').isVisible()){await page.locator('#level-pick').click();await audit('level menu','#level-menu button,#level-pick');await page.keyboard.press('Escape');}
   if(await page.locator('#menu-btn').isVisible()){await page.locator('#menu-btn').click();await audit('main menu','#topnav a,#menu-btn');await page.keyboard.press('Escape');}
   await page.locator('[data-pane="scenario"]').click();await audit('scenario pane');
+  const reasoning=page.locator('[data-math-work] > summary');
+  for(let i=0;i<await reasoning.count();i++)await reasoning.nth(i).click();
+  await audit('expanded physics reasoning');
   await page.locator('#scenario-adjust > summary').click();await audit('expanded teaching inputs');
   const choices=await page.locator('[data-choice]').evaluateAll(bs=>bs.map(b=>({key:b.dataset.choice,value:b.dataset.value})));
   for(const {key,value} of choices){await page.locator(`[data-choice="${key}"][data-value="${value}"]`).click();await page.waitForFunction(({key,value})=>!grx.isBusy()&&grx.store.scenario[key]===value,{key,value});if(await page.locator(`[data-choice="${key}"][data-value="${value}"]`).getAttribute('aria-pressed')!=='true')fail.push(`${key}/${value}: selected choice not reflected`);}
@@ -319,6 +339,71 @@ export async function run(name,form=process.argv[2]||'desktop'){
   }
   if(form==='phone'){
    const viewport=page.viewportSize();await page.setViewportSize({width:320,height:844});await audit('320 px phone controls');await page.setViewportSize(viewport);
+   // Expanded teaching notes, Scenario, and a dragged sheet compete for the
+   // same phone height. Check them together, including a shorter viewport.
+   const checkPhoneBudget=async label=>{
+    await audit(label,'#hud-btns button,#hud-btns select,#animation-controls .animation-transport button,.orbit-playback button,#sheet-toggle,#tab-parts,#tab-scenario');
+    const problems=await page.evaluate(()=>{
+     const bad=[],view=document.getElementById('view').getBoundingClientRect(),panel=document.getElementById('inspector').getBoundingClientRect();
+     if(view.height<139.5)bad.push('canvas lost its 140 px minimum');
+     if(panel.bottom>innerHeight+.5||panel.height<149.5)bad.push('inspector exceeds the viewport or loses its reading area');
+     for(const node of document.querySelectorAll('#hud-btns button,#hud-btns select,.animation-transport button,.orbit-playback button')){
+      if(!node.checkVisibility())continue;
+      const r=node.getBoundingClientRect(),hit=document.elementFromPoint((r.left+r.right)/2,(r.top+r.bottom)/2);
+      if(r.bottom>panel.top+.5||r.top<0||r.left<0||r.right>innerWidth||!hit||!(node===hit||node.contains(hit)))bad.push(`${node.id||node.textContent}: transport is not fully exposed above the inspector`);
+     }
+     return bad;
+    });
+    fail.push(...problems.map(problem=>`${label}: ${problem}`));
+   };
+   for(const size of [{width:390,height:844},{width:320,height:844},{width:390,height:667},{width:320,height:667}]){
+    await page.setViewportSize(size);await show(page,'abi','light');
+    await page.locator('#animation-controls [data-action="play"]').click();
+    await page.locator('.animation-explanation').evaluate(node=>{node.open=true;});
+    await page.locator('#tab-scenario').click();
+    const label=`${size.width}×${size.height} animation notes + Scenario`;
+    await checkPhoneBudget(label);
+    const handle=await page.locator('#sheet-toggle').boundingBox();
+    await page.mouse.move(handle.x+handle.width/2,handle.y+handle.height/2);await page.mouse.down();
+    await page.mouse.move(handle.x+handle.width/2,20,{steps:8});await page.mouse.up();
+    await checkPhoneBudget(`${label} + tall sheet drag`);
+    await show(page,'orbits','light');await page.locator('.orbit-playback-note').evaluate(node=>{node.open=true;});
+    await page.locator('#tab-scenario').click();await checkPhoneBudget(`${size.width}×${size.height} orbit explanation + Scenario`);
+   }
+   for(const size of [{width:844,height:390},{width:667,height:375}]){
+    await page.setViewportSize(size);
+    for(const lesson of ['abi','orbits']){
+     await show(page,lesson,'light');
+     if(lesson==='abi'){
+      await page.locator('#animation-controls [data-action="play"]').click();
+      await page.locator('.animation-explanation').evaluate(node=>{node.open=true;});
+     }else await page.locator('.orbit-playback-note').evaluate(node=>{node.open=true;});
+     await page.locator('#tab-scenario').click();
+     const label=`${size.width}×${size.height} ${lesson} landscape playback + Scenario`;
+     await audit(label,'#hud-btns button,#hud-btns select,#playback-dock button,.pane-tabs button');
+     const problems=await page.evaluate(()=>{
+      const bad=[],view=document.getElementById('view').getBoundingClientRect(),panel=document.getElementById('inspector').getBoundingClientRect();
+      if(view.height<139.5)bad.push('canvas lost its 140 px minimum');
+      if(panel.bottom>innerHeight+.5||panel.height<149.5)bad.push('reading pane exceeds viewport or loses its minimum');
+      const layers=document.querySelector('.mode'),layerRect=layers.getBoundingClientRect();
+      if(layers.parentElement.id!=='mode-slot'||layerRect.bottom>view.top+.5||!document.getElementById('level-pick').checkVisibility())bad.push('landscape layer/level controls cover the canvas');
+      return bad;
+     });
+     fail.push(...problems.map(problem=>`${label}: ${problem}`));
+    }
+   }
+   await page.setViewportSize(viewport);await show(page,'abi','light');
+   await page.locator('#animation-controls [data-action="play"]').click();
+   await page.locator('#animation-controls [data-action="play"]').focus();
+   await page.evaluate(()=>{window.rotationScene=grx.built[grx.state.scene];});
+   for(const [size,playing] of [[{width:844,height:390},true],[viewport,false]]){
+    if(!playing)await page.locator('#animation-controls [data-action="play"]').click();
+    await page.setViewportSize(size);await settleLayout(page);
+    const stable=await page.evaluate(expected=>grx.built[grx.state.scene]===window.rotationScene&&grx.state.selected===null&&window.rotationScene.teaching.state().playing===expected&&document.activeElement?.getAttribute('data-action')==='play',playing);
+    states++;audited.push(`rotation preserves ${playing?'playing':'paused'} lesson and focus`);
+    if(!stable)fail.push(`rotation lost ${playing?'playing':'paused'} lesson, Overview, scene identity or focus`);
+   }
+   await show(page,'orbits','light');await page.locator('#tab-parts').click();
   }
   if(await page.locator('#sheet-toggle').isVisible()){await page.locator('#sheet-toggle').click();await audit('collapsed sheet');await page.locator('#sheet-toggle').click();await audit('expanded sheet');}
   details.uiStates=audited;
@@ -330,25 +415,51 @@ export async function run(name,form=process.argv[2]||'desktop'){
    const phases=await page.evaluate(()=>grx.built[grx.state.scene].teaching?.state().steps.map((step,index)=>({name:step.id,index}))||[{name:'orbital playback',index:0}]);
    for(const phase of [{name:'selected-part',index:-2},{name:'inspection',index:-1},...phases]){
     await page.evaluate(index=>{
-     const b=grx.built[grx.state.scene];if(index!==-2)grx.overview();grx.settle();
-     if(b.teaching){b.teaching.reset();if(index<0)b.teaching.setInspection(true);else{b.teaching.step(index);b.teaching.play();}}
+     const b=grx.built[grx.state.scene];
+     if(index===-2){if(!grx.state.selected)throw new Error('Selected-part performance requires a selected component');grx.select(grx.state.selected);}
+     else grx.overview();
+     grx.settle();
+     if(b.teaching){b.teaching.reset();if(index<0)b.teaching.setInspection(true);else b.teaching.seek(index,0);}
      else b.setMotion?.(index>=0);
     },phase.index);
     const r=await page.evaluate(index=>new Promise((resolve,reject)=>{
-     const values=[],b=grx.built[grx.state.scene],started=performance.now();let last=started,warm=24,restarts=0;
+     const values=[],b=grx.built[grx.state.scene],started=performance.now(),named=index>=0&&!!b.teaching;
+     const progressBins=Array(10).fill(0);let last=started,warm=24,restarts=0,completePasses=0,minProgress=1,maxProgress=0,previousProgress=0,calls=0,triangles=0;
+     const finish=()=>{
+      values.sort((a,b)=>a-b);const q=grx.quality(),n=values.length;
+      resolve({median:values[Math.floor(n*.5)],p95:values[Math.min(n-1,Math.floor(n*.95))],samples:n,restarts,calls,triangles,tier:q.tiers[grx.state.scene],ratio:q.ratio,
+       progressCoverage:named?{start:0,end:1,completePasses,minSample:minProgress,maxSample:maxProgress,bins:progressBins}:null});
+     };
      const tick=now=>{
       if(now-started>15000){reject(new Error('Performance sampling exceeded 15 seconds'));return;}
-      // Gather the named phase only. At lower frame rates its remaining duration
-      // can end before 240 samples; restart it and discard transition frames.
-      if(index>=0&&b.teaching&&(b.teaching.state().index!==index||!b.teaching.state().playing)){
-       b.teaching.reset();b.teaching.step(index);b.teaching.play();last=now;warm=2;restarts++;requestAnimationFrame(tick);return;
+      // Warm the exact phase at rest, then begin at zero. User Step intentionally
+      // lands at 72%; using it here would omit early mechanism motion entirely.
+      if(warm>0){last=now;if(--warm===0&&named){b.teaching.seek(index,0);b.teaching.play();}requestAnimationFrame(tick);return;}
+      const state=named?b.teaching.state():null;
+      if(named&&(state.index!==index||!state.playing)){
+       const completed=state.index===index+1||(index===state.total-1&&state.index===index&&state.progress===1&&!state.playing);
+       if(!completed){reject(new Error('Teaching phase stopped before completing its progress range'));return;}
+       completePasses++;
+       // Complete the phase even if 240 samples arrived earlier. At lower frame
+       // rates repeat whole passes until the same minimum sample count is met.
+       // The interval crossing a phase boundary is excluded from both passes.
+       if(values.length>=240){finish();return;}
+       b.teaching.seek(index,0);b.teaching.play();last=now;previousProgress=0;restarts++;requestAnimationFrame(tick);return;
       }
-      if(warm-->0){last=now;requestAnimationFrame(tick);return;}
-      values.push(now-last);last=now;if(values.length<240){requestAnimationFrame(tick);return;}
-      values.sort((a,b)=>a-b);const R=grx.renderer(),q=grx.quality();resolve({median:values[120],p95:values[228],samples:values.length,restarts,calls:R.info.render.calls,triangles:R.info.render.triangles,tier:q.tiers[grx.state.scene],ratio:q.ratio});
+      if(named&&(!Number.isFinite(state.progress)||state.progress<0||state.progress>1||state.progress<previousProgress||state.suspended||state.inspection)){reject(new Error('Invalid or held teaching phase during performance measurement'));return;}
+      if(named&&state.progress===0){last=now;requestAnimationFrame(tick);return;}
+      const interval=now-last;last=now;
+      if(interval>0&&Number.isFinite(interval)){
+       values.push(interval);const R=grx.renderer();calls=Math.max(calls,R.info.render.calls);triangles=Math.max(triangles,R.info.render.triangles);
+       if(named){previousProgress=state.progress;minProgress=Math.min(minProgress,state.progress);maxProgress=Math.max(maxProgress,state.progress);progressBins[Math.min(9,Math.floor(state.progress*10))]++;}
+      }
+      if(!named&&values.length>=240){finish();return;}
+      requestAnimationFrame(tick);
      };requestAnimationFrame(tick);
     }),phase.index);
     rows.push({scene:sc.id,mode,phase:phase.name,...r});states++;
+    if(r.samples<240)fail.push(`${sc.id}/${mode}/${phase.name}: fewer than 240 valid samples`);
+    if(r.progressCoverage&&(!r.progressCoverage.completePasses||r.progressCoverage.bins.some(n=>!n)))fail.push(`${sc.id}/${mode}/${phase.name}: incomplete phase progress coverage`);
     if(r.tier!==0)fail.push(`${sc.id}/${mode}/${phase.name}: measured tier ${r.tier}, expected 0`);
     if(r.p95>(form==='phone'?7:15))fail.push(`${sc.id}/${mode}/${phase.name}: p95 ${r.p95.toFixed(2)} ms exceeds budget`);
    }

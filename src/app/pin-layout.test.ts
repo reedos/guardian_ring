@@ -32,6 +32,13 @@ describe('pin labels respect visible UI reservations',()=>{
 });
 
 describe('numbered pins avoid printed component names',()=>{
+  it('keeps a short landscape canvas caption readable without losing the pin anchor',()=>{
+    const caption={left:14,right:310,top:133,bottom:166};
+    const original=new Map([['6',{x:235,y:145,ax:235,ay:145}],['9',{x:275,y:117,ax:275,ay:117}]]);
+    const moved=avoidPinObstacles(original,{obstacles:[caption],width:473,height:176});
+    for(const p of moved.values())expect(overlapsRect({left:p.x-14,right:p.x+14,top:p.y-14,bottom:p.y+14},caption,4)).toBe(false);
+    expect(moved.get('6')).toMatchObject({ax:235,ay:145});
+  });
   it('moves a marker off a nameplate while preserving the geometry leader',()=>{
     const plate={left:100,right:280,top:120,bottom:175};
     const original=new Map([['a',{x:190,y:145,ax:190,ay:145}],['b',{x:310,y:150,ax:310,ay:150}]]);

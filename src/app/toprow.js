@@ -28,7 +28,14 @@ addEventListener('keydown', e => { if (e.key !== 'Escape') return; const p = pop
 document.addEventListener('pointerdown', e => { for (const p of pops) if (!p.menu.hidden && !p.menu.contains(e.target) && !p.btn.contains(e.target)) close(p); }, true);
 
 // phones: the layer switch moves from over the view into the top row
-const phone = matchMedia('(max-width: 760px)');
+const phone = matchMedia('(max-width: 760px), (max-width: 1100px) and (max-height: 600px) and (orientation: landscape)');
 const layers = document.querySelector('.hud.tr .mode'), home = document.querySelector('.hud.tr'), slot = $('mode-slot');
-function placeLayers() { if (!layers || !slot || !home) return; if (phone.matches) slot.append(layers); else home.prepend(layers); }
+function placeLayers() {
+  if (!layers || !slot || !home) return;
+  const parent = phone.matches ? slot : home;
+  if (layers.parentElement === parent) return;
+  const focused = layers.contains(document.activeElement) ? document.activeElement : null;
+  if (phone.matches) parent.append(layers); else parent.prepend(layers);
+  if (focused?.isConnected && focused.checkVisibility()) focused.focus({ preventScroll: true });
+}
 phone.addEventListener('change', placeLayers); placeLayers();

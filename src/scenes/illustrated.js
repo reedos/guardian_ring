@@ -79,6 +79,7 @@ export function illustrated(config) {
         subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
         play(){clock.play();pose(clock.state());},pause(){clock.pause();pose(clock.state());},
         step(delta){clock.step(delta);pose(clock.state());},reset(){clock.reset();pose(clock.state());},
+        seek(index,progress=0){clock.seek(index,progress);pose(clock.state());},
         setInspection(value){clock.setInspection(value);pose(clock.state());},
         setSuspended(value){clock.setSuspended(value);},
       };

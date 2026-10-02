@@ -128,7 +128,7 @@ function updatePins() {
   // retain the true geometry anchor when a marker moves to make room for another.
   const printedBounds=(built[ui.scene]?.labels||[]).filter(label=>label.visible&&label.userData.readability?.bounds).map(label=>label.userData.readability.bounds);
   const fan=declutterPins(points, { expanded:new Set(points.map(p => p.id)) });
-  const placements=avoidPinObstacles(fan.placements,{obstacles:printedBounds,width,height,selected:ui.selected});
+  const placements=avoidPinObstacles(fan.placements,{obstacles:[...printedBounds,...hudBounds],width,height,selected:ui.selected});
   for (const point of points) {
     const spot = placements.get(point.id), button = point.button;
     const x = Math.max(13,Math.min(width-13,spot.x)), y = Math.max(13,Math.min(height-13,spot.y));

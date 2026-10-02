@@ -1,6 +1,6 @@
 export const overlapsRect = (a, b, gap = 0) => a.left < b.right + gap && a.right > b.left - gap && a.top < b.bottom + gap && a.bottom > b.top - gap;
 
-// Printed hardware names are obstacles for numbered markers too. Keep leaders
+// Printed hardware names and screen text are obstacles for numbered markers. Keep leaders
 // tied to the original anchor while moving a marker to the nearest clear spot.
 /** @param {Map<string,{x:number,y:number,ax:number,ay:number}>} placements
  * @param {{obstacles:{left:number,right:number,top:number,bottom:number}[],width:number,height:number,selected?:string|null}} options */

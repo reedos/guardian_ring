@@ -12,6 +12,10 @@ export function createTeachingSequence(steps, { reduced = false, duration = 3.6 
     pause() { playing = false; last = null; emit(); },
     reset() { index = 0; progress = 0; playing = false; last = null; emit(); },
     step(delta = 1) { index = (index + Math.trunc(delta) % steps.length + steps.length) % steps.length; progress = .72; playing = false; inspection = false; last = null; emit(); },
+    seek(nextIndex, nextProgress = 0) {
+      if (!Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= steps.length || !Number.isFinite(nextProgress) || nextProgress < 0 || nextProgress > 1) throw new RangeError('Seek requires a valid step and progress in [0, 1]');
+      index = nextIndex; progress = nextProgress; playing = false; inspection = false; last = null; emit();
+    },
     setInspection(value) { inspection = !!value; if (inspection) playing = false; last = null; emit(); },
     setSuspended(value) {const next=!!value;if(next!==suspended){suspended=next;last=null;}},
     tick(time) {

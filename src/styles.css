@@ -975,7 +975,7 @@ body.story .pane-tabs { display: none; }
   body.app .step .meta { font-size: 10.5px; gap: 6px; }
 }
 /* phones: "Level 3 of 6" and the level's name, the layer switch, the menu: one row */
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-width: 1100px) and (max-height: 600px) and (orientation: landscape) {
   body.app .toprow .steps { display: none; }
   body.app .level-pick { all: unset; box-sizing: border-box; position: relative; flex: 1 1 auto; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: center; column-gap: 8px; row-gap: 2px; min-height: 54px; padding: 6px 8px 7px 14px; cursor: pointer; }
   body.app .level-pick::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--c, var(--accent)); }
@@ -1130,17 +1130,29 @@ body.app .pane-scenario .sc-h { margin: 0; }
 body.app .pane-scenario .note { color: var(--muted); font-size: 13px; }
 body.app .panel-scroll > * { min-width: 0; }
 @media (max-width: 1100px) {
-  body.app .viewer { flex: 1 1 0; min-height: 0; overflow: hidden; }
+  /* The inspector yields height before the canvas or transport can be clipped.
+     min-content includes the live animation strip and the side-level Back row. */
+  body.app .viewer { flex: 1 1 0; min-height: min-content; overflow: hidden; }
   body.app .view, body.app.sheet-open .view { flex: 1 1 0; min-height: 140px; height: auto; }
-  body.app .panel { position: relative; z-index: 8; flex: 0 0 var(--inspector-size, 240px); }
+  body.app .panel { position: relative; z-index: 8; flex: 0 1 var(--inspector-size, 240px); min-height: 150px; }
   body.app.sheet-open .panel { flex-basis: var(--inspector-size, 52dvh); }
   body.app .sheet-toggle { display: grid; width: 44px; touch-action: none; user-select: none; }
   body.app.inspector-collapsed .viewer { flex: 1 1 0; }
   body.app.inspector-collapsed .view { flex: 1 1 0; height: auto; }
 }
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-width: 1100px) and (max-height: 600px) and (orientation: landscape) {
   .scaffold-badge { left: 14px; right: auto; bottom: 10px; font-size: 8px; text-align: left; }
   body.app #hud-btns { flex-wrap: wrap; padding: 6px 12px; min-height: 52px; }
+  /* Keep the side-level return beside the picker, leaving navigation its own
+     complete row instead of spending a third row of a short phone viewport. */
+  body.app #hud-btns { display: grid; grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1fr) auto; gap: 6px; }
+  body.app #hud-btns .part-transport { display: contents; }
+  body.app #hud-btns .view-part { grid-column: 1 / -1; grid-row: 1; }
+  body.app #hud-btns .part-nav { grid-column: 1 / 4; grid-row: 2; }
+  body.app #hud-btns #part-play { grid-column: 4; grid-row: 2; }
+  body.app #hud-btns #back-out { grid-column: 1 / 3; grid-row: 1; max-width: 100%; min-width: 0; white-space: normal; }
+  body.app #hud-btns:has(#back-out:not([hidden])) .view-part { grid-column: 3 / -1; }
+  body.app #hud-btns #presentation-exit { grid-column: 1 / -1; grid-row: 3; }
   .part-transport { grid-template-columns: minmax(0, 1fr) auto; gap: 6px; width: 100%; }
   .part-transport .view-part { grid-column: 1 / -1; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px; }
   .part-transport .part-nav { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; }
@@ -1307,7 +1319,7 @@ body.app .panel-scroll > * { min-width: 0; }
   .animation-explanation { grid-column: 2; grid-row: 1 / span 2; }
   .animation-explanation[open] > summary { padding-top: 0; min-height: 25px; }
 }
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-width: 1100px) and (max-height: 600px) and (orientation: landscape) {
   .learning-guide { gap: 8px; padding-bottom: 12px; }
   .learning-guide h2 { font-size: 25px; }
   .card-components { gap: 8px; padding-block: 12px; }
@@ -1322,9 +1334,18 @@ body.app .panel-scroll > * { min-width: 0; }
   .animation-transport .animation-counter { font-size: 9px; }
   .animation-controls .animation-step { font-size: 15px; margin-top: 5px; }
   .animation-explanation > summary, .orbit-playback-note > summary { min-height: 44px; padding-block: 13px; }
-  .animation-explanation[open] { max-height: 150px; overflow: auto; }
+  .animation-explanation[open], .orbit-playback-note[open] { max-height: var(--explanation-max-height, 150px); overflow: auto; overscroll-behavior: contain; }
   .orbit-playback-row { gap: 6px; flex-wrap: nowrap; }
   .orbit-playback #day-play { min-width: 105px; }
   .orbit-playback .orbit-families { gap: 4px; flex-wrap: nowrap; }
   .orbit-playback .btn { padding-inline: 6px; font-size: 9px; }
+}
+.playback-dock[hidden] { display: none; }
+@media (max-width: 1100px) and (max-height: 600px) and (orientation: landscape) {
+  body.app .stage .body, body.app.inspector-collapsed .stage .body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 44%); grid-template-rows: auto minmax(0, 1fr); }
+  body.app .viewer { grid-column: 1; grid-row: 1 / -1; min-height: 0; }
+  body.app .panel { grid-column: 2; grid-row: 2; min-height: 150px; }
+  .playback-dock { grid-column: 2; grid-row: 1; min-width: 0; background: var(--surface); border-left: 1px solid var(--line); }
+  .playback-dock .animation-controls, .playback-dock .orbit-playback { padding: 3px 10px 1px; }
+  .playback-dock #presentation-exit { min-height: 44px; margin: 4px 10px; }
 }
