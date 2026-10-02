@@ -1,6 +1,6 @@
 # Guardian Ring review build
 
-10/02/2026. The expanded anatomy, readable labels, guided exploration, and engineering-animation revision is implemented on `codex/public-design-gap-audit`. Built-preview acceptance is incomplete: 19 of 20 browser gate commands pass; phone performance remains unresolved. This revision has not been merged, pushed, or deployed. Reed's device review and separate launch decision remain open.
+10/02/2026. The expanded anatomy, readable labels, guided exploration, and engineering-animation revision has completed built-preview acceptance: all 20 browser gate commands pass. This is the authorized dark review edition. Reed's device review and separate launch decision remain open.
 
 ## Current scope
 
@@ -30,13 +30,13 @@ The engineering-learning review adds six directly verified primary sources for c
 
 The current production build has SHA-256 `437ad69d3642fd36f7848fe6caeefa00afdb3eb6fa1ffac83877e61520552e50` (sorted relative paths and bytes). Typecheck and all 138 unit tests pass. The evidence audit reports zero problems across 924 site claims, 88,608 scenario instances, 96 scenarios and 241 research facts.
 
-Nineteen of twenty full-scope browser gate commands pass against that unchanged build on the real GPU. Cycle and parts each cover 22,752 selections; camera routes cover 2,091 ordered routes per form. Views cover 237 states per form, label checks 267 per form, learning checks 208 per form, and UI checks 264 desktop / 287 phone states. Quality, links, coplanarity, story and reference-page checks also pass. Desktop performance passes all 169 conditions, with worst p95 11.8 ms against the 15 ms limit.
+All twenty full-scope browser gate commands pass against that unchanged build on the real GPU. Cycle and parts each cover 22,752 selections; camera routes cover 2,091 ordered routes per form. Views cover 237 states per form, label checks 267 per form, learning checks 208 per form, and UI checks 264 desktop / 287 phone states. Quality, links, coplanarity, story and reference-page checks also pass. Performance passes all 169 conditions per form: worst p95 is 11.8 ms desktop and 2.4 ms phone, against unchanged limits of 15 ms and 7 ms.
 
-The complete phone performance run fails 11 of 169 conditions: nine orbit cases and two focal-plane inspection cases, with worst p95 149.3 ms against the unchanged 7 ms limit. Earlier phone sampling also timed out. These failures are not waived. Fixed orbit/spacecraft/orbit/spacecraft comparisons subsequently measured 0.4 / 0.7 / 0.4 / 0.7 ms p95 on the phone layout with the same runtime, stable shader counts, and negligible one-time GPU-fence waits. The desktop comparison also recovered without runtime changes. Shared GPU load is a plausible contributor, but the comparisons do not establish the sole cause or replace the failed full phone run.
+Earlier phone runs showed severe intermittent stalls, including a 149.3 ms worst p95 and a sampling timeout. Fixed scene comparisons recovered without runtime changes. After Reed authorized temporarily unloading a separate local model, GPU memory use fell from 31.2 GB to 8.9 GB and the complete phone performance gate passed on the unchanged build. This controlled result supports the shared-resource contention diagnosis; the failed runs were retained, not waived or substituted with focused checks.
 
-The benchmark now uses IF's 300 ms settling approach, followed by a check for finished CSS transitions and 24 warm-up frames. It retains all valid measured intervals, requires at least 240 samples and complete teaching phases, and preserves the 15 ms desktop / 7 ms phone budgets. Failed reports and comparison diagnostics remain in `.local/`; `.local/current-acceptance-summary.json` records freshness checks for this build. Separate GPU workloads were left running. The next step is a full phone run in a controlled GPU environment, then investigation of any remaining failure before merge or publication.
+The benchmark uses IF's 300 ms settling approach, followed by a check for finished CSS transitions and 24 warm-up frames. It retains all valid measured intervals, requires at least 240 samples and complete teaching phases, and preserves the 15 ms desktop / 7 ms phone budgets. Failed reports and comparison diagnostics remain in `.local/`; `.local/current-acceptance-summary.json` records freshness checks for this build.
 
-`gate-results.md` is the historical acceptance record for the earlier 10/01/2026 build. Its figures are not acceptance evidence for this revision. The final report generator continues to reject the current failed phone result.
+`gate-results.md` is the generated acceptance record for this build. Its validator confirms full scope, fresh reports, real-GPU rendering, all-pairs camera coverage, current unit tests and the strict evidence audit before recording success.
 
 The acceptance suite covers scenarios, parent parts, ordered camera routes, evidence dialogs, component anatomy, Parts search/navigation, responsive diagrams, saved comparisons, renderer quality, physical labels, selected callouts and performance. Phone-sized browser checks do not replace testing on an actual phone.
 
