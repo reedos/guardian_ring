@@ -13,7 +13,7 @@ export function mountAnimationControls(host,{getTeaching,preparePlayback}) {
   const evidence=host.querySelector('.animation-evidence');let legendKey='',evidenceKey='';
   function render(){
     host.hidden=!teaching;if(!teaching)return;
-    const state=teaching.state();buttons.play.textContent=state.playing?'Pause sequence':state.progress===1&&state.index===state.total-1?'Replay sequence':'Play sequence';
+    const state=teaching.state();host.dataset.inspection=String(state.inspection);buttons.play.textContent=state.playing?'Pause sequence':state.progress===1&&state.index===state.total-1?'Replay sequence':'Play sequence';
     buttons.play.setAttribute('aria-pressed',String(state.playing));counter.textContent=`${state.index+1} / ${state.total}`;
     title.textContent=state.step.title;description.textContent=state.step.body;
     const keys=state.step.claimKeys||[],claimKey=keys.join(',');if(claimKey!==evidenceKey){evidenceKey=claimKey;evidence.innerHTML=keys.map(key=>{const claim=claimByKey(store.M,store.C,key);return claim?chip(claim.basis,key,claim.label):'';}).join('');}

@@ -148,8 +148,15 @@ function updatePins() {
       .filter(el=>el.checkVisibility()).map(el=>{const r=el.getBoundingClientRect();return {left:r.left-origin.left,right:r.right-origin.left,top:r.top-origin.top,bottom:r.bottom-origin.top};});
     reserved.push(...hudBounds,...printedBounds);
     const x=parseFloat(selected.button.style.left),y=parseFloat(selected.button.style.top),maxWidth=Math.min(270,width-32);
-    label.style.width=`${maxWidth}px`;selected.button.classList.remove('hide-lbl');
-    const height=label.offsetHeight,box=pinLabelBox(x,y,maxWidth,width,view.clientHeight,reserved,true,height);
+    selected.button.classList.remove('hide-lbl');label.style.maxWidth=`${maxWidth}px`;label.style.width='max-content';
+    const naturalWidth=Math.ceil(label.offsetWidth);let box=null;
+    // Keep the full name at the same type size. A narrower, wrapped label can
+    // use a clear corner on a phone where a wide label has no horizontal lane.
+    for(const candidate of [...new Set([naturalWidth,220,180,140].map(w=>Math.min(naturalWidth,w)))]){
+      label.style.width=`${candidate}px`;
+      box=pinLabelBox(x,y,candidate,width,view.clientHeight,reserved,true,label.offsetHeight);
+      if(box)break;
+    }
     if(box){label.style.left=`${box.left-x+11}px`;label.style.top=`${box.top-y+11}px`;}
     else selected.button.classList.add('hide-lbl');
   }

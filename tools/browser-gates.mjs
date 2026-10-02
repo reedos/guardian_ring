@@ -33,7 +33,7 @@ const checkPart=({scene,mode,id})=>{
  if(anatomy.length!==components.length)bad.push('assembly component details are missing or stale');
  components.forEach((component,i)=>{
   const article=anatomy[i];
-  if(article?.dataset.component!==component.id||article?.querySelector('h5')?.textContent!==component.title||article?.querySelector('.component-role')?.textContent!==(component.role||undefined))bad.push(`${component.id}: component name/function mismatch`);
+  if(article?.dataset.component!==component.id||article?.querySelector('.component-title')?.textContent!==component.title||article?.querySelector('.component-role')?.textContent!==(component.role||undefined))bad.push(`${component.id}: component name/function mismatch`);
   const keys=[...(article?.querySelectorAll('[data-src]')||[])].map(el=>el.dataset.src);
   if(JSON.stringify(keys)!==JSON.stringify((component.specs||[]).map((_,n)=>`component:${sceneId}:${id}:${component.id}:${n}`)))bad.push(`${component.id}: component evidence is not synchronized`);
  });
@@ -45,7 +45,7 @@ const checkPart=({scene,mode,id})=>{
 
 // Open popups are audited as their own interaction surface: they intentionally
 // cover background controls. Closed-state checks still cover those controls.
-const checkUI=({selector='button,select,.topbar a'})=>{
+const checkUI=({selector='button,select,summary,.topbar a'})=>{
  const bad=[],label=el=>el.id||el.getAttribute('aria-label')||el.textContent.trim().slice(0,70);
  const rendered=el=>{for(let p=el;p;p=p.parentElement){const s=getComputedStyle(p);if(p.hidden||s.display==='none'||s.visibility==='hidden'||Number(s.opacity)===0)return false;}const r=el.getBoundingClientRect();return r.width>0&&r.height>0;};
  const nodes=[...document.querySelectorAll(selector)].filter(rendered);
@@ -180,6 +180,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
   if(await page.locator('#level-pick').isVisible()){await page.locator('#level-pick').click();await audit('level menu','#level-menu button,#level-pick');await page.keyboard.press('Escape');}
   if(await page.locator('#menu-btn').isVisible()){await page.locator('#menu-btn').click();await audit('main menu','#topnav a,#menu-btn');await page.keyboard.press('Escape');}
   await page.locator('[data-pane="scenario"]').click();await audit('scenario pane');
+  await page.locator('#scenario-adjust > summary').click();await audit('expanded teaching inputs');
   const choices=await page.locator('[data-choice]').evaluateAll(bs=>bs.map(b=>({key:b.dataset.choice,value:b.dataset.value})));
   for(const {key,value} of choices){await page.locator(`[data-choice="${key}"][data-value="${value}"]`).click();await page.waitForFunction(({key,value})=>!grx.isBusy()&&grx.store.scenario[key]===value,{key,value});if(await page.locator(`[data-choice="${key}"][data-value="${value}"]`).getAttribute('aria-pressed')!=='true')fail.push(`${key}/${value}: selected choice not reflected`);}
   const choose=async values=>{for(const [key,value]of Object.entries(values)){await page.locator(`[data-choice="${key}"][data-value="${value}"]`).click();await page.waitForFunction(({key,value})=>!grx.isBusy()&&grx.store.scenario[key]===value,{key,value});}};
@@ -324,7 +325,34 @@ export async function run(name,form=process.argv[2]||'desktop'){
   fs.mkdirSync('shots',{recursive:true});await page.screenshot({path:`shots/scaffold-${form}.png`,fullPage:true});
  } else if(name==='perf'){
   const rows=[];await page.evaluate(()=>grx.forceTier(0,{hold:true}));
-  for(const sc of scenes)for(const mode of MODES){await show(page,sc.i,mode);await page.evaluate(()=>grx.forceTier(0,{hold:true}));const r=await page.evaluate(()=>new Promise(resolve=>{const values=[];let last=performance.now(),warm=24;const tick=now=>{if(warm-->0){last=now;requestAnimationFrame(tick);return;}values.push(now-last);last=now;if(values.length<240)return requestAnimationFrame(tick);values.sort((a,b)=>a-b);const R=grx.renderer(),q=grx.quality();resolve({median:values[120],p95:values[228],calls:R.info.render.calls,triangles:R.info.render.triangles,tier:q.tiers[grx.state.scene],ratio:q.ratio});};requestAnimationFrame(tick);}));rows.push({scene:sc.id,mode,...r});states++;if(r.tier!==0)fail.push(`${sc.id}/${mode}: measured tier ${r.tier}, expected 0`);if(r.p95>(form==='phone'?7:15))fail.push(`${sc.id}/${mode}: p95 ${r.p95.toFixed(2)} ms exceeds budget`);}
+  for(const sc of scenes)for(const mode of MODES){
+   await show(page,sc.i,mode);await page.evaluate(()=>grx.forceTier(0,{hold:true}));
+   const phases=await page.evaluate(()=>grx.built[grx.state.scene].teaching?.state().steps.map((step,index)=>({name:step.id,index}))||[{name:'orbital playback',index:0}]);
+   for(const phase of [{name:'selected-part',index:-2},{name:'inspection',index:-1},...phases]){
+    await page.evaluate(index=>{
+     const b=grx.built[grx.state.scene];if(index!==-2)grx.overview();grx.settle();
+     if(b.teaching){b.teaching.reset();if(index<0)b.teaching.setInspection(true);else{b.teaching.step(index);b.teaching.play();}}
+     else b.setMotion?.(index>=0);
+    },phase.index);
+    const r=await page.evaluate(index=>new Promise((resolve,reject)=>{
+     const values=[],b=grx.built[grx.state.scene],started=performance.now();let last=started,warm=24,restarts=0;
+     const tick=now=>{
+      if(now-started>15000){reject(new Error('Performance sampling exceeded 15 seconds'));return;}
+      // Gather the named phase only. At lower frame rates its remaining duration
+      // can end before 240 samples; restart it and discard transition frames.
+      if(index>=0&&b.teaching&&(b.teaching.state().index!==index||!b.teaching.state().playing)){
+       b.teaching.reset();b.teaching.step(index);b.teaching.play();last=now;warm=2;restarts++;requestAnimationFrame(tick);return;
+      }
+      if(warm-->0){last=now;requestAnimationFrame(tick);return;}
+      values.push(now-last);last=now;if(values.length<240){requestAnimationFrame(tick);return;}
+      values.sort((a,b)=>a-b);const R=grx.renderer(),q=grx.quality();resolve({median:values[120],p95:values[228],samples:values.length,restarts,calls:R.info.render.calls,triangles:R.info.render.triangles,tier:q.tiers[grx.state.scene],ratio:q.ratio});
+     };requestAnimationFrame(tick);
+    }),phase.index);
+    rows.push({scene:sc.id,mode,phase:phase.name,...r});states++;
+    if(r.tier!==0)fail.push(`${sc.id}/${mode}/${phase.name}: measured tier ${r.tier}, expected 0`);
+    if(r.p95>(form==='phone'?7:15))fail.push(`${sc.id}/${mode}/${phase.name}: p95 ${r.p95.toFixed(2)} ms exceeds budget`);
+   }
+  }
   details.rows=rows;details.worstP95=Math.max(...rows.map(r=>r.p95));console.log(`Worst p95 ${details.worstP95.toFixed(2)} ms`);
  } else if(name==='govern'){
   const rows=[];

@@ -1274,6 +1274,8 @@ body.app .panel-scroll > * { min-width: 0; }
 .presentation-exit[hidden] { display: none; }
 .animation-controls { flex: none; padding: 10px 14px; border-top: 1px solid var(--line); background: var(--surface); min-width: 0; }
 .animation-controls[hidden] { display: none; }
+.animation-controls[data-inspection='true'] .animation-step,
+.animation-controls[data-inspection='true'] .animation-explanation { display: none; }
 .animation-controls button { min-height: 44px; }
 .animation-transport { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; }
 .animation-transport .btn { padding-inline: 10px; font-size: 10px; line-height: 1.3; }

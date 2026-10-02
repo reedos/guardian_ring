@@ -21,6 +21,14 @@ describe('pin labels respect visible UI reservations',()=>{
     const box=pinLabelBox(180,110,90,390,140,[{left:0,right:390,top:150,bottom:200}]);
     expect(box).not.toBeNull();
   });
+  it('finds an open phone corner between staggered pins and printed nameplates',()=>{
+    const obstacles=[{left:181,right:207,top:116,bottom:142},{left:32,right:54,top:92,bottom:114},{left:27,right:49,top:168,bottom:190},{left:304,right:326,top:158,bottom:180},{left:14,right:239,top:250,bottom:282},{left:123,right:220,top:155,bottom:196},{left:136,right:235,top:36,bottom:70},{left:12,right:79,top:205,bottom:241}];
+    const box=pinLabelBox(194,129,140,390,292,obstacles,true,56);
+    expect(box).not.toBeNull();
+    for(const obstacle of obstacles)expect(overlapsRect(box!,obstacle,4)).toBe(false);
+    expect(box!.left).toBeGreaterThanOrEqual(6);expect(box!.right).toBeLessThanOrEqual(384);
+    expect(box!.top).toBeGreaterThanOrEqual(6);expect(box!.bottom).toBeLessThanOrEqual(286);
+  });
 });
 
 describe('numbered pins avoid printed component names',()=>{
