@@ -22,8 +22,9 @@ window.grx = {
   show: stage.show, overview: stage.overview, THREE, clearance: stage.clearanceStats, occupancy: stage.occupancy, scenarioOptions: SCENARIO_OPTIONS,
   setQualityPreference: stage.setQualityPreference, isBusy: stage.isBusy, isCameraMoving: stage.isCameraMoving,
   flightProgress: stage.getFlightProgress,
+  setAssemblyView:stage.setAssemblyView,
 };
-const animationControls = mountAnimationControls(document.getElementById('animation-controls'), { getTeaching: stage.getTeaching, preparePlayback: stage.preparePlayback });
+const animationControls = mountAnimationControls(document.getElementById('animation-controls'), { getTeaching: stage.getTeaching, preparePlayback: stage.preparePlayback, getAssemblyPresentation:stage.getAssemblyPresentation,setAssemblyView:stage.setAssemblyView });
 mountInspectorLayout();
 for (const event of ['scene', 'mode', 'scene-settings']) on(event, () => animationControls.sync());
 const tabs = [...document.querySelectorAll('[data-pane]')], scenario = document.getElementById('pane-scenario'), sheetButton = document.getElementById('sheet-toggle');

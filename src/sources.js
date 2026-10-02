@@ -646,6 +646,64 @@ export const SOURCES = { ...{
     "status": "verified",
     "section": "Webb Detector Architecture and Figure 4"
   },
+  "lm-sbirs-payload-delivery-2014": {
+    "title": "Lockheed Martin And Northrop Grumman Deliver Payload For Fourth SBIRS Missile Defense Early Warning Satellite",
+    "publisher": "Lockheed Martin",
+    "url": "https://news.lockheedmartin.com/2014-10-08-Lockheed-Martin-And-Northrop-Grumman-Deliver-Payload-For-Fourth-SBIRS-Missile-Defense-Early-Warning-Satellite",
+    "kind": "primary",
+    "marketing": true,
+    "published": "10/08/2014",
+    "accessed": "10/02/2026",
+    "status": "verified",
+    "evidence": "research/instrument-integration-review.md#supplier-responsibility",
+    "section": "Opening two paragraphs and SBIRS team paragraph; contractor roles and delivery only"
+  },
+  "nasa-landsat9-integration-2020": {
+    "title": "Landsat 9: The Pieces Come Together",
+    "publisher": "NASA Science / Goddard Space Flight Center",
+    "url": "https://science.nasa.gov/missions/landsat/landsat-9-the-pieces-come-together/",
+    "kind": "primary",
+    "marketing": false,
+    "published": "01/09/2020",
+    "accessed": "10/02/2026",
+    "status": "verified",
+    "evidence": "research/instrument-integration-review.md#spacecraft-integration",
+    "section": "Opening paragraph; electrical integration paragraph"
+  },
+  "nasa-interface-management": {
+    "title": "6.3 Interface Management",
+    "publisher": "NASA",
+    "url": "https://www.nasa.gov/reference/6-3-interface-management/",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Page last updated 07/26/2023",
+    "accessed": "10/02/2026",
+    "status": "verified",
+    "evidence": "research/instrument-integration-review.md#interface-control",
+    "section": "Opening tasks; 6.3.1.1; 6.3.1.2.3; 6.3.1.3"
+  },
+  "goes-r-faq-integration-unchecked": {
+    "title": "GOES-R Frequently Asked Questions",
+    "publisher": "NOAA / NASA GOES-R",
+    "url": "https://www.goes-r.gov/resources/faqs.html",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Publication date not confirmed",
+    "attempted": "10/02/2026",
+    "unchecked": "Direct open redirected to a general NESDIS geostationary-satellites page. Search-cache content was not admitted; no new contractor attribution was taken from this URL.",
+    "status": "unchecked"
+  },
+  "goes-r-databook-alternate-unchecked": {
+    "title": "GOES-R Series Data Book alternate program URL",
+    "publisher": "NOAA / NASA GOES-R",
+    "url": "https://www.goes-r.gov/downloads/resources/documents/GOES-RSeriesDataBook.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Publication date not confirmed",
+    "attempted": "10/02/2026",
+    "unchecked": "Direct open redirected to a general NESDIS page, not the PDF. The previously verified OSPO download and its local record retain separate provenance; this alternate URL is not cited.",
+    "status": "unchecked"
+  },
   "sda-tracking-layer-leo-altitude": {
     "title": "SDA approximate LEO altitude (seed alias)",
     "publisher": "GAO source pointer",

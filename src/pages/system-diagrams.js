@@ -2,6 +2,7 @@
 // come from the same catalog as the explorer; no independent fact registry.
 import { COMPONENT_CATALOG } from '../component-catalog.js';
 import { chip } from '../evidence.js';
+import { INSTRUMENT_ASSEMBLIES, INSTRUMENT_INTERFACES } from '../instrument-integration.js';
 
 const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ref = (scene, part, id) => ({scene, part, id});
@@ -46,7 +47,7 @@ export const SYSTEM_DIAGRAMS = [
   },
   {
     id:'abi-instrument',eyebrow:'Civil instrument architecture',title:'ABI: optics, mechanisms and electronics',
-    intro:'The Advanced Baseline Imager separates the optical train, Sensor Unit Electronics, Electronics Unit and cryocooler controls. The functional paths below use the public ABI component names; the 3D teaching layout is representative.',
+    intro:'ABI is one instrument delivered through several coordinated physical units. The Sensor Unit includes optics, mechanisms and its own electronics; the Electronics Unit is a common chassis of cards; cooler controls mount separately. These civil groupings organize the representative cutaway.',
     flows:[
       flow('abi-optical','Scene radiation reaches a filtered focal-plane module',[
         node(abi('scan-system','comp-abi-scan-mirrors')),
@@ -102,7 +103,7 @@ export const SYSTEM_DIAGRAMS = [
   },
   {
     id:'tirs2-interfaces',eyebrow:'NASA TIRS-2 design architecture',title:'TIRS-2: electrical interfaces and thermal hardware',
-    intro:'The 2018 TIRS-2 design diagram distinguishes detector-side electronics, main electronics, mechanism control and cooler control. Selected redundant connections are preserved here without drawing every backup as connected to every box.',
+    intro:'The 2018 TIRS-2 design groups command/data, power, thermal, mechanism and high-speed-interface boards inside Main Electronics Boxes. Detector-side electronics and cooler electronics are separately identified. This is another coherent instrument architecture, with its own names and selected redundant connections.',
     flows:[
       flow('tirs-science','Focal-plane electronics connect through an interface board',[
         node(tirs('readout','fpe')),
@@ -166,6 +167,17 @@ function renderWire(edge) {
   return `<li class="sd-connector sd-${esc(edge.type)}"><svg class="sd-arrow" viewBox="0 0 40 24" aria-hidden="true" focusable="false"><path class="sd-wire" d="M3 12H35"/><path class="sd-tip" d="M29 6L35 12L29 18"/>${edge.both?'<path class="sd-tip" d="M9 6L3 12L9 18"/>':''}</svg><span class="sd-connection-label">${esc(edge.label)}</span></li>`;
 }
 
+function renderInstrumentArchitecture() {
+  const children = {
+    sensor: ['Optical bench, telescope and scan mechanisms', 'Focal-plane modules and ROICs', 'Sensor Unit Electronics: Video Processors, conversion circuitry and P&TC'],
+    electronics: ['Common chassis and parent board', 'Instrument Controller, Data Processor, HSIO and TNT cards', 'Power supply, scanner driver and encoder-processor cards'],
+    cooler: ['Spacecraft-mounted cooler-control electronics', 'Electrical connection to the cooler in the Sensor Unit', 'Temperature feedback and controlled drive'],
+  };
+  const packages = INSTRUMENT_ASSEMBLIES.map(assembly => `<section class="sd-package"><h4>${esc(assembly.title)}</h4><ul>${children[assembly.id].map(name => `<li>${esc(name)}</li>`).join('')}</ul><p>${esc(assembly.body)}</p>${chip('spec',assembly.evidence,`${assembly.title}: ABI packaging`)}</section>`).join('');
+  const interfaces = INSTRUMENT_INTERFACES.map(item => `<div><dt>${esc(item.title)}</dt><dd>${esc(item.body)} ${chip('spec',`integration:${item.fact}`,item.title)}</dd></div>`).join('');
+  return `<section class="sd-instrument" aria-labelledby="sd-instrument-title"><header><p class="eyebrow">Physical assembly view / ABI civil example</p><h4 id="sd-instrument-title">One instrument, coordinated units</h4><p>Enclosures contain several functions. Shared electronics do not require the whole instrument to occupy one housing. ${chip('spec','integration:abi-units','ABI physical units')}</p></header><div class="sd-packages">${packages}</div><details class="sd-interface-details"><summary>Across the instrument-to-spacecraft boundary</summary><dl class="sd-interfaces">${interfaces}</dl></details><details class="sd-interface-details"><summary>Who supplies it, and who integrates it?</summary><p>Contract responsibility is a different map from physical packaging. Lockheed Martin’s 2014 announcement identifies it as SBIRS prime and Northrop Grumman as payload provider, with the delivered payload proceeding to satellite-bus integration. That establishes delivery roles only. ${chip('vendor','integration:supplier-delivery','Historical SBIRS delivery roles')}</p><p>NASA’s Landsat 9 example describes mechanical attachment of the instruments followed by power and spacecraft data-handling integration. ${chip('reported','integration:spacecraft-integration','Landsat 9 integration')}</p><p>NASA’s interface-management guidance separates organizational boundaries from functional and physical interfaces. Teams define and control those interfaces during design and verify compatibility during integration. There is no universal rule that one company, one enclosure and one function are the same boundary. ${chip('spec','integration:interface-management','NASA interface management')}</p></details></section>`;
+}
+
 export function renderSystemDiagram(id,{assemblyPrefix=''}={}) {
   const diagram=SYSTEM_DIAGRAMS.find(item=>item.id===id);
   if(!diagram) throw new Error(`Unknown system diagram: ${id}`);
@@ -175,7 +187,7 @@ export function renderSystemDiagram(id,{assemblyPrefix=''}={}) {
     return `<section class="sd-path" aria-labelledby="sd-${esc(row.id)}"><h4 id="sd-${esc(row.id)}">${esc(row.title)}</h4><ol class="sd-flow" style="--sd-steps:${row.nodes.length}">${sequence}</ol>${row.note?`<p class="sd-path-note">${esc(row.note)}</p>`:''}</section>`;
   }).join('');
   const legend=[['light','Light'],['data','Data / control'],['power','Electrical power'],['heat','Heat'],['mechanical','Mechanical motion']].map(([type,label])=>`<li class="sd-${type}"><svg viewBox="0 0 40 24" aria-hidden="true" focusable="false"><path class="sd-wire" d="M3 12H35"/><path class="sd-tip" d="M29 6L35 12L29 18"/></svg><span>${label}</span></li>`).join('');
-  return `<figure class="system-diagram" id="diagram-${esc(id)}" aria-labelledby="sd-title-${esc(id)}"><figcaption><p class="eyebrow">${esc(diagram.eyebrow)}</p><h3 id="sd-title-${esc(id)}">${esc(diagram.title)}</h3><p>${esc(diagram.intro)}</p></figcaption><ul class="sd-legend" aria-label="Connection types">${legend}</ul><div class="sd-paths">${rows}</div><p class="sd-boundary">Selected functional connections. <a href="method.html#assume-look-model">Drawing arrangement is schematic.</a> Component buttons open the reviewed evidence; component names link to the assembly catalog.</p></figure>`;
+  return `<figure class="system-diagram" id="diagram-${esc(id)}" aria-labelledby="sd-title-${esc(id)}"><figcaption><p class="eyebrow">${esc(diagram.eyebrow)}</p><h3 id="sd-title-${esc(id)}">${esc(diagram.title)}</h3><p>${esc(diagram.intro)}</p></figcaption>${id==='abi-instrument'?renderInstrumentArchitecture():''}<ul class="sd-legend" aria-label="Connection types">${legend}</ul><div class="sd-paths">${rows}</div><p class="sd-boundary">Selected functional connections. Arrows describe a connection or processing step, not a separate housing for every block. <a href="method.html#assume-look-model">Drawing arrangement is schematic.</a> Component buttons open the reviewed evidence; component names link to the assembly catalog.</p></figure>`;
 }
 
 export const renderSystemDiagrams = options => SYSTEM_DIAGRAMS.map(diagram=>renderSystemDiagram(diagram.id,options)).join('\n');

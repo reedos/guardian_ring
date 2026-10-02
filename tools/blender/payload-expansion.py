@@ -139,49 +139,10 @@ def expand(h,m):
         h.ring('Stationary cold stop',(x,-.06,z-.11),.21,.125,.025,m['black'],'z',32)
         h.box('Filter cassette foot',(x,-.64,z),(.28,.09,.23),m['dark'],.009)
 
-    h.role('DataInterface')
-    # An open EU rack groups named cards. Individual card forms/parts are as drawn.
-    h.box('Electronics unit common base',(4.14,-1.38,-.83),(2.22,.16,3.30),m['silver'],.033)
-    for x in [3.10,5.18]:
-        h.box('Electronics unit side frame',(x,-.55,-.83),(.075,1.60,3.23),m['silver'],.019)
-        for z in [-2.28,.62]:h.box('Electronics unit front corner',(x,-.36,z),(.10,1.92,.10),m['silver'],.014)
-    h.box('Electronics unit rear backplane',(4.14,-.51,-2.35),(2.0,1.57,.071),m['pcb'],.008)
-    card(h,m,'Data processor',(4.13,-.93,-1.49),(1.77,.76))
-    card(h,m,'Telemetry and timing',(4.13,-.58,-.58),(1.77,.78),'clock')
-    card(h,m,'High-speed data interface',(4.13,-.23,.29),(1.77,.77))
-    for x in [3.61,4.12,4.63]:
-        h.connector('HSIO connector',(x,-.18,.82),.29,m)
-        h.line('Representative data interface cable',[(x,-.16,.91),(x,-.09,1.12),(x+.13,-.64,1.31)],.022,m['loom'])
-    h.line('Digitizer to EU harness',[(2.73,-.46,1.03),(3.10,-.46,1.24),(3.65,-.64,1.27),(4.11,-.64,.86)],.032,m['loom'])
-    h.line('EU command and telemetry loom',[(3.2,-.55,-.56),(2.9,-.53,-.38),(2.58,-.53,-.40)],.028,m['loom'])
-
-    h.role('PowerSupply')
-    h.enclosure('Instrument power supply housing',(4.22,-1.00,2.27),(2.12,.53,1.49),m,True)
-    card(h,m,'Power conversion',(4.22,-.69,2.27),(1.89,1.26),'power')
-    for x in [3.65,4.15,4.65]:
-        h.box('Power component thermal pad',(x,-.52,2.02),(.23,.055,.23),m['white'],.009)
-    h.line('Instrument supply input cable',[(4.86,-.62,2.95),(5.18,-.91,3.21),(5.18,-1.21,3.58)],.035,m['loom'])
-    h.line('Converted supply to EU',[(4.17,-.58,1.56),(4.40,-.46,1.32),(4.89,-.34,.71)],.027,m['loom'])
-    h.line('Converted supply to sensor unit',[(3.30,-.62,2.21),(2.85,-.81,2.21),(2.70,-.89,1.59)],.026,m['loom'])
-
-    h.role('Controller')
-    # Motor drive, encoder processing and peripheral/thermal control are visible
-    # daughter assemblies rather than attributed to the instrument computer chip.
-    card(h,m,'Scan motor drive',(1.06,-1.12,3.39),(1.42,1.14),'drive')
-    card(h,m,'Encoder processing',(2.57,-1.12,3.39),(1.25,1.14),'digital')
-    h.enclosure('Peripheral thermal control module',(.68,-1.04,2.14),(1.18,.37,.63),m,True)
-    for x in [.31,.57,.83,1.09]:h.box('Peripheral heater and mechanism driver',(x,-.81,2.13),(.17,.065,.26),m['chip'],.005)
-    h.line('Scan drive output loom',[(.40,-.91,3.59),(-.1,-.92,3.67),(-.40,-1.14,3.66)],.030,m['loom'])
-    h.line('Encoder return loom',[(2.0,-.90,3.2),(1.4,-.75,2.9),(.02,-1.1,2.61)],.021,m['loom'])
-
     h.role('Thermal')
-    h.enclosure('Separate cryocooler control electronics',(1.80,-1.10,-3.61),(2.2,.43,1.08),m,True)
-    card(h,m,'Cryocooler power amplifier',(1.8,-.82,-3.61),(1.98,.92),'drive')
     h.box('Cold-head thermometer',(-.42,-.40,-3.51),(.12,.08,.12),m['edge'],.006)
-    h.line('Cold-head thermometer feedback',[(-.42,-.35,-3.51),(-.11,-.50,-3.74),(.56,-.54,-3.93),(.83,-.71,-3.84)],.015,m['loom'])
-    h.line('CCE cooler drive harness',[(2.65,-.68,-3.31),(2.99,-.80,-2.95),(2.71,-.86,-2.27)],.033,m['loom'])
     h.cyl('Remote cold head',(-.22,-.84,-3.29),.15,.55,m['cyan'],'x',28,.012)
-    h.line('Cooler transfer line',[(1.30,-.86,-2.24),(.98,-.96,-2.61),(.59,-.96,-3.18),(.08,-.84,-3.29)],.035,m['silver'])
+    h.line('Cooler transfer line',[(3.81,-.86,-2.24),(3.42,-1.08,-2.70),(1.08,-1.10,-2.95),(.59,-.96,-3.18),(.08,-.84,-3.29)],.035,m['silver'])
     h.line('Cold-stage thermal strap',[(-.53,-.54,-3.44),(-.37,-.64,-3.4),(-.41,-.83,-3.29)],.054,m['copper'])
 
     return {
@@ -189,6 +150,4 @@ def expand(h,m):
         'AnchorMechanisms':[-2.65,.04,-.48],
         'AnchorCalibration':[-3.29,-.17,.14],
         'AnchorAftOptics':[-.45,.21,-2.04],
-        'AnchorDataInterface':[4.14,.02,.33],
-        'AnchorPower':[4.22,-.43,2.25],
     }

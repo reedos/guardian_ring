@@ -35,7 +35,7 @@ export const checkView = () => {
   return { dist: +dist.toFixed(3), blocked: block ? `${block.object.type} ${col(block.object.material)} at ${Math.round(block.distance / dist * 100)}%` : null, covers };
 };
 
-export const fly = async ({ id }) => {
+export const fly = async ({ id = '', assemblyView = '' }) => {
   const T = grx.THREE, st = grx.state, B = grx.built[st.scene], cam = grx.camera;
   if (typeof grx.flightProgress !== 'function') throw new Error('Missing rendered flight-progress hook');
   let observedProgress = 0;
@@ -46,10 +46,11 @@ export const fly = async ({ id }) => {
     observedProgress = u; return u;
   };
   const frames = [cam.position.clone()], aims = [grx.controls.target.clone()], progress = [0];
-  const spot = ({light:B.hotspots,data:B.dataHotspots,heat:B.heatHotspots})[st.mode]?.[id];
+  const spot = assemblyView?{view:B.camera}:({light:B.hotspots,data:B.dataHotspots,heat:B.heatHotspots})[st.mode]?.[id];
   const motionRequired = !!spot?.view && (cam.position.distanceTo(new T.Vector3(...spot.view.pos)) > 1e-7 || grx.controls.target.distanceTo(new T.Vector3(...spot.view.target)) > 1e-7);
   const t0 = performance.now(), cs = grx.clearance ? { ...grx.clearance } : null;
-  if (id) grx.select(id, true);
+  if (assemblyView) grx.setAssemblyView(assemblyView);
+  else if (id) grx.select(id, true);
   if (readProgress() !== 0) throw new Error('Flight did not begin at rendered progress 0');
   const selectMs = performance.now() - t0, ce = grx.clearance;
   const plan = cs && { standIn: ce.standIn > cs.standIn, unplanned: ce.unplanned > cs.unplanned, planned: ce.plans > cs.plans ? ce.planMs : null, ready: ce.hits > cs.hits, clear: ce.clear, chosen: ce.chosen, costs: ce.costs };

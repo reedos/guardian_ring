@@ -34,3 +34,7 @@ html{scroll-behavior:smooth;scroll-padding-top:96px}[hidden]{display:none!import
 .learning-entry-options strong { color: var(--accent); font-size: 14px; }
 .learning-entry-options span { color: var(--muted); font-size: 12px; line-height: 1.6; }
 @media (max-width: 760px) { .learning-entry { grid-template-columns: minmax(0,1fr); gap: 18px; padding-block: 28px; } }
+.signal-chain.instrument-packages {grid-template-columns:repeat(3,minmax(0,1fr))}
+.signal-chain.instrument-packages li:nth-child(n) {grid-column:auto;grid-row:auto}
+.signal-chain.instrument-packages li::after {display:none}
+@media(max-width:760px) {.signal-chain.instrument-packages {grid-template-columns:1fr}}

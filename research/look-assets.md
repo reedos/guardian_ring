@@ -1,6 +1,6 @@
 # Illustration and diagram provenance
 
-Reviewed 10/01/2026. The story illustrations accompany ten interactive Blender scenes and a sourced component catalog. All rendered constellation positions, representative hardware layouts, molecular icons, and plume shapes are schematic. No live positions, operational constellation count, coverage guarantee, plume intensity, dimensions, or sensor performance is represented.
+Reviewed 10/02/2026. The story illustrations accompany ten interactive Blender scenes and a sourced component catalog. All rendered constellation positions, representative hardware layouts, molecular icons, and plume shapes are schematic. No live positions, operational constellation count, coverage guarantee, plume intensity, dimensions, or sensor performance is represented.
 
 ## Rendered outputs
 
@@ -8,16 +8,18 @@ Reviewed 10/01/2026. The story illustrations accompany ten interactive Blender s
 |---|---|---|---|
 | Schematic ring | `public/look/ring.webp` | `public/look/ring-phone.webp` | `tools/blender/build-orbit-look.py` |
 | Spacecraft cutaway | `public/look/satellite.webp` | `public/look/satellite-phone.webp` | `tools/blender/render-authored.py`, shipped `satellite.glb` |
-| Payload cutaway | `public/look/payload.webp` | `public/look/payload-phone.webp` | `tools/blender/render-authored.py`, shipped `payload.glb` v7 |
-| Focal-plane cutaway | `public/look/focal-plane.webp` | `public/look/focal-plane-phone.webp` | `tools/blender/render-authored.py`, shipped `focal-plane.glb` v4 |
-| Detector-element study | `public/look/pixel.webp` | `public/look/pixel-phone.webp` | `tools/blender/build-hardware-look.py` |
-| Molecular plume | `public/look/plume.webp` | `public/look/plume-phone.webp` | `tools/blender/build-plume-look.py` |
+| Payload cutaway | `public/look/payload.webp` | `public/look/payload-phone.webp` | `tools/blender/render-authored.py`, shipped `payload.glb` v13 |
+| Focal-plane cutaway | `public/look/focal-plane.webp` | `public/look/focal-plane-phone.webp` | `tools/blender/render-authored.py`, shipped `focal-plane.glb` v5 |
+| Detector-element study | `public/look/pixel.webp` | `public/look/pixel-phone.webp` | `tools/blender/render-authored.py`, shipped `pixel.glb` |
+| Molecular plume | `public/look/plume.webp` | `public/look/plume-phone.webp` | `tools/blender/render-authored.py`, shipped `plume.glb` |
 
-Each study has separate desktop and phone cameras. Blender 5.2 renders the geometry, textures and lighting. The current authored hardware stills use Cycles with denoising; the ring and plume builders retain their own rendering configurations. `tools/blender/encode-look.py` creates the twelve WebP delivery files without resizing. The PNGs are reproducible source renders and do not ship.
+Each study has separate desktop and phone cameras. Blender 5.2 renders the geometry, textures and lighting. The current authored stills use Cycles with denoising; the ring builder retains its own rendering configuration. `tools/blender/encode-look.py` creates the twelve WebP delivery files without resizing. The PNGs are reproducible source renders and do not ship.
 
-The detailed spacecraft, payload, and focal-plane stills import the actual shipped GLBs. Payload v7 exposes thirteen parent assemblies, including scan mechanisms, calibration references, aft optics, sensor and instrument electronics, power, and thermal paths. Focal-plane v4 exposes eight parents and distinguishes the detector/ROIC package, warm video electronics, bias/timing, and thermometer/cooler feedback. Public ABI names and functions guide the explanation; package dimensions, connector layouts, repeated parts, board traces, and wiring are original drawing choices. No manufacturer mesh or CAD model was used.
+The spacecraft, payload, focal-plane, detector-element, and plume stills import the actual shipped GLBs. Payload v13 groups sensor unit electronics (SUE), the common instrument electronics unit (EU), and cooler control electronics (CCE) into coherent enclosures with mounted boards, bulkhead connectors, harnesses, and conductive mounting paths. The Explorer retains thirteen stable learning selections for components and functions within the integrated instrument; this is not a count of thirteen separate physical assemblies. Focal-plane v5 exposes eight learning selections and distinguishes the detector/ROIC package, warm video electronics, bias/timing, and thermometer/cooler feedback. Public ABI names and functions guide the explanation; package dimensions, connector layouts, repeated parts, board traces, and wiring are original drawing choices. No manufacturer mesh or CAD model was used.
 
-`THIRD_PARTY_NOTICES.md` lists all ten interactive assets and their builders. Their only third-party image content is the NASA Earth imagery documented below. The plume texture is procedural. Final browser acceptance is recorded in `gate-results.md`: all 16 commands passed for this revision, including desktop/phone framing, story stills, coplanar surfaces, all-pairs camera flights, and performance. The authored stills and representative hardware views were also visually inspected.
+Both payload stills were rendered on 10/02/2026 from the shipped v13 GLB and are referenced by `look/payload.webp?v=6` and `look/payload-phone.webp?v=6`. They show the Explorer's Inside view: the renderer hides only objects with the exact `SensorElectronicsCover`, `InstrumentElectronicsCover`, or `CoolerElectronicsCover` role or cover-parent name, including their lid trim and fasteners. Internal boards, enclosure walls, mounting feet, connectors, harnesses, and thermal interfaces stay in place. The GLB version and story-image cache key are independent.
+
+`THIRD_PARTY_NOTICES.md` lists all ten interactive assets and their builders. Their only third-party image content is the NASA Earth imagery documented below. The plume texture is procedural. The payload v13 revision completed all twenty full-scope built-preview browser gate commands on the real RTX 5090 on 10/02/2026. `gate-results.md` identifies the accepted build as SHA-256 `fd3463e001d9a178003bab65f1f226b87c0732f8160756f400fcb708cf77e01d` and records story, framing, label, camera-route, and performance checks. This is local acceptance, not remote CI or deployment status. Future asset changes require fresh acceptance; exporting a GLB or rendering a still alone is insufficient.
 
 ## System diagrams
 

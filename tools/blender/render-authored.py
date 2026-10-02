@@ -23,7 +23,7 @@ def from_three(p):
 
 views = {
     'satellite': ([0,.5,0],[8,7,11]),
-    'payload': ([.6,-.3,.15],[12,10,15]),
+    'payload': ([1.4,-.3,.15],[14,12,17]),
     'focal-plane': ([.4,.25,-.2],[4.5,4.8,6]),
     'pixel': ([0,1.25,0],[4.7,3.6,6]),
     'plume': ([0,3.2,0],[8,5.8,11]),
@@ -33,6 +33,15 @@ for kind in kinds:
     target, eye = views[kind]
     bpy.ops.wm.read_factory_settings(use_empty=True)
     bpy.ops.import_scene.gltf(filepath=str(ROOT/'public'/'models'/f'{kind}.glb'))
+    if kind == 'payload':
+        # Match the Explorer's explicit Inside view. Only authored cover meshes
+        # disappear; mounted boards, harnesses and heat paths stay in place.
+        covers = {'SensorElectronicsCover', 'InstrumentElectronicsCover', 'CoolerElectronicsCover'}
+        for obj in bpy.context.scene.objects:
+            if obj.get('assetRole') in covers or obj.name in covers:
+                obj.hide_render = True
+                for child in obj.children_recursive:
+                    child.hide_render = True
     helpers['setup_render'](kind,from_three(target))
     helpers['render'](kind,from_three(target),from_three(eye))
     helpers['render'](kind,from_three(target),from_three(eye),phone=True)

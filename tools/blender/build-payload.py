@@ -1,7 +1,7 @@
-"""Detailed representative infrared payload and electronics, version 10.
+"""Detailed representative infrared payload and electronics, version 13.
 Blender --background --python tools/blender/build-payload.py.
-The opened telescope and displaced cold/electronics assemblies show subsystem
-relationships only. No military optical prescription, electronics schematic,
+The opened telescope and integrated electronics units show subsystem
+relationships with authored removable covers. No military optical prescription, electronics schematic,
 dimensions, part count, detector format or performance is reconstructed.
 """
 import ast,bpy,math,importlib.util
@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=10
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=13
 
 # Keep the approved reflective cutaway, then expose the rest of its signal chain.
 source=Path(__file__).with_name('build-hardware-look.py');tree=ast.parse(source.read_text(encoding='utf-8'))
@@ -29,10 +29,10 @@ for obj in list(bpy.context.scene.objects):
         if modifier.type=='BEVEL':modifier.segments=1 if modifier.width<=.005 else 2
 
 h.role('Bench')
-h.box('Payload structural optical bench',(.70,-1.60,.15),(9.80,.18,9.10),m['dark'],.055)
-for x in [-4.08,5.48]:h.box('Machined bench edge',(x,-1.48,.15),(.095,.070,8.86),m['silver'],.014)
-for z in [-4.28,4.58]:h.box('Machined bench edge',(.70,-1.48,z),(9.56,.070,.095),m['silver'],.014)
-for x in [-2.70,-.5,1.6,3.45]:
+h.box('Payload structural optical bench',(1.50,-1.60,.15),(11.40,.18,9.10),m['dark'],.055)
+for x in [-4.08,7.08]:h.box('Machined bench edge',(x,-1.48,.15),(.095,.070,8.86),m['silver'],.014)
+for z in [-4.28,4.58]:h.box('Machined bench edge',(1.50,-1.48,z),(11.16,.070,.095),m['silver'],.014)
+for x in [-2.70,-.5,1.6,3.45,6.3]:
     for z in [-2.55,1.85]:
         h.cyl('Bench isolator mount',(x,-1.78,z),.12,.18,m['silver'],segments=20)
         h.screw((x,-1.435,z),m['edge'],r=.033)
@@ -62,61 +62,31 @@ h.ring('Cold shield optical interface',(-1.10,-.47,-1.42),.38,.29,.055,m['silver
 for obj in bpy.context.scene.objects:
     if obj.get('assetRole')=='Detector':obj.location.y+=1.50;obj.location.z+=.12
 
-h.role('Readout')
-h.enclosure('Front-end readout housing',(.56,-.98,.91),(1.23,.72,1.17),m,True)
-h.board('Analog front-end board',(.56,-.60,.91),(1.09,1.01),m)
-for x in [.20,.55,.89]:h.box('Readout channel package',(x,-.42,.61),(.21,.085,.21),m['chip'],.012)
-h.connector('Low-level signal interface',(.55,-.93,1.56),.57,m)
-for z in [.60,1.12]:h.box('Readout shield partition',(.57,-.43,z),(1.01,.20,.025),m['silver'],.005)
-h.box('Readout role plate',(.55,-.745,1.645),(1.02,.21,.026),m['dark'],.005)
-# Gold flex physically connects the separated cold package and front end.
-h.ribbon('Detector flex',[(-.64,-.33,-3.07),(-.42,-.55,-2.92),(.76,-.81,-2.74),(.97,-.91,-.20),(.32,-.62,.41)],.30,m['goldedge'])
-for dx in [-.09,-.045,0,.045,.09]:h.line('Flex signal conductor',[(-.64+dx,-.315,-3.07),(-.42+dx,-.535,-2.92),(.76+dx,-.795,-2.74),(.97+dx,-.895,-.20),(.32+dx,-.605,.41)],.004,m['copper'])
-
-h.role('Digitizer')
-h.enclosure('Digitization and processing housing',(2.12,-.98,.91),(1.37,.72,1.17),m,True)
-h.board('Representative conversion board',(2.12,-.60,.91),(1.22,1.01),m)
-h.box('Conversion circuit package',(2.10,-.42,.84),(.42,.12,.38),m['chip'],.015)
-h.box('Conversion package lid',(2.10,-.350,.84),(.33,.015,.29),m['dark'],.005)
-for z in [.52,1.28]:h.connector('Data board interface',(2.11,-.50,z),.39,m)
-h.box('Digitizer role plate',(2.12,-.77,1.536),(1.09,.22,.028),m['dark'],.005)
-for dz in [-.05,0,.05]:h.line('Readout to digitizer harness',[(1.14,-.55,.95+dz),(1.30,-.48,1.03+dz),(1.45,-.48,1.03+dz),(1.50,-.56,.94+dz)],.010,m['loom'])
-
-h.role('Controller')
-h.enclosure('Instrument controller chassis',(1.99,-.98,-.90),(1.56,.72,1.19),m,True)
-h.board('Instrument control board',(1.99,-.60,-.90),(1.42,1.04),m)
-for x in [1.51,1.98,2.44]:
-    h.box('Control-board card guide',(x,-.43,-1.0),(.044,.28,.74),m['silver'],.007)
-    h.box('Controller daughtercard',(x,-.37,-1.0),(.026,.35,.68),m['pcb'],.004)
-h.connector('Spacecraft data connector',(2.04,-.95,-.237),.56,m)
-for x in [1.39,2.59]:h.box('Controller identification support',(x,-.43,-.39),(.045,.30,.10),m['silver'],.005)
-h.box('Controller role plate',(1.99,-.28,-.39),(1.36,.035,.30),m['dark'],.005)
-h.line('Digitizer output loom',[(2.54,-.5,.43),(2.73,-.37,.13),(2.73,-.37,-.25),(2.48,-.47,-.40)],.026,m['loom'])
-h.line('Instrument control harness',[(1.50,-.54,-.45),(.84,-.52,-.46),(.43,-.56,-.70),(-.25,-.51,-1.06)],.020,m['loom'])
-
 h.role('Thermal')
-h.cyl('Representative cooler compressor',(2.19,-.86,-2.24),.23,1.13,m['silver'],'x',32,.015)
-for x in [1.74,1.91,2.08,2.25,2.42,2.59]:h.ring('Compressor housing fin',(x,-.86,-2.24),.26,.232,.026,m['dark'],'x',32)
-h.cyl('Cooler cold head',(1.45,-.86,-2.24),.125,.29,m['cyan'],'x',24,.012)
-for i in range(6):h.line('Thermal braid leaf',[(-.57,-.54,-3.76),(-.16,-.76,-3.40),(.35,-.76,-2.73),(1.29,-.82,-2.27+i*.014)],.013,m['copper'])
-h.line('Cooler control harness',[(2.54,-.83,-2.13),(2.88,-.76,-1.87),(2.60,-.62,-1.39)],.024,m['loom'])
-h.box('Heat rejection radiator support',(3.45,-.49,-1.80),(.09,1.63,1.70),m['dark'],.030)
-h.box('Representative radiator face',(3.515,-.49,-1.80),(.028,1.55,1.60),m['white'],.012)
-for y in [-1.11,-.87,-.63,-.39,-.15,.09]:h.box('Radiator coating segment',(3.534,y,-1.80),(.008,.012,1.48),m['silver'],.002)
-for z in [-2.40,-1.20]:h.line('Warm-side heat pipe',[(2.55,-1.07,-2.24),(2.94,-1.15,z),(3.39,-.75,z)],.028,m['silver'])
-h.box('Cooling role plate',(2.20,-.57,-2.24),(.94,.03,.24),m['dark'],.006)
+h.cyl('Representative cooler compressor',(4.70,-.86,-2.24),.23,1.13,m['silver'],'x',32,.015)
+for x in [4.25,4.42,4.59,4.76,4.93,5.10]:h.ring('Compressor housing fin',(x,-.86,-2.24),.26,.232,.026,m['dark'],'x',32)
+for x in [4.31,5.06]:
+    h.box('Compressor conductive saddle',(x,-1.20,-2.24),(.20,.30,.55),m['silver'],.016)
+    h.box('Compressor mounting foot',(x,-1.41,-2.24),(.39,.10,.72),m['silver'],.012)
+h.cyl('Compressor transfer interface',(3.96,-.86,-2.24),.125,.29,m['silver'],'x',24,.012)
+h.box('Heat rejection radiator support',(6.55,-.49,-2.13),(.09,1.63,1.72),m['dark'],.030)
+h.box('Representative radiator face',(6.615,-.49,-2.13),(.028,1.55,1.62),m['white'],.012)
+for y in [-1.11,-.87,-.63,-.39,-.15,.09]:h.box('Radiator coating segment',(6.634,y,-2.13),(.008,.012,1.50),m['silver'],.002)
+for z in [-2.72,-1.55]:h.line('Warm-side heat pipe',[(5.06,-1.20,-2.24),(5.56,-1.40,z),(6.49,-.75,z)],.028,m['silver'])
+h.box('Cooling role plate',(4.70,-.57,-2.24),(.94,.03,.24),m['dark'],.006)
+# Continuous structural/thermal interfaces to the bench and radiator. These
+# routes identify conductance paths, not temperature, conductance or capacity.
+h.line('Instrument chassis heat pipe',[(6.36,-1.43,1.05),(6.76,-1.43,1.05),(6.76,-1.42,-1.32),(6.49,-.75,-1.55)],.025,m['silver'])
+h.line('Sensor baseplate heat pipe',[(1.65,-1.43,-.30),(3.13,-1.44,-.30),(3.13,-1.43,-1.62),(5.56,-1.40,-1.55)],.025,m['silver'])
+h.line('Cooler controller baseplate heat pipe',[(4.80,-1.43,-3.53),(6.22,-1.44,-3.53),(6.22,-1.42,-2.72),(6.49,-.75,-2.72)],.025,m['silver'])
 
 spec=importlib.util.spec_from_file_location('payload_expansion',Path(__file__).with_name('payload-expansion.py'))
 expansion=importlib.util.module_from_spec(spec);spec.loader.exec_module(expansion)
 expanded_anchors=expansion.expand(h,m)
 
-# Side plates on the EU frame remain visible beside the stepped cards. Placing
-# their text under the next card falsely suggested clipped, embedded lettering.
-h.role('DataInterface')
-for name,y,z in [('Data processor',-.93,-1.49),('Telemetry timing',-.58,-.58),('High-speed interface',-.23,.29)]:
-    h.box(name+' side identification stock',(5.265,y,z),(.038,.29,.82),m['dark'],.005)
-h.role('Thermal')
-h.box('Cooler-control rear identification stock',(1.80,-.53,-3.96),(1.88,.035,.27),m['dark'],.005)
+spec=importlib.util.spec_from_file_location('payload_electronics',Path(__file__).with_name('payload-electronics.py'))
+electronics=importlib.util.module_from_spec(spec);spec.loader.exec_module(electronics)
+electronics_anchors=electronics.build(h,m)
 h.role('Calibration')
 h.box('Calibration target left identification stock',(-3.795,-.24,-.24),(.034,.28,.82),m['dark'],.005)
 
@@ -126,10 +96,10 @@ for mat in bpy.data.materials:
             if node.type in {'TEX_NOISE','BUMP'}:mat.node_tree.nodes.remove(node)
 anchors={
  'AnchorOptics':[-.97,.38,-.595],'AnchorBaffles':[-1.70,.93,1.80],
- 'AnchorDetector':[-1.10,-.275,-3.47],'AnchorReadout':[.55,-.34,.90],
- 'AnchorDigitizer':[2.10,-.32,.84],'AnchorController':[1.99,-.12,-.90],
- 'AnchorThermal':[2.14,-.58,-2.24],
+ 'AnchorDetector':[-1.10,-.275,-3.47],
+ 'AnchorThermal':[4.70,-.58,-2.24], 'AnchorRadiator':[6.64,-.49,-2.13],
 }
 anchors.update(expanded_anchors)
+anchors.update(electronics_anchors)
 h.export(ROOT/'public/models/payload.glb','GuardianPayload',VERSION,'payload',anchors,
- 'Representative civil-derived payload teaching assembly: orthogonal scan drives, four reflective telescope surfaces, focus and deployable cover, calibration examples, stationary aft optics, cold detector, sensor electronics, instrument electronics and closed cooling/control paths. Component roles follow public ABI descriptions; layout, optical prescription, packaging and counts of electronic parts are as drawn, not military hardware.')
+ 'Representative civil-derived payload teaching assembly: orthogonal scan drives, four reflective telescope surfaces, focus and deployable cover, calibration examples, stationary aft optics, cold detector, one closed sensor electronics enclosure, one closed common instrument electronics chassis, separate coordinated cooler-control electronics, defined bulkhead connectors, common mounting interfaces and closed cooling/control paths. Component roles follow public ABI descriptions; layout, optical prescription, packaging and counts of electronic parts are as drawn, not military hardware.')

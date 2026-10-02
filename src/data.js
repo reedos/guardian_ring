@@ -6,13 +6,14 @@ import { focalContent } from './focal-content.js';
 import { expandContent } from './expanded-content.js';
 import { nameComponents } from './component-names.js';
 import { attachComponents } from './component-catalog.js';
+import { attachInstrumentIntegration } from './instrument-integration.js';
 export const SCENES = [
   ['orbits', 'The ring'], ['satellite', 'The satellite'], ['payload', 'The payload'],
   ['focal-plane', 'The focal plane'], ['pixel', 'The pixel'], ['plume', 'The photon'],
   ['ground', 'Ground segment'], ['abi', 'Civil twin: ABI'], ['tirs2', 'Civil twin: TIRS-2'], ['atmosphere', 'The atmosphere'],
 ].map(([id, title], i) => ({ id, title, name: title, short: title.replace('The ', ''), unit: 1, side: i >= 6 }));
 export function content(model) {
-  const levels = attachComponents(nameComponents(expandContent({orbits:orbitsContent(model),...remainingContent(model),'focal-plane':focalContent()})));
+  const levels = attachInstrumentIntegration(attachComponents(nameComponents(expandContent({orbits:orbitsContent(model),...remainingContent(model),'focal-plane':focalContent()}))));
   const layer = name => Object.fromEntries(SCENES.map(({id})=>[id,levels[id][name]]));
   return { SCENES: SCENES.map(scene => ({...scene,intro:levels[scene.id].intro,scale:levels[scene.id].scale,ready:true})),
     PARTS:layer('light'),PARTS_DATA:layer('data'),PARTS_HEAT:layer('heat') };

@@ -8,6 +8,7 @@ import { createTeachingSequence } from './teaching-sequence.js';
 import { teachingProgram } from './teaching-programs.js';
 import { createTeachingFlows, createSignalIndicator, createPhaseHighlights } from './teaching-flows.js';
 import { createMirrorDemo } from './mirror-demo.js';
+import { createAssemblyPresentation } from './assembly-presentation.js';
 
 export function illustrated(config) {
   return {
@@ -26,7 +27,7 @@ export function illustrated(config) {
       // No catalog numbers or ratings: these name the teaching component roles.
       const labels=[];
       for (const label of config.labels || []) {
-        const {text,anchor,p,size,face='top',mount,partIds=[],...placement}=label;
+        const {text,anchor,p,size,face='top',mount,partIds=[],coverRole,assemblyId,...placement}=label;
         const point=anchor?resolve(anchor):p;
         const normal={top:[0,1,0],front:[0,0,1],back:[0,0,-1],right:[1,0,0],left:[-1,0,0]}[face];
         const surface=mount?stick(asset,point.map((v,i)=>v+normal[i]*(mount.reach||.6)),normal.map(v=>-v),o=>o.name.startsWith(mount.prefix),{footprint:size}):null;
@@ -34,7 +35,7 @@ export function illustrated(config) {
         const lines=Array.isArray(text)?text:[text];
         const mesh=printDecals(asset, {texture:textTexture(lines,{aspect:size[0]/size[1],ink:'#eaf1f6',plate:'#0b1015',px:96}),
           size,placements:[{p:point,face,...placement,...surface}],lift:.006,name:`Role label: ${lines.join(' ')}`});
-        if(mesh){mesh.userData.partIds=partIds;mesh.userData.textLines=lines.length;mesh.visible=false;labels.push(mesh);}
+        if(mesh){mesh.userData.partIds=partIds;mesh.userData.coverRole=coverRole;mesh.userData.assemblyId=assemblyId;mesh.userData.textLines=lines.length;mesh.visible=false;labels.push(mesh);}
       }
       const direction = new THREE.Vector3(...camera.pos).sub(new THREE.Vector3(...camera.target)).normalize();
       const make = (positions,views=config.views||{}) => Object.fromEntries(Object.entries(positions).map(([id,point]) => {
@@ -73,20 +74,36 @@ export function illustrated(config) {
         }
         if(pivots.length)asset.updateMatrixWorld(true);
         paths.update(state,mode);indicator?.update(state);absorption?.update(state);highlights.update(state);for(const mirror of mirrors)mirror.update(state);
+        if(presentation?.capture().view==='assembled'){
+          if(indicator)indicator.root.visible=false;
+          if(absorption)absorption.root.visible=false;
+          for(const mirror of mirrors)mirror.line.visible=false;
+        }
       }
       const teaching={
         state:()=>({...clock.state(),mode,legend:paths.legend(mode,clock.state().steps),note:config.lessonNote||'Drawing motion and sequence timing are illustrative; no real instrument performance is simulated.'}),
         subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
-        play(){clock.play();pose(clock.state());},pause(){clock.pause();pose(clock.state());},
-        step(delta){clock.step(delta);pose(clock.state());},reset(){clock.reset();pose(clock.state());},
-        seek(index,progress=0){clock.seek(index,progress);pose(clock.state());},
+        play(){presentation?.preparePlayback();clock.play();pose(clock.state());},pause(){clock.pause();pose(clock.state());},
+        step(delta){presentation?.preparePlayback();clock.step(delta);pose(clock.state());},reset(){clock.reset();pose(clock.state());},
+        seek(index,progress=0){presentation?.preparePlayback();clock.seek(index,progress);pose(clock.state());},
         setInspection(value){clock.setInspection(value);pose(clock.state());},
         setSuspended(value){clock.setSuspended(value);},
       };
       const solids=[];asset.traverse(o=>{if(o.isMesh&&!o.userData.teachingOverlay&&!o.userData.printed&&o.userData.solidForCamera!==false)solids.push(o);});
       const printed=labelController(labels,solids);
+      const applyPresentation=state=>{
+        const inside=state.view==='inside';
+        paths.root.visible=inside;
+        if(indicator)indicator.root.visible=inside;
+        if(absorption)absorption.root.visible=inside;
+        for(const mirror of mirrors)mirror.line.visible=inside;
+        for(const label of labels)label.userData.presentationHidden=(!!label.userData.coverRole&&inside)||(!!label.userData.assemblyId&&!inside);
+        printed.invalidate();
+      };
+      const presentation=config.assemblies?.length?createAssemblyPresentation({asset,assemblies:config.assemblies,onChange:applyPresentation}):null;
+      if(presentation)applyPresentation(presentation.state());
       pose(clock.state());
-      return { scene,asset,quality,model,camera,hotspots,dataHotspots,heatHotspots,solids,labels,teaching,
+      return { scene,asset,quality,model,camera,hotspots,dataHotspots,heatHotspots,solids,labels,teaching,presentation,
         updateLabels:printed.update,
         flows:paths.records.filter(r=>r.mode==='light').map(r=>r.group),dataFlows:paths.records.filter(r=>r.mode==='data').map(r=>r.group),heatFlows:paths.records.filter(r=>r.mode==='heat').map(r=>r.group),
         look:{exposure:1,bloom:0,threshold:1,ao:0,env:'studio'},

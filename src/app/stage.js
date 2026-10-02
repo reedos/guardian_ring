@@ -11,6 +11,7 @@ import { declutterPins, pinLabelBox, avoidPinObstacles } from './pin-layout.js';
 import { chip } from '../evidence.js';
 import { renderComponentDetails } from './component-details.js';
 import { createVisitHistory, retainedPart, capturePane, refreshScenarioContent } from './exploration-context.js';
+import { assemblyViewFromQuery } from './explorer-url.js';
 import * as orbits from '../scenes/orbits.js';
 import * as satellite from '../scenes/satellite.js';
 import * as payload from '../scenes/payload.js';
@@ -68,9 +69,10 @@ export const isCameraMoving = () => busy || !!tween;
 // Keep the completed value after tween is cleared so observers can record u=1.
 export const getFlightProgress = () => renderedFlightProgress;
 export const getTeaching = () => built[ui.scene]?.teaching || null;
+export const getAssemblyPresentation = () => built[ui.scene]?.presentation || null;
 const inspect = active => getTeaching()?.setInspection(active);
 function captureView() {
-  return { scene: ui.scene, mode: ui.mode, selected: ui.selected, position: camera.position.toArray(), target: controls.target.toArray(), pane: capturePane() };
+  return { scene: ui.scene, mode: ui.mode, selected: ui.selected, position: camera.position.toArray(), target: controls.target.toArray(), pane: capturePane(), presentation:getAssemblyPresentation()?.capture() };
 }
 export const destination = () => ui.scene;
 export const stageActive = () => $('viewer').contains(document.activeElement) || $('viewer').matches(':hover');
@@ -121,7 +123,7 @@ function updatePins() {
     const spot = hotspotsFor(ui.scene)[button.dataset.id]; if (!spot) continue;
     const p = new THREE.Vector3(...spot.pos).project(camera);
     const x = (p.x + 1) / 2 * width, y = (1 - p.y) / 2 * height;
-    button.hidden = p.z < -1 || p.z > 1 || x < 12 || x > width - 12 || y < 12 || y > height - 12;
+    button.hidden = getAssemblyPresentation()?.isPartVisible(button.dataset.id) === false || p.z < -1 || p.z > 1 || x < 12 || x > width - 12 || y < 12 || y > height - 12;
     if (!button.hidden) points.push({ id:button.dataset.id, x, y, button });
   }
   // The reference viewer's fan keeps nearby parts selectable on a phone. Leaders
@@ -193,6 +195,10 @@ export function select(id, fly = true) {
   if (!partCycle.selecting) partCycle.stop();
   if (fly) { inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); }
   ui.selected = id; $('card').hidden = false; $('card-k').textContent = part.kicker; $('card-t').textContent = part.title; $('card-b').textContent = part.body;
+  let assembly=$('card-assembly');
+  if(!assembly){assembly=document.createElement('div');assembly.id='card-assembly';assembly.className='card-assembly';$('card-b').before(assembly);}
+  assembly.hidden=!part.assembly;assembly.replaceChildren();
+  if(part.assembly){const title=document.createElement('p');title.textContent=part.assembly.title;assembly.append(title);assembly.insertAdjacentHTML('beforeend',chip('spec',part.assembly.evidence,'Civil reference'));if(part.assemblyNote){const note=document.createElement('p');note.className='assembly-context';note.textContent=part.assemblyNote;assembly.append(note);}}
   renderComponentDetails($('card-components'), part.components, { sceneId: store.C.SCENES[ui.scene].id, partId: id });
   $('card-s').replaceChildren();
   part.specs.forEach((row, index) => {
@@ -209,6 +215,7 @@ export function select(id, fly = true) {
     button.setAttribute('aria-pressed',String(active));
     if(button.classList.contains('pin'))button.classList.toggle('on',active);
   });
+  getAssemblyPresentation()?.revealPart(id);
   built[ui.scene]?.setPart?.(id); emit('scene-settings');
   const spot = hotspotsFor(ui.scene)[id]; if (fly && spot?.view) flyTo(spot.view.pos, spot.view.target);
   emit('select', id); updateCycle();
@@ -223,8 +230,15 @@ export function overview() {
   const preset = built[ui.scene]?.camera; if (!preset) return;
   partCycle.stop(); deselect(); flyTo(preset.pos, preset.target);
 }
+// Covers disappear only for the illustrative cutaway. Camera clearance always
+// includes the complete enclosures, so closing cannot trap a detail camera.
+export function setAssemblyView(view) {
+  const presentation=getAssemblyPresentation();if(!presentation)return;
+  getTeaching()?.pause();inspect(true);overview();
+  presentation.setView(view);updatePins();emit('scene-settings');
+}
 // Playback starts from the whole assembly, after the camera reaches its safe preset.
-export function preparePlayback() { overview(); settle(); inspect(false); emit('scene-settings'); }
+export function preparePlayback() { overview(); settle();getAssemblyPresentation()?.preparePlayback();inspect(false);emit('scene-settings'); }
 export function cycle(direction) {
   const parts = partsFor(ui.scene); if (!parts.length) return;
   const index = parts.findIndex(part => part.id === ui.selected);
@@ -268,12 +282,13 @@ export async function go(index, { record = true, restore = null } = {}) {
     const preset = built[index].camera; camera.position.set(...preset.pos); controls.target.set(...preset.target); camera.near = preset.near; camera.far = preset.far; controls.minDistance = preset.min; controls.maxDistance = preset.max;
     controls.update(); built[index].setMode(ui.mode); buildPanel(); resize(); emit('scene', index);
     if (restore) {
+      getAssemblyPresentation()?.restore(restore.presentation);
       document.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === ui.mode)));
       const id = retainedPart(partsFor(index), restore.selected);
       if (id) { inspect(true); select(id, false); } else deselect();
       camera.position.fromArray(restore.position); controls.target.fromArray(restore.target); settle();
       emit('mode', ui.mode); emit('restore-pane', { ...restore.pane, restoreFocus: true });
-    } else { select(partsFor(index)[0]?.id, false); if (!firstView) emit('pane-request', { pane: 'parts', reset: true }); }
+    } else { if(getAssemblyPresentation()){getAssemblyPresentation().setView('assembled');inspect(true);}select(partsFor(index)[0]?.id, false); if (!firstView) emit('pane-request', { pane: 'parts', reset: true }); }
     $('veil').hidden = true; emit('scene-settings');
   } catch (error) { $('veil').textContent = 'The viewer could not start. Reload to try again; the source and method pages remain available.'; throw error; }
   finally { if (epoch === buildEpoch) busy = false; }
@@ -352,11 +367,21 @@ export function start() {
     frameObservers.forEach(fn => fn({ frame: dt * 1000, cpu })); govern(now);
   });
   const [level, mode, part] = (new URLSearchParams(location.search).get('view') || '').split('.');
+  const sharedAssemblyView = assemblyViewFromQuery(location.search);
   if (/^\d$/.test(level) && modes.includes(mode)) {
     void show({ scene: Number(level), mode, part: part || null }).then(() => {
+      if (ui.scene !== Number(level) || ui.mode !== mode) return;
       // A shared two-field view explicitly means Overview. Keep show()'s
       // first-card default for ordinary navigation and the test-hook contract.
-      if (!part && ui.scene === Number(level) && ui.mode === mode) overview();
+      if (!part) overview();
+      const presentation = getAssemblyPresentation();
+      if (presentation && sharedAssemblyView) {
+        presentation.setView(sharedAssemblyView);
+        // A malformed closed+internal-part link must still reveal its subject.
+        // Restoring a presentation must not clear a valid external selection.
+        if (ui.selected) presentation.revealPart(ui.selected);
+        updatePins(); emit('scene-settings');
+      }
     });
   }
   else void go(0);

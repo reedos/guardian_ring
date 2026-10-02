@@ -689,7 +689,7 @@
       ],
       "scope": "Named ABI civil instrument design; the generic payload drawing does not inherit this hardware layout, dimensions, or performance.",
       "excerpt": "Power optical encoders and compute scan mirror",
-      "body": "The Encoder Processor cards power the optical encoders and calculate mirror position for the instrument electronics. The motor driver supplies motion; the encoder path reports position."
+      "body": "The Encoder Processor cards sit inside the Electronics Unit chassis. They power the optical encoders on the scan mechanism and calculate mirror position. The motor-driver card supplies motion; the encoder-processing path reports position."
     },
     {
       "id": "comprehensive-abi-opsa",
@@ -1266,7 +1266,7 @@
       ],
       "scope": "Named ABI civil instrument design; the generic payload drawing does not inherit this hardware layout, dimensions, or performance.",
       "excerpt": "digitize the focal plane data",
-      "body": "The source establishes an analog-to-digital function inside the SUE. A separate ADC board in the drawing is an explanatory grouping, not a verified ABI packaging layout."
+      "body": "The source establishes an analog-to-digital function inside the Sensor Unit Electronics. The cutaway identifies a circuit region within that assembly; no separate ADC board or enclosure is established by the public description."
     },
     {
       "id": "comprehensive-abi-eu",
@@ -1344,7 +1344,7 @@
       ],
       "scope": "Named ABI civil instrument design; the generic payload drawing does not inherit this hardware layout, dimensions, or performance.",
       "excerpt": "with the exception of the scanner",
-      "body": "P&TC handles calibration-target temperature, VNIR-module temperature, heat-pipe and outgas heaters, covers, and telescope focus. Scanner motion has separate EU drive cards."
+      "body": "The P&TC card is part of the Sensor Unit Electronics. It handles calibration-target temperature, VNIR-module temperature, heat-pipe and outgas heaters, covers, and telescope focus. Scanner motion has separate drive cards inside the Electronics Unit."
     },
     {
       "id": "comprehensive-abi-ptc-telemetry",

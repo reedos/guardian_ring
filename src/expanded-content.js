@@ -23,11 +23,11 @@ const payload = {
     ['Bound the detector’s optical environment','Cold stops and cooled aft optics help define the radiation environment seen by the detector. They are distinct from the active refrigeration that removes heat. The illustrated stop, filter mounts and window occupy separate supports so the optical and thermal responsibilities remain visible.']],
   'data-interface': ['Data processor and spacecraft interface',['abi-packets','abi-timing'],
     ['Carry observations beyond the optical assembly','Once the focal-plane signal has been digitized, its route continues through electronics. ABI’s Data Processor prepares the samples for transmission and its High Speed I/O card connects with the spacecraft using SpaceWire. These are downstream of the detector and video electronics.'],
-    ['Format data and cross the spacecraft interface','ABI distinguishes the Data Processor’s formatting and packetization from the High Speed I/O interface. Its timing card supplies system clocks and telemetry services. The card rack makes these functions physically distinct: collecting samples, organizing records and transporting them are separate steps.'],
+    ['Format data and cross the spacecraft interface','ABI’s Data Processor, High Speed I/O and timing cards share its Electronics Unit chassis. The Data Processor organizes samples into packets, HSIO communicates with the spacecraft and the timing card supplies clocks and telemetry services. They are coordinated cards within one electrical assembly, with distinct functional responsibilities.'],
     ['Conduct electronics heat through the chassis','The interface and processing cards consume electrical power and belong to the instrument’s warm Electronics Unit. GOES-R mounts that unit on thermally controlled equipment panels. Card supports, chassis and panel interfaces form a heat path separate from the cold detector assembly.']],
   power: ['Instrument power supply and distribution',['abi-power','power-distribution'],
     ['Supply the instrument’s electrical assemblies','The telescope does not supply its own operating power. ABI’s Electronics Unit converts spacecraft input power into instrument supplies. The resulting feeds support controllers, readout electronics and mechanism-related circuitry; the cryocooler also has its own control electronics.'],
-    ['Separate supply conversion from command handling','A power-supply card converts electrical input, while command and timing cards coordinate instrument operation. These functions share an electronics chassis but are not interchangeable. The drawing exposes a supply module and connectors to make the power path traceable alongside the data harness.'],
+    ['Separate supply conversion from command handling','A power-supply card converts electrical input, while command and timing cards coordinate instrument operation. These functions share ABI’s Electronics Unit chassis and parent board. The cutaway exposes the supply card inside that common enclosure so the power path can be followed alongside the internal data and control connections.'],
     ['Carry conversion heat to the mounting panel','Electrical conversion is part of the instrument’s heat load. The Electronics Unit rejects heat through its spacecraft equipment-panel interface. The cold head is served by the cooler and its dedicated thermal transport, so instrument electronics and detector cooling are represented as separate branches.']],
 };
 const focal={
@@ -54,6 +54,6 @@ export function expandContent(levels) {
       }
     });
   }
-  levels.payload.intro='Explore the instrument as connected assemblies: scan mirrors and mechanisms, telescope and aft optics, calibration references, detector and video electronics, conversion, command and timing, data interfaces, power and thermal control. The representative geometry uses explicitly named ABI examples. Open each assembly for its component anatomy and evidence.';
+  levels.payload.intro='Start with a complete instrument: sensor assembly, instrument electronics chassis and separate cooler controls. Open the enclosures to follow their boards and functions. ABI supplies the named civil packaging example; the drawing is representative. Component stops identify details and connections within that instrument, not an independent box for every function or company.';
   return expandLevelDetails(levels);
 }

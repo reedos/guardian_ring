@@ -9,6 +9,8 @@
 .parts-heading {display:flex;justify-content:space-between;align-items:start;gap:24px;margin-bottom:22px}
 .parts-heading h3 {font:500 clamp(24px,3vw,34px)/1.15 var(--display);margin:0 0 8px;text-transform:uppercase}
 .parts-heading p {color:var(--muted);font-size:13px}
+.parts-heading .part-parent {color:var(--accent);font:10px/1.6 var(--mono);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
+.part-parent-note {color:var(--muted);font-size:13px;line-height:1.7;max-width:86ch;margin:0 0 18px}
 .part-open {flex-shrink:0;font:11px/1.6 var(--mono);padding:8px 0}
 .part-layer {border-top:1px solid var(--line);padding:12px 0}
 .part-layer summary,.part-anatomy summary {cursor:pointer;font:500 12px/1.5 var(--mono);color:var(--accent);min-height:32px;padding:5px 0}

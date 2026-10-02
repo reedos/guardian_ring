@@ -1286,6 +1286,16 @@ body.app .panel-scroll > * { min-width: 0; }
 .presentation-exit[hidden] { display: none; }
 .animation-controls { flex: none; padding: 10px 14px; border-top: 1px solid var(--line); background: var(--surface); min-width: 0; }
 .animation-controls[hidden] { display: none; }
+.assembly-controls { display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; margin-bottom:6px; color:var(--muted); font:400 10px/1.4 var(--mono); grid-column:1 / -1; }
+.assembly-controls[hidden] { display:none; }
+.assembly-controls > div { display:flex; gap:4px; }
+.assembly-controls .btn { padding-inline:12px; font-size:10px; }
+.assembly-controls .btn[aria-pressed='true'] { color:var(--accent); border-color:var(--accent); }
+.assembly-controls .assembly-note { font:400 10px/1.4 var(--sans); }
+.card-assembly { display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; margin:12px 0; color:var(--accent); font:400 10px/1.5 var(--mono); }
+.card-assembly[hidden] { display:none; }
+.card-assembly p { margin:0; }
+.card-assembly .assembly-context { flex-basis:100%; color:var(--muted); font:400 11px/1.5 var(--sans); }
 .animation-controls[data-inspection='true'] .animation-step,
 .animation-controls[data-inspection='true'] .animation-explanation { display: none; }
 .animation-controls button { min-height: 44px; }
@@ -1318,6 +1328,9 @@ body.app .panel-scroll > * { min-width: 0; }
   .animation-step { grid-column: 1; grid-row: 2; }
   .animation-explanation { grid-column: 2; grid-row: 1 / span 2; }
   .animation-explanation[open] > summary { padding-top: 0; min-height: 25px; }
+  .animation-controls:has(.assembly-controls:not([hidden])) .animation-transport { grid-row:2; }
+  .animation-controls:has(.assembly-controls:not([hidden])) .animation-step { grid-row:3; }
+  .animation-controls:has(.assembly-controls:not([hidden])) .animation-explanation { grid-row:2 / span 2; }
 }
 @media (max-width: 760px), (max-width: 1100px) and (max-height: 600px) and (orientation: landscape) {
   .learning-guide { gap: 8px; padding-bottom: 12px; }
@@ -1332,6 +1345,8 @@ body.app .panel-scroll > * { min-width: 0; }
   .animation-transport .btn { padding-inline: 7px; }
   .animation-transport [data-action='play'] { min-width: 0; flex: 1 1 115px; }
   .animation-transport .animation-counter { font-size: 9px; }
+  .assembly-controls { flex-wrap:nowrap; gap:6px; }
+  .assembly-controls .assembly-note { margin-left:auto; max-width:90px; font-size:9px; }
   .animation-controls .animation-step { font-size: 15px; margin-top: 5px; }
   .animation-explanation > summary, .orbit-playback-note > summary { min-height: 44px; padding-block: 13px; }
   .animation-explanation[open], .orbit-playback-note[open] { max-height: var(--explanation-max-height, 150px); overflow: auto; overscroll-behavior: contain; }

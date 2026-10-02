@@ -10,6 +10,21 @@ function fixture() {
   return {label,camera,viewport};
 }
 describe('printed component labels',()=>{
+  it('rechecks a changed cover with a stationary camera and hides removed cover print',()=>{
+    const {label,camera,viewport}=fixture();
+    const cover=new THREE.Mesh(new THREE.BoxGeometry(3,1,.1),new THREE.MeshBasicMaterial());
+    cover.position.z=.2;cover.updateMatrixWorld();
+    const controller=labelController([label],[cover]);
+    for(let i=0;i<3;i++)controller.update(camera,viewport);
+    expect(label.visible).toBe(false);
+    cover.visible=false;controller.invalidate();
+    for(let i=0;i<3;i++)controller.update(camera,viewport);
+    expect(label.visible).toBe(true);
+    label.userData.presentationHidden=true;controller.invalidate();
+    expect(label.visible).toBe(false);
+    for(let i=0;i<3;i++)controller.update(camera,viewport);
+    expect(label.userData.readability.reason).toBe('hidden with enclosure cover');
+  });
   it('rejects a covered edge even when the center is clear',()=>{
     const {label,camera,viewport}=fixture();
     const blocker=new THREE.Mesh(new THREE.BoxGeometry(.25,.3,.1),new THREE.MeshBasicMaterial());

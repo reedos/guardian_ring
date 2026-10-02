@@ -2,9 +2,10 @@
 import { evOf } from './evidence.js';
 import { STORY_CLAIMS } from './story-claims.js';
 import { ENGINEERING_CLAIMS } from './engineering-evidence.js';
+import { INTEGRATION_CLAIMS } from './instrument-integration.js';
 export const LAYERS = [['light', 'PARTS'], ['data', 'PARTS_DATA'], ['heat', 'PARTS_HEAT']];
 export function allClaims(model, content) {
-  const out = [...STORY_CLAIMS, ...ENGINEERING_CLAIMS, ...Object.entries(model?.claims || {}).map(([id,row]) => ({ key:`model:${id}`, group:'model', label:row[0], value:row[1], basis:row[2], ev:evOf(row) }))];
+  const out = [...STORY_CLAIMS, ...ENGINEERING_CLAIMS, ...INTEGRATION_CLAIMS, ...Object.entries(model?.claims || {}).map(([id,row]) => ({ key:`model:${id}`, group:'model', label:row[0], value:row[1], basis:row[2], ev:evOf(row) }))];
   content.SCENES.forEach((scene, level) => {
     const componentsSeen = new Set();
     for (const [mode, key] of LAYERS) for (const part of content[key][scene.id] || []) {

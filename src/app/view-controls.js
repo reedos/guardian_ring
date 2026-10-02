@@ -11,7 +11,13 @@ function syncParts() {
   const { scene, mode, selected } = store.ui, parts = scene < 0 ? [] : partsFor(scene);
   const key = JSON.stringify([scene, mode, parts.map(part => [part.id, part.title])]);
   if (picker.dataset.parts !== key) {
-    picker.replaceChildren(new Option('0. Overview', ''), ...parts.map((part, index) => new Option(`${index + 1}. ${part.title}`, part.id)));
+    picker.replaceChildren(new Option('0. Overview', ''));
+    const groups=new Map();
+    parts.forEach((part,index)=>{
+      let parent=picker;
+      if(part.assembly){if(!groups.has(part.assembly.id)){const group=document.createElement('optgroup');group.label=part.assembly.title;groups.set(part.assembly.id,group);picker.append(group);}parent=groups.get(part.assembly.id);}
+      parent.append(new Option(`${index+1}. ${part.title}`,part.id));
+    });
     picker.dataset.parts = key;
   }
   picker.value = selected || '';

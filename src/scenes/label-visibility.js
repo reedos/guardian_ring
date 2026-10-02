@@ -3,6 +3,7 @@ import * as THREE from 'three';
 // Test the whole printed plate, not just its center. Surface lettering should
 // disappear as a unit when a component covers it, never show sliced-up words.
 export function labelVisibility(mesh, camera, solids, viewport) {
+  if (mesh.userData.presentationHidden) return { clear:false, reason:'hidden with enclosure cover' };
   const matrix = new THREE.Matrix4(); mesh.getMatrixAt(0, matrix); matrix.premultiply(mesh.matrixWorld);
   const center = new THREE.Vector3().applyMatrix4(matrix);
   const normal = new THREE.Vector3(0, 0, 1).transformDirection(matrix);
@@ -36,6 +37,7 @@ export function labelController(labels, solids) {
   let projection='', previous=null, checked=null, stable=0;
   const different=(a,b,positionTolerance,rotationTolerance)=>!a||b.some((value,i)=>Math.abs(value-a[i])>(i>=12&&i<=14?positionTolerance:rotationTolerance));
   return {
+    invalidate() { checked=null;stable=0;for(const mesh of labels)mesh.visible=false; },
     update(camera, viewport) {
       const next=[...camera.matrixWorld.elements], framing=[...camera.projectionMatrix.elements,viewport.width,viewport.height,JSON.stringify(viewport.obstacles||[])].join(',');
       const moving=framing!==projection||different(previous,next,.0001,.00001);
