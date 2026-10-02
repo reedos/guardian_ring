@@ -1,24 +1,26 @@
 # Guardian Ring review build
 
-10/01/2026. The component-anatomy revision passed full built-preview acceptance. Reed's device review and separate launch decision remain open.
+10/01/2026. The expanded component-anatomy and label revision is undergoing full built-preview acceptance. Reed's device review and separate launch decision remain open.
 
 ## Current scope
 
 Six pages connect the story, Explorer, Evidence, Method, Glossary, and searchable Parts reference. Ten Blender-authored scenes cover the ring, spacecraft, payload, focal plane, detector element, molecular emission, ground segment, ABI, TIRS-2, and atmosphere. Each has Light, Data, and Heat views with evidence and drawing assumptions.
 
-The spacecraft has twelve selectable parent assemblies, the payload thirteen, and the focal plane eight. Together with the other levels, that is 162 parent states across the three layers. Nested anatomy names the actual components within each assembly, explains their functions, and attaches evidence. The Explorer and Parts page use the same catalog; repeated appearances are not additional hardware counts.
+The spacecraft has twelve selectable parent assemblies, the payload thirteen, and the focal plane eight. The smaller levels now offer five to nine selections per view: six for orbits, pixel and ground; five for plume and atmosphere; and nine each for ABI and TIRS-2. Together, the ten levels provide 237 layer states and 85 distinct level/parent entries. Nested anatomy names the actual components within each assembly, explains their functions, and attaches evidence. The Explorer and Parts page use the same catalog; the 240 component-detail displays represent 160 distinct detail IDs, not additional hardware counts.
 
-Payload v7 exposes scan mirrors, motors, encoders and bearings; port-cover and focus mechanisms; calibration references; stationary aft optics; and separate sensor, instrument, interface, power, and cooling electronics. Focal-plane v4 separates the detector/ROIC package, warm video electronics, bias/timing interface, cold-head thermometer, and cooler feedback. Shapes, package layouts, wiring, and dimensions remain representative. The spacecraft, payload, and focal-plane story stills are rendered from their shipped GLBs.
+Payload v10 exposes scan mirrors, motors, encoders and bearings; port-cover and focus mechanisms; calibration references; stationary aft optics; and separate sensor, instrument, interface, power, and cooling electronics. Focal-plane v5 separates the detector/ROIC package, warm video electronics, bias/timing interface, cold-head thermometer, and cooler feedback. The expanded civil instruments expose their calibration, readout, control, power and thermal assemblies as separate selections. Shapes, package layouts, wiring, and dimensions remain representative. All five revised story-still pairs—spacecraft, payload, focal plane, pixel and plume—include updated desktop and phone images rendered from their shipped GLBs.
+
+Physical nameplates use a visibility guard that hides covered, edge-on or unreadably small print while preserving the full component identity in the selector and card. The selected numbered pin has a screen-space callout whose placement accounts for the viewport, interface overlays and other pins. Component names remain consistent across Light, Data and Heat; their functions appear beneath the names.
 
 Three cited system diagrams explain selected GOES-R support paths, ABI instrument paths, and TIRS-2 interfaces. Their component names and evidence come from the same catalog. They distinguish light, data/control, electrical power, heat, and mechanical motion without presenting circuit schematics or complete wiring diagrams.
 
-The admitted research ledger contains 210 facts, including the comprehensive component review and the separate TIRS-2 architecture review. The GOES-R Data Book supplies named civil hardware; additional NASA sources support grounding, mechanical isolation, and the TIRS-2 design. See `COMPREHENSIVE-SYSTEMS-REVIEW.md` and `tirs2-architecture-review.md` for exact scope and access outcomes.
+The admitted research ledger contains 241 facts, including 31 new rows from the public spacecraft-design gap review. It contains 40 verified research sources; the runtime registry also includes seven existing model sources. The additions cover computer support functions, mechanical interfaces, contamination control, protective surfaces, ground equipment and detector packaging. The historically verified GOES-R Data Book supplies named civil hardware; newly opened NASA, ESA and ECSS sources support general design practices and explicitly named civil examples. See `PUBLIC-DESIGN-GAP-REVIEW.md`, `design-practices-facts.json`, `COMPREHENSIVE-SYSTEMS-REVIEW.md` and `tirs2-architecture-review.md` for scope, exact locators and access outcomes. Fresh failed access attempts are recorded separately and supply no new claims.
 
 ## Validation status
 
-Final typecheck passed, all 81 unit tests passed, and the strict evidence audit found 0 problems across 667 site claims, 96 scenarios, and 210 research facts. All 16 browser gate commands passed against the same production build. `gate-results.md` records the build hash and detailed results, including 1,320 camera routes on each form and 15,552 states in each exhaustive scenario/parts sweep.
+Current full acceptance is in progress; the generated `gate-results.md` will record the results and build hash. Earlier revision totals are not acceptance evidence for this build.
 
-The completed checks cover every scenario, parent part, and ordered camera route, plus evidence dialogs, component anatomy, Parts search/navigation, responsive diagrams, saved comparisons, renderer quality, and performance. Real GPU checks used Chrome on Reed's RTX 5090. Worst p95 frame time at maximum quality was 0.90 ms desktop and 0.80 ms phone. Phone-sized browser checks do not replace testing on an actual phone.
+The acceptance suite covers scenarios, parent parts, ordered camera routes, evidence dialogs, component anatomy, Parts search/navigation, responsive diagrams, saved comparisons, renderer quality, physical labels, selected callouts and performance. Phone-sized browser checks do not replace testing on an actual phone.
 
 ## Supported scope and gaps
 

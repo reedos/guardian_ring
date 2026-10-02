@@ -314,6 +314,7 @@ PC, real GPU).
 | `cycle.mjs` | every scenario × level × layer with no page errors |
 | `views.mjs desktop` / `phone` | every part framed clear of overlays |
 | `parts.mjs` | every numbered part has a pin and a card |
+| `labels.mjs desktop` / `phone` | printed names are unobstructed when shown, every nameplate has a clear authored desktop view, selected component callouts stay readable |
 | `ui.mjs` | controls don't collide, phone and desktop |
 | `coplanar.mjs` | no flush surfaces that flicker |
 | `flights.mjs` | 0 camera moves through geometry, both forms |

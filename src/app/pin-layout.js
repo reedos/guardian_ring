@@ -1,10 +1,33 @@
 export const overlapsRect = (a, b, gap = 0) => a.left < b.right + gap && a.right > b.left - gap && a.top < b.bottom + gap && a.bottom > b.top - gap;
 
-export function pinLabelBox(x, y, width, canvasWidth, canvasHeight, reserved, selected = false) {
-  const height = 18, clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+// Printed hardware names are obstacles for numbered markers too. Keep leaders
+// tied to the original anchor while moving a marker to the nearest clear spot.
+/** @param {Map<string,{x:number,y:number,ax:number,ay:number}>} placements
+ * @param {{obstacles:{left:number,right:number,top:number,bottom:number}[],width:number,height:number,selected?:string|null}} options */
+export function avoidPinObstacles(placements, { obstacles, width, height, selected = null }) {
+  if(!obstacles.length)return placements;
+  const result=new Map([...placements].map(([id,p])=>[id,{...p,x:Math.max(15,Math.min(width-15,p.x)),y:Math.max(15,Math.min(height-15,p.y))}]));
+  const ids=[...result.keys()].sort((a,b)=>a===selected?-1:b===selected?1:0);
+  for(const id of ids){
+    const point=result.get(id);
+    const clear=({x,y})=>x>=15&&x<=width-15&&y>=15&&y<=height-15
+      &&!obstacles.some(r=>overlapsRect({left:x-14,right:x+14,top:y-14,bottom:y+14},r,4))
+      &&![...result].some(([other,p])=>other!==id&&Math.hypot(p.x-x,p.y-y)<30);
+    if(clear(point))continue;
+    const candidates=[];
+    for(const r of obstacles)candidates.push({x:point.x,y:r.top-19},{x:point.x,y:r.bottom+19},{x:r.left-19,y:point.y},{x:r.right+19,y:point.y});
+    for(let radius=28;radius<=196;radius+=28)for(let i=0;i<16;i++)candidates.push({x:point.x+Math.cos(i*Math.PI/8)*radius,y:point.y+Math.sin(i*Math.PI/8)*radius});
+    candidates.sort((a,b)=>Math.hypot(a.x-point.x,a.y-point.y)-Math.hypot(b.x-point.x,b.y-point.y));
+    const next=candidates.find(clear);if(next)result.set(id,{...point,...next});
+  }
+  return result;
+}
+
+export function pinLabelBox(x, y, width, canvasWidth, canvasHeight, reserved, selected = false, height = 18) {
+  const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
   const candidates = [[x + 18, y - 9], [x - 29 - width, y - 9]];
   if (selected) {
-    candidates.push([x - width / 2, y + 18], [x - width / 2, y - 36]);
+    candidates.push([x - width / 2, y + 18], [x - width / 2, y - height - 18]);
     for (const r of reserved) candidates.push([x - width / 2, r.bottom + 6], [x - width / 2, r.top - height - 6], [r.left - width - 6, y - 9], [r.right + 6, y - 9]);
   }
   for (let [left, top] of candidates) {

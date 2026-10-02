@@ -59,12 +59,19 @@ export function build({ quality, model }) {
   const hotspots = make({ geo:point, earth:ground, 'orbit-families':[-2,0,.4] });
   const dataHotspots = make({ processing:point, downlink:[1.0,.75,1.55], ground });
   const heatHotspots = make({ sunlight:[2.9,1.5,2.7], power:point, radiator:[2.1,.6,2.7] });
+  // These anchors follow authored spacecraft, rather than unconnected dots on
+  // an orbit guide. HEO/MEO/LEO are independent of Earth's GEO rotation.
+  for (const id of ['heo','meo','leo']) {
+    const node=asset.getObjectByName(`${id.toUpperCase()}_Satellite_01`);
+    if(!node)throw new Error(`Missing ${id} spacecraft anchor`);
+    for(const set of [hotspots,dataHotspots,heatHotspots])set[id]={pos:[0,0,0],node,rotating:false,view:{pos:[...camera.pos],target:[0,0,0]}};
+  }
   const spots = [...Object.values(hotspots),...Object.values(dataHotspots),...Object.values(heatHotspots)];
   let last = null;
   function locate() {
     scene.updateMatrixWorld(true);
     for (const spot of spots) {
-      const p = spin.localToWorld(new THREE.Vector3(...spot.local)); spot.pos = p.toArray();
+      const p = spot.node?spot.node.getWorldPosition(new THREE.Vector3()):spin.localToWorld(new THREE.Vector3(...spot.local)); spot.pos = p.toArray();
       const radial = p.clone().normalize().multiplyScalar(8.5); radial.y = Math.max(3.4, radial.y);
       spot.view.pos = radial.toArray(); spot.view.target = p.toArray();
     }
@@ -74,6 +81,7 @@ export function build({ quality, model }) {
     flows:layerGroups.light.children, dataFlows:layerGroups.data.children, heatFlows:layerGroups.heat.children,
     solids:[earth], satellites, look:{ exposure:1, bloom:0, threshold:1, ao:0, env:'night' },
     setMode(mode) { for (const [id,group] of Object.entries(layerGroups)) group.visible = id === mode; },
+    setPart(id) { if(family[id])family[id].visible=true; },
     setMotion(play) { moving.value = play; last = null; },
     motion() { return moving.value; },
     setFamily(id,visible) { if (family[id]) family[id].visible = visible; },

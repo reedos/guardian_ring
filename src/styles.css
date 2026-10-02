@@ -1221,7 +1221,8 @@ body.app .panel-scroll > * { min-width: 0; }
 }
 /* Selected pins keep their number highlight when collision layout hides their long label. */
 .pin.on.hide-lbl .lbl { display: none; }
-.scaffold-badge { white-space: pre-line; max-width: calc(100% - 28px); text-shadow: 0 1px 5px #000; }
+.pin.on:not(.hide-lbl) .lbl { position: absolute; display: block; white-space: normal; width: 270px; padding: 5px 7px; border: 1px solid #e6ba8260; border-radius: 3px; background: #0b1015ed; line-height: 1.35; text-align: left; pointer-events: none; }
+.scaffold-badge { white-space: pre-line; max-width: calc(100% - 28px); color: var(--muted); background: #0b1015d9; padding: 3px 6px; text-shadow: 0 1px 5px #000; }
 
 /* Existing claims, paired vertically so both scenarios remain legible in a narrow pane. */
 .scenario-comparison { min-width: 0; padding: 16px 12px; border: 1px solid var(--line-2); background: var(--surface); }

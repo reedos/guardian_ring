@@ -83,7 +83,8 @@ export async function run(name,form=process.argv[2]||'desktop'){
   if(!combos.length)throw new Error('No scenario combinations to audit');
   const textureCounts=[];
   for(const [scenarioIndex,scenario] of combos.entries()){
-   if(scenarioIndex%12===0)console.log(`${name}: scenarios ${scenarioIndex+1}–${Math.min(scenarioIndex+12,combos.length)} of ${combos.length}`);
+   const scenarioStarted=Date.now();
+   if(scenarioIndex===0)console.log(`${name}: checking all ${combos.length} scenarios`);
    await page.evaluate(async s=>{await grx.setScenario(s);},scenario);
    for(const sc of scenes)for(const mode of MODES){
     await show(page,sc.i,mode);
@@ -92,7 +93,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
     for(let i=0;i<ids.length;i++){
      const id=ids[i];
      if(name==='parts'){await page.locator('#parts button[data-id]').nth(i).click();await page.evaluate(()=>grx.settle());}
-     else await show(page,sc.i,mode,id);
+     else await page.evaluate(async id=>{grx.select(id);grx.settle();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));},id);
      states++;
      const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});
      fail.push(...result.map(error=>`${JSON.stringify(scenario)}/${sc.id}/${mode}/${id}: ${error}`));
@@ -106,6 +107,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
     if(!Number.isInteger(textures)||textures<0)fail.push(`scenario ${scenarioIndex+1}: invalid texture count ${textures}`);
     else if(textures!==textureCounts[0])fail.push(`scenario ${scenarioIndex+1}: ${textures} textures after complete traversal; baseline ${textureCounts[0]}`);
    }
+   console.log(`${name}: ${scenarioIndex+1}/${combos.length} scenarios complete; ${states} selections; ${((Date.now()-scenarioStarted)/1000).toFixed(1)}s`);
   }
   if(name==='cycle'){details.textureBaseline=textureCounts[0];details.textureCounts=textureCounts;}
   details.scenarios=combos.length;
@@ -119,6 +121,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
      // Reset the start pose immediately; only the requested flight is measured.
      await page.evaluate(()=>grx.setTransitions('instant'));
      await show(page,sc.i,mode,from);
+     if(from===null)await page.evaluate(()=>{grx.overview();grx.settle();});
      await page.evaluate(()=>grx.setTransitions('quick'));
      const r=await page.evaluate(fly,{id:to});states++;
      if(states%50===0)console.log(`Flights: ${states} routes checked (${sc.id}/${mode})`);
@@ -157,6 +160,14 @@ export async function run(name,form=process.argv[2]||'desktop'){
     const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});states++;
     fail.push(...result.map(error=>`${sc.id}/${mode}/layer-switch: ${error}`));
    }
+  }
+  // A layer may expose another face or electronics assembly of the same part.
+  // Exercise the actual layer button, not show()'s explicit part flight.
+  if(scenes.some(scene=>scene.id==='payload'))for(const [id,mode] of [['scan-system','data'],['thermal','heat']]){
+   await show(page,2,'light',id);await page.locator(`[data-mode="${mode}"]`).click();await page.evaluate(()=>grx.settle());
+   const result=await page.evaluate(checkPart,{scene:2,mode,id}),view=await page.evaluate(checkView);states++;
+   fail.push(...result.map(error=>`payload/${id}/layer-button: ${error}`));
+   if(view.blocked||view.covers?.length)fail.push(`payload/${id}/layer-button: ${JSON.stringify(view)}`);
   }
   for(const sc of scenes){
    await show(page,sc.i,'light');await page.locator('#more-btn').focus();await page.keyboard.press('Enter');

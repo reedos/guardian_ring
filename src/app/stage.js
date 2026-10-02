@@ -7,7 +7,7 @@ import { poseAt, clearPath } from './camera-path.js';
 import { createCameraClearance, constrainCameraPose, CLEARANCE_BAND } from './camera-clearance.js';
 import { occupancyBuilder } from './occupancy.js';
 import { createPartCycle } from './part-cycle.js';
-import { declutterPins } from './pin-layout.js';
+import { declutterPins, pinLabelBox, avoidPinObstacles } from './pin-layout.js';
 import { chip } from '../evidence.js';
 import { renderComponentDetails } from './component-details.js';
 import { disposeScene } from '../fx.js';
@@ -35,6 +35,7 @@ export const mobile = matchMedia('(max-width: 760px), (pointer: coarse)').matche
 export const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const clearanceStats = { builds: 0, buildMs: 0, standIn: 0, unplanned: 0, plans: 0, planMs: 0, hits: 0, prefetched: 0, clear: true, pending: false };
 let renderer, started = false, busy = false, tween = null, transitions = reduced ? 'instant' : 'full', buildEpoch = 0;
+let renderedFlightProgress = 1;
 let ratio = 1, gpu = 'Unavailable', preference = 'auto', governorAt = 0, frameSamples = [], cpuSamples = [], judged = null;
 const tiers = Array(sceneCount).fill(0), ceilings = Array(sceneCount).fill(0), held = new Set(), frameObservers = new Set(), tickers = new Set();
 try { const saved = localStorage.getItem('grx-render-preference'); if (['auto', 'max', 'laptop'].includes(saved)) preference = saved; } catch { /* optional */ }
@@ -62,6 +63,9 @@ const hotspotsFor = i => built[i]?.[ui.mode === 'data' ? 'dataHotspots' : ui.mod
 export const occupancy = () => built[ui.scene]?.occupancy || null;
 export const isBusy = () => busy;
 export const isCameraMoving = () => busy || !!tween;
+// Progress belongs to the last camera pose played, not a gate callback's clock.
+// Keep the completed value after tween is cleared so observers can record u=1.
+export const getFlightProgress = () => renderedFlightProgress;
 export const destination = () => ui.scene;
 export const stageActive = () => $('viewer').contains(document.activeElement) || $('viewer').matches(':hover');
 export const observeFrame = fn => { frameObservers.add(fn); return () => frameObservers.delete(fn); };
@@ -71,6 +75,7 @@ export function setTransitions(value) { if (value in TRANSITIONS) { transitions 
 export const getTransitions = () => transitions;
 export function settle() {
   if (tween) { camera.position.copy(tween.p1); controls.target.copy(tween.t1); tween = null; }
+  renderedFlightProgress = 1;
   controls.update(); camera.updateMatrixWorld(); updatePins();
 }
 export function flyTo(pos, target, duration = .9) {
@@ -78,7 +83,7 @@ export function flyTo(pos, target, duration = .9) {
   const move = { p0: camera.position.clone(), t0: controls.target.clone(), p1: new THREE.Vector3(...pos), t1: new THREE.Vector3(...target), limits, start: 0, duration: duration * TRANSITIONS[transitions] * 1000 };
   constrainCameraPose(move.p1, move.t1, limits);
   // Instant and reduced-motion views have no intermediate flight to plan.
-  if (!move.duration) { tween = move; settle(); return; }
+  if (!move.duration) { tween = move; renderedFlightProgress = 0; settle(); return; }
   const map = occupancy(), start = performance.now();
   const result = clearPath(move, createCameraClearance(move, map, limits), { n: 32, maxTries: 320, through: 100, goodEnough: CLEARANCE_BAND });
   clearanceStats.plans++; clearanceStats.planMs = performance.now() - start; clearanceStats.clear = result.good; clearanceStats.costs = result.costs;
@@ -86,7 +91,7 @@ export function flyTo(pos, target, duration = .9) {
   move.duration *= Math.min(1.6, 1 + .6 * Math.max(0, result.stretch - 1));
   // Planning time must not consume the beginning of the checked flight.
   move.start = performance.now();
-  tween = move;
+  tween = move; renderedFlightProgress = 0;
 }
 function resize() {
   if (!renderer) return;
@@ -99,6 +104,11 @@ function updatePins() {
   if (ui.scene < 0) return;
   camera.updateMatrixWorld();
   const width = view.clientWidth, height = view.clientHeight;
+  const origin=view.getBoundingClientRect();
+  const hudBounds=[...view.querySelectorAll('.hud,.hud-row,#scene-note')].filter(el=>el.checkVisibility()).map(el=>{
+    const r=el.getBoundingClientRect();return {left:r.left-origin.left,right:r.right-origin.left,top:r.top-origin.top,bottom:r.bottom-origin.top};
+  });
+  built[ui.scene]?.updateLabels?.(camera,{width,height,obstacles:hudBounds});
   const points = [];
   for (const button of $('pins').querySelectorAll('button')) {
     const spot = hotspotsFor(ui.scene)[button.dataset.id]; if (!spot) continue;
@@ -109,7 +119,9 @@ function updatePins() {
   }
   // The reference viewer's fan keeps nearby parts selectable on a phone. Leaders
   // retain the true geometry anchor when a marker moves to make room for another.
-  const { placements } = declutterPins(points, { expanded:new Set(points.map(p => p.id)) });
+  const printedBounds=(built[ui.scene]?.labels||[]).filter(label=>label.visible&&label.userData.readability?.bounds).map(label=>label.userData.readability.bounds);
+  const fan=declutterPins(points, { expanded:new Set(points.map(p => p.id)) });
+  const placements=avoidPinObstacles(fan.placements,{obstacles:printedBounds,width,height,selected:ui.selected});
   for (const point of points) {
     const spot = placements.get(point.id), button = point.button;
     const x = Math.max(13,Math.min(width-13,spot.x)), y = Math.max(13,Math.min(height-13,spot.y));
@@ -118,6 +130,21 @@ function updatePins() {
     button.classList.toggle('fanned',length>.5);
     button.style.setProperty('--lead-len',`${Math.max(0,length-12)}px`);
     button.style.setProperty('--lead-a',`${Math.atan2(dy,dx)}rad`);
+    if(point.id!==ui.selected)button.classList.add('hide-lbl');
+  }
+  // Keep the selected component name readable even when its physical nameplate
+  // is on the far side or too small. Reserve the HUD and other numbered pins.
+  const selected=points.find(point=>point.id===ui.selected);
+  if(selected){
+    const label=selected.button.querySelector('.lbl');
+    const reserved=[...points.map(p=>p.button.querySelector('.num'))]
+      .filter(el=>el.checkVisibility()).map(el=>{const r=el.getBoundingClientRect();return {left:r.left-origin.left,right:r.right-origin.left,top:r.top-origin.top,bottom:r.bottom-origin.top};});
+    reserved.push(...hudBounds,...printedBounds);
+    const x=parseFloat(selected.button.style.left),y=parseFloat(selected.button.style.top),maxWidth=Math.min(270,width-32);
+    label.style.width=`${maxWidth}px`;selected.button.classList.remove('hide-lbl');
+    const height=label.offsetHeight,box=pinLabelBox(x,y,maxWidth,width,view.clientHeight,reserved,true,height);
+    if(box){label.style.left=`${box.left-x+11}px`;label.style.top=`${box.top-y+11}px`;}
+    else selected.button.classList.add('hide-lbl');
   }
 }
 function buildPanel() {
@@ -167,6 +194,7 @@ export function select(id, fly = true) {
     button.setAttribute('aria-pressed',String(active));
     if(button.classList.contains('pin'))button.classList.toggle('on',active);
   });
+  built[ui.scene]?.setPart?.(id); emit('scene-settings');
   const spot = hotspotsFor(ui.scene)[id]; if (fly && spot?.view) flyTo(spot.view.pos, spot.view.target);
   emit('select', id); updateCycle();
   if (fly) emit('part-inspect', id);
@@ -190,8 +218,15 @@ const partCycle = createPartCycle({ parts: () => partsFor(ui.scene).map(part => 
 export function setMode(mode) {
   if (!modes.includes(mode)) return;
   partCycle.stop();
+  const previous=hotspotsFor(ui.scene)[ui.selected]?.view;
   ui.mode = mode; document.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
-  if (ui.scene >= 0) { built[ui.scene]?.setMode(mode); const id = hasPart(ui.scene,ui.selected) ? ui.selected : partsFor(ui.scene)[0]?.id; buildPanel(); if (id) select(id, false); }
+  if (ui.scene >= 0) {
+    built[ui.scene]?.setMode(mode);
+    const id=hasPart(ui.scene,ui.selected)?ui.selected:partsFor(ui.scene)[0]?.id;
+    const next=hotspotsFor(ui.scene)[id]?.view;
+    buildPanel();
+    if(id)select(id,!!previous&&JSON.stringify(previous)!==JSON.stringify(next));
+  }
   emit('mode', mode);
 }
 export async function go(index) {
@@ -207,7 +242,7 @@ export async function go(index) {
       built[index].occupancy = builder.result; clearanceStats.builds++; clearanceStats.buildMs = performance.now() - start;
     }
     if (epoch !== buildEpoch) return;
-    ui.scene = index; ui.selected = null; tween = null;
+    ui.scene = index; ui.selected = null; tween = null; renderedFlightProgress = 1;
     const preset = built[index].camera; camera.position.set(...preset.pos); controls.target.set(...preset.target); camera.near = preset.near; camera.far = preset.far; controls.minDistance = preset.min; controls.maxDistance = preset.max;
     controls.update(); built[index].setMode(ui.mode); buildPanel(); resize(); emit('scene', index);
     select(partsFor(index)[0]?.id, false); $('veil').hidden = true;
@@ -271,7 +306,7 @@ export function start() {
     const dt = Math.max(0, (now - last) / 1000); last = now;
     if (document.hidden || ui.scene < 0 || !built[ui.scene]) return;
     const cpuStart = performance.now();
-    if (tween) { const u = Math.min(1, (now - tween.start) / tween.duration); poseAt(tween, u, camera.position, controls.target); if (u >= 1) tween = null; }
+    if (tween) { const u = Math.max(0, Math.min(1, (now - tween.start) / tween.duration)); poseAt(tween, u, camera.position, controls.target); renderedFlightProgress = u; if (u >= 1) tween = null; }
     controls.update(); built[ui.scene].update(now / 1000); partCycle.tick(dt); tickers.forEach(fn => fn(now / 1000, dt)); updatePins();
     renderer.render(built[ui.scene].scene, camera);
     const cpu = performance.now() - cpuStart; if (dt < .25) { frameSamples.push(dt * 1000); cpuSamples.push(cpu); }

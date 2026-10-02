@@ -1,4 +1,4 @@
-"""Detailed representative infrared payload and electronics, version 7.
+"""Detailed representative infrared payload and electronics, version 10.
 Blender --background --python tools/blender/build-payload.py.
 The opened telescope and displaced cold/electronics assemblies show subsystem
 relationships only. No military optical prescription, electronics schematic,
@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=7
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=10
 
 # Keep the approved reflective cutaway, then expose the rest of its signal chain.
 source=Path(__file__).with_name('build-hardware-look.py');tree=ast.parse(source.read_text(encoding='utf-8'))
@@ -38,7 +38,8 @@ for x in [-2.70,-.5,1.6,3.45]:
         h.screw((x,-1.435,z),m['edge'],r=.033)
 for x in [-2.17,-.73]:
     for z in [-.67,1.90]:h.box('Telescope bench interface',(x,-1.455,z),(.43,.08,.34),m['silver'],.012)
-h.box('Telescope role plate',(-1.42,-1.34,2.15),(1.66,.20,.048),m['dark'],.008)
+h.box('Telescope identification bracket',(-.29,-.84,-.40),(.075,1.26,.18),m['silver'],.008)
+h.box('Telescope identification stock',(-.24,-.20,-.40),(.032,.25,1.04),m['dark'],.005)
 
 h.role('Detector')
 h.box('Cold assembly support',(-1.10,-1.34,-1.97),(1.35,.16,1.20),m['silver'],.025)
@@ -67,7 +68,7 @@ h.board('Analog front-end board',(.56,-.60,.91),(1.09,1.01),m)
 for x in [.20,.55,.89]:h.box('Readout channel package',(x,-.42,.61),(.21,.085,.21),m['chip'],.012)
 h.connector('Low-level signal interface',(.55,-.93,1.56),.57,m)
 for z in [.60,1.12]:h.box('Readout shield partition',(.57,-.43,z),(1.01,.20,.025),m['silver'],.005)
-h.box('Readout role plate',(.55,-1.04,1.526),(.82,.17,.022),m['dark'],.005)
+h.box('Readout role plate',(.55,-.745,1.645),(1.02,.21,.026),m['dark'],.005)
 # Gold flex physically connects the separated cold package and front end.
 h.ribbon('Detector flex',[(-.64,-.33,-3.07),(-.42,-.55,-2.92),(.76,-.81,-2.74),(.97,-.91,-.20),(.32,-.62,.41)],.30,m['goldedge'])
 for dx in [-.09,-.045,0,.045,.09]:h.line('Flex signal conductor',[(-.64+dx,-.315,-3.07),(-.42+dx,-.535,-2.92),(.76+dx,-.795,-2.74),(.97+dx,-.895,-.20),(.32+dx,-.605,.41)],.004,m['copper'])
@@ -78,7 +79,7 @@ h.board('Representative conversion board',(2.12,-.60,.91),(1.22,1.01),m)
 h.box('Conversion circuit package',(2.10,-.42,.84),(.42,.12,.38),m['chip'],.015)
 h.box('Conversion package lid',(2.10,-.350,.84),(.33,.015,.29),m['dark'],.005)
 for z in [.52,1.28]:h.connector('Data board interface',(2.11,-.50,z),.39,m)
-h.box('Digitizer role plate',(2.12,-1.04,1.526),(.94,.17,.022),m['dark'],.005)
+h.box('Digitizer role plate',(2.12,-.77,1.536),(1.09,.22,.028),m['dark'],.005)
 for dz in [-.05,0,.05]:h.line('Readout to digitizer harness',[(1.14,-.55,.95+dz),(1.30,-.48,1.03+dz),(1.45,-.48,1.03+dz),(1.50,-.56,.94+dz)],.010,m['loom'])
 
 h.role('Controller')
@@ -88,7 +89,8 @@ for x in [1.51,1.98,2.44]:
     h.box('Control-board card guide',(x,-.43,-1.0),(.044,.28,.74),m['silver'],.007)
     h.box('Controller daughtercard',(x,-.37,-1.0),(.026,.35,.68),m['pcb'],.004)
 h.connector('Spacecraft data connector',(2.04,-.95,-.237),.56,m)
-h.box('Controller role plate',(1.98,-1.03,-.257),(.99,.17,.022),m['dark'],.005)
+for x in [1.39,2.59]:h.box('Controller identification support',(x,-.43,-.39),(.045,.30,.10),m['silver'],.005)
+h.box('Controller role plate',(1.99,-.28,-.39),(1.36,.035,.30),m['dark'],.005)
 h.line('Digitizer output loom',[(2.54,-.5,.43),(2.73,-.37,.13),(2.73,-.37,-.25),(2.48,-.47,-.40)],.026,m['loom'])
 h.line('Instrument control harness',[(1.50,-.54,-.45),(.84,-.52,-.46),(.43,-.56,-.70),(-.25,-.51,-1.06)],.020,m['loom'])
 
@@ -102,11 +104,21 @@ h.box('Heat rejection radiator support',(3.45,-.49,-1.80),(.09,1.63,1.70),m['dar
 h.box('Representative radiator face',(3.515,-.49,-1.80),(.028,1.55,1.60),m['white'],.012)
 for y in [-1.11,-.87,-.63,-.39,-.15,.09]:h.box('Radiator coating segment',(3.534,y,-1.80),(.008,.012,1.48),m['silver'],.002)
 for z in [-2.40,-1.20]:h.line('Warm-side heat pipe',[(2.55,-1.07,-2.24),(2.94,-1.15,z),(3.39,-.75,z)],.028,m['silver'])
-h.box('Cooling role plate',(2.20,-1.22,-1.93),(.84,.16,.03),m['dark'],.006)
+h.box('Cooling role plate',(2.20,-.57,-2.24),(.94,.03,.24),m['dark'],.006)
 
 spec=importlib.util.spec_from_file_location('payload_expansion',Path(__file__).with_name('payload-expansion.py'))
 expansion=importlib.util.module_from_spec(spec);spec.loader.exec_module(expansion)
 expanded_anchors=expansion.expand(h,m)
+
+# Side plates on the EU frame remain visible beside the stepped cards. Placing
+# their text under the next card falsely suggested clipped, embedded lettering.
+h.role('DataInterface')
+for name,y,z in [('Data processor',-.93,-1.49),('Telemetry timing',-.58,-.58),('High-speed interface',-.23,.29)]:
+    h.box(name+' side identification stock',(5.265,y,z),(.038,.29,.82),m['dark'],.005)
+h.role('Thermal')
+h.box('Cooler-control rear identification stock',(1.80,-.53,-3.96),(1.88,.035,.27),m['dark'],.005)
+h.role('Calibration')
+h.box('Calibration target left identification stock',(-3.795,-.24,-.24),(.034,.28,.82),m['dark'],.005)
 
 for mat in bpy.data.materials:
     if mat.use_nodes:

@@ -5,8 +5,10 @@ export const MODES=['light','data','heat'];
 export async function openGate(name,form='desktop') {
   const gate={browser:null,page:null,errors:[],scenes:[],gpu:'unavailable',name,form};
   try {
-  const perf=name==='perf';
-  const browser=await chromium.launch({channel:'chrome',headless:true,args:['--use-angle=d3d11','--enable-gpu','--ignore-gpu-blocklist',...(perf?['--disable-gpu-vsync','--disable-frame-rate-limit']:[])]});
+  // Exhaustive state checks still await rendered frames, but need not wait for
+  // display refresh. Camera flights and interaction gates retain normal timing.
+  const uncapped=['perf','cycle','parts'].includes(name);
+  const browser=await chromium.launch({channel:'chrome',headless:true,args:['--use-angle=d3d11','--enable-gpu','--ignore-gpu-blocklist',...(uncapped?['--disable-gpu-vsync','--disable-frame-rate-limit']:[])]});
   gate.browser=browser;
   const page=await browser.newPage(form==='phone'?{viewport:{width:390,height:844},deviceScaleFactor:3,isMobile:true,hasTouch:true}:{viewport:{width:1440,height:900},deviceScaleFactor:1});
   gate.page=page;page.setDefaultTimeout(15000);

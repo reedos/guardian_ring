@@ -1,4 +1,4 @@
-"""Qualitative air-column illustration, v1. No physical altitude or transmission.
+"""Qualitative air-column illustration, v2. No physical altitude or transmission.
 Colored sheets are diagram layers only, not measured atmospheric strata.
 Molecular symbols and all spacing, proportions and colors are as drawn.
 """
@@ -21,6 +21,7 @@ land=mat('Schematic ground',(.055,.10,.105),.2,.65)
 rim=mat('Atmospheric diagram outlines',(.18,.47,.65),.2,.5,.25)
 oxygen=mat('Molecule warm symbol',(.67,.41,.17),.1,.4)
 carbon=mat('Molecule cool symbol',(.14,.23,.29),.1,.4)
+hydrogen=mat('Hydrogen pale symbol',(.72,.78,.80),.1,.4)
 
 # A shallow spherical cap gives a curved reference surface without geographic data.
 segments,rings=64,12
@@ -50,12 +51,25 @@ mesh=bpy.data.meshes.new('Transparent air-column surface');mesh.from_pydata(vert
 o=bpy.data.objects.new('Air-column boundary',mesh);bpy.context.collection.objects.link(o)
 
 def molecule(center,linear=True):
+    before=set(bpy.context.scene.objects)
     x,y,z=center
     points=[(x-.4,y,z),(x,y,z),(x+.4,y,z)] if linear else [(x-.3,y,z-.20),(x,y,z),(x+.3,y,z-.20)]
     line('Symbolic molecular bond',points,.033,m['silver'])
-    for i,p in enumerate(points):sphere('Schematic atom',p,(.18,.18,.18),carbon if i==1 else oxygen)
-molecule((.40,-1.25,2.3))
-molecule((-.55,-.7,1.25),False)
+    for i,p in enumerate(points):
+        if linear:
+            material=carbon if i==1 else oxygen
+            radius=.16 if i==1 else .18
+        else:
+            material=oxygen if i==1 else hydrogen
+            radius=.18 if i==1 else .11
+        sphere('Carbon dioxide atom symbol' if linear else 'Water-vapor atom symbol',p,(radius,radius,radius),material)
+    for obj in set(bpy.context.scene.objects)-before:
+        obj['assetRole']='CarbonDioxide' if linear else 'WaterVapor'
+        obj['teachingOverlay']=True
+        obj['physicalHardware']=False
+        obj['solidForCamera']=False
+molecule((1.95,-.25,2.55))
+molecule((-1.90,-.15,1.55),False)
 
 for material in bpy.data.materials:
     if material.use_nodes:
@@ -66,18 +80,19 @@ bpy.ops.object.select_all(action='DESELECT')
 for o in geometry:o.select_set(True)
 bpy.context.view_layer.objects.active=geometry[0];bpy.ops.object.convert(target='MESH')
 root=bpy.data.objects.new('GuardianAtmosphere',None);bpy.context.collection.objects.link(root)
-root['version']=1;root['physicalScale']=False;root['representative']=True;root['assumption']='look-model'
+root['version']=2;root['physicalScale']=False;root['representative']=True;root['assumption']='look-model'
 root['description']='Qualitative atmospheric absorption diagram. No altitude, weather, humidity, temperature, transmission or detection model.'
 batches={}
 for o in list(bpy.context.scene.objects):
-    if o.type=='MESH':batches.setdefault(tuple(mat.name for mat in o.data.materials),[]).append(o)
-for names,objects in batches.items():
+    if o.type=='MESH':batches.setdefault((o.get('assetRole','AirColumn'),tuple(mat.name for mat in o.data.materials)),[]).append(o)
+for (role,names),objects in batches.items():
     bpy.ops.object.select_all(action='DESELECT')
     for o in objects:o.select_set(True)
     bpy.context.view_layer.objects.active=objects[0]
     if len(objects)>1:bpy.ops.object.join()
-    o=bpy.context.object;o.name='Atmosphere — '+names[0];o.parent=root;o['representative']=True
-for name,p in {'AnchorAir':(-.9,-.6,3.1),'AnchorBands':(.4,-1.25,2.3),'AnchorContext':(.7,-.6,.25)}.items():
+    o=bpy.context.object;o.name=role+' — '+names[0];o.parent=root;o['representative']=True;o['assetRole']=role
+for name,p in {'AnchorAir':(-.9,-.6,3.1),'AnchorBands':(.4,-1.25,2.3),'AnchorContext':(.7,-.6,.25),
+    'AnchorCO2':(1.95,-.43,2.55),'AnchorH2O':(-1.9,-.34,1.55)}.items():
     o=bpy.data.objects.new(name,None);bpy.context.collection.objects.link(o);o.parent=root;o.location=p
 out=ROOT/'public/models/atmosphere.glb'
 bpy.ops.export_scene.gltf(filepath=str(out),export_format='GLB',export_yup=True,export_extras=True,export_apply=True,export_animations=False,export_cameras=False,export_lights=False)

@@ -3,7 +3,7 @@
 const asDrawn = () => ['Drawing', 'Representative / not to scale', 'assumed', { assume: 'look-model' }];
 
 export function orbitsContent(model) {
-  return {
+  const level = {
     intro: 'A geostationary orbit keeps a satellite above the same longitude. Follow the light, data, and heat paths through a schematic view of Earth and its orbit families.',
     scale: 'Earth and orbit families · schematic scale',
     light: [
@@ -71,4 +71,15 @@ export function orbitsContent(model) {
       },
     ],
   };
+  const shapes = {
+    heo: ['Highly elliptical orbit spacecraft', 'A changing distance along an ellipse', 'The elongated guide introduces a highly elliptical orbit. Its shape and enlarged spacecraft marker are schematic. NASA describes Molniya as an elliptical orbit; the drawn ellipse does not encode a real trajectory.', ['Orbit example', 'Molniya: elliptical orbit', 'reported', { refs:[['nasa-orbit-catalog','Medium Earth Orbit, Molniya discussion']] }]],
+    meo: ['Medium Earth orbit spacecraft', 'An intermediate orbit family', 'This marker separates the medium Earth orbit family from GEO and LEO. The guide is compressed to fit this teaching view; its drawn radius is not an altitude specification.', ['Orbit family', 'Medium Earth orbit', 'reported', { refs:[['nasa-orbit-catalog','Medium Earth Orbit']] }]],
+    leo: ['Low Earth orbit spacecraft', 'A nearer orbit family', 'The inner guide introduces low Earth orbit. NASA describes Terra as a civil example in this family. The oversized marker is a representative spacecraft, with no mission coverage or viewing footprint assigned.', ['Civil orbit example', 'Terra in low Earth orbit', 'reported', { refs:[['nasa-orbit-catalog','Low Earth Orbit, Terra sun-synchronous example']] }]],
+  };
+  for (const [id,[title,kicker,body,fact]] of Object.entries(shapes)) {
+    level.light.push({id,title,kicker,body,specs:[fact,asDrawn()]});
+    level.data.push({id,title,kicker:'Instrument, spacecraft and ground interfaces',body:`${body} The marker represents a spacecraft carrying instrument and communications equipment. Its selection identifies an orbit family; it does not assert crosslinks, link schedules or processing functions for an operational constellation.`,specs:[fact,asDrawn()],drill:1});
+    level.heat.push({id,title,kicker:'The spacecraft carries its power and thermal systems',body:`${body} Solar arrays, batteries and heat-rejection hardware travel with the vehicle. Their detailed components can be explored at the satellite level. The orbital drawing does not simulate eclipse duration, array generation or temperature.`,specs:[fact,asDrawn()],drill:1});
+  }
+  return level;
 }

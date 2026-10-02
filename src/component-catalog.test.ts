@@ -25,6 +25,12 @@ vi.mock('./scenes/illustrated.js', () => ({ illustrated: (config: SceneConfig) =
 import './scenes/satellite.js';
 import './scenes/payload.js';
 import './scenes/focal-plane.js';
+import './scenes/pixel.js';
+import './scenes/plume.js';
+import './scenes/side-ground.js';
+import './scenes/side-abi.js';
+import './scenes/side-tirs2.js';
+import './scenes/side-atmosphere.js';
 
 const facts: { runtimeKey: string; row: Row }[] = componentLedgers.flatMap(ledger => ledger.facts);
 const model = compute(), C = content(model), claims = allClaims(model, C);
@@ -107,14 +113,15 @@ describe('component identity and canonical evidence', () => {
 });
 
 describe('assembly references and geometry anchors', () => {
-  it('anchors all satellite, payload and focal-plane parent cards in the actual GLBs', () => {
-    for (const [scene, count] of [['satellite', 12], ['payload', 13], ['focal-plane', 8]] as const) {
+  it('anchors every hardware and physics stop in its actual GLB with a distinct camera view', () => {
+    for (const [scene, count] of [['satellite',12],['payload',13],['focal-plane',8],['pixel',6],['plume',5],['ground',6],['abi',9],['tirs2',9],['atmosphere',5]] as const) {
       const config = sceneConfigs.get(scene)!;
       expect(config, scene).toBeDefined();
       const partIds = cards(C, 'PARTS', scene).map(part => part.id).sort();
       expect(partIds).toHaveLength(count);
       expect(Object.keys(config.points).sort()).toEqual(partIds);
       expect(Object.keys(config.views).sort()).toEqual(partIds);
+      expect(new Set(Object.values(config.views).map(view=>JSON.stringify(view))).size,scene).toBe(count);
       for (const [, key] of modes) expect(cards(C, key, scene).map(part => part.id).sort()).toEqual(partIds);
       const gltf = modelDocument(config.url);
       const names = gltf.nodes.map((node: { name?: string }) => node.name);

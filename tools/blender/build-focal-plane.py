@@ -1,4 +1,4 @@
-"""Level 4 focal-plane carrier GLB, version 4.
+"""Level 4 focal-plane carrier GLB, version 5.
 
 Run: Blender 5.2 --background --python tools/blender/build-focal-plane.py
 
@@ -15,7 +15,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 4
+VERSION = 5
 OUT.mkdir(parents=True, exist_ok=True)
 
 
@@ -127,6 +127,7 @@ for dx in [-.034,.034]:h.line('Thermometer lead',[(-.64+dx,.285,-1.0),(-.50+dx,.
 h.line('Cooler power-amplifier cable',[(1.42,.31,-2.80),(1.08,.25,-2.45),(.95,.21,-1.89),(.97,.20,-1.38)],.031,hm['loom'])
 h.line('Warm control heat path',[(2.86,.07,-2.63),(3.16,.06,-2.63),(3.18,.06,-1.90)],.030,hm['silver'])
 h.box('Control-board heat-rejection interface',(3.20,.03,-1.92),(.17,.25,.43),hm['silver'],.015)
+h.box('Cooler controller rear identification stock',(2.13,.12,-3.26),(1.65,.23,.025),hm['dark'],.005)
 
 h.role('WarmReadout')
 # Distinct package leads, service connectors and a shield frame make the warm

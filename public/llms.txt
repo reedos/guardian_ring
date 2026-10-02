@@ -2,7 +2,7 @@
 
 > An educational review build about infrared satellite architecture, from orbit to a detector element. Public sources explain the physics; named civil instruments supply detailed engineering examples.
 
-This is a review build, not a launch announcement. Pages retain noindex and nofollow, and robots.txt disallows crawling. Current validation and publication status are recorded in research/BUILD-REVIEW.md and the generated research/gate-results.md. Final acceptance of the component-anatomy revision is pending.
+This is a review build, not a launch announcement. Pages retain noindex and nofollow, and robots.txt disallows crawling. Current validation and publication status are recorded in research/BUILD-REVIEW.md and the generated research/gate-results.md. Reed's device review and separate launch decision remain open.
 
 ## Pages
 
@@ -27,7 +27,7 @@ All 3D geometry is authored in Blender. Spacecraft, payload, and focal-plane sto
 
 ## Evidence and scope
 
-Figures are labeled Spec, Vendor, Reported, Calc., or Assumed. Each label leads to the exact source location, formula, or assumption. Sources marked unchecked support no claim. The admitted research ledger currently contains 210 facts from directly inspected public material.
+Figures are labeled Spec, Vendor, Reported, Calc., or Assumed. Each label leads to the exact source location, formula, or assumption. Sources marked unchecked support no claim. The admitted research ledger currently contains 241 facts from directly inspected public material.
 
 GOES-R, ABI, and TIRS-2 details belong to those named civil designs. TIRS-2's architecture presentation describes a 2018 design. Neither these sources nor the representative drawings describe military sensor internals or performance.
 

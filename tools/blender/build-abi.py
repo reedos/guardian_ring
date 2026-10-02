@@ -1,245 +1,80 @@
-"""ABI civil-instrument teaching asset, version 1.
-
-Run: Blender 5.2 --background --python tools/blender/build-abi.py
-
-GOES-R Series Data Book, printed 3-8 / PDF 36: four telescope mirrors form
-images on three focal-plane modules. Those two counts are preserved. The
-scan mirrors and complete aft optics are not reproduced. Bench layout, mirror
-shapes, module packages, cooler/radiator shapes, spacing and thermal links are
-representative. Coordinates are arbitrary drawing units, not dimensions.
-
-No ray trace, spectral response, temperatures, detector format, or performance
-is encoded. Runtime supplies labeled illustrative Light/Data/Heat overlays.
-Only helper definitions are imported from the approved look builder; no render
-or image-generation loop is executed. The GLB is exported Three.js Y-up.
+"""ABI civil assembly v5; nine inspectable groups, representative packaging.
+GOES-R component vocabulary; four telescope mirrors and three focal modules.
+Layout and optical angles as drawn, not a flight prescription. CPU export only.
 """
-import ast
-import math
+import bpy, importlib.util
 from pathlib import Path
-import bpy
-from mathutils import Vector
-
-ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / 'public' / 'models'
-VERSION = 1
-OUT.mkdir(parents=True, exist_ok=True)
-
-
-def load_helpers():
-    source = Path(__file__).with_name('build-hardware-look.py')
-    tree = ast.parse(source.read_text(encoding='utf-8'), filename=str(source))
-    definitions = [node for node in tree.body
-                   if isinstance(node, (ast.Import, ast.ImportFrom, ast.FunctionDef))]
-    namespace = {'__file__': str(source), '__name__': 'guardian_abi_geometry'}
-    exec(compile(ast.Module(body=definitions, type_ignores=[]), str(source), 'exec'), namespace)
-    return namespace
-
-
-def group(name, parent=None, **metadata):
-    obj = bpy.data.objects.new(name, None)
-    bpy.context.scene.collection.objects.link(obj)
-    obj.parent = parent
-    for key, value in metadata.items(): obj[key] = value
-    return obj
-
-
-def tagged(obj, role):
-    obj['assetRole'] = role
-    return obj
-
-
-def box(role, name, pos, size, mat, bevel=.025):
-    return tagged(helpers['box'](name, pos, size, mat, bevel), role)
-
-
-def cylinder(role, name, pos, radius, depth, mat, axis='z', vertices=32, bevel=.008):
-    return tagged(helpers['cylinder'](name, pos, radius, depth, mat, axis, vertices, bevel), role)
-
-
-def link(role, name, points, radius, mat):
-    obj = tagged(helpers['line'](name, points, radius, mat), role)
-    obj.data.bevel_resolution = 2
-    return obj
-
-
-bpy.ops.wm.read_factory_settings(use_empty=True)
-bpy.context.scene.unit_settings.system = 'NONE'
-helpers = load_helpers()
-m = helpers['palette']()
-
-# Open bench: enough separation to read the component roles from an oblique view.
-box('OpticalBench', 'Representative ABI optical bench', (-.05, .20, .06), (7.5, 3.8, .24), m['dark'], .075)
-for y in [-1.63, 2.03]:
-    box('OpticalBench', 'Machined bench perimeter rail', (-.05, y, .225), (7.2, .095, .075), m['silver'], .016)
-for x in [-3.66, 3.56]:
-    box('OpticalBench', 'Bench end rail', (x, .20, .225), (.095, 3.56, .075), m['silver'], .016)
-for x in [-3.28, -.95, 1.38, 3.22]:
-    for y in [-1.36, 1.77]:
-        box('OpticalBench', 'Representative mounting foot', (x, y, -.145), (.48, .36, .18), m['silver'], .027)
-        cylinder('OpticalBench', 'Captive bench fastener', (x, y, .203), .045, .04, m['bright'], vertices=16, bevel=.004)
-
-# Four separate polished surfaces, each on its own support. Curvatures and the
-# alternating bench placement are chosen for legibility, not ABI prescriptions.
-mirror_specs = [
-    (-2.75, .55, 1.00, .60),
-    (-1.60, -.68, .92, .36),
-    (-.65, .72, 1.04, .44),
-    (.28, -.65, .90, .30),
-]
-for number, (x, y, z, radius) in enumerate(mirror_specs, 1):
-    box('TelescopeMirrors', f'Mirror {number} foot', (x, y+.095, .285), (radius*1.30, .36, .18), m['silver'], .021)
-    box('TelescopeMirrors', f'Mirror {number} stalk', (x, y+.095, (z+.38)/2), (.10, .11, z-.38), m['dark'], .015)
-    cylinder('TelescopeMirrors', f'Mirror {number} back support', (x, y+.120, z), radius*1.08, .09, m['dark'], 'y', 48)
-    mirror = tagged(helpers['mirror'](f'Telescope reflective surface {number}', 0, radius, 0, .040, m['mirror']), 'TelescopeMirrors')
-    mirror.location = (x, y, z)
-    mirror['publishedTelescopeMirrorIndex'] = number
-    mirror['shapeIsRepresentative'] = True
-    # Retainer lies behind the reflective face, avoiding coincident surfaces.
-    ring = tagged(helpers['ring_y'](f'Mirror {number} perimeter mount', y+.085, radius*1.13, radius*1.07, m['silver'], .045, center=(x, z)), 'TelescopeMirrors')
-
-# Neutral, schematic aft-optics interfaces. No additional telescope mirrors or
-# traced rays. Runtime may overlay VNIR/MWIR/LWIR paths on these interfaces.
-for number, (x, y, angle) in enumerate([(1.04, -.23, -24), (1.29, .78, 27)], 1):
-    box('BandSeparation', f'Aft-optics pedestal {number}', (x, y, .335), (.48, .44, .23), m['dark'], .034)
-    frame = box('BandSeparation', f'Representative dichroic frame {number}', (x, y, .86), (.10, .59, .77), m['silver'], .022)
-    plate = box('BandSeparation', f'Schematic band-separation interface {number}', (x-.065, y, .86), (.016, .47, .65), m['cyan'], .008)
-    frame.rotation_euler.z = math.radians(angle)
-    plate.rotation_euler.z = math.radians(angle)
-
-# Three physically separated, blank module faces. The named modules are retained,
-# but no array or pixel grid is drawn and no detector format is implied visually.
-module_specs = [('VNIR', -1.03), ('MWIR', -.02), ('LWIR', .99)]
-for band, y in module_specs:
-    x = 2.60
-    box('FocalPlaneModules', f'{band} representative module base', (x, y, .35), (1.04, .79, .28), m['dark'], .042)
-    box('FocalPlaneModules', f'{band} focal-plane carrier', (x, y, .55), (.91, .67, .10), m['silver'], .023)
-    box('FocalPlaneModules', f'{band} schematic cold surround', (x, y, .646), (.75, .53, .045), m['coldedge'], .017)
-    face = box('FocalPlaneModules', f'{band} blank module entrance', (x, y, .705), (.63, .405, .045), m['silicon'], .011)
-    face['publishedFocalPlaneModule'] = band
-    face['noArrayFormat'] = True
-    for offset in [-.39, .39]:
-        cylinder('FocalPlaneModules', f'{band} package fastener', (x+offset, y, .615), .025, .021, m['silver'], vertices=16, bevel=.003)
-
-# Two representative cooler bodies agree with the published redundant-cooler
-# architecture, without reproducing hardware dimensions, internals or stages.
-for number, x in enumerate([-2.45, -.78], 1):
-    box('Cryocooler', f'Cooler {number} mounting shoe', (x, 1.53, .295), (.83, .55, .16), m['dark'], .031)
-    cylinder('Cryocooler', f'Representative cooler {number}', (x, 1.53, .61), .235, .68, m['silver'], 'x', 40, .016)
-    for offset in [-.245, .245]:
-        cylinder('Cryocooler', f'Cooler {number} clamp', (x+offset, 1.53, .61), .254, .055, m['dark'], 'x', 32)
-    cylinder('Cryocooler', f'Cooler {number} cold-head proxy', (x+.47, 1.53, .61), .125, .23, m['silver'], 'x', 32)
-    link('Cryocooler', f'Cooler {number} representative transfer line', [(x+.61,1.53,.61),(x+.86,1.36,.51),(.96,1.37,.39)], .025, m['strap'])
-link('Cryocooler', 'Shared representative thermal path', [(.96,1.37,.39),(1.84,1.29,.40)], .025, m['strap'])
-for band, y in module_specs:
-    link('Cryocooler', f'{band} schematic thermal connection', [(2.18,y,.49),(1.91,y,.49),(1.84,1.29,.40)], .022, m['strap'])
-
-# The radiator is a recognizable rear panel; orientation, pattern and area are
-# arbitrary. Separated layers avoid flush coplanar surfaces at material edges.
-box('Radiator', 'Representative radiator backing', (2.22, 1.86, 1.07), (2.21, .105, 1.40), m['silver'], .044)
-box('Radiator', 'Representative pale radiator face', (2.22, 1.788, 1.07), (2.06, .030, 1.25), m['white'], .020)
-for x in [1.31, 1.77, 2.22, 2.67, 3.13]:
-    box('Radiator', 'Schematic radiator surface division', (x, 1.761, 1.07), (.012, .009, 1.17), m['silver'], .002)
-link('Cryocooler', 'Representative radiator thermal connection', [(1.84,1.29,.40),(1.45,1.56,.43),(1.45,1.79,.54)], .027, m['strap'])
-
-for mat in bpy.data.materials:
-    if not mat.use_nodes: continue
-    for node in list(mat.node_tree.nodes):
-        if node.type in {'TEX_NOISE', 'BUMP'}: mat.node_tree.nodes.remove(node)
-for obj in bpy.context.scene.objects:
-    if obj.type not in {'MESH', 'CURVE'}: continue
-    for modifier in obj.modifiers:
-        if modifier.type == 'BEVEL': modifier.segments = 1 if modifier.width <= .008 else 2
-
-geometry = [obj for obj in bpy.context.scene.objects if obj.type in {'MESH', 'CURVE'}]
-bpy.ops.object.select_all(action='DESELECT')
-for obj in geometry: obj.select_set(True)
-bpy.context.view_layer.objects.active = geometry[0]
-bpy.ops.object.convert(target='MESH')
-
-root = group('GuardianABI', version=VERSION, level='abi', representative=True,
-    physicalScale=False, assumption='look-model', upAxis='Y',
-    units='Arbitrary drawing units, not meters.',
-    source='GOES-R Series Data Book, printed 3-8 / PDF 36; thermal roles printed 3-13–3-14 / PDF 41–42.',
-    publishedTelescopeMirrorCount=4, publishedFocalPlaneModuleCount=3,
-    description='Four-mirror telescope and three focal-plane modules on a representative bench. Other geometry is schematic.',
-    scope='Mirror count applies to the telescope. Full scan-mirror system and optical prescription are not reproduced.',
-    sourceGeometry='Shared manufactured-edge helpers from build-hardware-look.py; authored ABI teaching layout.',
-    teachingRays='Omitted; runtime owns labeled illustrative overlays.',
-    defaultCamera=[8.0, 7.5, 11.0], defaultTarget=[0, .70, -.10])
-roles = {role: group(role, root, role=role, representative=True) for role in
-         ['OpticalBench', 'TelescopeMirrors', 'BandSeparation', 'FocalPlaneModules', 'Cryocooler', 'Radiator']}
-
-batches = {}
-for obj in list(bpy.context.scene.objects):
-    if obj.type != 'MESH': continue
-    key = (obj['assetRole'], tuple(mat.name for mat in obj.data.materials))
-    batches.setdefault(key, []).append(obj)
-for (role, names), objects in batches.items():
-    bpy.ops.object.select_all(action='DESELECT')
-    for obj in objects: obj.select_set(True)
-    bpy.context.view_layer.objects.active = objects[0]
-    if len(objects) > 1: bpy.ops.object.join()
-    obj = bpy.context.object
-    obj.name = role + ' — ' + names[0]
-    obj.parent = roles[role]
-    obj['assetRole'] = role
-    obj['representative'] = True
-    obj['solidForCamera'] = True
-
-# Nonrendering role markers keep the independently verifiable civil counts even
-# after geometry is batched. Their positions are not physical dimensions.
-for number, (x, y, z, radius) in enumerate(mirror_specs, 1):
-    marker = group(f'TelescopeMirror{number:02}', roles['TelescopeMirrors'],
-                   role='Published telescope mirror count marker', mirrorIndex=number,
-                   publishedCount=True, shapeIsRepresentative=True)
-    marker.location = (x, y, z)
-for band, y in module_specs:
-    marker = group(f'FocalPlaneModule{band}', roles['FocalPlaneModules'],
-                   role='Published focal-plane module count marker', bandRegion=band,
-                   publishedCount=True, noArrayFormat=True, packageIsRepresentative=True)
-    marker.location = (2.60, y, .73)
-
-anchors = group('Anchors', root, role='Nonrendering interface anchors')
-anchor_specs = {
-    'AnchorTelescope': ((-2.38, .51, 1.31), 'Four-mirror telescope group'),
-    'AnchorBands': ((1.04, -.20, 1.28), 'Representative band-separation region'),
-    'AnchorFocalPlanes': ((2.60, -.02, .755), 'Three distinct focal-plane modules'),
-    'AnchorCooler': ((-.78, 1.53, .88), 'Representative cryocooler group'),
-    'AnchorRadiator': ((2.22, 1.75, 1.59), 'Representative radiator'),
-}
-for name, (point, role) in anchor_specs.items():
-    anchor = group(name, anchors, role=role, representative=True,
-                   threePosition=[point[0], point[2], -point[1]])
-    anchor.location = point
-
-bpy.context.view_layer.update()
-points = [obj.matrix_world @ vertex.co for obj in bpy.context.scene.objects
-          if obj.type == 'MESH' for vertex in obj.data.vertices]
-triangles = 0
-for obj in bpy.context.scene.objects:
-    if obj.type != 'MESH': continue
-    obj.data.calc_loop_triangles()
-    triangles += len(obj.data.loop_triangles)
-converted = [Vector((p.x, p.z, -p.y)) for p in points]
-low = [min(point[i] for point in converted) for i in range(3)]
-high = [max(point[i] for point in converted) for i in range(3)]
-radius = max(point.length for point in points)
-root['boundingBoxMin'] = low
-root['boundingBoxMax'] = high
-root['maximumDrawingRadius'] = radius
-root['triangleCount'] = triangles
-root['materialRoleBatches'] = len(batches)
-assert triangles < 40000, f'ABI geometry exceeds triangle budget: {triangles}'
-assert len(batches) <= 20, f'ABI geometry exceeds batch budget: {len(batches)}'
-assert len(mirror_specs) == 4 and len(module_specs) == 3
-
-path = OUT / 'abi.glb'
-bpy.ops.export_scene.gltf(filepath=str(path), export_format='GLB',
-    export_yup=True, export_extras=True, export_apply=True,
-    export_animations=False, export_cameras=False, export_lights=False,
-    export_materials='EXPORT', export_normals=True)
-print('ABI_ASSET', path, 'version', VERSION, 'bytes', path.stat().st_size,
-      'triangles', triangles, 'batches', len(batches), 'radius', radius,
-      'bounds', low, high, flush=True)
-print('ABI_ANCHORS_Y_UP', {name: [point[0], point[2], -point[1]]
-      for name, (point, role) in anchor_specs.items()}, flush=True)
+ROOT=Path(__file__).resolve().parents[2]
+spec=importlib.util.spec_from_file_location('civil',Path(__file__).with_name('civil-detail.py'))
+c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c);h=c.load_h()
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=5
+c.bench(h,m,(.35,-.26,.10),(10.8,8.2))
+h.role('Telescope')
+mirrors=[(-3.40,1.05,.55,.59),(-2.40,.97,-.65,.37),(-1.43,1.08,.47,.44),(-.48,.94,-.65,.30)]
+for i,(x,y,z,r) in enumerate(mirrors,1):
+    h.box('Telescope mirror support '+str(i),(x,y/2-.04,z-.10),(.15,y,.16),m['dark'])
+    h.box('Telescope mirror foot '+str(i),(x,.035,z-.1),(r*1.30,.13,.48),m['silver'])
+    h.cyl('Telescope mirror backing '+str(i),(x,y,z-.03),r*1.07,.10,m['dark'],'z',40)
+    h.cyl('Reflective telescope surface '+str(i),(x,y,z+.036),r,.022,m['mirror'],'z',48,.003)
+    h.ring('Telescope mirror retaining ring '+str(i),(x,y,z+.040),r*1.13,r*1.045,.045,m['silver'],'z',48)
+c.plaque(h,m,'Telescope',(-2.4,-.08,1.43),2.5)
+h.role('ScanSystem')
+c.scan(h,m,'North south scan',(-3.20,.87,3.0),(.64,.25,.72),scale=.85)
+c.scan(h,m,'East west scan',(-1.28,.86,2.78),(-.64,.45,.63),scale=.69,axis='y')
+c.plaque(h,m,'Scan mirrors',(-2.48,-.06,3.78),2.48)
+h.role('Calibration')
+c.blackbody(h,m,'Internal calibration target',(.20,.63,2.62),.34)
+c.plate(h,m,'Solar calibration diffuser',(1.08,.74,2.75),(.57,.60),(0,.45,1),'white')
+h.box('Solar target support',(1.08,.36,2.58),(.16,.61,.15),m['silver'])
+h.cyl('Solar cover hinge',(1.08,.45,2.40),.06,.70,m['dark'],'x',24)
+c.plaque(h,m,'Calibration targets',(.61,-.06,3.63),1.72)
+h.role('Bands')
+for name,at,normal,mat in [('Visible infrared splitter',(.41,.99,-.43),(.71,0,.71),'cyanedge'),('Infrared splitter',(1.27,1.0,-.42),(-.71,0,.71),'goldedge'),('Aft fold mirror',(.68,.99,.49),(.71,0,-.71),'mirror')]:
+    c.plate(h,m,name,at,(.47,.63),normal,mat)
+    h.box(name+' support',(at[0],.47,at[2]),(.12,.90,.13),m['dark'])
+    h.box(name+' foot',(at[0],.04,at[2]),(.42,.11,.38),m['silver'])
+c.plaque(h,m,'Aft optics',(.67,-.06,1.34),1.5)
+h.role('FocalPlanes')
+for name,z in [('VNIR',-.83),('MWIR',.0),('LWIR',.83)]:
+    x=2.70
+    h.box(name+' module base',(x,.12,z),(1.06,.22,.69),m['dark'])
+    h.box(name+' carrier',(x,.29,z),(.94,.095,.61),m['silver'])
+    h.box(name+' cold surround',(x,.37,z),(.78,.049,.49),m['cyan'])
+    h.box(name+' blank module entrance',(x,.43,z),(.64,.035,.35),m['solar'],.006)
+    for xx in [x-.42,x+.42]:h.screw((xx,.36,z),m['edge'])
+    h.ribbon(name+' readout interface',[(x+.50,.31,z),(3.47,-.09,z),(3.47,-.09,1.78),(3.43,.14,1.93)],.17,m['goldedge'])
+c.plaque(h,m,'Focal modules',(2.73,-.06,1.38),1.77)
+h.role('Readout')
+h.enclosure('Sensor Unit Electronics chassis',(2.77,.34,2.72),(2.00,.63,1.70),m,True)
+c.card(h,m,'Video Processor',(2.77,.31,2.34),(1.68,.62))
+c.card(h,m,'Scan interface',(2.77,.34,3.19),(1.68,.58),'drive')
+c.plaque(h,m,'Sensor electronics',(2.78,.02,3.80),1.9)
+h.role('Controller')
+h.enclosure('Electronics Unit chassis',(4.44,.43,-.02),(1.48,.89,2.78),m,True)
+for name,z in [('Instrument Control',-.93),('Data Processor',-.09),('High-speed Interface',.74)]:c.card(h,m,name,(4.44,.40,z),(1.18,.63))
+h.role('Power')
+h.enclosure('Power supply enclosure',(4.59,.38,2.82),(1.32,.78,1.55),m,True)
+c.card(h,m,'Power Supply',(4.59,.35,2.80),(1.04,1.23),'power')
+h.line('Power supply output harness',[(4.2,.22,2.24),(3.91,.17,2.06),(3.92,.17,1.20)],.03,m['loom'])
+c.plaque(h,m,'Power supply',(4.54,-.01,3.82),1.43)
+h.role('Thermal')
+for n,x in enumerate([-.58,.75],1):
+    h.box('Cooler mount',(x,.00,-2.39),(1.10,.14,.64),m['dark'])
+    h.cyl('Representative redundant cooler '+str(n),(x,.38,-2.39),.23,.91,m['silver'],'x',32)
+    for xx in [x-.31,x+.31]:h.ring('Cooler mounting clamp',(xx,.38,-2.39),.252,.231,.075,m['dark'],'x',32)
+    h.cyl('Cooler cold head',(x+.57,.38,-2.39),.118,.20,m['cyan'],'x',24)
+    h.line('Cooler transfer line',[(x+.70,.38,-2.39),(1.76,.28,-2.17),(2.29,.24,-1.10)],.03,m['silver'])
+c.card(h,m,'Cryocooler Control Electronics',(-2.60,.16,-2.63),(2.07,1.22),'drive')
+c.radiator(h,m,'Heat rejection radiator',(3.48,.77,-2.69),(2.86,1.69))
+h.line('Warm heat rejection path',[(.64,.14,-2.86),(1.59,.14,-3.24),(2.70,.56,-3.19)],.047,m['silver'])
+c.plaque(h,m,'Cooling hardware',(-.04,-.02,-1.59),2.47)
+anchors={'AnchorTelescope':[-2.4,1.43,-.61],'AnchorBands':[.73,1.43,-.16],'AnchorFocalPlanes':[2.70,.51,0],
+ 'AnchorScanSystem':[-2.16,1.43,2.97],'AnchorCalibration':[.20,1.06,2.75],'AnchorReadout':[2.77,.77,2.74],
+ 'AnchorController':[4.44,.95,-.02],'AnchorPower':[4.59,.93,2.82],'AnchorThermal':[.09,.68,-2.39],
+ 'AnchorCooler':[.75,.68,-2.39],'AnchorRadiator':[3.48,.91,-2.69]}
+eyes={'AnchorTelescope':[.5,6.5,3.6],'AnchorBands':[2.6,4.7,3.7],'AnchorFocalPlanes':[6.4,4.8,3.1],
+ 'AnchorScanSystem':[-.6,4.8,7.0],'AnchorCalibration':[1.3,4.8,6.9],'AnchorReadout':[4.2,4.6,7.0],
+ 'AnchorController':[7.9,4.6,2.8],'AnchorPower':[7.4,4.7,6.1],'AnchorThermal':[.8,10,3.7]}
+h.export(ROOT/'public/models/abi.glb','GuardianABI',VERSION,'abi',anchors,
+ 'Public ABI component roles: orthogonal scan mirrors, four-mirror telescope, calibration targets, aft spectral optics, three focal-plane modules, Sensor Unit Electronics, Electronics Unit, power supply and cooling. Layout and package internals as drawn.')
+c.raycheck(h,anchors,eyes)

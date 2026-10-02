@@ -1,4 +1,4 @@
-"""Ground side-level GLB, version 1: representative receive/process/operations.
+"""Ground side-level GLB, version 2: representative ground-system equipment.
 
 Run: Blender 5.2 --background --python tools/blender/build-ground.py
 
@@ -15,7 +15,7 @@ from mathutils import Vector
 
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'public'/'models'
-VERSION=1
+VERSION=2
 OUT.mkdir(parents=True,exist_ok=True)
 
 
@@ -60,12 +60,12 @@ def rod(name,start,end,radius,mat):
 
 
 def floor():
-    box('Representative raised floor',(0,0,-.13),(8.10,4.40,.24),m['floor'],.06)
+    box('Representative raised floor',(0,-1.25,-.13),(8.10,6.90,.24),m['floor'],.06)
     for ix in range(9):
-        for iy in range(5):
-            box('Separated floor tile',((ix-4)*.876,(iy-2)*.846,.014),(.852,.822,.035),m['tile'],.008)
-    for x in [-4.02,4.02]:box('Floor edge cap',(x,0,-.08),(.055,4.27,.10),m['silver'],.012)
-    for y in [-2.17,2.17]:box('Floor edge cap',(0,y,-.08),(8.0,.055,.10),m['silver'],.012)
+        for iy in range(8):
+            box('Separated floor tile',((ix-4)*.876,1.7-iy*.846,.014),(.852,.822,.035),m['tile'],.008)
+    for x in [-4.02,4.02]:box('Floor edge cap',(x,-1.25,-.08),(.055,6.77,.10),m['silver'],.012)
+    for y in [-4.67,2.17]:box('Floor edge cap',(0,y,-.08),(8.0,.055,.10),m['silver'],.012)
     # Low route covers suggest facility services without drawing signal flow.
     box('Floor service cover',(-.15,1.88,.075),(6.3,.17,.075),m['dark'],.012)
 
@@ -151,7 +151,41 @@ def operations():
         cylinder('Chair caster',end,.06,.055,m['dark'],'x',vertices=16,bevel=.007)
 
 
-for name,build in [('Floor',floor),('Receive',receive),('Process',process),('Operations',operations)]:section(name,build)
+def cabinet(kind,cx,cy,height):
+    width,depth=.96,.96
+    box(kind+' equipment foot',(cx,cy,.12),(1.08,1.10,.16),m['dark'],.025)
+    box(kind+' cabinet',(cx,cy,.19+height/2),(width,depth,height),m['dark'],.028)
+    for dx in [-.45,.45]:
+        box(kind+' front rail',(cx+dx,cy-.493,.19+height/2),(.038,.035,height-.05),m['silver'],.007)
+    box(kind+' label stock',(cx,cy-.507,height+.035),(.79,.024,.16),m['silver'],.008)
+    if kind=='Receiver':
+        for j in range(4):
+            z=.42+j*.23
+            box('Receiver modular enclosure',(cx,cy-.495,z),(.84,.046,.19),m['silver'],.012)
+            for dx in [-.30,-.10,.10]:
+                cylinder('Representative RF connector',(cx+dx,cy-.543,z),.038,.042,m['goldedge'],'y',vertices=16,bevel=.003)
+            box('Receiver blank status glass',(cx+.29,cy-.526,z),(.15,.015,.07),m['screen'],.004)
+    elif kind=='Archive':
+        for j in range(6):
+            z=.39+j*.23
+            box('Storage module face',(cx,cy-.504,z),(.82,.044,.185),m['silver'],.009)
+            for dx in [-.31,.31]:
+                box('Storage module pull handle',(cx+dx,cy-.543,z),(.038,.042,.115),m['dark'],.006)
+            box('Storage status light',(cx+.19,cy-.531,z+.04),(.032,.01,.025),m['indicator'],.003)
+    else:
+        box('UPS power-module panel',(cx,cy-.508,.56),(.78,.04,.55),m['silver'],.016)
+        for i in range(8):
+            box('UPS panel cooling slot',(cx-.28+i*.08,cy-.533,.46),(.035,.009,.19),m['black'],.004)
+        box('UPS blank status display',(cx,cy-.535,.72),(.29,.012,.07),m['screen'],.007)
+        box('UPS module handle',(cx,cy-.58,.29),(.35,.07,.04),m['dark'],.009)
+    # A rear cable relief is mechanical context; logical paths are runtime overlays.
+    line(kind+' service cable',[(cx+.26,cy+.50,.38),(cx+.37,cy+.64,.21),(cx+.37,cy+.8,.14)],.023,m['dark'])
+
+
+for name,build in [('Floor',floor),('Receive',receive),('Process',process),('Operations',operations),
+    ('Receiver',lambda:cabinet('Receiver',-2.65,-2.75,1.32)),
+    ('Archive',lambda:cabinet('Archive',-.35,-2.75,1.70)),
+    ('Power',lambda:cabinet('Power',2.20,-3.35,1.03))]:section(name,build)
 for mat in bpy.data.materials:
     if mat.use_nodes:
         for node in list(mat.node_tree.nodes):
@@ -167,9 +201,9 @@ bpy.context.view_layer.objects.active=geometry[0];bpy.ops.object.convert(target=
 
 root=group('GuardianGround',version=VERSION,level='ground',representative=True,
     physicalScale=False,assumption='look-model',units='Arbitrary drawing units, not meters.',upAxis='Y',
-    description='Representative receiving antenna, processing rack and operations console; not an actual facility.',
+    description='Representative antenna, RF/baseband receiver, processing rack, archive, operations console and UPS; not an actual facility.',
     defaultCamera=[8.0,6.5,10.0],defaultTarget=[0.0,.8,0.0])
-roles={name:group(name,root,role=name,representative=True) for name in ['Floor','Receive','Process','Operations']}
+roles={name:group(name,root,role=name,representative=True) for name in ['Floor','Receive','Process','Operations','Receiver','Archive','Power']}
 batches={}
 for obj in list(bpy.context.scene.objects):
     if obj.type=='MESH':batches.setdefault((obj['assetRole'],tuple(m.name for m in obj.data.materials)),[]).append(obj)
@@ -186,6 +220,9 @@ for name,point,role in [
     ('AnchorReceive',(-2.65,-.15,1.95),'Representative receive antenna'),
     ('AnchorProcess',(-.35,-.13,1.45),'Representative processing equipment'),
     ('AnchorOperations',(2.20,-.22,1.38),'Representative operator console'),
+    ('AnchorReceiver',(-2.65,-3.30,1.355),'Representative RF and baseband receiver cabinet'),
+    ('AnchorArchive',(-.35,-3.30,1.735),'Representative mission-data archive cabinet'),
+    ('AnchorPower',(2.20,-3.90,1.065),'Representative UPS and facility distribution'),
 ]:
     obj=group(name,anchors,role=role,representative=True,threePosition=[point[0],point[2],-point[1]])
     obj.location=point
@@ -201,7 +238,7 @@ high=[max(p[i] for p in converted) for i in range(3)]
 root['boundingBoxMin']=low;root['boundingBoxMax']=high
 root['triangleCount']=triangles;root['materialRoleBatches']=len(batches)
 root['maximumDrawingRadius']=max(p.length for p in points)
-assert triangles<=30000,'Ground asset triangle budget exceeded'
+assert triangles<=45000,'Ground asset triangle budget exceeded'
 path=OUT/'ground.glb'
 bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',export_yup=True,export_extras=True,
     export_apply=True,export_animations=False,export_cameras=False,export_lights=False,

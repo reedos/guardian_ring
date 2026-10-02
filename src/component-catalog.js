@@ -2,7 +2,8 @@
 import spacecraft from '../research/spacecraft-facts.json';
 import comprehensive from '../research/comprehensive-systems-facts.json';
 import tirs from '../research/tirs2-architecture-facts.json';
-const facts = Object.fromEntries([...spacecraft.facts,...comprehensive.facts,...tirs.facts].map(f=>[f.runtimeKey,f.row]));
+import practices from '../research/design-practices-facts.json';
+const facts = Object.fromEntries([...spacecraft.facts,...comprehensive.facts,...tirs.facts,...practices.facts].map(f=>[f.runtimeKey,f.row]));
 export const catalogFact = key => {
   if(!facts[key]) throw new Error(`Unreviewed component fact: ${key}`);
   return structuredClone(facts[key]);
@@ -14,7 +15,7 @@ export const COMPONENT_CATALOG = {
       c('scene-mirror','Scene-select mirror','Choose Earth or a calibration reference','The TIRS-2 scene-select mechanism points toward Earth, its onboard blackbody or a space view. This civil mechanism has a different observing role from ABI’s two-axis scanning assembly.','tirs-scene-select'),
       c('scene-drive','Scene-select motor, bearings and encoders','Move and measure the mirror','NASA’s TIRS-2 design separates the motor, mirror support, encoders and mechanism-control electronics. Motion and measured position are distinct hardware responsibilities.','tirs-motion'),
       c('blackbody','Onboard blackbody target','Provide a thermal reference','The blackbody is an internal reference that the scene-select mirror can observe. Space supplies another reference view rather than another installed target.','tirs-scene-select'),
-      c('baffles','Lens baffles and filter assembly','Control the optical path','The TIRS-2 design includes lens-region baffles and a filter assembly ahead of the focal plane. Its refractive optical train is distinct from ABI’s reflective telescope.','tirs-baffles'),
+      c('baffles','Lens baffles and spacers','Control unwanted light around the lenses','The TIRS-2 design includes lens-region baffles and spacers. Its refractive optical train is distinct from ABI’s reflective telescope; the fixed interference filters are a separately selectable assembly.','tirs-baffles'),
     ],
     arrays:[
       c('fpe','Focal Plane Electronics','Connect and operate detector readout','NASA’s design diagram separates the detector assemblies from the FPE and main electronics. The FPE forms the instrument’s detector-side electrical interface.','tirs-fpe'),
@@ -54,10 +55,37 @@ for(const group of comprehensive.coverage) {
 COMPONENT_CATALOG.satellite['solar-array'].unshift(c('photovoltaic-cell','Photovoltaic cells','Convert sunlight into electrical current','A semiconductor photovoltaic cell converts absorbed light into electrical energy. NASA describes multi-junction cells as stacked junctions that respond to different portions of the solar spectrum.','solar-cells'));
 // Civil comparisons expose the same detailed ABI modules without duplicating evidence definitions.
 COMPONENT_CATALOG.abi={
-  telescope:[...COMPONENT_CATALOG.payload.optics,...COMPONENT_CATALOG.payload['scan-system'],...COMPONENT_CATALOG.payload.mechanisms],
-  bands:[...COMPONENT_CATALOG.payload.calibration,...COMPONENT_CATALOG.payload['aft-optics'],...COMPONENT_CATALOG.payload.controller,...COMPONENT_CATALOG.payload['data-interface'],...COMPONENT_CATALOG.payload.power],
-  'focal-planes':[...COMPONENT_CATALOG.payload.detector,...COMPONENT_CATALOG.payload.readout,...COMPONENT_CATALOG.payload.thermal],
+  telescope:[...COMPONENT_CATALOG.payload.optics,...COMPONENT_CATALOG.payload.mechanisms],
+  bands:[...COMPONENT_CATALOG.payload['aft-optics']],
+  'focal-planes':[...COMPONENT_CATALOG.payload.detector],
+  'scan-system':[...COMPONENT_CATALOG.payload['scan-system']],
+  calibration:[...COMPONENT_CATALOG.payload.calibration],
+  readout:[...COMPONENT_CATALOG.payload.readout],
+  controller:[...COMPONENT_CATALOG.payload.controller,...COMPONENT_CATALOG.payload['data-interface']],
+  thermal:[...COMPONENT_CATALOG.payload.thermal],
+  power:[...COMPONENT_CATALOG.payload.power],
 };
+// Promote the formerly crowded civil overview groups into separately selectable assemblies.
+const select=(items,ids)=>items.filter(item=>ids.includes(item.id));
+const oldTirs=COMPONENT_CATALOG.tirs2;
+COMPONENT_CATALOG.tirs2={
+  telescope:select(oldTirs.telescope,['baffles']),
+  arrays:[],
+  cooling:select(oldTirs.cooling,['tmu','cce','rse']),
+  'scene-select':select(oldTirs.telescope,['scene-mirror','scene-drive']),
+  blackbody:select(oldTirs.telescope,['blackbody']),
+  readout:select(oldTirs.arrays,['fpe','fib']),
+  electronics:select(oldTirs.arrays,['meb','mce','redundant']),
+  radiator:select(oldTirs.cooling,['thermal','heaters','restraint']),
+  filters:[],
+};
+// New evidence follows the same canonical ledger; ground/test and software practices
+// remain explanations of existing hardware instead of invented flight boxes.
+for(const f of practices.facts) for(const {scene,part} of f.parents||[]) {
+  COMPONENT_CATALOG[scene] ||= {};
+  COMPONENT_CATALOG[scene][part] ||= [];
+  COMPONENT_CATALOG[scene][part].push(c(f.runtimeKey,f.componentName,f.row[1],f.body,f.runtimeKey));
+}
 export function attachComponents(levels) {
   for(const [scene,parts] of Object.entries(COMPONENT_CATALOG)) for(const mode of ['light','data','heat']) {
     for(const part of levels[scene][mode]) part.components=parts[part.id]||[];

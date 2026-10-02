@@ -1,4 +1,4 @@
-"""Representative spacecraft engineering cutaway, v4.
+"""Representative spacecraft engineering cutaway, v7.
 Blender --background --python tools/blender/build-satellite.py.
 Open decks, separated covers, equipment counts and arrangement are teaching
 choices, not a military satellite reconstruction or bill of materials.
@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
 bpy.ops.wm.read_factory_settings(use_empty=True)
-m=h.palette();VERSION=4
+m=h.palette();VERSION=7
 
 h.role('Structure')
 h.box('Lower structural sandwich deck',(0,.08,0),(3.10,.16,2.25),m['silver'],.035)
@@ -29,6 +29,10 @@ h.foil('Removed outer thermal blanket',(-1.92,.93,1.714),(.74,0,0),(0,1.51,0),(0
 for x in [-2.28,-1.56]:h.box('Blanket edge binding',(x,.93,1.728),(.023,1.49,.018),m['goldedge'],.003)
 for y in [.20,1.66]:h.box('Blanket edge binding',(-1.92,y,1.728),(.74,.023,.018),m['goldedge'],.003)
 for y in [.3,1.55]:h.line('Detached-panel teaching bracket',[(-1.52,y,1.01),(-1.62,y,1.40),(-1.70,y,1.66)],.014,m['silver'])
+for y in [.45,1.37]:
+    h.box('Representative blanket bonding tab',(-1.61,y,1.742),(.14,.085,.016),m['silver'],.004)
+    for dx in [-.014,0,.014]:h.line('Blanket bond strap strand',[(-1.61+dx,y,1.75),(-1.54+dx,y+.05,1.40),(-1.48+dx,y,1.06)],.005,m['copper'])
+h.box('Blanket identification stock',(-1.92,1.43,1.746),(.70,.20,.025),m['dark'],.005)
 
 h.role('Battery')
 h.enclosure('Battery module tray',(-.85,.39,.52),(1.04,.43,.75),m,True)
@@ -39,12 +43,14 @@ for x in [-1.17,-.85,-.53]:
 for z in [.32,.65]:h.box('Battery bus strap',(-.85,.681,z),(.77,.018,.044),m['copper'],.003)
 h.line('Battery insulated lead',[(-.49,.69,.60),(-.32,.73,.60),(-.25,.73,.36),(.28,.72,.36)],.023,m['loom'])
 h.connector('Battery service connector',(-.86,.35,.927),.28,m)
+h.box('Battery identification stock',(-.85,.55,.981),(.96,.18,.025),m['dark'],.005)
 
 h.role('Power')
 h.enclosure('Open power distribution unit',(.80,.41,.56),(1.01,.47,.80),m,True)
 h.board('Power conditioning board',(.80,.66,.56),(.90,.68),m)
 for x in [.53,.76,1.00]:h.cyl('Representative power inductor',(x,.79,.34),.072,.10,m['copper'],segments=16,bevel=.004)
 h.connector('PDU output connector',(.82,.42,.99),.42,m)
+h.box('Power-unit identification stock',(.80,.64,1.053),(.95,.20,.025),m['dark'],.005)
 for i in range(3):h.line('Power harness branch',[(.43+i*.12,.76,.9),(.38+i*.12,.85,1.0),(.1+i*.15,1.02,.9),(.1+i*.15,1.18,.25)],.012,m['loom'])
 
 h.role('Computer')
@@ -58,6 +64,14 @@ h.enclosure('Payload processor chassis',(.67,1.44,.05),(1.05,.53,.87),m,True)
 h.board('Representative payload processing board',(.67,1.70,.05),(.92,.72),m)
 for x in [.29,1.04]:h.box('Processor chassis stiffener',(x,1.83,.05),(.055,.055,.68),m['silver'],.009)
 h.line('Avionics signal harness',[(-.2,1.65,.5),(.02,1.86,.5),(.45,1.9,.42),(.74,1.88,.2)],.019,m['loom'])
+h.box('Flight computer identification stock',(-.69,1.76,.714),(1.04,.21,.026),m['dark'],.005)
+h.box('Payload processor identification stock',(.67,1.43,.51),(.95,.20,.026),m['dark'],.005)
+# Recovery-function packages are representative physical vocabulary, not a
+# named computer design or a reconstructed reset/boot circuit.
+h.box('Representative recovery daughterboard',(-1.05,1.825,-.11),(.33,.030,.44),m['pcb'],.006)
+h.box('Representative bootstrap memory package',(-1.06,1.882,-.24),(.21,.075,.17),m['chip'],.008)
+h.box('Representative reset supervisor package',(-1.05,1.873,.005),(.16,.057,.12),m['chip'],.006)
+for dx in [-.012,0,.012]:h.line('Computer housing bond strap',[(-1.26+dx,1.22,-.41),(-1.34+dx,1.13,-.49),(-1.34+dx,1.11,-.66)],.005,m['copper'])
 
 h.role('Wheels')
 h.box('Reaction-wheel mounting shelf',(-.06,.24,1.21),(.77,.085,.60),m['silver'],.014)
@@ -66,6 +80,7 @@ for at,axis in [((-.18,.48,1.19),'y'),((.18,.51,1.23),'x'),((-.13,.64,1.40),'z')
     q=list(at);q[{'x':0,'y':1,'z':2}[axis]]+=.084
     h.cyl('Wheel housing service face',q,.143,.018,m['silver'],axis,32,.004)
 h.line('Wheel drive harness',[(.28,.45,1.22),(.37,.37,1.0),(.42,.42,.97)],.018,m['loom'])
+h.box('Wheel identification stock',(-.06,.26,1.56),(.72,.18,.022),m['dark'],.005)
 
 h.role('Propulsion')
 h.sphere('Representative propellant tank',(.88,1.38,-.74),(.43,.50,.36),m['silver'])
@@ -118,6 +133,9 @@ for side in [-1,1]:
     h.role('ArrayDriveLeft' if side<0 else 'ArrayDriveRight')
     for x,r,d,mat in [(1.66,.20,.21,'silver'),(1.87,.15,.17,'dark'),(2.04,.115,.16,'goldedge')]:h.cyl('Solar-array rotary drive',(side*x,1.10,-.13),r,d,m[mat],'x',32,.012)
     h.line('Array power harness',[(side*2.09,1.10,-.08),(side*1.98,1.33,-.02),(side*1.67,1.39,.01),(side*1.42,1.27,.28)],.019,m['loom'])
+    h.box('Representative deployment-position sensor',(side*1.74,1.38,-.05),(.17,.10,.15),m['dark'],.010)
+    h.box('Position-sensor actuating tab',(side*1.90,1.39,-.05),(.15,.033,.065),m['goldedge'],.004)
+    h.line('Deployment-state sensor lead',[(side*1.74,1.37,-.13),(side*1.62,1.48,-.16),(side*1.42,1.33,.08)],.010,m['loom'])
     h.role('SolarArrayLeft' if side<0 else 'SolarArrayRight')
     for panel in range(2):
         cx=side*(2.96+panel*1.72)
@@ -145,7 +163,7 @@ anchors={
  'AnchorSolarArray':[3.01,1.10,-.09],'AnchorArrayDrive':[-1.88,1.16,.07],
  'AnchorPower':[.80,.82,.62],'AnchorBattery':[-.85,.72,.55],
  'AnchorAttitude':[-1.06,2.44,-.045],'AnchorWheels':[-.08,.64,1.53],
- 'AnchorPropulsion':[.88,1.59,-.38],'AnchorComputer':[-.69,1.80,.34],
+ 'AnchorPropulsion':[.88,1.59,-.38],'AnchorComputer':[-1.06,1.922,-.24],
  'AnchorAntenna':[-.52,3.05,-.72],'AnchorRadiator':[1.93,1.28,1.56],
 }
 h.export(ROOT/'public/models/satellite.glb','GuardianSatellite',VERSION,'satellite',anchors,

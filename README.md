@@ -12,6 +12,8 @@ The explainer includes a visual story, an interactive explorer, an Evidence regi
 
 The spacecraft cutaway exposes solar cells and deployment hardware, power regulation, batteries, attitude sensors and reaction wheels, propulsion, onboard computers, communications, and heat rejection. The payload and focal-plane views expose scan drives and encoders, cover and focus mechanisms, calibration targets, spectral optics, detector readout, video electronics, digitization, timing, data interfaces, power conversion and cooling. A sourced component catalog and three responsive system diagrams explain the supporting assemblies and their connections. Component names lead every card, with the function below. A persistent part selector, Overview beside Previous/Next, and presentation controls make these assemblies navigable on desktop and phone.
 
+The civil instruments expose their optical, calibration, detector, electronic and thermal assemblies as separate selections. The smaller levels distinguish detector interconnects and packaging, ground reception and storage, and molecular species. Component callouts remain readable as the camera moves; surface nameplates appear only when their text is clear.
+
 This edition is under review. The site is unlisted and retains noindex; its review link is shared directly with the reviewer.
 
 ## Follow the evidence
@@ -25,6 +27,7 @@ Hardware, orbit positions, plume shapes, and animated paths are schematic. Publi
 - [Spacecraft and payload engineering sources](research/spacecraft-review.md)
 - [Comprehensive component review](research/COMPREHENSIVE-SYSTEMS-REVIEW.md)
 - [TIRS-2 architecture review](research/tirs2-architecture-review.md)
+- [Public design-practice additions and completeness review](research/PUBLIC-DESIGN-GAP-REVIEW.md)
 - [Intelligence Factory UI parity review](research/UI-PARITY-REVIEW.md)
 - [Build review and supported scope](research/BUILD-REVIEW.md)
 - [Browser and unit-test acceptance record](research/gate-results.md)

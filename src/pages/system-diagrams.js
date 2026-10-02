@@ -105,20 +105,20 @@ export const SYSTEM_DIAGRAMS = [
     intro:'The 2018 TIRS-2 design diagram distinguishes detector-side electronics, main electronics, mechanism control and cooler control. Selected redundant connections are preserved here without drawing every backup as connected to every box.',
     flows:[
       flow('tirs-science','Focal-plane electronics connect through an interface board',[
-        node(tirs('arrays','fpe')),
-        node(tirs('arrays','fib')),
-        node(tirs('arrays','meb')),
+        node(tirs('readout','fpe')),
+        node(tirs('readout','fib')),
+        node(tirs('electronics','meb')),
       ],[wire('data','Detector-side interface'),wire('data','Selected cross-connections')],
       'MEB-A/B contain distinct command/data, power, temperature-control, mechanism-control and high-speed-interface functions.'),
       flow('tirs-scene-control','The scene-select mechanism has its own electrical control',[
-        node(tirs('arrays','mce')),
-        node(tirs('telescope','scene-drive')),
-        node(tirs('telescope','scene-mirror')),
+        node(tirs('electronics','mce')),
+        node(tirs('scene-select','scene-drive')),
+        node(tirs('scene-select','scene-mirror')),
       ],[wire('power','Motor drive'),wire('mechanical','Mirror selection')],
       'The mirror selects Earth, the onboard blackbody or a space view. Its selection role differs from ABI’s two-axis scan system.'),
       flow('tirs-position','The encoders return measured position',[
-        node(tirs('telescope','scene-drive')),
-        node(tirs('arrays','mce')),
+        node(tirs('scene-select','scene-drive')),
+        node(tirs('electronics','mce')),
       ],[wire('data','Encoder telemetry')]),
       flow('tirs-cooler-power','Cooler switching is an electrical path',[
         node(tirs('cooling','cce')),
@@ -127,13 +127,13 @@ export const SYSTEM_DIAGRAMS = [
       ],[wire('power','Cooler-control connection'),wire('power','Selected cooler drive')],
       'RSE selects the connection between the paired cooler-control electronics and the thermomechanical unit. It is an electronics interface, not a heat pipe.'),
       flow('tirs-heat','Thermal transport and emission have different hardware',[
-        named('Heat pipes','Transport heat',tirs('cooling','thermal')),
-        named('Radiators','Release thermal energy',tirs('cooling','thermal')),
+        named('Heat pipes','Transport heat',tirs('radiator','thermal')),
+        named('Radiators','Release thermal energy',tirs('radiator','thermal')),
       ],[wire('heat','Transported heat')],
       'The Earth shield, blankets and isolation also manage external and conducted heat. This row shows thermal roles rather than reconstructing the cooler’s complete thermal network.'),
       flow('tirs-heaters','Heater circuits add controlled heat',[
-        named('Temperature-control boards','Electrical thermal-control functions within the MEB',tirs('arrays','meb')),
-        named('Operational heater circuits','Support operational thermal control',tirs('cooling','heaters')),
+        named('Temperature-control boards','Electrical thermal-control functions within the MEB',tirs('electronics','meb')),
+        named('Operational heater circuits','Support operational thermal control',tirs('radiator','heaters')),
       ],[wire('power','Heater supply')],
       'NASA separately identifies survival-heater supply. Operational control, survival heating and cryocooler drive are distinct paths in the design.'),
     ],

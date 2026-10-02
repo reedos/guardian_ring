@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { overlapsRect, pinLabelBox, declutterPins } from './pin-layout.js';
+import { overlapsRect, pinLabelBox, declutterPins, avoidPinObstacles } from './pin-layout.js';
 
 describe('pin labels respect visible UI reservations',()=>{
   const hud={left:600,right:1050,top:20,bottom:140};
@@ -20,6 +20,18 @@ describe('pin labels respect visible UI reservations',()=>{
   it('does not treat mobile controls below the canvas as a label obstruction',()=>{
     const box=pinLabelBox(180,110,90,390,140,[{left:0,right:390,top:150,bottom:200}]);
     expect(box).not.toBeNull();
+  });
+});
+
+describe('numbered pins avoid printed component names',()=>{
+  it('moves a marker off a nameplate while preserving the geometry leader',()=>{
+    const plate={left:100,right:280,top:120,bottom:175};
+    const original=new Map([['a',{x:190,y:145,ax:190,ay:145}],['b',{x:310,y:150,ax:310,ay:150}]]);
+    const moved=avoidPinObstacles(original,{obstacles:[plate],width:390,height:400,selected:'a'});
+    for(const p of moved.values())expect(overlapsRect({left:p.x-14,right:p.x+14,top:p.y-14,bottom:p.y+14},plate,4)).toBe(false);
+    expect(moved.get('a')).toMatchObject({ax:190,ay:145});
+    expect(Math.hypot(moved.get('a')!.x-moved.get('b')!.x,moved.get('a')!.y-moved.get('b')!.y)).toBeGreaterThanOrEqual(30);
+    expect(original.get('a')!.y).toBe(145);
   });
 });
 

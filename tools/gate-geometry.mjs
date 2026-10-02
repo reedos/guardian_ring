@@ -37,19 +37,36 @@ export const checkView = () => {
 
 export const fly = async ({ id }) => {
   const T = grx.THREE, st = grx.state, B = grx.built[st.scene], cam = grx.camera;
-  const frames = [cam.position.clone()], aims = [grx.controls.target.clone()];
+  if (typeof grx.flightProgress !== 'function') throw new Error('Missing rendered flight-progress hook');
+  let observedProgress = 0;
+  const readProgress = () => {
+    const u = grx.flightProgress();
+    if (typeof u !== 'number' || !Number.isFinite(u) || u < 0 || u > 1) throw new Error(`Invalid rendered flight progress: ${String(u)}`);
+    if (u < observedProgress) throw new Error(`Nonmonotonic rendered flight progress: ${observedProgress} → ${u}`);
+    observedProgress = u; return u;
+  };
+  const frames = [cam.position.clone()], aims = [grx.controls.target.clone()], progress = [0];
   const spot = ({light:B.hotspots,data:B.dataHotspots,heat:B.heatHotspots})[st.mode]?.[id];
   const motionRequired = !!spot?.view && (cam.position.distanceTo(new T.Vector3(...spot.view.pos)) > 1e-7 || grx.controls.target.distanceTo(new T.Vector3(...spot.view.target)) > 1e-7);
   const t0 = performance.now(), cs = grx.clearance ? { ...grx.clearance } : null;
   if (id) grx.select(id, true);
+  if (readProgress() !== 0) throw new Error('Flight did not begin at rendered progress 0');
   const selectMs = performance.now() - t0, ce = grx.clearance;
   const plan = cs && { standIn: ce.standIn > cs.standIn, unplanned: ce.unplanned > cs.unplanned, planned: ce.plans > cs.plans ? ce.planMs : null, ready: ce.hits > cs.hits, clear: ce.clear, chosen: ce.chosen, costs: ce.costs };
-  await new Promise(res => {
+  await new Promise((res, reject) => {
     let still = 0, n = 0;
     const tick = () => {
-      const q = cam.position, last = frames[frames.length - 1];
-      if (q.distanceTo(last) > 1e-7 || grx.controls.target.distanceTo(aims[aims.length - 1]) > 1e-7) { frames.push(q.clone()); aims.push(grx.controls.target.clone()); still = 0; } else still++;
-      if (++n > 900 || still > 20) res(); else requestAnimationFrame(tick);
+      try {
+        const q = cam.position, last = frames[frames.length - 1], u = readProgress();
+        if (q.distanceTo(last) > 1e-7 || grx.controls.target.distanceTo(aims[aims.length - 1]) > 1e-7 || (u === 1 && progress[progress.length - 1] < 1)) { frames.push(q.clone()); aims.push(grx.controls.target.clone()); progress.push(u); still = 0; } else still++;
+        // Finish only after the actual endpoint has been played and recorded.
+        // Forcing settle after a timeout would conceal an incomplete flight.
+        if (++n > 900) throw new Error('Flight did not finish within 900 rendered frames');
+        if (!grx.isCameraMoving() && still >= 2) {
+          if (u !== 1) throw new Error(`Flight stopped before completion at rendered progress ${u}`);
+          res();
+        } else requestAnimationFrame(tick);
+      } catch (error) { reject(error); }
     };
     requestAnimationFrame(tick);
   });
@@ -76,15 +93,19 @@ export const fly = async ({ id }) => {
   const name = o => o.name || o.parent?.name || o.type;
   // the end framings, the reach that belongs to each, and its distance from its aim point
   const home = [0, n].map(i => { const d = frames[i].distanceTo(aims[i]); return [frames[i], 0.03 * d, d]; });
-  const atHome = q => home.some(([f, r]) => q.distanceTo(f) <= r);
+  const sameHome = (a, b) => home.some(([f, r]) => a.distanceTo(f) <= r && b.distanceTo(f) <= r);
   let blockedRun = 0;
   for (let k = 1; k <= n; k++) {
-    if (atHome(frames[k - 1]) && atHome(frames[k])) continue;
+    // Exempt only motion within one endpoint region. A skipped-frame jump
+    // from the start region to the destination still needs its segment checked.
+    if (sameHome(frames[k - 1], frames[k])) continue;
     d.subVectors(frames[k], frames[k - 1]); const len = d.length(); if (len < 1e-9) continue;
     ray.set(frames[k - 1], d.normalize()); ray.near = 0; ray.far = len;
     let h = ray.intersectObjects(objs, false)[0];
     if (h) { hits.push({ frame: k, kind: 'through', what: name(h.object) }); continue; }
-    const taper = Math.max(0, Math.min(Math.sin(Math.PI * (k - 1) / n), Math.sin(Math.PI * k / n))), D = Math.max(frames[k].distanceTo(aims[k]), home[0][2] + (home[1][2] - home[0][2]) * k / n);
+    // Frame count is not elapsed progress: dropped/uneven rendered frames must
+    // not reparameterize the planner's taper or endpoint-distance envelope.
+    const taper = Math.max(0, Math.min(Math.sin(Math.PI * progress[k - 1]), Math.sin(Math.PI * progress[k]))), D = Math.max(frames[k].distanceTo(aims[k]), home[0][2] + (home[1][2] - home[0][2]) * progress[k]);
     const r = 0.06 * D * taper;
     if (r <= 1e-6) continue;
     // nine probes around the camera: below, above, either side, the four diagonals between, and ahead-down
@@ -105,7 +126,7 @@ export const fly = async ({ id }) => {
     blockedRun = h ? blockedRun + 1 : 0;
     if (blockedRun === 3) hits.push({ frame: k, kind: `view blocked (${h.distance.toFixed(2)} ahead, of ${sight.toFixed(2)} clear)`, what: name(h.object) });
   }
-  return { frames: frames.length, motionRequired, hits: hits.length, first: hits[0] || null, selectMs, plan };
+  return { frames: frames.length, motionRequired, hits: hits.length, first: hits[0] || null, selectMs, plan, progress: { source:'rendered-flight-progress', start:progress[0], end:progress[progress.length - 1], samples:progress.length } };
 };
 
 export const checkCoplanar = () => {

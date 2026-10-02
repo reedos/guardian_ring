@@ -132,7 +132,7 @@ export function remainingContent(_model) {
       scale: 'Landsat 9 TIRS-2 · representative instrument layout',
       light: [
         card('telescope', 'Follow the refractive telescope', 'TIRS-2 optical design', 'NASA describes TIRS-2’s refractive telescope and field of view. The drawing preserves the published element count while identifying lens shapes, distances, and ray paths as representative.', ['tirs2-optics', 'tirs2-fov']),
-        card('arrays', 'Name the TIRS-2 detector assemblies', 'Published QWIP arrays', 'The published TIRS-2 description identifies its QWIP arrays and physical format. A simplified drawn pixel pattern represents that assembly; it need not draw every physical detector.', ['tirs2-detectors']),
+        card('arrays', 'Name the TIRS-2 detector assemblies', 'Published QWIP arrays', 'The published TIRS-2 description identifies its QWIP arrays and physical format. The drawing shows representative detector packages and blank detector faces; the published physical format remains in the evidence row.', ['tirs2-detectors']),
         card('cooling', 'Keep the thermal bands instrument-specific', 'NASA’s TIRS-family description', 'NASA lists the thermal spectral bands for the TIRS instrument family. These named civil bands provide context for the cooled focal plane without assigning bands to a military sensor.', ['tirs-bands']),
       ],
       data: [

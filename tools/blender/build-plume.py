@@ -1,4 +1,4 @@
-"""Level 6 illustrative molecular-emission plume GLB, version 1.
+"""Level 6 illustrative molecular-emission plume GLB, version 2.
 
 Run: Blender 5.2 --background --python tools/blender/build-plume.py
 
@@ -18,7 +18,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 1
+VERSION = 2
 OUT.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.context.scene.unit_settings.system = 'NONE'
@@ -196,6 +196,7 @@ for i in range(18):
 
 atom_light = plain_material('Molecular symbol pale amber',(.49,.30,.12),1,.12)
 atom_dark = plain_material('Molecular symbol graphite',(.12,.16,.19),1,.08)
+hydrogen = plain_material('Hydrogen symbol pale',(.68,.76,.79),1,.08)
 bond_mat = plain_material('Molecular symbol bond',(.31,.26,.21),1,.15)
 
 
@@ -211,17 +212,17 @@ def molecule(name, center, bent=False):
         physicalHardware=False,description='Symbolic molecule; geometry and scale are illustrative.')
     ctr=Vector(center)
     ends=[ctr+Vector((-.34,0,-.23)),ctr+Vector((.34,0,-.23))] if bent else [ctr+Vector((-.38,0,-.077)),ctr+Vector((.38,0,.077))]
-    atom('Molecular symbol central atom',ctr,.14,atom_dark,node)
+    atom('Oxygen symbol' if bent else 'Carbon symbol',ctr,.17 if bent else .14,atom_light if bent else atom_dark,node)
     for end in ends:
-        atom('Molecular symbol outer atom',end,.105 if bent else .17,atom_light,node)
+        atom('Hydrogen symbol' if bent else 'Oxygen symbol',end,.105 if bent else .17,hydrogen if bent else atom_light,node)
         direction=end-ctr
         bpy.ops.mesh.primitive_cylinder_add(vertices=12,radius=.022,depth=direction.length,location=(ctr+end)/2)
         obj=bpy.context.object;obj.name='Molecular symbol bond';obj.rotation_euler=direction.to_track_quat('Z','Y').to_euler()
         obj.parent=node;obj.data.materials.append(bond_mat);obj['teachingOverlay']=True;obj['physicalHardware']=False
 
 
-molecule('LinearMoleculeSymbol',(1.65,.1,3.85))
-molecule('BentMoleculeSymbol',(-1.40,.2,2.75),True)
+molecule('CarbonDioxideMoleculeSymbol',(1.85,.1,3.85))
+molecule('WaterMoleculeSymbol',(-1.65,.2,2.75),True)
 
 # Batch only matching material and semantic parent; retain optional symbol group.
 for parent in [source,envelope,ribbons,wisps,*symbols.children]:
@@ -237,8 +238,10 @@ for parent in [source,envelope,ribbons,wisps,*symbols.children]:
 anchors=group('Anchors',root,role='Nonrendering interface anchors')
 for name, point, role in [
     ('AnchorSource',(.04,-.12,.55),'Illustrative source gas'),
-    ('AnchorBands',(1.65,.10,3.85),'Symbolic molecular origin of emission bands'),
+    ('AnchorBands',(.67,-.55,4.45),'Illustrative gas emission region; not a spectrum measurement'),
     ('AnchorTimeline',(-.75,-.15,5.65),'Upper dispersing plume; qualitative event sequence'),
+    ('AnchorCO2',(1.85,-.065,3.85),'Enlarged carbon dioxide molecular symbol'),
+    ('AnchorH2O',(-1.65,.025,2.75),'Enlarged water-vapor molecular symbol'),
 ]:
     obj=group(name,anchors,role=role,representative=True,threePosition=[point[0],point[2],-point[1]])
     obj.location=point

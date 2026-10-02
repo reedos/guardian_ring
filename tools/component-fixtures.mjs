@@ -2,7 +2,7 @@
 // Node file APIs out of the browser project's TypeScript declaration surface.
 import { readFileSync } from 'node:fs';
 
-export const componentLedgers = ['spacecraft-facts', 'comprehensive-systems-facts', 'tirs2-architecture-facts'].map(name =>
+export const componentLedgers = ['spacecraft-facts', 'comprehensive-systems-facts', 'tirs2-architecture-facts', 'design-practices-facts'].map(name =>
   JSON.parse(readFileSync(new URL(`../research/${name}.json`, import.meta.url), 'utf8')));
 
 export function modelDocument(url) {

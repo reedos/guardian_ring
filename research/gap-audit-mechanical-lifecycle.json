@@ -1,0 +1,226 @@
+{
+  "reviewed": "10/01/2026",
+  "scope": "Research-only mechanical, integration and lifecycle gap audit for the representative GEO teaching spacecraft. Recommendations are educational product judgments, not a flight-hardware compliance checklist or a claim about an OPIR implementation.",
+  "repositoryCompared": ["src/component-catalog.js", "src/component-names.js", "research/comprehensive-systems-facts.json", "research/spacecraft-facts.json"],
+  "interpretation": "A public standard describes requirements for projects that adopt and tailor it. It does not prove that a named spacecraft contains a particular component. New representative geometry would remain Assumed/as drawn; the stated engineering practice can carry the cited Spec or Reported row.",
+  "sources": [
+    {
+      "id": "ecss-mechanisms-2019",
+      "title": "ECSS-E-ST-33-01C Rev.2: Mechanisms",
+      "publisher": "ECSS / ESA Requirements and Standards Division",
+      "url": "https://ecss.nl/wp-content/uploads/2019/05/ECSS-E-ST-33-01C-Rev.2(1March2019).pdf",
+      "published": "03/01/2019",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Official landing page and linked 97-page PDF opened directly; relevant text and section/page locators read.",
+      "locator": "Sections 4.7.5.4.2–4.7.5.4.3 (PDF pp. 40–41); 4.7.5.4.11 (PDF p. 46); 4.7.7.4–4.7.7.7 (PDF pp. 49–51); 4.7.3.1 and 4.7.3.3.3 (PDF pp. 26 and 29)",
+      "excerpt": "Connections shall be protected from harness induced loads.",
+      "scopeLimit": "Use requirements only as attributed engineering practice. Do not import numerical margins, materials, dimensions, redundancy counts or crewed-spacecraft provisions into the representative vehicle."
+    },
+    {
+      "id": "ecss-operability-2008",
+      "title": "ECSS-E-ST-70-11C: Space segment operability",
+      "publisher": "ECSS / ESA Requirements and Standards Division",
+      "url": "https://ecss.nl/wp-content/uploads/standards/ecss-e/ECSS-E-ST-70-11C31July2008.pdf",
+      "published": "07/31/2008",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "76-page PDF opened directly; Section 1 and mechanism requirements read. A guessed separate landing-page URL later returned Internal Error; no retry of that page.",
+      "locator": "Section 1, PDF p. 8; Section 4.5a, PDF p. 17; Section 5.9.5, PDF pp. 51–52",
+      "excerpt": "monitor the various stages of a deployment process",
+      "scopeLimit": "Dated 2008 edition, not asserted to be the latest edition. General requirements cover several orbit classes; detailed requirements depend on implemented functions and tailoring."
+    },
+    {
+      "id": "esa-battery-passivation-2019",
+      "title": "Testing space batteries to destruction for cleaner skies",
+      "publisher": "European Space Agency",
+      "url": "https://www.esa.int/Space_Safety/Clean_Space/Testing_space_batteries_to_destruction_for_cleaner_skies",
+      "published": "03/12/2019",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct page open succeeded; final test-derived recommendation paragraphs read.",
+      "locator": "Paragraph beginning 'The resulting satellite passivation recommendations'; following battery-specialist scope paragraph",
+      "excerpt": "fully disconnected from the solar arrays",
+      "scopeLimit": "Apply the qualitative lifecycle principle. Do not reuse the page's historical LEO disposal deadline or assign cell-specific safety thresholds to our vehicle."
+    },
+    {
+      "id": "esa-zero-debris-technologies",
+      "title": "Zero Debris Technologies",
+      "publisher": "European Space Agency",
+      "url": "https://www.esa.int/Space_Safety/Clean_Space/Zero_Debris_Technologies",
+      "dated": "Undated public page, accessed 10/01/2026",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct page open succeeded; disposal, passivation and design-for-removal sections read.",
+      "locator": "Reducing the amount of space debris; End-of-life reentry technologies; End-of-life passivation; Design for Removal",
+      "excerpt": "Different satellites require different technologies",
+      "scopeLimit": "Use qualitative GEO disposal and stored-energy concepts only; no disposal-altitude calculation, regulatory deadline, trajectory or passivation command sequence."
+    },
+    {
+      "id": "nasa-smallsat-launch-deployment",
+      "title": "10.0 Integration, Launch, and Deployment",
+      "publisher": "NASA Small Spacecraft Systems Virtual Institute",
+      "url": "https://www.nasa.gov/smallsat-institute/sst-soa/integration-launch-and-deployment/",
+      "dated": "Current public web chapter; exact publication date not established in the opened excerpt",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct page open succeeded; Section 10.4.3 read.",
+      "locator": "Section 10.4.3 Separation Systems, paragraphs describing circular interfaces, clamp bands and multi-point systems",
+      "excerpt": "One ring is attached to the launch vehicle",
+      "scopeLimit": "SmallSat-focused source supports a conceptual separation-interface example. It does not establish the launch adapter, clamp band, springs or dimensions of GOES-R or any OPIR satellite."
+    },
+    {
+      "id": "ecss-emc-2022-audit",
+      "title": "ECSS-E-ST-20-07C Rev.2: Electromagnetic compatibility",
+      "publisher": "ECSS / ESA Requirements and Standards Section",
+      "url": "https://ecss.nl/wp-content/uploads/2022/01/ECSS-E-ST-20-07C-Rev.2(3January2022).pdf",
+      "published": "01/03/2022",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified-scope-only",
+      "accessOutcome": "Official landing page and linked PDF opened; cover, change log and scope readable. Subsequent section-level open/find requests returned Internal Error/no text. No retry through another tool or shell.",
+      "locator": "Cover and Section 1 only",
+      "usedForCandidateEvidence": false,
+      "scopeLimit": "Do not cite numerical bonding or harness requirements from this partial read. Existing NASA grounding coverage and directly read ECSS mechanism Section 4.7.7.4 suffice for this audit."
+    },
+    {
+      "id": "goes-r-databook-current-access-audit",
+      "title": "GOES-R Series Data Book",
+      "publisher": "NOAA",
+      "url": "https://www.ospo.noaa.gov/resources/documents/GOES-RSeriesDataBook.pdf",
+      "attempted": "10/01/2026",
+      "status": "unchecked",
+      "reason": "Direct web open returned HTTP 403 Forbidden. Stopped affected retrieval, notified parent, and did not retry through another tool/shell or use the existing local file as a workaround. This records current access only; it does not negate earlier verified repository facts.",
+      "usedForCandidateEvidence": false
+    },
+    {
+      "id": "rhessi-launch-interface-unchecked",
+      "title": "HESSI Spacecraft–Launch Vehicle Interface Requirements, HSI_SYS_024f",
+      "publisher": "NASA Goddard / HESSI project",
+      "url": "https://hesperia.gsfc.nasa.gov/rhessi3/docs/official_docs/RHESSI_Documentation/Interface_Control_Documents_ICD/HSI_SYS_024f.pdf",
+      "attempted": "10/01/2026",
+      "status": "unchecked",
+      "reason": "Direct PDF open returned TimeoutError. No retry and no citation of its search snippets.",
+      "usedForCandidateEvidence": false
+    },
+    {
+      "id": "esa-pcdu-passivation-unchecked",
+      "title": "Electrical Passivation — PCDU upgrade for power passivation",
+      "publisher": "ESA Nebula Public Library",
+      "url": "https://nebula.esa.int/content/electrical-passivation-pcdu-upgrade-power-passivation",
+      "attempted": "10/01/2026",
+      "status": "unchecked",
+      "reason": "Direct open returned page metadata but body section retrieval returned Internal Error with no matching text. No candidate evidence taken and no alternate-tool retry.",
+      "usedForCandidateEvidence": false
+    }
+  ],
+  "candidates": [
+    {
+      "id": "mechanism-position-feedback",
+      "componentName": "Deployment-position sensors and latch-status indicators",
+      "parents": ["satellite.array-drive", "payload.mechanisms", "satellite.computer"],
+      "priority": "P0 — must explain",
+      "decision": "add-subordinate-component",
+      "gap": "The catalog names release devices, hinges, dampers, latches and drive electronics. It does not separately explain how completion is observed. Scanner encoders already exist but do not cover appendage deployment status.",
+      "row": ["ECSS mechanism status", "Monitor deployment progress and report lock/latch state through telemetry", "Spec", {"refs": [["ecss-operability-2008", "Section 5.9.5b–e, PDF p. 52"], ["ecss-mechanisms-2019", "Sections 4.7.5.4.2a–b and 4.7.5.4.3b, PDF pp. 40–41"]]}],
+      "applicationJudgment": "Add a distinct feedback element in the deployment/control diagram. A drawn switch or position transducer is illustrative; the evidence does not pick a sensor technology for this vehicle."
+    },
+    {
+      "id": "electrical-passivation",
+      "componentName": "Battery discharge path and recharge-isolation switch",
+      "parents": ["satellite.power", "satellite.battery"],
+      "priority": "P0 — must explain",
+      "decision": "add-subordinate-function-and-representative-interface",
+      "gap": "Present cards cover normal charging, load distribution and protection, but not deliberate end-of-life deactivation.",
+      "row": ["ESA battery passivation guidance", "Discharge the battery and prevent renewed charging from the solar array", "Reported", {"refs": [["esa-battery-passivation-2019", "Final recommendations paragraph following the abuse-test discussion"]]}],
+      "applicationJudgment": "Draw this within the existing power architecture with an end-of-life annotation. Do not invent a dedicated passivation box, relay count or circuit topology. Explain that operational power-off and permanent retirement serve different purposes."
+    },
+    {
+      "id": "propulsion-passivation",
+      "componentName": "Propellant and pressurant depletion or vent paths",
+      "parents": ["satellite.propulsion", "orbits.orbit-families"],
+      "priority": "P0 — must explain",
+      "decision": "extend-existing-propulsion-and-lifecycle-copy",
+      "gap": "The feed components and ground service valves exist; stored-energy removal at retirement does not.",
+      "row": ["ESA end-of-life passivation", "Remove remaining propellant and pressurant energy; GEO disposal uses an adjacent graveyard orbit", "Reported", {"refs": [["esa-zero-debris-technologies", "Reducing the amount of space debris; End-of-life passivation"]]}],
+      "applicationJudgment": "Teach the lifecycle boundary using the existing tank/feed path. A separate passivation valve is architecture-dependent and must not be drawn as universally mandatory. No maneuver or valve-actuation sequence is needed."
+    },
+    {
+      "id": "mechanism-vent-paths",
+      "componentName": "Pressure-equalization vent passages",
+      "parents": ["payload.mechanisms", "payload.scan-system", "satellite.array-drive"],
+      "priority": "P1 — valuable physical detail",
+      "decision": "add-subordinate-component",
+      "gap": "Enclosures are drawn without explaining the transition from atmosphere to vacuum.",
+      "row": ["ECSS mechanism venting", "Venting accommodates ascent depressurization while controlling particle contamination", "Spec", {"refs": [["ecss-mechanisms-2019", "Section 4.7.5.4.11a–c, PDF p. 46"]]}],
+      "applicationJudgment": "A representative vent feature adds a useful integration lesson near the optical mechanisms. Retain the sealed-or-pressure-qualified exception; do not add holes indiscriminately to every package or assign vent dimensions."
+    },
+    {
+      "id": "moving-harness-strain-relief",
+      "componentName": "Harness clamps and strain-relief supports",
+      "parents": ["satellite.array-drive", "payload.scan-system", "payload.mechanisms"],
+      "priority": "P1 — valuable physical detail",
+      "decision": "expand-existing-harness-anatomy",
+      "gap": "Shielding and electrical interfaces are covered; mechanical support of wiring at moving joints is not explicit.",
+      "row": ["ECSS moving harness", "Protect electrical connections from harness loads and verify repeatable routing through motion", "Spec", {"refs": [["ecss-mechanisms-2019", "Section 4.7.7.7, PDF p. 51"]]}],
+      "applicationJudgment": "Add supports to the existing harness descriptions rather than a new scene or standalone harness subsystem. Any clamp, slack loop, bend radius or routing shown remains as drawn."
+    },
+    {
+      "id": "mechanism-bonding",
+      "componentName": "Mechanism-housing bonding strap",
+      "parents": ["satellite.structure", "satellite.array-drive", "payload.mechanisms"],
+      "priority": "P1 — refine existing entry",
+      "decision": "expand-existing-ground-reference-component",
+      "gap": "Ground-reference connections and cable shields are already cataloged, but the connection can be made visually tangible.",
+      "row": ["ECSS mechanism bonding", "Bond the mechanism housing to its mounting ground plane when it contains electrical equipment", "Spec", {"refs": [["ecss-mechanisms-2019", "Section 4.7.7.4a–b, PDF p. 49"]]}],
+      "applicationJudgment": "Add a strap to the existing grounding explanation. Do not create another parent or claim a mission-specific return-current architecture, resistance or termination scheme."
+    },
+    {
+      "id": "separation-interface",
+      "componentName": "Launch-vehicle separation interface",
+      "parents": ["satellite.structure"],
+      "priority": "P1 — lifecycle context",
+      "decision": "expand-existing-adapter-ring-description",
+      "gap": "Core structure and adapter ring are already named; the boundary between structural attachment and separation hardware deserves clarification.",
+      "row": ["NASA separation-system example", "A clamped pair of interface rings can release and separate with springs", "Reported", {"refs": [["nasa-smallsat-launch-deployment", "Section 10.4.3, circular separation-system and clamp-band paragraphs"]]}],
+      "applicationJudgment": "Use an optional conceptual inset with explicit SmallSat-source scope. Do not assign a Marman band or spring count to the representative GEO vehicle without a suitable named civil GEO source."
+    },
+    {
+      "id": "lubrication-contamination-boundary",
+      "componentName": "Bearing lubricant or lubricating surface and migration barrier",
+      "parents": ["payload.scan-system", "payload.mechanisms", "satellite.array-drive"],
+      "priority": "P2 — explanatory annotation",
+      "decision": "add-best-practice-note-not-new-part",
+      "gap": "Bearings and motors are covered, but their vacuum-compatible tribology and proximity to optics are not explained.",
+      "row": ["ECSS mechanism tribology", "Qualify lubrication for the mission; contain fluid migration where sensitive equipment requires it", "Spec", {"refs": [["ecss-mechanisms-2019", "Sections 4.7.3.1a–b and 4.7.3.3.3a–b, PDF pp. 26 and 29"]]}],
+      "applicationJudgment": "A small annotation is sufficient. Do not assign a lubricant formulation or portray all mechanisms as fluid-lubricated."
+    }
+  ],
+  "alreadyCovered": [
+    {"topic": "Restraint-release devices, spring hinges, dampers, hard stops and latches", "parents": ["satellite.array-drive", "payload.mechanisms"], "existingKeys": ["comp-bus-release-devices"], "decision": "Do not duplicate; add status feedback to complete the explanation."},
+    {"topic": "Propellant tanks, PMDs, pressurant regulator, check/latch/service valves, filters and pressure transducers", "parents": ["satellite.propulsion"], "existingKeys": ["comp-bus-propellant-tanks", "comp-bus-feed-valves"], "decision": "Service filling/draining/test functionality is already present; only retirement context is a clear gap."},
+    {"topic": "Instrument platform and reaction-wheel isolation", "parents": ["satellite.instrument", "satellite.wheels"], "existingKeys": ["comp-goes-platform-isolators", "comp-goes-wheel-isolators"], "decision": "Already sourced; no need for another vibration-isolation box."},
+    {"topic": "MLI, low-conductivity supports, conductive mounts, heat pipes, radiators, heaters and thermometry", "parents": ["satellite.radiator", "payload.thermal"], "decision": "Present coverage is substantial. Prefer explicit connection paths and moving-clearance annotations over more duplicate component entries."},
+    {"topic": "Cable shields and ground-reference connections", "parents": ["satellite.structure"], "existingKeys": ["comp-grounding-reference", "comp-cable-shielding"], "decision": "Refine the existing descriptions with a representative bond and strain relief; no new parent needed."}
+  ],
+  "deferredOrDoNotAdd": [
+    {"componentName": "Launch umbilical disconnect and separation-sense circuit", "parents": ["satellite.structure", "satellite.computer"], "decision": "defer-specific-hardware", "reason": "Useful future lifecycle explanation, but the directly requested HESSI source timed out and no named GEO interface source was verified here. Do not adopt CubeSat rail switches or a generic pinout."},
+    {"componentName": "Deployment inhibits", "parents": ["satellite.power", "satellite.array-drive"], "decision": "explain-function-without-circuit", "row": ["ECSS critical-command principle", "Guard against mission loss from a command executed in the wrong configuration", "Spec", {"refs": [["ecss-operability-2008", "Section 4.5a, PDF p. 17"]]}], "reason": "A controls note is justified; a specific inhibit count, firing circuit or actuation sequence is neither needed nor established."},
+    {"componentName": "Drag sail, electrodynamic tether or CubeSat rail deployment switch", "parents": ["satellite.structure"], "decision": "do-not-add-to-GEO-default", "reason": "These would conflate distinct mission classes with the representative GEO architecture. An orbit-specific teaching variant requires its own design premise."},
+    {"componentName": "Dedicated passivation valve or battery-unplugging box", "parents": ["satellite.propulsion", "satellite.power"], "decision": "do-not-declare-universal", "reason": "Required lifecycle functions can use different architectures. The audit supports explaining energy removal and recharge prevention, not naming an unsupported package."},
+    {"componentName": "Robotic servicing fixture or removal docking target", "parents": ["satellite.structure"], "decision": "optional-future-context", "row": ["ESA design for removal", "Some prepared spacecraft use coupling interfaces and navigation aids for later removal", "Reported", {"refs": [["esa-zero-debris-technologies", "Design for Removal"]]}], "reason": "Not established as part of this public GEO/civil-twin premise. Adding one now would imply capability not sourced for the modeled mission."}
+  ],
+  "recommendedProductChange": "Complete the existing spacecraft anatomy with deployment feedback, moving-harness support and pressure-equalization details. Add a short retirement view linking power isolation, propulsion stored-energy removal and GEO disposal. Keep life-cycle operations high-level and explicitly representative; most findings belong under current parents rather than requiring new scenes.",
+  "validation": "This artifact records research decisions only. Candidate references were checked against its verified-source records; implementation and acceptance gates are tracked separately."
+}

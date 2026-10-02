@@ -1,6 +1,7 @@
 // Additional assembly cards use the same reviewed civil facts as the component reference.
 import { spacecraftFact as fact } from './spacecraft-content.js';
 import { catalogFact } from './component-catalog.js';
+import { expandLevelDetails } from './level-detail-content.js';
 const drawn = ['Drawing','Representative arrangement / not to scale','assumed',{assume:'look-model'}];
 const card=(id,title,kicker,body,ids)=>({id,title,kicker,body,specs:[...ids.map(fact),drawn]});
 const payload = {
@@ -54,5 +55,5 @@ export function expandContent(levels) {
     });
   }
   levels.payload.intro='Explore the instrument as connected assemblies: scan mirrors and mechanisms, telescope and aft optics, calibration references, detector and video electronics, conversion, command and timing, data interfaces, power and thermal control. The representative geometry uses explicitly named ABI examples. Open each assembly for its component anatomy and evidence.';
-  return levels;
+  return expandLevelDetails(levels);
 }

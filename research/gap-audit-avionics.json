@@ -1,0 +1,269 @@
+{
+  "reviewed": "10/01/2026",
+  "scope": "Research-only audit of avionics, electrical fault protection, timekeeping, and assurance. Recommendations concern the educational application's representative hardware and named civil examples. They do not establish any military implementation.",
+  "applicationDecision": "Add finer computer anatomy under the existing computer parent, not another major scene. The strongest additions are recovery memory, memory-protection logic, and reset circuitry. Explain spacecraft time and safing as functions. Most power protection, redundancy-management, and telemetry assemblies are already present.",
+  "priorityMeaning": {
+    "P1": "Important educational omission to address in a future product revision; not a claim that this hardware is mandatory on every satellite.",
+    "P2": "Useful optional comparison or refinement after the main omissions are addressed.",
+    "covered": "Present in the current catalog; improve explanation or diagram rather than create a duplicate.",
+    "defer": "Not admitted as new evidence in this audit."
+  },
+  "inspectedLocalFiles": [
+    "AGENTS.md",
+    "PLAN.md",
+    "src/component-catalog.js",
+    "src/expanded-content.js",
+    "research/spacecraft-facts.json",
+    "research/comprehensive-systems-facts.json"
+  ],
+  "sources": [
+    {
+      "id": "nasa-pld-handbook-4008-change2",
+      "title": "NASA-HDBK-4008 with Change 2: Programmable Logic Devices Handbook",
+      "publisher": "NASA",
+      "url": "https://standards.nasa.gov/system/files/tmp/NASA-HDBK4008%20w%20-Change%202.pdf",
+      "published": "12/02/2013",
+      "dated": "Revalidated with administrative/editorial changes 06/18/2025; history states no technical changes",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct PDF open succeeded; relevant sections were returned as page-indexed text.",
+      "sections": [
+        "Section 7.3.3.2, printed/PDF p. 39: State Machine Transition and Fault Recovery",
+        "Appendix F.1.1-F.1.3, printed/PDF pp. 103-105: reset circuitry and startup",
+        "Appendix F.5.5, printed/PDF p. 113: nonvolatile-memory reliability"
+      ],
+      "scope": "NASA design guidance, not proof of a specific flight implementation."
+    },
+    {
+      "id": "nasa-smallsat-avionics-2026",
+      "title": "State-of-the-Art of Small Spacecraft Technology: 8.0 Small Spacecraft Avionics",
+      "publisher": "NASA Small Spacecraft Systems Virtual Institute",
+      "url": "https://www.nasa.gov/smallsat-institute/sst-soa/small-spacecraft-avionics/",
+      "published": "05/19/2026",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct page open and section reads succeeded.",
+      "sections": ["8.1 Introduction", "8.2.1 Radiation Mitigation and Tolerance Schemes", "8.2.4 Memory, Electronic Function Blocks, and Components"],
+      "scope": "General principles only. Manufacturer product tables and their unverified performance figures are excluded. SmallSat implementations are not assigned to a GEO spacecraft."
+    },
+    {
+      "id": "nasa-onboard-data",
+      "title": "Basics of Space Flight: Chapter 11, Onboard Systems, page one",
+      "publisher": "NASA Science / Jet Propulsion Laboratory",
+      "url": "https://science.nasa.gov/learn/basics-of-space-flight/chapter11-1/",
+      "dated": "Page last updated 01/16/2025",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Existing source reopened directly; relevant text read.",
+      "sections": ["Spacecraft Clock", "Fault Protection and Safing"],
+      "scope": "General architecture; no clock accuracy, memory size, or recovery timing admitted."
+    },
+    {
+      "id": "nasa-swehb-fault-detection-d",
+      "title": "Software Engineering Handbook Version D: 9.07 Fault Detection and Response",
+      "publisher": "NASA",
+      "url": "https://swehb.nasa.gov/spaces/SWEHBVD/pages/102695798/9.07%2BFault%2BDetection%2Band%2BResponse",
+      "dated": "Publication date not displayed in the opened page",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct public page and relevant sections read. NASA-only linked material was not opened.",
+      "sections": ["2 Examples and Discussion", "3.1 ARC, 3.7.4.3", "3.3 JPL, 4.9.1.4 and 4.9.2.2"],
+      "scope": "Public engineering guidance and examples; center requirements are not represented as universal satellite requirements."
+    },
+    {
+      "id": "ecss-rha-2025-scope",
+      "title": "ECSS-Q-ST-60-15C Rev.1: Radiation hardness assurance",
+      "publisher": "European Cooperation for Space Standardization",
+      "url": "https://ecss.nl/standard/ecss-q-st-60-15c-rev-1-radiation-hardness-assurance-20-march-2025/",
+      "published": "03/20/2025",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct standard landing page and its Scope read. Linked full standard was not needed or cited.",
+      "sections": ["Scope"],
+      "scope": "Only the public scope statement is admitted."
+    },
+    {
+      "id": "ecss-lcl-glossary",
+      "title": "ECSS glossary: latching current limiter (LCL)",
+      "publisher": "European Cooperation for Space Standardization",
+      "url": "https://ecss.nl/item/?glossary_id=911",
+      "dated": "Undated glossary entry; identifies ECSS-E-ST-20-20C",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct glossary definition read.",
+      "sections": ["Definition"],
+      "scope": "Component-class definition; no mission-specific installation, circuit, trip time, or current rating."
+    },
+    {
+      "id": "nasa-llis-559-unchecked",
+      "title": "NASA Lessons Learned entry 559",
+      "publisher": "NASA",
+      "url": "https://llis.nasa.gov/lesson/559",
+      "attempted": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "unchecked",
+      "reason": "Direct open returned an empty document (zero text lines). Search snippets were not admitted; no alternate retrieval attempted.",
+      "cited": false
+    },
+    {
+      "id": "ecss-lcl-handbook-unchecked",
+      "title": "ECSS-E-HB-20-20A, 04/15/2016",
+      "publisher": "European Cooperation for Space Standardization",
+      "url": "https://ecss.nl/wp-content/uploads/2016/07/ECSS-E-HB-20-20A15April2016.pdf",
+      "attempted": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "unchecked",
+      "reason": "Direct open returned PDF metadata, but section queries returned Internal Error. No passage from this handbook is admitted and no alternate retrieval was attempted. The separately opened ECSS glossary supports only its own definition.",
+      "cited": false
+    }
+  ],
+  "candidateAdditions": [
+    {
+      "id": "recovery-memory",
+      "priority": "P1",
+      "name": "Boot and recovery memory",
+      "kind": "physical component class",
+      "parent": {"scene": "satellite", "part": "computer"},
+      "existingCoverage": "comp-command-data-memory explains sequence/data storage, but not a protected startup or recovery image.",
+      "recommendation": "Split recovery storage from working/data memory in a representative computer-board inset. Label the implementation illustrative; do not assign a capacity or part number.",
+      "row": ["NASA recovery-memory guidance", "Permanent memory can retain processor boot/safe-hold code or a basic programmable-logic configuration", "reported", {"refs": [["nasa-pld-handbook-4008-change2", "Appendix F.5.5, printed/PDF p. 113"]]}]
+    },
+    {
+      "id": "memory-protection",
+      "priority": "P1",
+      "name": "Memory interface and error-correction logic",
+      "kind": "physical circuitry and associated maintenance function",
+      "parent": {"scene": "satellite", "part": "computer"},
+      "existingCoverage": "Generic memory is present; no EDAC/ECC explanation appears in the inspected catalog.",
+      "recommendation": "Add a board-level callout beside memory. Present scrubbing as an associated operation, not a second unexplained hardware box. Do not promise correction of every fault.",
+      "row": ["NASA memory-protection guidance", "Memory interfaces implement error detection and correction appropriate to their application", "reported", {"refs": [["nasa-pld-handbook-4008-change2", "Appendix F.5.5, printed/PDF p. 113"]]}],
+      "supportingRow": ["NASA avionics mitigation examples", "ECC, watchdogs, scrubbing, and redundancy are complementary mitigation approaches", "reported", {"refs": [["nasa-smallsat-avionics-2026", "Section 8.2.1"]]}]
+    },
+    {
+      "id": "reset-circuitry",
+      "priority": "P1",
+      "name": "Power-on-reset circuitry",
+      "kind": "physical circuitry; may be integrated",
+      "parent": {"scene": "satellite", "part": "computer"},
+      "existingCoverage": "RMC reboot is covered, but board startup/reset sequencing is not.",
+      "recommendation": "Add a small supporting callout tied to the power and computer diagram; avoid inventing a standalone supervisor box or exact circuit.",
+      "row": ["NASA board-reset guidance", "Reset circuitry coordinates startup and protects critical signals while power and clocks settle", "reported", {"refs": [["nasa-pld-handbook-4008-change2", "Appendix F.1.1-F.1.3, printed/PDF pp. 103-105"]]}]
+    },
+    {
+      "id": "spacecraft-time",
+      "priority": "P1",
+      "name": "Spacecraft time counter",
+      "kind": "functional element; no separate physical clock package inferred",
+      "parent": {"scene": "satellite", "part": "computer"},
+      "existingCoverage": "ABI Telemetry and Timing card and RF reference oscillator are present. The spacecraft time-tagging role is not explicitly distinguished.",
+      "recommendation": "Add a time-tag path to the data diagram and a computer detail entry. Keep spacecraft time, detector timing, and radio frequency reference distinct.",
+      "row": ["NASA spacecraft-clock description", "A data-system counter schedules activity and time-tags engineering and science data", "reported", {"refs": [["nasa-onboard-data", "Spacecraft Clock, first and third paragraphs"]]}]
+    },
+    {
+      "id": "lcl-comparison",
+      "priority": "P2",
+      "name": "Latching current limiter",
+      "kind": "optional physical component-class comparison",
+      "parent": {"scene": "satellite", "part": "power"},
+      "existingCoverage": "GOES-R PDMs, current sensing, and fuse boards already explain distribution and overcurrent protection.",
+      "recommendation": "Optional comparison in Parts or Glossary. Do not place an LCL into the GOES-R model without mission evidence or describe it as mandatory.",
+      "row": ["ECSS current-limiter definition", "Switchable protection between source and load limits overcurrent and then latches off", "reported", {"refs": [["ecss-lcl-glossary", "Definition"]]}]
+    }
+  ],
+  "bestPracticeExplanations": [
+    {
+      "id": "safing",
+      "priority": "P1",
+      "name": "Fault protection and safe operating states",
+      "kind": "software and system behavior",
+      "parent": {"scene": "satellite", "part": "computer"},
+      "recommendation": "Add a concise normal/recovery/safe-state diagram connecting existing power, attitude, thermal, and communications hardware. This is explanatory content, not an extra component or military operational sequence.",
+      "row": ["NASA safe-state guidance", "Preserve spacecraft resources and commandability while maintaining a sustainable power and thermal state", "reported", {"refs": [["nasa-swehb-fault-detection-d", "Section 3.1 ARC, 3.7.4.3; section 3.3 JPL, 4.9.2.2"]]}]
+    },
+    {
+      "id": "fault-containment",
+      "priority": "P1",
+      "name": "Fault containment and redundancy boundaries",
+      "kind": "system architecture",
+      "parent": {"scene": "satellite", "part": "computer"},
+      "recommendation": "Explain why extra boxes alone do not establish resilience. Draw a selected alternate path only when its named civil source verifies it.",
+      "row": ["NASA fault-containment guidance", "Redundancy depends on containing faults within defined regions", "reported", {"refs": [["nasa-swehb-fault-detection-d", "Section 3.3 JPL, 4.9.1.4 and rationale"]]}]
+    },
+    {
+      "id": "radiation-assurance",
+      "priority": "P1",
+      "name": "Radiation hardness assurance",
+      "kind": "engineering assurance process, not hardware",
+      "parent": {"scene": "satellite", "part": "computer"},
+      "recommendation": "Add a Method note explaining the evidence needed before calling hardware radiation-qualified. No generic shield thickness, dose rating, or universal radiation-proof label belongs on the teaching model.",
+      "row": ["ECSS radiation-assurance scope", "Project-specific assurance addresses ionizing dose, displacement damage, and single-event effects in EEE components", "reported", {"refs": [["ecss-rha-2025-scope", "Scope, first paragraph"]]}]
+    }
+  ],
+  "coveredOrDoNotAdd": [
+    {
+      "name": "Independent watchdog or recovery supervisor box",
+      "decision": "covered",
+      "parent": {"scene": "satellite", "part": "computer"},
+      "existingKeys": ["comp-bus-rmc", "comp-bus-ctp", "comp-bus-obc"],
+      "reason": "The catalog already names GOES-R's Redundancy Management Card and its heartbeat/reboot role. Explain it more clearly rather than add a duplicate generic assembly.",
+      "row": ["NASA watchdog guidance", "Recovery can use external reset resources; independence of clock and reset resources matters", "reported", {"refs": [["nasa-pld-handbook-4008-change2", "Section 7.3.3.2, printed/PDF p. 39"]]}]
+    },
+    {
+      "name": "Power-distribution and health-monitoring assemblies",
+      "decision": "covered",
+      "parent": {"scene": "satellite", "part": "power"},
+      "existingKeys": ["comp-bus-pru", "comp-bus-cda", "comp-bus-lcm", "comp-bus-lpm", "comp-bus-pdm", "comp-bus-fba", "comp-bus-csu", "comp-bus-tsu"],
+      "reason": "These are already named in the catalog. Visibility and diagram connections are the likely remaining product issue."
+    },
+    {
+      "name": "Universal redundant computer count or triple-modular voter",
+      "decision": "do not add as a universal component",
+      "parent": {"scene": "satellite", "part": "computer"},
+      "existingKeys": ["comp-abi-parent-board", "comp-abi-sue-redundancy", "comp-abi-cooler-redundancy", "tirs-redundancy"],
+      "reason": "Named civil redundancy examples are already available. A new fixed count or voting topology would require specific evidence and is unnecessary for the application.",
+      "row": ["NASA avionics architecture context", "Architecture and redundancy choices depend on mission requirements and accepted risk", "reported", {"refs": [["nasa-smallsat-avionics-2026", "Section 8.1, paragraphs on large and small spacecraft architecture"]]}]
+    },
+    {
+      "name": "Safing box, radiation-hardness box, or standalone memory-scrubbing box",
+      "decision": "do not add",
+      "reason": "These labels confuse functions or assurance practices with physical components. Tie the explanations to actual computer, memory, power, and interface hardware."
+    },
+    {
+      "name": "Specific processor model, science-recorder capacity, radiation dose rating, or redundant hardware count",
+      "decision": "do not infer",
+      "reason": "The reviewed guidance does not establish those properties for the representative satellite. Product-table figures are intentionally excluded."
+    }
+  ],
+  "deferredEvidence": [
+    {
+      "name": "GOES-R Command Decryption Unit Assembly",
+      "priority": "defer",
+      "parent": {"scene": "satellite", "part": "computer"},
+      "locatorToRevisitOnlyWithAuthorization": "Existing research/physics/GOES-RSeriesDataBook.pdf, printed p. 10-6 / PDF p. 130",
+      "status": "not admitted as new evidence",
+      "reason": "This agent read pp. 126-131 from the previously downloaded local book before receiving the root's cross-agent notice that a fresh web retrieval had returned 403. Further book inspection stopped immediately. No new download or alternate network retrieval was made. The candidate is held out of the verified recommendations pending the root's access-rule disposition.",
+      "proposedScopeIfLaterAdmitted": "Component name and high-level command-processing role only; omit cryptographic configuration, keys, implementation details, and any system-defeat discussion."
+    }
+  ],
+  "verification": {
+    "applicationFilesChanged": false,
+    "buildsOrGpuTestsRun": false,
+    "newNumericFlightClaims": false,
+    "quotationPolicy": "No direct source quotations included; paraphrases are concise.",
+    "newEvidenceAdmission": "This audit file is not imported by the runtime claims registry. Any future implementation must admit selected rows and source metadata through the normal evidence and claims checks."
+  }
+}

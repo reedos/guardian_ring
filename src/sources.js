@@ -390,8 +390,7 @@ export const SOURCES = { ...{
     "marketing": false,
     "dated": "Page last updated 01/16/2025",
     "accessed": "10/01/2026",
-    "status": "verified",
-    "section": "Structure Subsystem; Data Handling Subsystems; Sequence Storage; Spacecraft Clock; Telemetry Packaging and Coding; Data Storage"
+    "status": "verified"
   },
   "nasa-onboard-attitude": {
     "title": "Basics of Space Flight: Chapter 11, Onboard Systems, page two",
@@ -447,6 +446,205 @@ export const SOURCES = { ...{
     "accessed": "10/01/2026",
     "status": "verified",
     "section": "PDF pp. 4, 6, 14–15, 17, 19–20; full electrical block diagram visually inspected on PDF p. 19"
+  },
+  "ecss-cleanliness-7001-rev1-2025": {
+    "title": "ECSS-Q-ST-70-01C Rev.1: Cleanliness and contamination control",
+    "publisher": "European Cooperation for Space Standardization",
+    "url": "https://ecss.nl/wp-content/uploads/2025/10/ECSS-Q-ST-70-01C-Rev.1(15October2025).pdf",
+    "kind": "primary",
+    "marketing": false,
+    "published": "10/15/2025",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "ecss-mechanisms-2019": {
+    "title": "ECSS-E-ST-33-01C Rev.2: Mechanisms",
+    "publisher": "ECSS / ESA Requirements and Standards Division",
+    "url": "https://ecss.nl/wp-content/uploads/2019/05/ECSS-E-ST-33-01C-Rev.2(1March2019).pdf",
+    "kind": "primary",
+    "marketing": false,
+    "published": "03/01/2019",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "ecss-operability-2008": {
+    "title": "ECSS-E-ST-70-11C: Space segment operability",
+    "publisher": "ECSS / ESA Requirements and Standards Division",
+    "url": "https://ecss.nl/wp-content/uploads/standards/ecss-e/ECSS-E-ST-70-11C31July2008.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "published": "07/31/2008",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "ecss-rha-2025-scope": {
+    "title": "ECSS-Q-ST-60-15C Rev.1: Radiation hardness assurance",
+    "publisher": "European Cooperation for Space Standardization",
+    "url": "https://ecss.nl/standard/ecss-q-st-60-15c-rev-1-radiation-hardness-assurance-20-march-2025/",
+    "kind": "primary",
+    "marketing": false,
+    "published": "03/20/2025",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "esa-battery-passivation-2019": {
+    "title": "Testing space batteries to destruction for cleaner skies",
+    "publisher": "European Space Agency",
+    "url": "https://www.esa.int/Space_Safety/Clean_Space/Testing_space_batteries_to_destruction_for_cleaner_skies",
+    "kind": "primary",
+    "marketing": false,
+    "published": "03/12/2019",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "esa-solar-coverglass": {
+    "title": "Anti-Reflection Coated Cover Glasses",
+    "publisher": "European Space Agency, ARTES",
+    "url": "https://resilience.esa.int/archives/projects/anti-reflection-coated-cover-glasses",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Project status date 12/18/2012; page has inconsistent ongoing/completed fields, so no current project-status claim is admitted",
+    "accessed": "10/01/2026",
+    "status": "verified",
+    "evidence": "Coverglass protects photovoltaic cells; coatings influence the useful light and absorbed radiation.",
+    "section": "Objectives and Features"
+  },
+  "esa-zero-debris-technologies": {
+    "title": "Zero Debris Technologies",
+    "publisher": "European Space Agency",
+    "url": "https://www.esa.int/Space_Safety/Clean_Space/Zero_Debris_Technologies",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Undated public page, accessed 10/01/2026",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "nasa-charging-handbook-2022": {
+    "title": "NASA-HDBK-4002B: Mitigating In-Space Charging Effects—A Guideline",
+    "publisher": "NASA Office of the Chief Engineer",
+    "url": "https://standards.nasa.gov/sites/default/files/standards/NASA/B/0/2022-06-07-NASA-HDBK-4002B-Approved.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "published": "06/07/2022",
+    "accessed": "10/01/2026",
+    "status": "verified",
+    "evidence": "Guidance requires mission-specific tailoring; the catalog admits component roles without dimensions, resistance limits, or shielding-performance claims.",
+    "section": "Sections 5.2.1.2–5.2.1.5 and 5.2.5.1, PDF pp. 52–57 and 78–79"
+  },
+  "nasa-cii-contamination-best-practices-2012": {
+    "title": "CII Contamination Control Best Practices",
+    "publisher": "NASA CII Team / Brian Blakkolb",
+    "url": "https://essp.nasa.gov/wp-content/uploads/sites/153/2017/07/10-1130_-_Contamination_20121211.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "2012 presentation, as identified by the published file name; day not established by the slides",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "nasa-goddard-detector-packaging": {
+    "title": "Goddard's Detector Technology",
+    "publisher": "NASA",
+    "url": "https://svs.gsfc.nasa.gov/vis/a010000/a011400/a011484/script_18778_00.html",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Historical NASA narration; transcript date not displayed",
+    "accessed": "10/01/2026",
+    "status": "verified",
+    "section": "Transcript paragraph beginning The die are screened; Landsat 8 QWIP example, not TIRS-2"
+  },
+  "nasa-ground-flight-data-group": {
+    "title": "Ground & Flight Data Systems Group",
+    "publisher": "NASA",
+    "url": "https://www.nasa.gov/intelligent-systems-division/collaborative-and-assistant-systems/ground-and-flight-data-systems-group/",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Page last updated 09/30/2025",
+    "accessed": "10/01/2026",
+    "status": "verified",
+    "section": "Overview, second paragraph"
+  },
+  "nasa-ground-systems-2026": {
+    "title": "11.0 Ground Data Systems and Mission Operations",
+    "publisher": "NASA",
+    "url": "https://www.nasa.gov/smallsat-institute/sst-soa/ground-data-systems-and-mission-operations/",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "05/11/2026",
+    "accessed": "10/01/2026",
+    "status": "verified",
+    "section": "Sections 11.6, 11.6.1, and 11.7.1; general introductory passages only, no manufacturer tables"
+  },
+  "nasa-materials-6016c-2021": {
+    "title": "NASA-STD-6016C: Standard Materials and Processes Requirements for Spacecraft",
+    "publisher": "NASA",
+    "url": "https://standards.nasa.gov/sites/default/files/standards/NASA/C/2021-09-30-NASA-STD-6016C-Approved.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "published": "09/30/2021",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "nasa-pld-handbook-4008-change2": {
+    "title": "NASA-HDBK-4008 with Change 2: Programmable Logic Devices Handbook",
+    "publisher": "NASA",
+    "url": "https://standards.nasa.gov/system/files/tmp/NASA-HDBK4008%20w%20-Change%202.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "published": "12/02/2013",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "nasa-smallsat-launch-deployment": {
+    "title": "10.0 Integration, Launch, and Deployment",
+    "publisher": "NASA Small Spacecraft Systems Virtual Institute",
+    "url": "https://www.nasa.gov/smallsat-institute/sst-soa/integration-launch-and-deployment/",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Current public web chapter; exact publication date not established in the opened excerpt",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "nasa-swehb-fault-detection-d": {
+    "title": "Software Engineering Handbook Version D: 9.07 Fault Detection and Response",
+    "publisher": "NASA",
+    "url": "https://swehb.nasa.gov/spaces/SWEHBVD/pages/102695798/9.07%2BFault%2BDetection%2Band%2BResponse",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Publication date not displayed in the opened page",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "nasa-tirs2-characterization-plan-2018": {
+    "title": "Landsat 9 Thermal Infrared Sensor 2 Characterization Plan Overview",
+    "publisher": "NASA Goddard Space Flight Center / IGARSS authors",
+    "url": "https://ntrs.nasa.gov/api/citations/20180004891/downloads/20180004891.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "2018 conference paper",
+    "accessed": "10/01/2026",
+    "status": "verified"
+  },
+  "nasa-ups-2010": {
+    "title": "Development and Testing of an Ultracapacitor Based Uninterruptible Power Supply (UPS) System",
+    "publisher": "NASA",
+    "url": "https://ntrs.nasa.gov/citations/20100031134",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "07/01/2010",
+    "accessed": "10/01/2026",
+    "status": "verified",
+    "section": "NTRS public abstract, opening sentences; only backup-power role admitted"
+  },
+  "nasa-webb-hybrid-detectors": {
+    "title": "Infrared Detectors: Webb Detector Architecture",
+    "publisher": "NASA",
+    "url": "https://science.nasa.gov/mission/webb/infrared-detectors/",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Page last updated 08/12/2024",
+    "accessed": "10/01/2026",
+    "status": "verified",
+    "section": "Webb Detector Architecture and Figure 4"
   },
   "sda-tracking-layer-leo-altitude": {
     "title": "SDA approximate LEO altitude (seed alias)",

@@ -1,4 +1,4 @@
-"""Level 5 single-pixel conceptual stack GLB, version 1.
+"""Level 5 single-pixel conceptual stack GLB, version 2.
 
 Run: Blender 5.2 --background --python tools/blender/build-pixel.py
 
@@ -15,7 +15,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 1
+VERSION = 2
 OUT.mkdir(parents=True, exist_ok=True)
 
 
@@ -40,6 +40,8 @@ def group(name, parent=None, **metadata):
 def role_for(obj):
     name = obj.name.lower()
     if 'alignment guide' in name: return 'AlignmentGuides'
+    if 'output' in name: return 'OutputInterface'
+    if 'carrier' in name: return 'Support'
     if 'absorber' in name: return 'Absorber'
     if 'contact metallization' in name: return 'Metallization'
     if 'indium' in name: return 'IndiumContact'
@@ -50,6 +52,15 @@ bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.context.scene.unit_settings.system = 'NONE'
 builders = load_look_builders()
 builders['pixel'](builders['palette']())
+m = builders['palette']()
+# An abstract package interface makes the distinction between a bump connection,
+# readout circuitry and the outgoing connection visible. It is not a pinout.
+builders['box']('Output interface carrier',(1.53,0,.14),(.56,1.12,.13),m['pcb'],.025)
+builders['box']('Output interface housing',(1.74,0,.27),(.25,.94,.15),m['dark'],.022)
+for i in range(6):
+    y=-.37+i*.148
+    builders['box']('Output interface pad',(1.50,y,.219),(.23,.072,.012),m['trace'],.003)
+    builders['line']('Output package interconnect',[(.96,y,.287),(1.18,y,.29),(1.39,y,.224)],.008,m['trace'])
 for obj in list(bpy.context.scene.objects):
     if obj.name.startswith(('Illustrative incident light', 'Light-path marker')):
         bpy.data.objects.remove(obj, do_unlink=True)
@@ -73,7 +84,7 @@ bpy.ops.object.convert(target='MESH')
 root = group('GuardianPixel', version=VERSION, level='pixel',
     representative=True, physicalScale=False, assumption='look-model',
     units='Arbitrary drawing units, not meters.',
-    description='Exploded conceptual absorber, contact and readout stack; dimensions and spacing are not physical.',
+    description='Exploded absorber, metallization, bump, readout, support and output interface; not a transistor circuit or physical dimensions.',
     sourceGeometry='tools/blender/build-hardware-look.py: pixel()',
     upAxis='Y', absorberFacing='+Y', explodedSpacing=True,
     incidentRays='Omitted; runtime owns illustrative layer overlays.',
@@ -81,7 +92,7 @@ root = group('GuardianPixel', version=VERSION, level='pixel',
 roles = {name: group(name, root, role=name, representative=True,
                     physicalHardware=name != 'AlignmentGuides',
                     teachingOverlay=name == 'AlignmentGuides')
-         for name in ['Absorber', 'Metallization', 'IndiumContact', 'Readout', 'AlignmentGuides']}
+         for name in ['Absorber', 'Metallization', 'IndiumContact', 'Readout', 'Support', 'OutputInterface', 'AlignmentGuides']}
 roles['AlignmentGuides']['optionalVisibility'] = True
 
 batches = {}
@@ -106,8 +117,11 @@ for (role, names), objects in batches.items():
 anchors = group('Anchors', root, role='Nonrendering interface anchors')
 anchor_specs = {
     'AnchorAbsorber': ((0, 0, 2.42), 'Representative entrance face'),
-    'AnchorContact': ((0, -.25, 1.10), 'Representative indium bump'),
+    'AnchorContact': ((0, -.708, 1.82), 'Contact metallization'),
     'AnchorReadout': ((.44, .21, .326), 'Representative readout circuit region'),
+    'AnchorBump': ((0, -.254, 1.10), 'Representative hybrid bump interconnect'),
+    'AnchorSupport': ((0, -1.001, -.03), 'Readout substrate carrier'),
+    'AnchorOutput': ((1.747, -.486, .27), 'Representative package output interface'),
 }
 for name, (point, role) in anchor_specs.items():
     anchor = group(name, anchors, role=role, representative=True,

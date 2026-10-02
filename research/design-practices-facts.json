@@ -1,0 +1,1360 @@
+{
+  "reviewed": "10/01/2026",
+  "scope": "Selected public design-practice additions and named civil examples. Geometry is representative; none establishes military hardware or performance.",
+  "sources": [
+    {
+      "id": "ecss-cleanliness-7001-rev1-2025",
+      "title": "ECSS-Q-ST-70-01C Rev.1: Cleanliness and contamination control",
+      "publisher": "European Cooperation for Space Standardization",
+      "url": "https://ecss.nl/wp-content/uploads/2025/10/ECSS-Q-ST-70-01C-Rev.1(15October2025).pdf",
+      "published": "10/15/2025",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct public standard page opened; linked PDF opened successfully, 97 pages.",
+      "locators": [
+        "Annex F, PDF/printed p. 81, cleanliness-oriented design",
+        "Section 5.4.2.5, pp. 55–56, purging",
+        "Section 5.3.1.7, p. 38, molecular monitoring"
+      ],
+      "excerpt": "Locate the vent holes of the space system and the instruments away from the sensitive items",
+      "applicability": "Tailorable general standard; Annex F is informative. It does not establish GOES-R, TIRS-2, or OPIR implementation."
+    },
+    {
+      "id": "ecss-mechanisms-2019",
+      "title": "ECSS-E-ST-33-01C Rev.2: Mechanisms",
+      "publisher": "ECSS / ESA Requirements and Standards Division",
+      "url": "https://ecss.nl/wp-content/uploads/2019/05/ECSS-E-ST-33-01C-Rev.2(1March2019).pdf",
+      "published": "03/01/2019",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Official landing page and linked 97-page PDF opened directly; relevant text and section/page locators read.",
+      "locator": "Sections 4.7.5.4.2–4.7.5.4.3 (PDF pp. 40–41); 4.7.5.4.11 (PDF p. 46); 4.7.7.4–4.7.7.7 (PDF pp. 49–51); 4.7.3.1 and 4.7.3.3.3 (PDF pp. 26 and 29)",
+      "excerpt": "Connections shall be protected from harness induced loads.",
+      "scopeLimit": "Use requirements only as attributed engineering practice. Do not import numerical margins, materials, dimensions, redundancy counts or crewed-spacecraft provisions into the representative vehicle."
+    },
+    {
+      "id": "ecss-operability-2008",
+      "title": "ECSS-E-ST-70-11C: Space segment operability",
+      "publisher": "ECSS / ESA Requirements and Standards Division",
+      "url": "https://ecss.nl/wp-content/uploads/standards/ecss-e/ECSS-E-ST-70-11C31July2008.pdf",
+      "published": "07/31/2008",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "76-page PDF opened directly; Section 1 and mechanism requirements read. A guessed separate landing-page URL later returned Internal Error; no retry of that page.",
+      "locator": "Section 1, PDF p. 8; Section 4.5a, PDF p. 17; Section 5.9.5, PDF pp. 51–52",
+      "excerpt": "monitor the various stages of a deployment process",
+      "scopeLimit": "Dated 2008 edition, not asserted to be the latest edition. General requirements cover several orbit classes; detailed requirements depend on implemented functions and tailoring."
+    },
+    {
+      "id": "ecss-rha-2025-scope",
+      "title": "ECSS-Q-ST-60-15C Rev.1: Radiation hardness assurance",
+      "publisher": "European Cooperation for Space Standardization",
+      "url": "https://ecss.nl/standard/ecss-q-st-60-15c-rev-1-radiation-hardness-assurance-20-march-2025/",
+      "published": "03/20/2025",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct standard landing page and its Scope read. Linked full standard was not needed or cited.",
+      "sections": [
+        "Scope"
+      ],
+      "scope": "Only the public scope statement is admitted."
+    },
+    {
+      "id": "esa-battery-passivation-2019",
+      "title": "Testing space batteries to destruction for cleaner skies",
+      "publisher": "European Space Agency",
+      "url": "https://www.esa.int/Space_Safety/Clean_Space/Testing_space_batteries_to_destruction_for_cleaner_skies",
+      "published": "03/12/2019",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct page open succeeded; final test-derived recommendation paragraphs read.",
+      "locator": "Paragraph beginning 'The resulting satellite passivation recommendations'; following battery-specialist scope paragraph",
+      "excerpt": "fully disconnected from the solar arrays",
+      "scopeLimit": "Apply the qualitative lifecycle principle. Do not reuse the page's historical LEO disposal deadline or assign cell-specific safety thresholds to our vehicle."
+    },
+    {
+      "id": "esa-solar-coverglass",
+      "title": "Anti-Reflection Coated Cover Glasses",
+      "publisher": "European Space Agency, ARTES",
+      "url": "https://resilience.esa.int/archives/projects/anti-reflection-coated-cover-glasses",
+      "kind": "primary",
+      "dated": "Project status date 12/18/2012; page has inconsistent ongoing/completed fields, so no current project-status claim is admitted",
+      "accessed": "10/01/2026",
+      "status": "verified",
+      "section": "Objectives and Features",
+      "evidence": "Coverglass protects photovoltaic cells; coatings influence the useful light and absorbed radiation."
+    },
+    {
+      "id": "esa-zero-debris-technologies",
+      "title": "Zero Debris Technologies",
+      "publisher": "European Space Agency",
+      "url": "https://www.esa.int/Space_Safety/Clean_Space/Zero_Debris_Technologies",
+      "dated": "Undated public page, accessed 10/01/2026",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct page open succeeded; disposal, passivation and design-for-removal sections read.",
+      "locator": "Reducing the amount of space debris; End-of-life reentry technologies; End-of-life passivation; Design for Removal",
+      "excerpt": "Different satellites require different technologies",
+      "scopeLimit": "Use qualitative GEO disposal and stored-energy concepts only; no disposal-altitude calculation, regulatory deadline, trajectory or passivation command sequence."
+    },
+    {
+      "id": "nasa-charging-handbook-2022",
+      "title": "NASA-HDBK-4002B: Mitigating In-Space Charging Effects—A Guideline",
+      "publisher": "NASA Office of the Chief Engineer",
+      "url": "https://standards.nasa.gov/sites/default/files/standards/NASA/B/0/2022-06-07-NASA-HDBK-4002B-Approved.pdf",
+      "kind": "primary",
+      "published": "06/07/2022",
+      "accessed": "10/01/2026",
+      "status": "verified",
+      "section": "Sections 5.2.1.2–5.2.1.5 and 5.2.5.1, PDF pp. 52–57 and 78–79",
+      "evidence": "Guidance requires mission-specific tailoring; the catalog admits component roles without dimensions, resistance limits, or shielding-performance claims."
+    },
+    {
+      "id": "nasa-cii-contamination-best-practices-2012",
+      "title": "CII Contamination Control Best Practices",
+      "publisher": "NASA CII Team / Brian Blakkolb",
+      "url": "https://essp.nasa.gov/wp-content/uploads/sites/153/2017/07/10-1130_-_Contamination_20121211.pdf",
+      "dated": "2012 presentation, as identified by the published file name; day not established by the slides",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct PDF opened successfully, 14 pages.",
+      "locators": [
+        "PDF p. 5, guideline 9.7.2.3, instrument venting",
+        "PDF pp. 10–11, guidelines 9.7.4.1–9.7.4.2, purge GSE and interface",
+        "PDF p. 9, guidelines 9.7.3.1–9.7.3.2, protective covers"
+      ],
+      "excerpt": "Instrument Purge",
+      "applicability": "Hosted-payload integration guidance; no named mission implementation."
+    },
+    {
+      "id": "nasa-goddard-detector-packaging",
+      "title": "Goddard's Detector Technology",
+      "publisher": "NASA",
+      "url": "https://svs.gsfc.nasa.gov/vis/a010000/a011400/a011484/script_18778_00.html",
+      "dated": "Historical NASA narration; transcript date not displayed",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "section": "Transcript paragraph beginning The die are screened; Landsat 8 QWIP example, not TIRS-2",
+      "accessOutcome": "Direct primary page opened and cited section read on 10/01/2026."
+    },
+    {
+      "id": "nasa-ground-flight-data-group",
+      "title": "Ground & Flight Data Systems Group",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov/intelligent-systems-division/collaborative-and-assistant-systems/ground-and-flight-data-systems-group/",
+      "dated": "Page last updated 09/30/2025",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "section": "Overview, second paragraph",
+      "accessOutcome": "Direct primary page opened and cited section read on 10/01/2026."
+    },
+    {
+      "id": "nasa-ground-systems-2026",
+      "title": "11.0 Ground Data Systems and Mission Operations",
+      "publisher": "NASA",
+      "url": "https://www.nasa.gov/smallsat-institute/sst-soa/ground-data-systems-and-mission-operations/",
+      "dated": "05/11/2026",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "section": "Sections 11.6, 11.6.1, and 11.7.1; general introductory passages only, no manufacturer tables",
+      "accessOutcome": "Direct primary page opened and cited section read on 10/01/2026."
+    },
+    {
+      "id": "nasa-materials-6016c-2021",
+      "title": "NASA-STD-6016C: Standard Materials and Processes Requirements for Spacecraft",
+      "publisher": "NASA",
+      "url": "https://standards.nasa.gov/sites/default/files/standards/NASA/C/2021-09-30-NASA-STD-6016C-Approved.pdf",
+      "published": "09/30/2021",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct PDF opened successfully, 157 pages.",
+      "locators": [
+        "Section 4.2.3.6, PDF/printed pp. 48–49, Thermal Vacuum Stability"
+      ],
+      "excerpt": "Spacecraft with cryogenic optics may be sensitive to water vapor deposition",
+      "applicability": "This identified revision supports a materials-selection explanation; no claim that the application or a mission is certified to the standard."
+    },
+    {
+      "id": "nasa-onboard-data",
+      "title": "Basics of Space Flight: Chapter 11, Onboard Systems, page one",
+      "publisher": "NASA Science / Jet Propulsion Laboratory",
+      "url": "https://science.nasa.gov/learn/basics-of-space-flight/chapter11-1/",
+      "dated": "Page last updated 01/16/2025",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Existing source reopened directly; relevant text read.",
+      "sections": [
+        "Spacecraft Clock",
+        "Fault Protection and Safing"
+      ],
+      "scope": "General architecture; no clock accuracy, memory size, or recovery timing admitted."
+    },
+    {
+      "id": "nasa-pld-handbook-4008-change2",
+      "title": "NASA-HDBK-4008 with Change 2: Programmable Logic Devices Handbook",
+      "publisher": "NASA",
+      "url": "https://standards.nasa.gov/system/files/tmp/NASA-HDBK4008%20w%20-Change%202.pdf",
+      "published": "12/02/2013",
+      "dated": "Revalidated with administrative/editorial changes 06/18/2025; history states no technical changes",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct PDF open succeeded; relevant sections were returned as page-indexed text.",
+      "sections": [
+        "Section 7.3.3.2, printed/PDF p. 39: State Machine Transition and Fault Recovery",
+        "Appendix F.1.1-F.1.3, printed/PDF pp. 103-105: reset circuitry and startup",
+        "Appendix F.5.5, printed/PDF p. 113: nonvolatile-memory reliability"
+      ],
+      "scope": "NASA design guidance, not proof of a specific flight implementation."
+    },
+    {
+      "id": "nasa-smallsat-launch-deployment",
+      "title": "10.0 Integration, Launch, and Deployment",
+      "publisher": "NASA Small Spacecraft Systems Virtual Institute",
+      "url": "https://www.nasa.gov/smallsat-institute/sst-soa/integration-launch-and-deployment/",
+      "dated": "Current public web chapter; exact publication date not established in the opened excerpt",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct page open succeeded; Section 10.4.3 read.",
+      "locator": "Section 10.4.3 Separation Systems, paragraphs describing circular interfaces, clamp bands and multi-point systems",
+      "excerpt": "One ring is attached to the launch vehicle",
+      "scopeLimit": "SmallSat-focused source supports a conceptual separation-interface example. It does not establish the launch adapter, clamp band, springs or dimensions of GOES-R or any OPIR satellite."
+    },
+    {
+      "id": "nasa-swehb-fault-detection-d",
+      "title": "Software Engineering Handbook Version D: 9.07 Fault Detection and Response",
+      "publisher": "NASA",
+      "url": "https://swehb.nasa.gov/spaces/SWEHBVD/pages/102695798/9.07%2BFault%2BDetection%2Band%2BResponse",
+      "dated": "Publication date not displayed in the opened page",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct public page and relevant sections read. NASA-only linked material was not opened.",
+      "sections": [
+        "2 Examples and Discussion",
+        "3.1 ARC, 3.7.4.3",
+        "3.3 JPL, 4.9.1.4 and 4.9.2.2"
+      ],
+      "scope": "Public engineering guidance and examples; center requirements are not represented as universal satellite requirements."
+    },
+    {
+      "id": "nasa-tirs2-characterization-plan-2018",
+      "title": "Landsat 9 Thermal Infrared Sensor 2 Characterization Plan Overview",
+      "publisher": "NASA Goddard Space Flight Center / IGARSS authors",
+      "url": "https://ntrs.nasa.gov/api/citations/20180004891/downloads/20180004891.pdf",
+      "dated": "2018 conference paper",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "accessOutcome": "Direct PDF opened successfully, 4 pages.",
+      "locators": [
+        "PDF p. 1, Introduction, interference-filter paragraph",
+        "PDF pp. 2–3, Section 3, Calibration Ground Support Equipment",
+        "PDF p. 3, Section 4, TIPCE alignment-shim paragraph"
+      ],
+      "excerpt": "fabricate shims that optimize the alignment of the image plane",
+      "applicability": "Named TIRS-2 development hardware and ground characterization. No old launch predictions or performance numbers admitted."
+    },
+    {
+      "id": "nasa-ups-2010",
+      "title": "Development and Testing of an Ultracapacitor Based Uninterruptible Power Supply (UPS) System",
+      "publisher": "NASA",
+      "url": "https://ntrs.nasa.gov/citations/20100031134",
+      "dated": "07/01/2010",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "section": "NTRS public abstract, opening sentences; only backup-power role admitted",
+      "accessOutcome": "Direct primary page opened and cited section read on 10/01/2026."
+    },
+    {
+      "id": "nasa-webb-hybrid-detectors",
+      "title": "Infrared Detectors: Webb Detector Architecture",
+      "publisher": "NASA",
+      "url": "https://science.nasa.gov/mission/webb/infrared-detectors/",
+      "dated": "Page last updated 08/12/2024",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "section": "Webb Detector Architecture and Figure 4",
+      "accessOutcome": "Direct primary page opened and cited section read on 10/01/2026."
+    }
+  ],
+  "accessAttempts": [
+    {
+      "id": "nasa-llis-559-unchecked",
+      "title": "NASA Lessons Learned entry 559",
+      "publisher": "NASA",
+      "url": "https://llis.nasa.gov/lesson/559",
+      "attempted": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "unchecked",
+      "reason": "Direct open returned an empty document (zero text lines). Search snippets were not admitted; no alternate retrieval attempted.",
+      "cited": false
+    },
+    {
+      "id": "ecss-lcl-handbook-unchecked",
+      "title": "ECSS-E-HB-20-20A, 04/15/2016",
+      "publisher": "European Cooperation for Space Standardization",
+      "url": "https://ecss.nl/wp-content/uploads/2016/07/ECSS-E-HB-20-20A15April2016.pdf",
+      "attempted": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "unchecked",
+      "reason": "Direct open returned PDF metadata, but section queries returned Internal Error. No passage from this handbook is admitted and no alternate retrieval was attempted. The separately opened ECSS glossary supports only its own definition.",
+      "cited": false
+    },
+    {
+      "id": "ecss-emc-2022-audit",
+      "title": "ECSS-E-ST-20-07C Rev.2: Electromagnetic compatibility",
+      "publisher": "ECSS / ESA Requirements and Standards Section",
+      "url": "https://ecss.nl/wp-content/uploads/2022/01/ECSS-E-ST-20-07C-Rev.2(3January2022).pdf",
+      "published": "01/03/2022",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified-scope-only",
+      "accessOutcome": "Official landing page and linked PDF opened; cover, change log and scope readable. Subsequent section-level open/find requests returned Internal Error/no text. No retry through another tool or shell.",
+      "locator": "Cover and Section 1 only",
+      "usedForCandidateEvidence": false,
+      "scopeLimit": "Do not cite numerical bonding or harness requirements from this partial read. Existing NASA grounding coverage and directly read ECSS mechanism Section 4.7.7.4 suffice for this audit."
+    },
+    {
+      "id": "goes-r-databook-current-access-audit",
+      "title": "GOES-R Series Data Book",
+      "publisher": "NOAA",
+      "url": "https://www.ospo.noaa.gov/resources/documents/GOES-RSeriesDataBook.pdf",
+      "attempted": "10/01/2026",
+      "status": "unchecked",
+      "reason": "Direct web open returned HTTP 403 Forbidden. Stopped affected retrieval, notified parent, and did not retry through another tool/shell or use the existing local file as a workaround. This records current access only; it does not negate earlier verified repository facts.",
+      "usedForCandidateEvidence": false
+    },
+    {
+      "id": "rhessi-launch-interface-unchecked",
+      "title": "HESSI Spacecraft–Launch Vehicle Interface Requirements, HSI_SYS_024f",
+      "publisher": "NASA Goddard / HESSI project",
+      "url": "https://hesperia.gsfc.nasa.gov/rhessi3/docs/official_docs/RHESSI_Documentation/Interface_Control_Documents_ICD/HSI_SYS_024f.pdf",
+      "attempted": "10/01/2026",
+      "status": "unchecked",
+      "reason": "Direct PDF open returned TimeoutError. No retry and no citation of its search snippets.",
+      "usedForCandidateEvidence": false
+    },
+    {
+      "id": "esa-pcdu-passivation-unchecked",
+      "title": "Electrical Passivation — PCDU upgrade for power passivation",
+      "publisher": "ESA Nebula Public Library",
+      "url": "https://nebula.esa.int/content/electrical-passivation-pcdu-upgrade-power-passivation",
+      "attempted": "10/01/2026",
+      "status": "unchecked",
+      "reason": "Direct open returned page metadata but body section retrieval returned Internal Error with no matching text. No candidate evidence taken and no alternate-tool retry.",
+      "usedForCandidateEvidence": false
+    },
+    {
+      "id": "nasa-tirs-thermal-2021-unchecked",
+      "title": "TIRS-1/2 thermal paper, NTRS 20210014593",
+      "publisher": "NASA NTRS",
+      "url": "https://ntrs.nasa.gov/api/citations/20210014593/downloads/Veronica%20Otero%20ICES%20Final-TIRS1%262.pdf?attachment=true",
+      "dated": "2021 identifier; contents not verified",
+      "attempted": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "unchecked",
+      "reason": "Direct web open returned 403 Forbidden. Stopped the affected source action and reported it; no alternate route, tool, shell, mirror, or snippet citation."
+    },
+    {
+      "id": "goes-r-databook-recheck-optical-unchecked",
+      "title": "GOES-R Series Data Book, optical/environment audit access recheck",
+      "publisher": "NOAA",
+      "url": "https://www.ospo.noaa.gov/resources/documents/GOES-RSeriesDataBook.pdf",
+      "attempted": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "unchecked",
+      "reason": "Direct web recheck returned 403 Forbidden. Stopped and reported it; no alternate route attempted. This audit adopts no new Data Book claim and does not change the earlier verified ledger."
+    },
+    {
+      "id": "nasa-west-coast-facility-access",
+      "url": "https://public.ksc.nasa.gov/lsplaunch/west-coast-facility/",
+      "attempted": "10/01/2026",
+      "status": "unchecked",
+      "reason": "Direct web open returned 400 Timeout fetching. No retry or alternate retrieval; uncited."
+    }
+  ],
+  "facts": [
+    {
+      "id": "gap-recovery-memory",
+      "runtimeKey": "gap-recovery-memory",
+      "levels": [
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "computer"
+        }
+      ],
+      "componentName": "Boot and recovery memory",
+      "body": "Protected startup storage is distinct from working memory and stored observations. Its drawn package and memory organization are illustrative.",
+      "row": [
+        "NASA recovery-memory guidance",
+        "Permanent memory can retain processor boot/safe-hold code or a basic programmable-logic configuration",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-pld-handbook-4008-change2",
+              "Appendix F.5.5, printed/PDF p. 113"
+            ]
+          ]
+        }
+      ],
+      "scope": "General NASA spacecraft engineering guidance; representative implementation, no named flight specification."
+    },
+    {
+      "id": "gap-memory-protection",
+      "runtimeKey": "gap-memory-protection",
+      "levels": [
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "computer"
+        }
+      ],
+      "componentName": "Memory interface and error-correction logic",
+      "body": "Error-protection logic belongs at the memory interface. Memory scrubbing is a maintenance operation, not necessarily a separate chip.",
+      "row": [
+        "NASA memory-protection guidance",
+        "Memory interfaces implement error detection and correction appropriate to their application",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-pld-handbook-4008-change2",
+              "Appendix F.5.5, printed/PDF p. 113"
+            ]
+          ]
+        }
+      ],
+      "scope": "General NASA spacecraft engineering guidance; representative implementation, no named flight specification."
+    },
+    {
+      "id": "gap-reset-circuitry",
+      "runtimeKey": "gap-reset-circuitry",
+      "levels": [
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "computer"
+        }
+      ],
+      "componentName": "Power-on-reset circuitry",
+      "body": "Reset circuitry gives the board a controlled starting state. It may be integrated rather than packaged as a separate supervisor.",
+      "row": [
+        "NASA board-reset guidance",
+        "Reset circuitry coordinates startup and protects critical signals while power and clocks settle",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-pld-handbook-4008-change2",
+              "Appendix F.1.1-F.1.3, printed/PDF pp. 103-105"
+            ]
+          ]
+        }
+      ],
+      "scope": "General NASA spacecraft engineering guidance; representative implementation, no named flight specification."
+    },
+    {
+      "id": "gap-spacecraft-time",
+      "runtimeKey": "gap-spacecraft-time",
+      "levels": [
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "computer"
+        }
+      ],
+      "componentName": "Spacecraft time counter",
+      "body": "The spacecraft time counter is a data-handling function. It is distinct from detector sample clocks and the radio reference oscillator.",
+      "row": [
+        "NASA spacecraft-clock description",
+        "A data-system counter schedules activity and time-tags engineering and science data",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-onboard-data",
+              "Spacecraft Clock, first and third paragraphs"
+            ]
+          ]
+        }
+      ],
+      "scope": "General NASA spacecraft engineering guidance; representative implementation, no named flight specification."
+    },
+    {
+      "id": "gap-safing",
+      "runtimeKey": "gap-safing",
+      "levels": [
+        "satellite"
+      ],
+      "parents": [],
+      "componentName": "Fault protection and safe operating states",
+      "body": "System-level engineering practice, not an additional hardware box.",
+      "row": [
+        "NASA safe-state guidance",
+        "Preserve spacecraft resources and commandability while maintaining a sustainable power and thermal state",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-swehb-fault-detection-d",
+              "Section 3.1 ARC, 3.7.4.3; section 3.3 JPL, 4.9.2.2"
+            ]
+          ]
+        }
+      ],
+      "scope": "General guidance; architecture explanation only."
+    },
+    {
+      "id": "gap-fault-containment",
+      "runtimeKey": "gap-fault-containment",
+      "levels": [
+        "satellite"
+      ],
+      "parents": [],
+      "componentName": "Fault containment and redundancy boundaries",
+      "body": "System-level engineering practice, not an additional hardware box.",
+      "row": [
+        "NASA fault-containment guidance",
+        "Redundancy depends on containing faults within defined regions",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-swehb-fault-detection-d",
+              "Section 3.3 JPL, 4.9.1.4 and rationale"
+            ]
+          ]
+        }
+      ],
+      "scope": "General guidance; architecture explanation only."
+    },
+    {
+      "id": "gap-radiation-assurance",
+      "runtimeKey": "gap-radiation-assurance",
+      "levels": [
+        "satellite"
+      ],
+      "parents": [],
+      "componentName": "Radiation hardness assurance",
+      "body": "System-level engineering practice, not an additional hardware box.",
+      "row": [
+        "ECSS radiation-assurance scope",
+        "Project-specific assurance addresses ionizing dose, displacement damage, and single-event effects in EEE components",
+        "reported",
+        {
+          "refs": [
+            [
+              "ecss-rha-2025-scope",
+              "Scope, first paragraph"
+            ]
+          ]
+        }
+      ],
+      "scope": "General guidance; architecture explanation only."
+    },
+    {
+      "id": "gap-mechanism-position-feedback",
+      "runtimeKey": "gap-mechanism-position-feedback",
+      "levels": [
+        "satellite",
+        "payload"
+      ],
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "array-drive"
+        },
+        {
+          "scene": "payload",
+          "part": "mechanisms"
+        },
+        {
+          "scene": "satellite",
+          "part": "computer"
+        }
+      ],
+      "componentName": "Deployment-position sensors and latch-status indicators",
+      "body": "Position sensing and latch-status telemetry show whether a deployment completed. The sensor type and placement shown are illustrative.",
+      "row": [
+        "ECSS mechanism status",
+        "Monitor deployment progress and report lock/latch state through telemetry",
+        "spec",
+        {
+          "refs": [
+            [
+              "ecss-operability-2008",
+              "Section 5.9.5b–e, PDF p. 52"
+            ],
+            [
+              "ecss-mechanisms-2019",
+              "Sections 4.7.5.4.2a–b and 4.7.5.4.3b, PDF pp. 40–41"
+            ]
+          ]
+        }
+      ],
+      "scope": "Attributed engineering guidance; no GOES-R or military implementation inferred."
+    },
+    {
+      "id": "gap-electrical-passivation",
+      "runtimeKey": "gap-electrical-passivation",
+      "levels": [
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "power"
+        },
+        {
+          "scene": "satellite",
+          "part": "battery"
+        }
+      ],
+      "componentName": "Battery discharge and recharge-isolation circuitry",
+      "body": "Retirement includes removing stored battery energy and preventing recharge. This role belongs within the power architecture, not an invented standalone box.",
+      "row": [
+        "ESA battery passivation guidance",
+        "Discharge the battery and prevent renewed charging from the solar array",
+        "reported",
+        {
+          "refs": [
+            [
+              "esa-battery-passivation-2019",
+              "Final recommendations paragraph following the abuse-test discussion"
+            ]
+          ]
+        }
+      ],
+      "scope": "Attributed engineering guidance; no GOES-R or military implementation inferred."
+    },
+    {
+      "id": "gap-propulsion-passivation",
+      "runtimeKey": "gap-propulsion-passivation",
+      "levels": [
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "propulsion"
+        }
+      ],
+      "componentName": "Propellant and pressurant depletion or vent paths",
+      "body": "Propulsion has a retirement role as well as an operating role: remaining stored energy must be addressed. The illustration specifies no actuation sequence.",
+      "row": [
+        "ESA end-of-life passivation",
+        "Retirement addresses remaining propellant and pressurant energy",
+        "reported",
+        {
+          "refs": [
+            [
+              "esa-zero-debris-technologies",
+              "Reducing the amount of space debris; End-of-life passivation"
+            ]
+          ]
+        }
+      ],
+      "scope": "Attributed engineering guidance; no GOES-R or military implementation inferred."
+    },
+    {
+      "id": "gap-mechanism-vent-paths",
+      "runtimeKey": "gap-mechanism-vent-paths",
+      "levels": [
+        "payload",
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "payload",
+          "part": "mechanisms"
+        },
+        {
+          "scene": "payload",
+          "part": "scan-system"
+        },
+        {
+          "scene": "satellite",
+          "part": "array-drive"
+        }
+      ],
+      "componentName": "Pressure-equalization vent passages",
+      "body": "Enclosures may need vent passages for ascent. Sealed or pressure-qualified hardware is a different case; a vent is not automatically appropriate everywhere.",
+      "row": [
+        "ECSS mechanism venting",
+        "Venting accommodates ascent depressurization while controlling particle contamination",
+        "spec",
+        {
+          "refs": [
+            [
+              "ecss-mechanisms-2019",
+              "Section 4.7.5.4.11a–c, PDF p. 46"
+            ]
+          ]
+        }
+      ],
+      "scope": "Attributed engineering guidance; no GOES-R or military implementation inferred."
+    },
+    {
+      "id": "gap-moving-harness-strain-relief",
+      "runtimeKey": "gap-moving-harness-strain-relief",
+      "levels": [
+        "satellite",
+        "payload"
+      ],
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "array-drive"
+        },
+        {
+          "scene": "payload",
+          "part": "scan-system"
+        },
+        {
+          "scene": "payload",
+          "part": "mechanisms"
+        }
+      ],
+      "componentName": "Harness clamps and strain-relief supports",
+      "body": "Clamps and strain relief keep moving wiring from loading its electrical connections. Routes and supports are representative.",
+      "row": [
+        "ECSS moving harness",
+        "Protect electrical connections from harness loads and verify repeatable routing through motion",
+        "spec",
+        {
+          "refs": [
+            [
+              "ecss-mechanisms-2019",
+              "Section 4.7.7.7, PDF p. 51"
+            ]
+          ]
+        }
+      ],
+      "scope": "Attributed engineering guidance; no GOES-R or military implementation inferred."
+    },
+    {
+      "id": "gap-separation-interface",
+      "runtimeKey": "gap-separation-interface",
+      "levels": [
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "structure"
+        }
+      ],
+      "componentName": "Launch-vehicle separation interface",
+      "body": "A launch attachment and its release interface have distinct roles. NASA provides a SmallSat clamp-ring example; the drawn GEO interface is conceptual.",
+      "row": [
+        "NASA separation-system example",
+        "A clamped pair of interface rings can release and separate with springs",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-smallsat-launch-deployment",
+              "Section 10.4.3, circular separation-system and clamp-band paragraphs"
+            ]
+          ]
+        }
+      ],
+      "scope": "Attributed engineering guidance; no GOES-R or military implementation inferred."
+    },
+    {
+      "id": "gap-lubrication-contamination-boundary",
+      "runtimeKey": "gap-lubrication-contamination-boundary",
+      "levels": [
+        "payload",
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "payload",
+          "part": "scan-system"
+        },
+        {
+          "scene": "payload",
+          "part": "mechanisms"
+        },
+        {
+          "scene": "satellite",
+          "part": "array-drive"
+        }
+      ],
+      "componentName": "Bearing lubricant or lubricating surface and migration barrier",
+      "body": "Bearings require suitable tribology; any lubricant and migration-control approach depend on the mechanism and its environment.",
+      "row": [
+        "ECSS mechanism tribology",
+        "Qualify lubrication for the mission; contain fluid migration where sensitive equipment requires it",
+        "spec",
+        {
+          "refs": [
+            [
+              "ecss-mechanisms-2019",
+              "Sections 4.7.3.1a–b and 4.7.3.3.3a–b, PDF pp. 26 and 29"
+            ]
+          ]
+        }
+      ],
+      "scope": "Attributed engineering guidance; no GOES-R or military implementation inferred."
+    },
+    {
+      "id": "gap-vent-paths",
+      "runtimeKey": "gap-vent-paths",
+      "levels": [
+        "payload",
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "payload",
+          "part": "baffles"
+        },
+        {
+          "scene": "satellite",
+          "part": "structure"
+        }
+      ],
+      "componentName": "Vented housing and vent passages",
+      "body": "ECSS recommends directing instrument and blanket vents away from contamination-sensitive items. A representative cutaway can identify the housing opening and its routed passage.",
+      "row": [
+        "ECSS cleanliness-oriented design",
+        "Vents and blanket venting are directed away from sensitive items",
+        "reported",
+        {
+          "refs": [
+            [
+              "ecss-cleanliness-7001-rev1-2025",
+              "Annex F, p. 81, items b.1–b.3"
+            ]
+          ]
+        }
+      ],
+      "scope": "representative flight-hardware detail supported by general practice"
+    },
+    {
+      "id": "gap-purge-interface",
+      "runtimeKey": "gap-purge-interface",
+      "levels": [
+        "payload"
+      ],
+      "parents": [
+        {
+          "scene": "payload",
+          "part": "mechanisms"
+        }
+      ],
+      "componentName": "Instrument purge connection",
+      "body": "NASA's hosted-payload guidance separates the instrument's purge connection from the ground equipment that filters, conditions, and regulates the supplied gas.",
+      "row": [
+        "NASA instrument purge interface",
+        "A defined mechanical connection links instrument and ground purge equipment",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-cii-contamination-best-practices-2012",
+              "PDF pp. 10–11, 9.7.4.1–9.7.4.2"
+            ]
+          ]
+        }
+      ],
+      "scope": "ground-serviced instrument interface; not an onboard continuous purge system"
+    },
+    {
+      "id": "gap-tirs2-alignment-shims",
+      "runtimeKey": "gap-tirs2-alignment-shims",
+      "levels": [
+        "tirs2"
+      ],
+      "parents": [
+        {
+          "scene": "tirs2",
+          "part": "arrays"
+        }
+      ],
+      "componentName": "Detector alignment shims",
+      "body": "TIRS-2 subsystem optical tests supplied focus information for fabrication of alignment shims. These are fixed mechanical adjustments, not an on-orbit focusing actuator.",
+      "row": [
+        "TIRS-2 detector alignment",
+        "Ground focus measurements inform alignment-shim fabrication",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-tirs2-characterization-plan-2018",
+              "PDF p. 3, Section 4, first TIPCE paragraph"
+            ]
+          ]
+        }
+      ],
+      "scope": "named civil hardware; fixed adjustment established on the ground"
+    },
+    {
+      "id": "gap-tirs2-interference-filters",
+      "runtimeKey": "gap-tirs2-interference-filters",
+      "levels": [
+        "tirs2"
+      ],
+      "parents": [
+        {
+          "scene": "tirs2",
+          "part": "filters"
+        }
+      ],
+      "componentName": "Spectral interference filters",
+      "body": "The TIRS-2 paper places interference filters over the detector arrays to select its spectral channels.",
+      "row": [
+        "TIRS-2 spectral selection",
+        "Interference filters over the arrays select the channels",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-tirs2-characterization-plan-2018",
+              "PDF p. 1, Introduction, focal-plane paragraph"
+            ]
+          ]
+        }
+      ],
+      "scope": "named civil hardware refinement"
+    },
+    {
+      "id": "gap-materials-outgassing",
+      "runtimeKey": "gap-materials-outgassing",
+      "levels": [
+        "payload",
+        "focal-plane",
+        "satellite"
+      ],
+      "parents": [
+        {
+          "scene": "payload",
+          "part": "optics"
+        },
+        {
+          "scene": "focal-plane",
+          "part": "flex"
+        },
+        {
+          "scene": "satellite",
+          "part": "radiator"
+        }
+      ],
+      "componentName": "Adhesives, coatings, insulation, and harness materials",
+      "body": "NASA's materials standard calls for vacuum-stability screening and allows stricter evaluation near optical surfaces. Cold optics require particular attention to water deposition. Screening and bakeout are verification processes, not separate flight boxes.",
+      "row": [
+        "NASA materials selection",
+        "Outgassing evaluation considers sensitive surfaces and cryogenic water deposition",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-materials-6016c-2021",
+              "Section 4.2.3.6, pp. 48–49"
+            ]
+          ]
+        }
+      ],
+      "scope": "material/property explanation on existing components"
+    },
+    {
+      "id": "gap-coverglass",
+      "runtimeKey": "gap-coverglass",
+      "levels": [
+        "satellite"
+      ],
+      "componentName": "Solar-cell coverglass and optical coatings",
+      "body": "Coverglass protects the cell; coatings manage incoming light. The cutaway is representative, with no assigned material or thickness.",
+      "row": [
+        "Solar-cell protective layers",
+        "Coverglass and optical coatings",
+        "reported",
+        {
+          "refs": [
+            [
+              "esa-solar-coverglass",
+              "Objectives and Features"
+            ]
+          ]
+        }
+      ],
+      "scope": "General ESA-described solar-cell construction; not a GOES-R material assignment.",
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "solar-array"
+        }
+      ]
+    },
+    {
+      "id": "gap-blanket-tabs",
+      "runtimeKey": "gap-blanket-tabs",
+      "levels": [
+        "satellite"
+      ],
+      "componentName": "Thermal-blanket bonding tabs",
+      "body": "Tabs connect conductive blanket layers to the spacecraft reference. Thermal insulation alone is not an electromagnetic enclosure.",
+      "row": [
+        "Blanket electrical connection",
+        "Bonding tabs connect conductive layers to structure",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-charging-handbook-2022",
+              "Section 5.2.5.1, PDF pp. 78–79; section 5.2.1.2, PDF p. 53"
+            ]
+          ]
+        }
+      ],
+      "scope": "NASA guidance; dimensions and electrical limits omitted.",
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "radiator"
+        }
+      ]
+    },
+    {
+      "id": "gap-bond-straps",
+      "runtimeKey": "gap-bond-straps",
+      "levels": [
+        "satellite"
+      ],
+      "componentName": "Electrical bonding straps",
+      "body": "Bonding provides electrical continuity across structural interfaces and moving joints. It is distinct from the signal-return circuit.",
+      "row": [
+        "Structural electrical continuity",
+        "Bonded structural interfaces and flexible joints",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-charging-handbook-2022",
+              "Section 5.2.1.3, PDF pp. 53–54; section 5.2.1.13, PDF p. 63"
+            ]
+          ]
+        }
+      ],
+      "scope": "General spacecraft guidance, representative routing.",
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "structure"
+        }
+      ]
+    },
+    {
+      "id": "gap-enclosure-shield",
+      "runtimeKey": "gap-enclosure-shield",
+      "levels": [
+        "satellite"
+      ],
+      "componentName": "Electronics enclosure and shield terminations",
+      "body": "The chassis, seams, cable shields, and connector entries participate in shielding. The exploded enclosure illustrates these interfaces without a shielding rating.",
+      "row": [
+        "Electronics shielding interfaces",
+        "Chassis, seams, cable shields and entry terminations",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-charging-handbook-2022",
+              "Section 5.2.1.2, PDF pp. 52–53"
+            ]
+          ]
+        }
+      ],
+      "scope": "General enclosure function; no real mission implementation inferred.",
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "computer"
+        }
+      ]
+    },
+    {
+      "id": "gap-dissipative-coating",
+      "runtimeKey": "gap-dissipative-coating",
+      "levels": [
+        "satellite"
+      ],
+      "componentName": "Charge-dissipative surface coating",
+      "body": "A grounded dissipative coating can manage surface charge. Material selection must also suit the surface's optical and thermal role.",
+      "row": [
+        "Surface charge management",
+        "Ground-referenced conductive or dissipative surfaces",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-charging-handbook-2022",
+              "Section 5.2.1.5, PDF pp. 55–57"
+            ]
+          ]
+        }
+      ],
+      "scope": "Design option from NASA guidance, not a universal coating requirement.",
+      "parents": [
+        {
+          "scene": "satellite",
+          "part": "radiator"
+        }
+      ]
+    },
+    {
+      "id": "gap-ground-receiver",
+      "runtimeKey": "gap-ground-receiver",
+      "levels": [
+        "ground"
+      ],
+      "parents": [
+        {
+          "scene": "ground",
+          "part": "receiver"
+        }
+      ],
+      "componentName": "Receiver and demodulation equipment",
+      "body": "The antenna collects the radio signal. Receiver electronics and signal-processing software recover the transmitted data; the layout is schematic.",
+      "row": [
+        "Receiver and demodulation equipment",
+        "RF front ends and receiver processing connect radio waveforms with data packets",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-ground-systems-2026",
+              "Sections 11.6.1 and 11.7.1, introductory paragraphs"
+            ]
+          ]
+        }
+      ],
+      "scope": "General civil ground architecture; not a FORGE internal design."
+    },
+    {
+      "id": "gap-ground-archive",
+      "runtimeKey": "gap-ground-archive",
+      "levels": [
+        "ground"
+      ],
+      "parents": [
+        {
+          "scene": "ground",
+          "part": "archive"
+        }
+      ],
+      "componentName": "Telemetry and science-data archive",
+      "body": "Mission records and science products need storage and retrieval. The illustrated server cabinet does not assign a storage technology or capacity.",
+      "row": [
+        "Telemetry and science-data archive",
+        "Ground systems preserve telemetry and science records for later analysis",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-ground-systems-2026",
+              "Section 11.6, Mission and Science Operations Centers"
+            ]
+          ]
+        }
+      ],
+      "scope": "General civil ground architecture; physical or hosted storage is mission-dependent."
+    },
+    {
+      "id": "gap-ground-ups",
+      "runtimeKey": "gap-ground-ups",
+      "levels": [
+        "ground"
+      ],
+      "parents": [
+        {
+          "scene": "ground",
+          "part": "power"
+        }
+      ],
+      "componentName": "Uninterruptible power supply",
+      "body": "A UPS supports electrical continuity. The drawn cabinet is a general infrastructure example, not a documented installation at an OPIR facility.",
+      "row": [
+        "Uninterruptible power supply",
+        "Stored energy can provide backup electrical power",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-ups-2010",
+              "Public abstract, opening sentences"
+            ]
+          ]
+        }
+      ],
+      "scope": "General backup-power role from NASA development work; no particular UPS storage medium or topology inferred."
+    },
+    {
+      "id": "gap-ground-pipeline",
+      "runtimeKey": "gap-ground-pipeline",
+      "levels": [
+        "ground"
+      ],
+      "parents": [
+        {
+          "scene": "ground",
+          "part": "process"
+        }
+      ],
+      "componentName": "Science-processing servers",
+      "body": "Civil science pipelines turn raw observations into usable products. This provides a public comparison for processing infrastructure without describing warning algorithms.",
+      "row": [
+        "Science-processing servers",
+        "Science pipelines transform uncorrected, uncalibrated data into usable products",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-ground-flight-data-group",
+              "Overview, second paragraph"
+            ]
+          ]
+        }
+      ],
+      "scope": "NASA civil processing example, not OPIR ground-software implementation."
+    },
+    {
+      "id": "gap-pixel-bump",
+      "runtimeKey": "gap-pixel-bump",
+      "levels": [
+        "pixel"
+      ],
+      "parents": [
+        {
+          "scene": "pixel",
+          "part": "bump"
+        }
+      ],
+      "componentName": "Indium interconnect",
+      "body": "Webb provides a named civil example of a hybrid detector connected to its readout by indium. The enlarged joint here is conceptual.",
+      "row": [
+        "Indium interconnect",
+        "Webb indium interconnects join absorber pixels to the silicon readout circuit",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-webb-hybrid-detectors",
+              "Webb Detector Architecture, first paragraph and Figure 4"
+            ]
+          ]
+        }
+      ],
+      "scope": "Webb architecture example only; no ABI, TIRS-2 or military pixel construction implied."
+    },
+    {
+      "id": "gap-pixel-output",
+      "runtimeKey": "gap-pixel-output",
+      "levels": [
+        "pixel"
+      ],
+      "parents": [
+        {
+          "scene": "pixel",
+          "part": "output"
+        }
+      ],
+      "componentName": "Readout output circuitry",
+      "body": "The output route continues beyond a single pixel. Its illustrated trace is schematic.",
+      "row": [
+        "Readout output circuitry",
+        "Webb readout circuitry carries many pixel signals to fewer outputs",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-webb-hybrid-detectors",
+              "Figure 4 caption"
+            ]
+          ]
+        }
+      ],
+      "scope": "Named Webb architecture principle; no numerical array format or readout count admitted."
+    },
+    {
+      "id": "gap-pixel-support",
+      "runtimeKey": "gap-pixel-support",
+      "levels": [
+        "pixel"
+      ],
+      "parents": [
+        {
+          "scene": "pixel",
+          "part": "support"
+        }
+      ],
+      "componentName": "Detector support and circuit-board interface",
+      "body": "Packaging connects a detector/readout hybrid to its fixtures and electronics. The pedestal is representative, with no specified material or dimensions.",
+      "row": [
+        "Detector support and circuit-board interface",
+        "NASA detector packaging bonds detector/readout assemblies to fixtures and circuit boards",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-goddard-detector-packaging",
+              "Transcript paragraph beginning The die are screened"
+            ]
+          ]
+        }
+      ],
+      "scope": "Goddard packaging description with a Landsat 8 example; not TIRS-2-specific construction."
+    }
+  ]
+}
