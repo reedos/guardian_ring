@@ -1092,9 +1092,12 @@ body.story .pane-note { display: none; }
 /* Guardian Ring scaffold additions; shared IF tokens and viewer layout above. */
 .ring-mark { width: 24px; height: 24px; border: 2px solid var(--accent); border-radius: 50%; display: inline-block; }
 .scaffold-badge { position: absolute; right: 22px; bottom: 24px; color: var(--faint); font: 400 10px/1.6 var(--mono); text-transform: uppercase; letter-spacing: .1em; pointer-events: none; text-align: right; }
-.part-transport { display: grid; grid-template-columns: minmax(140px, 1fr) auto auto auto; align-items: end; gap: 8px; width: min(700px, 100%); min-width: 0; }
+.part-transport { display: grid; grid-template-columns: minmax(140px, 1fr) auto auto; align-items: end; gap: 8px; width: min(860px, 100%); min-width: 0; }
 .part-transport .btn { justify-content: center; min-width: 0; padding: 0 10px; }
 .part-transport #part-play { white-space: nowrap; }
+.part-transport .part-nav { align-items: end; gap: 0; }
+.part-transport .part-nav .btn + .btn { margin-left: -1px; }
+.part-transport #reset-view { color: var(--accent); }
 .view-part { display: grid; gap: 5px; min-width: 0; color: var(--muted); font: 400 9px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
 .view-part select { width: 100%; min-width: 0; min-height: 40px; border: 1px solid var(--line-2); border-radius: 0; background: var(--ground); color: var(--ink); padding: 6px 9px; font: 500 12px/1.2 var(--sans); }
 .view-part select:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
@@ -1113,22 +1116,34 @@ body.app #inspector .parts .pk { grid-column: 2; grid-row: 2; text-align: left; 
 #side-levels { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
 #side-levels .btn { padding: 10px 12px; font-size: 11px; }
 #side-levels .btn[aria-current='step'] { border-color: var(--accent); color: var(--accent); }
-.quality-label { display: grid; gap: 8px; padding: 10px 14px; color: var(--muted); font-size: 12px; }
-.quality-label select { min-height: 40px; width: 100%; background: var(--surface); color: var(--ink); border: 1px solid var(--line-2); padding: 6px; }
+.more-menu .mm-view:not(:has(.campus-presentation)) { display: grid; }
+.more-menu > section { margin: 0; }
+.more-menu #orbit-controls { display: grid; gap: 6px; }
+.more-menu .mm-h { font-size: 10px; line-height: 1.4; }
+.more-menu .mm-select select { max-width: 190px; }
+.topnav a[aria-current='page'] { color: var(--ink); }
+.topnav a[aria-current='page']::after { transform: scaleX(1); }
+.page-sheet-open { overflow: hidden; }
+.ps-panel { min-height: 0; }
+.ps-panel iframe { min-height: 0; }
 body.app .pane-scenario .sc-h { margin: 0; }
 body.app .pane-scenario .note { color: var(--muted); font-size: 13px; }
 body.app .panel-scroll > * { min-width: 0; }
 @media (max-width: 1100px) {
-  body.app .viewer { min-height: 0; }
-  body.app .view { min-height: 170px; height: 43dvh; }
-  body.app.sheet-open .view { min-height: 140px; height: 23dvh; }
+  body.app .viewer { flex: 1 1 0; min-height: 0; overflow: hidden; }
+  body.app .view, body.app.sheet-open .view { flex: 1 1 0; min-height: 140px; height: auto; }
+  body.app .panel { position: relative; z-index: 8; flex: 0 0 var(--inspector-size, 240px); }
+  body.app.sheet-open .panel { flex-basis: var(--inspector-size, 52dvh); }
+  body.app .sheet-toggle { display: grid; width: 44px; touch-action: none; user-select: none; }
   body.app.inspector-collapsed .viewer { flex: 1 1 0; }
   body.app.inspector-collapsed .view { flex: 1 1 0; height: auto; }
 }
 @media (max-width: 760px) {
   .scaffold-badge { left: 14px; right: auto; bottom: 10px; font-size: 8px; text-align: left; }
   body.app #hud-btns { flex-wrap: wrap; padding: 6px 12px; min-height: 52px; }
-  .part-transport { grid-template-columns: minmax(0, 1fr) 44px 76px 44px; gap: 4px; width: 100%; }
+  .part-transport { grid-template-columns: minmax(0, 1fr) auto; gap: 6px; width: 100%; }
+  .part-transport .view-part { grid-column: 1 / -1; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px; }
+  .part-transport .part-nav { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; }
   .part-transport .btn, .view-part select { min-height: 44px; font-size: 10px; padding: 0 6px; }
   .part-transport #part-play { font-size: 9px; letter-spacing: .04em; }
   .part-transport .pn-t { display: none; }
@@ -1139,9 +1154,30 @@ body.app .panel-scroll > * { min-width: 0; }
   body.app .hud.tl .ttl { font-size: 24px; }
   body.app .hud.tl .sub { font-size: 9px; }
   body.app .panel-scroll { padding: 16px; }
+  body.app .panel { flex-basis: var(--inspector-size, 216px); }
+  body.app:not(.sheet-open) #card { gap: 6px; padding: 10px 12px; }
+  body.app:not(.sheet-open) #card h3 { font-size: 24px; }
+  body.app:not(.sheet-open) #card :is(#card-b, .card-components), body.app:not(.sheet-open) #card-s > div:nth-child(n+2) { display: none; }
+  body.app:not(.sheet-open) #card-s { order: 1; }
+  body.app:not(.sheet-open) #card .card-door { order: 2; }
+  body.app:not(.sheet-open) #card .card-more { display: inline-flex; margin-left: auto; }
+  body.app:not(.sheet-open) #card-s > div { padding: 4px 0; }
 }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .pane-parts { display: grid; gap: 22px; min-width: 0; }
+.card .card-function { color: var(--muted); font: 400 11px/1.55 var(--mono); text-transform: none; letter-spacing: 0; margin: 0; }
+.card-door { display: flex; flex-wrap: wrap; gap: 8px; }
+.card-door:has(#card-drill[hidden]) { display: none; }
+.card-door .btn { min-height: 44px; }
+.card-more { display: none; }
+.catalog-link { color: var(--accent); font: 500 12px/1.5 var(--sans); text-underline-offset: 4px; }
+.card-components { display: grid; gap: 20px; padding-block: 18px; border-block: 1px solid var(--line); min-width: 0; }
+.card-components > h4 { margin: 0; }
+.component-detail { display: grid; gap: 10px; min-width: 0; }
+.component-detail + .component-detail { padding-top: 18px; border-top: 1px solid var(--line); }
+.component-detail h5 { margin: 0; font: 600 24px/1.08 var(--display); text-transform: uppercase; }
+.component-detail .component-role { color: var(--accent); font: 400 11px/1.55 var(--mono); }
+@media (max-width: 760px) { body.app:not(.sheet-open) .card-door:has(#card-drill[hidden]) { display: flex; } }
 @media (max-width: 1100px) { .pane-parts { gap: 12px; } }
 
 /* The teaching calculations read as connected steps inside the existing scenario pane. */

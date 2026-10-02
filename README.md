@@ -8,9 +8,9 @@ Follow three connected stories: **Light** reaches an instrument, **Data** moves 
 
 The main journey moves through six scenes: the ring, spacecraft, optical payload, focal plane, detector pixel, and emitting gas. Four side views examine the ground segment, GOES-R's Advanced Baseline Imager, Landsat 9's Thermal Infrared Sensor 2, and atmospheric absorption.
 
-The explainer includes a visual story, an interactive explorer, an Evidence register, a Method page, and a Glossary. Independent calculation examples cover orbit geometry, vacuum light travel, photon energy, ideal diffraction, and blackbody radiation. Pin a scenario to compare its values and evidence with another.
+The explainer includes a visual story, an interactive explorer, an Evidence register, a Method page, a Glossary, and a searchable Parts reference. Independent calculation examples cover orbit geometry, vacuum light travel, photon energy, ideal diffraction, and blackbody radiation. Pin a scenario to compare its values and evidence with another.
 
-The spacecraft cutaway exposes solar cells and deployment hardware, power regulation, batteries, attitude sensors and reaction wheels, propulsion, onboard computers, communications, and heat rejection. The payload and focal-plane views follow detector readout, video electronics, digitization, instrument control, and cooling. A persistent part selector, Overview, and presentation controls make these assemblies navigable on desktop and phone.
+The spacecraft cutaway exposes solar cells and deployment hardware, power regulation, batteries, attitude sensors and reaction wheels, propulsion, onboard computers, communications, and heat rejection. The payload and focal-plane views expose scan drives and encoders, cover and focus mechanisms, calibration targets, spectral optics, detector readout, video electronics, digitization, timing, data interfaces, power conversion and cooling. A sourced component catalog and three responsive system diagrams explain the supporting assemblies and their connections. Component names lead every card, with the function below. A persistent part selector, Overview beside Previous/Next, and presentation controls make these assemblies navigable on desktop and phone.
 
 This edition is under review. The site is unlisted and retains noindex; its review link is shared directly with the reviewer.
 
@@ -23,6 +23,9 @@ Hardware, orbit positions, plume shapes, and animated paths are schematic. Publi
 - [Verified facts and source gaps](research/verified-facts.md)
 - [Physics model and assumptions](research/model-review.md)
 - [Spacecraft and payload engineering sources](research/spacecraft-review.md)
+- [Comprehensive component review](research/COMPREHENSIVE-SYSTEMS-REVIEW.md)
+- [TIRS-2 architecture review](research/tirs2-architecture-review.md)
+- [Intelligence Factory UI parity review](research/UI-PARITY-REVIEW.md)
 - [Build review and supported scope](research/BUILD-REVIEW.md)
 - [Browser and unit-test acceptance record](research/gate-results.md)
 - [Asset provenance and credits](THIRD_PARTY_NOTICES.md)
@@ -36,7 +39,7 @@ npm ci
 npm run dev
 ```
 
-Before committing, run `npm run typecheck`, `npm test`, and `npm run claims`. For browser acceptance, build the site, start `npm run preview`, then run `npm run gates` in another terminal. The suite requires Chrome and a real GPU and checks desktop and phone layouts. `node tools/gate-report.mjs` records full-build acceptance.
+Before committing, run `npm run typecheck`, `npm test`, and `npm run claims`. For browser acceptance, build the site, start `npm run preview`, then run `npm run gates` in another terminal. The suite requires Chrome and a real GPU and checks desktop and phone layouts. `npx tsx tools/gate-report.mjs` records full-build acceptance using the same JSON-aware loader as the claims audit.
 
 Contributors should read [AGENTS.md](AGENTS.md) and [PLAN.md](PLAN.md). The verified research records supersede unchecked statements in the original source seed and initial plan.
 

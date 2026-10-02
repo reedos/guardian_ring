@@ -9,10 +9,18 @@ if (embedded) {
     if (!a || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === '_blank') return;
     const url = new URL(a.getAttribute('href'), location.href), page = url.pathname.split('/').pop();
     if (url.origin !== location.origin) { a.target = '_blank'; a.rel = 'noopener'; return; }
-    if (page === 'visualizer.html') { e.preventDefault(); e.stopPropagation(); parent.postMessage({ type: 'grx-view', search: url.search }, location.origin); return; }
-    if (['evidence.html', 'method.html', 'glossary.html'].includes(page) || !page) { if (page) { url.searchParams.set('embed', '1'); a.setAttribute('href', `${page}${url.search}${url.hash}`); } return; }
+    if (page === 'visualizer.html') { e.preventDefault(); e.stopPropagation(); const destination = new URL(a.hasAttribute('data-scenario-fixed') ? url.href : withScenario(location.search, url.href)); parent.postMessage({ type: 'grx-view', search: destination.search }, location.origin); return; }
+    if (['evidence.html', 'method.html', 'glossary.html', 'parts.html'].includes(page) || !page) { if (page) { url.searchParams.set('embed', '1'); a.setAttribute('href', `${page}${url.search}${url.hash}`); } return; }
     a.target = '_top';
   }, true);
+  addEventListener('keydown', event => {
+    if (event.key === 'Escape') { event.preventDefault(); parent.postMessage({ type: 'grx-sheet-close' }, location.origin); }
+    if (event.key !== 'Tab') return;
+    const focusable = [...document.querySelectorAll('a[href],button,input,select,textarea,[tabindex="0"]')].filter(el => el.checkVisibility() && !el.disabled && el.tabIndex >= 0);
+    if ((event.shiftKey && document.activeElement === focusable[0]) || (!event.shiftKey && document.activeElement === focusable.at(-1))) {
+      event.preventDefault(); parent.postMessage({ type: 'grx-sheet-focus', back: event.shiftKey }, location.origin);
+    }
+  });
 }
 const bar = $('topbar'), nav = $('topnav'), menu = $('menu-btn'), hero = $('top');
 
@@ -26,7 +34,7 @@ function setMenu(open) {
   nav?.classList.toggle('open', open);
   menu?.setAttribute('aria-expanded', String(open));
 }
-menu?.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+menu?.addEventListener('click', () => { const open = !nav.classList.contains('open'); setMenu(open); if (open) nav.querySelector('a')?.focus({ preventScroll: true }); });
 nav?.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && nav?.classList.contains('open')) { setMenu(false); menu.focus(); } });
 document.addEventListener('click', e => { if (nav?.classList.contains('open') && !e.target.closest('#topnav, #menu-btn')) setMenu(false); });
@@ -43,8 +51,8 @@ for (const type of ['click', 'auxclick']) document.addEventListener(type, e => {
 });
 
 // the chapter on screen: the last chapter heading above the middle of the window
-const links = [...(nav?.querySelectorAll('a[href^="#"]') || [])];
-const chapters = links.map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+const links = [...document.querySelectorAll('#topnav a[href^="#"], .journey-nav a[href^="#"]')];
+const chapters = [...new Set(links.map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean))].sort((a, b) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
 let ticking = false;
 function spy() {
   ticking = false;

@@ -23,10 +23,16 @@ describe('final acceptance report', () => {
     }
   });
   it('requires every reference page in both forms from the built preview', () => {
-    const pages = ['evidence', 'method', 'glossary'].flatMap(page => ['desktop', 'phone'].map(form => ({ page, form, status: 'PASS', failures: [], url: `${PREVIEW}${page}.html?orbit=leo` })));
+    const pages = ['evidence', 'method', 'glossary', 'parts'].flatMap(page => ['desktop', 'phone'].map(form => ({ page, form, status: 'PASS', failures: [], url: `${PREVIEW}${page}.html?orbit=leo` })));
     const opts = { name: 'pages', modifiedAt: 2000, builtAt: 1000 };
-    expect(validatePageReports(pages, opts)).toHaveLength(6);
+    expect(validatePageReports(pages, opts)).toHaveLength(8);
     expect(() => validatePageReports(pages.slice(1), opts)).toThrow('incomplete');
+    expect(() => validatePageReports(pages.filter(page => page.page !== 'parts'), opts)).toThrow('incomplete');
+    for (const form of ['desktop', 'phone']) {
+      const index = pages.findIndex(page => page.page === 'parts' && page.form === form);
+      expect(() => validatePageReports(pages.filter((_, i) => i !== index), opts)).toThrow('incomplete');
+      expect(() => validatePageReports(pages.map((page, i) => i === index ? { ...page, status: 'FAIL', failures: ['catalog overflow'] } : page), opts)).toThrow(`parts/${form} failed`);
+    }
     expect(() => validatePageReports(pages, { ...opts, modifiedAt: 500 })).toThrow('stale');
     expect(() => validatePageReports(pages.map((p, i) => i ? p : { ...p, url: p.url.replace('47601', '47600') }), opts)).toThrow('built preview');
   });

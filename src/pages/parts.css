@@ -1,0 +1,36 @@
+.parts-toc {display:flex;flex-wrap:wrap;gap:12px 22px;font:12px/1.5 var(--mono)}
+.parts-schematics {border-block:1px solid var(--line-2);padding:18px 0}
+.parts-schematics>summary {font:500 24px/1.3 var(--display);text-transform:uppercase;cursor:pointer;color:var(--ink)}
+.parts-schematics>summary span {display:block;margin:8px 0 0;font:11px/1.5 var(--mono);color:var(--muted);text-transform:none}
+.parts-level {display:grid;gap:30px;margin-top:60px;scroll-margin-top:90px}
+.parts-level>header {display:grid;gap:14px;border-bottom:1px solid var(--line-2);padding-bottom:24px}
+.parts-level>header p {max-width:80ch;color:var(--muted)}
+.parts-assembly {padding:24px 0 12px;border-top:1px solid var(--line);scroll-margin-top:90px;min-width:0}
+.parts-heading {display:flex;justify-content:space-between;align-items:start;gap:24px;margin-bottom:22px}
+.parts-heading h3 {font:500 clamp(24px,3vw,34px)/1.15 var(--display);margin:0 0 8px;text-transform:uppercase}
+.parts-heading p {color:var(--muted);font-size:13px}
+.part-open {flex-shrink:0;font:11px/1.6 var(--mono);padding:8px 0}
+.part-layer {border-top:1px solid var(--line);padding:12px 0}
+.part-layer summary,.part-anatomy summary {cursor:pointer;font:500 12px/1.5 var(--mono);color:var(--accent);min-height:32px;padding:5px 0}
+.part-layer summary span,.part-anatomy summary span {color:var(--muted);margin-left:14px;font-weight:400}
+.part-layer>div {padding:14px 0 8px;display:grid;gap:18px}
+.part-layer>div>p {font-size:14px;max-width:86ch;color:var(--muted)}
+.part-specs {margin:0;display:grid;gap:0}
+.part-specs>div {display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,2fr);gap:16px;border-top:1px solid var(--line);padding:10px 0;font-size:12px;line-height:1.65}
+.part-specs dt {color:var(--muted)}
+.part-specs dd {margin:0;color:var(--ink);overflow-wrap:anywhere}
+.part-evidence-link {font:10px/1.8 var(--mono);display:inline-block;margin-left:12px}
+.part-anatomy {border-top:1px solid var(--line-2);padding:12px 0}
+.parts-components {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:40px}
+.part-component {border-top:1px solid var(--line);padding:24px 0;scroll-margin-top:90px;min-width:0}
+.part-component h4 {font:500 22px/1.15 var(--display);margin:0 0 8px;text-transform:uppercase}
+.part-component p {font-size:13px;color:var(--muted);margin:12px 0}
+.part-component .component-role {color:var(--ink);font-size:12px}
+.part-component .part-specs>div {grid-template-columns:1fr;gap:4px}
+[hidden] {display:none!important}
+@media(max-width:760px) {
+ .parts-heading {display:block}.part-open {display:inline-block;margin-top:10px}
+ .parts-components {grid-template-columns:1fr}.part-specs>div {grid-template-columns:1fr;gap:4px}
+ .part-layer summary span,.part-anatomy summary span {display:block;margin-left:0;margin-top:5px}
+ .parts-level {margin-top:40px}.parts-toc {gap:10px 18px}
+}

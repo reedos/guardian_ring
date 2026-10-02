@@ -72,14 +72,18 @@ function close() {
 }
 // Auto-cycle and model changes can replace the opener without any scroll event.
 // Close synchronously with the state change so evidence never outlives its claim.
-for (const event of ['select', 'mode', 'scene', 'scenario', 'pin']) on(event, close);
+for (const event of ['select', 'mode', 'scene', 'scenario', 'pin', 'reference-open']) on(event, close);
 // capture phase, so a chip inside a linked row opens its sources instead of following the row's link
 document.addEventListener('click', e => {
   const chip = e.target.closest?.('[data-src]');
   if (chip) { e.preventDefault(); e.stopPropagation(); if (opener === chip) close(); else open(chip); return; }
   if (!pop.contains(e.target)) close();
 }, true);
-document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape' || pop.hidden) return;
+  // Consume the topmost dialog's Escape before an enclosing reference sheet.
+  e.preventDefault(); e.stopPropagation(); close();
+});
 // a scroll moves the popover with its chip, whether the reader scrolled or a tour step scrolled the column on its own;
 // it closes only once the chip is off screen or gone
 function follow() {

@@ -57,8 +57,14 @@ try {
     await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
     if (form === 'phone') {
       await page.locator('#menu-btn').click();
+      // IF's menu has a visibility transition; inspect its settled open state.
+      try { await page.locator('#topnav a').first().waitFor({ state: 'visible', timeout: 2000 }); }
+      catch { failures.push('Phone menu did not become visible'); }
       if (!await page.locator('#topnav a').first().isVisible()) failures.push('Phone menu did not open');
+      if (await page.locator('#menu-btn').getAttribute('aria-expanded') !== 'true') failures.push('Phone menu did not expose its expanded state');
       await page.keyboard.press('Escape');
+      try { await page.locator('#topnav a').first().waitFor({ state: 'hidden', timeout: 2000 }); }
+      catch { failures.push('Phone menu remained visible after Escape'); }
       if (await page.locator('#menu-btn').getAttribute('aria-expanded') !== 'false') failures.push('Phone menu did not close');
     }
     await page.screenshot({ path: `.local/look/story-${form}.png`, fullPage: true });

@@ -1,15 +1,29 @@
-# Phase 2 ring and plume assets
+# Illustration and diagram provenance
 
-Reviewed 10/01/2026. This is a static look prototype. All rendered constellations, spacecraft proxies, molecular icons, and plume shapes are provisional illustrations. No live positions, constellation count, coverage guarantee, plume intensity, temperature, dimensions, or sensor performance is represented.
+Reviewed 10/01/2026. The story illustrations accompany ten interactive Blender scenes and a sourced component catalog. All rendered constellation positions, representative hardware layouts, molecular icons, and plume shapes are schematic. No live positions, operational constellation count, coverage guarantee, plume intensity, dimensions, or sensor performance is represented.
 
 ## Rendered outputs
 
 | Scene | Desktop | Phone | Builder |
 |---|---|---|---|
 | Schematic ring | `public/look/ring.webp` | `public/look/ring-phone.webp` | `tools/blender/build-orbit-look.py` |
+| Spacecraft cutaway | `public/look/satellite.webp` | `public/look/satellite-phone.webp` | `tools/blender/render-authored.py`, shipped `satellite.glb` |
+| Payload cutaway | `public/look/payload.webp` | `public/look/payload-phone.webp` | `tools/blender/render-authored.py`, shipped `payload.glb` v7 |
+| Focal-plane cutaway | `public/look/focal-plane.webp` | `public/look/focal-plane-phone.webp` | `tools/blender/render-authored.py`, shipped `focal-plane.glb` v4 |
+| Detector-element study | `public/look/pixel.webp` | `public/look/pixel-phone.webp` | `tools/blender/build-hardware-look.py` |
 | Molecular plume | `public/look/plume.webp` | `public/look/plume-phone.webp` | `tools/blender/build-plume-look.py` |
 
-Both desktop images are 2000 by 1250 pixels. Both phone images are 780 by 960 pixels, rendered with separate cameras. These are output-image dimensions, not physical figures. Blender 5.2 EEVEE renders the geometry, textures, volume, lights, and optical bloom. `tools/blender/encode-look.py` creates the WebP delivery files without resizing; it also handles the other four levels' PNGs. The PNGs are editable/reproducible source renders and need not ship.
+Each study has separate desktop and phone cameras. Blender 5.2 renders the geometry, textures and lighting. The current authored hardware stills use Cycles with denoising; the ring and plume builders retain their own rendering configurations. `tools/blender/encode-look.py` creates the twelve WebP delivery files without resizing. The PNGs are reproducible source renders and do not ship.
+
+The detailed spacecraft, payload, and focal-plane stills import the actual shipped GLBs. Payload v7 exposes thirteen parent assemblies, including scan mechanisms, calibration references, aft optics, sensor and instrument electronics, power, and thermal paths. Focal-plane v4 exposes eight parents and distinguishes the detector/ROIC package, warm video electronics, bias/timing, and thermometer/cooler feedback. Public ABI names and functions guide the explanation; package dimensions, connector layouts, repeated parts, board traces, and wiring are original drawing choices. No manufacturer mesh or CAD model was used.
+
+`THIRD_PARTY_NOTICES.md` lists all ten interactive assets and their builders. Their only third-party image content is the NASA Earth imagery documented below. The plume texture is procedural. Final browser acceptance is recorded in `gate-results.md`: all 16 commands passed for this revision, including desktop/phone framing, story stills, coplanar surfaces, all-pairs camera flights, and performance. The authored stills and representative hardware views were also visually inspected.
+
+## System diagrams
+
+`src/pages/system-diagrams.js` authors three responsive HTML/SVG diagrams: selected GOES-R spacecraft support paths, ABI instrument paths, and TIRS-2 interfaces. Component identities and evidence come from the same catalog as Explorer and Parts; no source diagrams, screenshots, manufacturer artwork, or logos are copied. The arrangement and arrows are explanatory choices, with distinct light, data/control, power, heat, and mechanical paths. These are selected functional connections, not complete wiring diagrams or circuit schematics.
+
+The GOES-R Data Book and the TIRS-2 design presentation support the named civil components. Original Landsat 8 TIRS and Webb cooler details are not substituted for ABI or TIRS-2. Component gaps and exact source locators are documented in `COMPREHENSIVE-SYSTEMS-REVIEW.md` and `tirs2-architecture-review.md`.
 
 Ring caption: **Schematic constellation. Orbital distances compressed; satellites and atmospheric limb enlarged. Positions and count are illustrative.** Earth geography uses historical NASA composites. Lighting and colors are adjusted for the artwork; this is neither a current Earth observation nor a quantitative map.
 
@@ -47,4 +61,4 @@ Suggested combined credit for the site: **Earth textures: NASA Earth Observatory
 
 Only rendered WebPs should be delivered with the site. Preserve the source textures and PNGs under `research/look/` for reproducibility, outside the Vite public tree. The raw textures were moved there individually with native PowerShell commands. The initial guessed Earth Observatory image-policy URL returned an unspecified fetch error; it is unchecked and is not relied on. The separately opened NASA Brand Center guidelines above are the usage reference.
 
-Rebuild with Blender's background mode and the builders listed above, then run the encoder with the bundled Python. Look approval is required before implementation of the engine or interactive levels.
+Rebuild with Blender's background mode and the builders listed above, then run the encoder with Python/Pillow. After any GLB change, bump its scene URL version and rerender the affected authored stills. Keep noindex enabled until Reed's launch call; model export or image rendering alone does not establish release acceptance.

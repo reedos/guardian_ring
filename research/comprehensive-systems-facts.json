@@ -1,1875 +1,488 @@
 {
   "reviewed": "10/01/2026",
-  "scope": "Research for review only. Civil values never describe military systems.",
+  "scope": "Component-name-first catalog research for public GOES-R/ABI civil engineering and general NASA electrical integration. No military implementation/performance or operational algorithms.",
+  "sources": [
+    {
+      "id": "nasa-grounding-4001a",
+      "title": "NASA-HDBK-4001A: Electrical Grounding Architecture for Uncrewed Spacecraft",
+      "publisher": "NASA Office of the Chief Engineer",
+      "url": "https://standards.nasa.gov/system/files/tmp/NASA-HDBK-4001A_Final_07152025_0.pdf",
+      "dated": "Revision A, 07/2025; approval-day discrepancy between cover and history",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "section": "Foreword; Section 1; Section 5.2.8. General guidance only; not a spacecraft wiring specification."
+    },
+    {
+      "id": "nasa-goes-dual-isolation-2019",
+      "title": "In-Flight Line-Of-Sight Pointing Performance for the GOES-16 and GOES-17 Spacecraft",
+      "publisher": "NASA NTRS / GOES-R project authors, AAS 19-133",
+      "url": "https://ntrs.nasa.gov/api/citations/20190002517/downloads/20190002517.pdf",
+      "published": "02/01/2019",
+      "accessed": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "section": "PDF pp. 2–5, passive platform and reaction-wheel isolation. No performance values or control algorithms adopted."
+    },
+    {
+      "id": "nasa-tirs2-design-status-2018-unchecked",
+      "title": "TIRS-2 design-status presentation (NTRS 20180007426)",
+      "publisher": "NASA NTRS",
+      "url": "https://ntrs.nasa.gov/api/citations/20180007426/downloads/20180007426.pdf?attachment=true",
+      "dated": "2018 identifier; document date unverified",
+      "attempted": "10/01/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "unchecked",
+      "unchecked": "Direct web open returned Internal Error. Stopped this source action, reported it, and did not retry or cite search snippets.",
+      "reason": "Direct web open returned Internal Error. Stopped this source action, reported it, and did not retry or cite search snippets."
+    }
+  ],
+  "existingSources": [
+    "goes-r-databook",
+    "nasa-onboard-attitude",
+    "nasa-onboard-data"
+  ],
+  "coverage": [
+    {
+      "level": "payload",
+      "part": "optics",
+      "components": "Optical Bench; Telescope Assembly",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-optical-bench",
+        "comp-abi-telescope"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "scan-system",
+      "components": "NS/EW scan mirrors; SDA motors; optical encoders; support bearings; SIMD; Encoder Processor cards",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-scan-mirrors",
+        "comp-abi-scan-drive",
+        "comp-abi-scan-encoder",
+        "comp-abi-scan-bearing",
+        "comp-abi-simd",
+        "comp-abi-encoder-processors"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "baffles",
+      "components": "Optical Port Sunshield Assembly and entrance baffles",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-opsa"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "mechanisms",
+      "components": "OPC; SMA pin-puller launch lock; cover hinges/stop; focus motor; SCC",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-opc",
+        "comp-abi-opc-lock",
+        "comp-abi-opc-hinges",
+        "comp-abi-focus-motor",
+        "comp-abi-scc"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "calibration",
+      "components": "Internal Calibration Target; Solar Calibration Target; space-look reference",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-ict",
+        "comp-abi-sct",
+        "comp-abi-space-reference"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "aft-optics",
+      "components": "BS1; fold mirror; BS2; channel filters; windows; cold stops",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-bs1",
+        "comp-abi-fold-mirror",
+        "comp-abi-bs2",
+        "comp-abi-channel-filters",
+        "comp-abi-windows-stops"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "detector",
+      "components": "FPM; channel FPA; detector array; ROIC",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-fpm",
+        "comp-abi-fpa",
+        "comp-abi-roic"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "readout",
+      "components": "SUE; Video Processors; array bias; readout timing; sample collection",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-sue",
+        "comp-abi-vp-bias",
+        "comp-abi-vp-timing",
+        "comp-abi-vp-samples"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "digitizer",
+      "components": "Focal-plane analog-to-digital function in SUE",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-digitization"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "controller",
+      "components": "EU; IC; P&TC; peripheral command/telemetry",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-eu",
+        "comp-abi-ic",
+        "comp-abi-ptc",
+        "comp-abi-ptc-telemetry"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "data-interface",
+      "components": "Data Processor; HSIO; TNT system clocks and telemetry",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-data-processor",
+        "comp-abi-hsio",
+        "comp-abi-tnt"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "power",
+      "components": "EU Power Supply; parent board; Side 1/Side 2 redundancy",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-power-supply",
+        "comp-abi-parent-board",
+        "comp-abi-sue-redundancy"
+      ]
+    },
+    {
+      "level": "payload",
+      "part": "thermal",
+      "components": "Pulse-tube cooler; TDU; cold head; transfer line; CCE; PRT; power amps; shrouds; CCHP; LHP; radiator; heaters",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-pulse-tube",
+        "comp-abi-tdu",
+        "comp-abi-cold-head",
+        "comp-abi-cce",
+        "comp-abi-prt",
+        "comp-abi-power-amplifiers",
+        "comp-abi-cooler-redundancy",
+        "comp-abi-shrouds",
+        "comp-abi-cchp",
+        "comp-abi-lhp",
+        "comp-abi-radiator",
+        "comp-abi-heaters"
+      ]
+    },
+    {
+      "level": "focal-plane",
+      "part": "array",
+      "components": "FPA detector array plus ROIC, distinct from the FPM",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-fpa",
+        "comp-abi-roic",
+        "comp-abi-fpm"
+      ]
+    },
+    {
+      "level": "focal-plane",
+      "part": "readout",
+      "components": "Separate SUE Video Processor interface",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-sue",
+        "comp-abi-vp-samples"
+      ]
+    },
+    {
+      "level": "focal-plane",
+      "part": "cold-stage",
+      "components": "TDU cold region and heat-removal path",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-tdu",
+        "comp-abi-cold-head",
+        "comp-abi-lhp"
+      ]
+    },
+    {
+      "level": "focal-plane",
+      "part": "shield",
+      "components": "Controlled aft optics with windows and cold stops; drawn enclosure dimensions representative",
+      "status": "representative",
+      "factKeys": [
+        "comp-abi-windows-stops"
+      ]
+    },
+    {
+      "level": "focal-plane",
+      "part": "flex",
+      "components": "Electrical interface is supported; flexible cable material, routing, connector and trace pattern are drawing choices",
+      "status": "representative",
+      "factKeys": [
+        "comp-abi-vp-bias",
+        "comp-abi-vp-timing"
+      ]
+    },
+    {
+      "level": "focal-plane",
+      "part": "carrier",
+      "components": "Mechanical support exists; exact package carrier, fasteners, standoffs and bump bonds are not established",
+      "status": "representative",
+      "factKeys": [
+        "comp-abi-optical-bench"
+      ]
+    },
+    {
+      "level": "focal-plane",
+      "part": "bias-timing",
+      "components": "Video Processor bias and array-readout timing",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-vp-bias",
+        "comp-abi-vp-timing"
+      ]
+    },
+    {
+      "level": "focal-plane",
+      "part": "thermal-feedback",
+      "components": "Cold-head PRT; CCE; power-amplifier control",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-abi-cold-head",
+        "comp-abi-cce",
+        "comp-abi-prt",
+        "comp-abi-power-amplifiers"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "instrument",
+      "components": "Earth Pointing Platform and instrument interfaces",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-epp"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "structure",
+      "components": "Core panels; adapter ring; equipment panels; launch locks; platform isolators",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-core",
+        "comp-bus-equipment-panels",
+        "comp-bus-epp-locks",
+        "comp-goes-platform-isolators"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "solar-array",
+      "components": "Cells; strings; circuits; isolation diodes",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-array-circuits",
+        "comp-bus-isolation-diodes"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "array-drive",
+      "components": "Shear ties; release devices; hinges/dampers; SADA; SRA; SADE; SEGA; TBA",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-shear-ties",
+        "comp-bus-release-devices",
+        "comp-bus-hinges",
+        "comp-bus-sada",
+        "comp-bus-slip-ring",
+        "comp-bus-sade",
+        "comp-bus-sega",
+        "comp-bus-trailer-bearing"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "power",
+      "components": "PRU; CDA; SAS; BCD; LCM; LPM; PDM; FBA; PRA; CSU; TSU",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-pru",
+        "comp-bus-cda",
+        "comp-bus-sas",
+        "comp-bus-bcd",
+        "comp-bus-lcm",
+        "comp-bus-lpm",
+        "comp-bus-pdm",
+        "comp-bus-fba",
+        "comp-bus-pra",
+        "comp-bus-csu",
+        "comp-bus-tsu"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "battery",
+      "components": "Cell banks; balancers; bypass switches; sensors; heaters; radiator",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-battery-banks",
+        "comp-bus-balancers",
+        "comp-bus-battery-thermal"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "attitude",
+      "components": "Star trackers; IMU gyros/accelerometers; GPSR; coarse and fine Sun sensors",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-star-trackers",
+        "comp-bus-imu",
+        "comp-bus-gpsr",
+        "comp-bus-sun-sensors"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "wheels",
+      "components": "Reaction Wheel Assemblies and wheel isolation",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-rwa",
+        "comp-goes-wheel-isolators"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "propulsion",
+      "components": "Tanks; PMDs; pressurant; regulator; valves; filters; pressure transducers; named thruster types",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-propellant-tanks",
+        "comp-bus-pressurant",
+        "comp-bus-feed-valves",
+        "comp-bus-feed-sensors",
+        "comp-bus-thrusters"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "computer",
+      "components": "CTP; RDC; RMC; OBC; SWRC; RIU/SIU; converter/control/backplane; telemetry interfaces; general command/data memory",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-ctp",
+        "comp-bus-rdc",
+        "comp-bus-rmc",
+        "comp-bus-obc",
+        "comp-bus-swrc",
+        "comp-bus-riu-siu",
+        "comp-bus-riu-boards",
+        "comp-bus-housekeeping",
+        "comp-command-data-memory"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "links",
+      "components": "TT&C; RDL; CDAS transceiver; S-band transponder; TWTA; RF reference; modulator/receivers; antennas/gimbal",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-ttc",
+        "comp-bus-rdl",
+        "comp-bus-cdas",
+        "comp-bus-s-transponder",
+        "comp-bus-twta",
+        "comp-bus-rf-clock",
+        "comp-bus-rf-conversion",
+        "comp-bus-antennas",
+        "comp-bus-antenna-gimbal"
+      ]
+    },
+    {
+      "level": "satellite",
+      "part": "radiator",
+      "components": "MLI/isolating supports; OSRs; heat pipes; thermostats/thermistors; conductive mounts",
+      "status": "verified-civil",
+      "factKeys": [
+        "comp-bus-mli",
+        "comp-bus-osr",
+        "comp-bus-heater-control",
+        "comp-bus-wet-mounts"
+      ]
+    },
+    {
+      "level": "cross-cutting",
+      "part": "harness",
+      "components": "System grounding and shielding principles; actual mission wiring not specified",
+      "status": "representative",
+      "factKeys": [
+        "comp-grounding-reference",
+        "comp-cable-shielding"
+      ]
+    }
+  ],
+  "notApplicable": [
+    {
+      "component": "Space-look calibration target hardware",
+      "reason": "Space look is a reference viewing direction, not an additional onboard target."
+    },
+    {
+      "component": "Repetitive imaging shutter inferred from OPC",
+      "reason": "ABI OPC is a one-time protective deployment cover; no repeated shutter role is supported."
+    },
+    {
+      "component": "Filter wheel inferred from ABI channel filters",
+      "reason": "ABI passages describe filters at detector arrays, not a filter-wheel mechanism."
+    },
+    {
+      "component": "TIRS or Webb cooler internals assigned to ABI",
+      "reason": "Those named instruments have distinct architectures; outside this ABI/bus catalog."
+    },
+    {
+      "component": "GOES-R magnetometer as an attitude-control magnetometer",
+      "reason": "The book describes the magnetometer as a science instrument. Do not turn it into an inferred ADCS sensor or add magnetic torque rods."
+    }
+  ],
+  "unverifiedDetail": [
+    "ABI standalone ADC package, converter bit depth, analog-amplifier topology/gain, antialias filter and correlated-double-sampling implementation",
+    "Mission-specific EMI filter network, grounding topology, connector pinouts and harness shielding/termination",
+    "ABI compressor internal geometry and vibration-cancellation mechanism; published TDU component names alone do not establish these",
+    "Generic recorder capacity, bus voltage, array power, battery energy, propulsion rating, control accuracy, detector format or military material assignment",
+    "Generic focal-plane carrier, bump bonds, flex construction, cold-shield aperture dimensions and exact component positions"
+  ],
   "facts": [
-    {
-      "id": "sbirs-orbit-families",
-      "levels": [
-        "orbits"
-      ],
-      "spec": [
-        "SBIRS orbit families",
-        "GEO and HEO",
-        "reported",
-        {
-          "refs": [
-            [
-              "gao-21-105249",
-              "Printed p. 4 (PDF p. 8), first paragraph; corroborated in GAO-26 Table 1."
-            ]
-          ]
-        }
-      ],
-      "locator": "Printed p. 4 (PDF p. 8), first paragraph; corroborated in GAO-26 Table 1.",
-      "qualification": "Public system architecture; no specific orbital slots, operational count, or visibility performance.",
-      "row": [
-        "SBIRS orbit families",
-        "GEO and HEO",
-        "reported",
-        {
-          "refs": [
-            [
-              "gao-21-105249",
-              "Printed p. 4 (PDF p. 8), first paragraph; corroborated in GAO-26 Table 1."
-            ]
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t1-original-award",
-      "levels": [
-        "orbits"
-      ],
-      "spec": [
-        "Tracking award, 07/18/2022",
-        "28 satellites / four planes",
-        "reported",
-        {
-          "refs": [
-            [
-              "sda-tranche1-award",
-              "Award paragraph describing space segment."
-            ]
-          ]
-        }
-      ],
-      "locator": "Award paragraph describing space segment.",
-      "qualification": "Historical award scope, not current inventory.",
-      "row": [
-        "Tracking award, 07/18/2022",
-        "28 satellites / four planes",
-        "reported",
-        {
-          "refs": [
-            [
-              "sda-tranche1-award",
-              "Award paragraph describing space segment."
-            ]
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t1-original-sensor-class",
-      "levels": [
-        "orbits",
-        "satellite"
-      ],
-      "spec": [
-        "Award sensor class",
-        "Wide-field-of-view infrared",
-        "reported",
-        {
-          "refs": [
-            [
-              "sda-tranche1-award",
-              "Director quotation following award paragraphs."
-            ]
-          ]
-        }
-      ],
-      "locator": "Director quotation following award paragraphs.",
-      "qualification": "No numerical field of view, resolution, or performance implied.",
-      "row": [
-        "Award sensor class",
-        "Wide-field-of-view infrared",
-        "reported",
-        {
-          "refs": [
-            [
-              "sda-tranche1-award",
-              "Director quotation following award paragraphs."
-            ]
-          ]
-        }
-      ]
-    },
-    {
-      "id": "satellite-components",
-      "levels": [
-        "satellite"
-      ],
-      "spec": [
-        "Public architecture",
-        "Bus, infrared payload, mission processor, communications",
-        "reported",
-        {
-          "refs": [
-            [
-              "gao-26-107085",
-              "PWSA-Enabling Technologies and Processes, opening description."
-            ]
-          ]
-        }
-      ],
-      "locator": "PWSA-Enabling Technologies and Processes, opening description.",
-      "qualification": "Explains component roles; representative GEO artwork must not masquerade as SDA hardware.",
-      "row": [
-        "Public architecture",
-        "Bus, infrared payload, mission processor, communications",
-        "reported",
-        {
-          "refs": [
-            [
-              "gao-26-107085",
-              "PWSA-Enabling Technologies and Processes, opening description."
-            ]
-          ]
-        }
-      ]
-    },
-    {
-      "id": "forge-public-role",
-      "levels": [
-        "ground"
-      ],
-      "spec": [
-        "FORGE role",
-        "Spacecraft operations and mission-data processing",
-        "reported",
-        {
-          "refs": [
-            [
-              "gao-21-105249",
-              "Printed p. 1 (PDF p. 5), opening paragraph; printed p. 8 (PDF p. 12), acquisition-strategy paragraph."
-            ]
-          ]
-        }
-      ],
-      "locator": "Printed p. 1 (PDF p. 5), opening paragraph; printed p. 8 (PDF p. 12), acquisition-strategy paragraph.",
-      "qualification": "Historical public high-level description; no software internals, processing latency, or current OBAC location claim.",
-      "row": [
-        "FORGE role",
-        "Spacecraft operations and mission-data processing",
-        "reported",
-        {
-          "refs": [
-            [
-              "gao-21-105249",
-              "Printed p. 1 (PDF p. 5), opening paragraph; printed p. 8 (PDF p. 12), acquisition-strategy paragraph."
-            ]
-          ]
-        }
-      ]
-    },
-    {
-      "id": "abi-bands",
-      "levels": [
-        "abi"
-      ],
-      "row": [
-        "ABI spectral channels",
-        "16",
-        "spec",
-        {
-          "refs": [
-            [
-              "noaa-abi-page",
-              "Instrument description"
-            ]
-          ]
-        }
-      ],
-      "section": "Instrument description",
-      "scope": "GOES-R ABI civil twin only; never a military payload figure."
-    },
-    {
-      "id": "abi-full-disk",
-      "levels": [
-        "abi"
-      ],
-      "row": [
-        "ABI full-disk cadence",
-        "10 min",
-        "spec",
-        {
-          "refs": [
-            [
-              "noaa-abi-page",
-              "Instrument description"
-            ]
-          ]
-        }
-      ],
-      "section": "Instrument description",
-      "scope": "GOES-R ABI civil twin only; never a military payload figure."
-    },
-    {
-      "id": "abi-conus",
-      "levels": [
-        "abi"
-      ],
-      "row": [
-        "ABI mainland U.S. cadence",
-        "5 min",
-        "spec",
-        {
-          "refs": [
-            [
-              "noaa-abi-page",
-              "Instrument description"
-            ]
-          ]
-        }
-      ],
-      "section": "Instrument description",
-      "scope": "GOES-R ABI civil twin only; never a military payload figure."
-    },
-    {
-      "id": "abi-meso",
-      "levels": [
-        "abi"
-      ],
-      "row": [
-        "ABI mesoscale cadence",
-        "30-60 s",
-        "spec",
-        {
-          "refs": [
-            [
-              "noaa-abi-page",
-              "One or two smaller areas, instrument description"
-            ]
-          ]
-        }
-      ],
-      "section": "One or two smaller areas, instrument description",
-      "scope": "GOES-R ABI civil twin only; never a military payload figure."
-    },
-    {
-      "id": "abi-optics",
-      "levels": [
-        "payload",
-        "abi"
-      ],
-      "row": [
-        "ABI telescope",
-        "Four mirrors; three focal-plane modules",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed p. 3-8 / PDF p. 36"
-            ]
-          ]
-        }
-      ],
-      "section": "Printed p. 3-8 / PDF p. 36",
-      "scope": "GOES-R ABI civil twin only; never a military payload figure."
-    },
-    {
-      "id": "abi-detector-material",
-      "levels": [
-        "focal-plane",
-        "pixel",
-        "abi"
-      ],
-      "row": [
-        "ABI infrared channels",
-        "HgCdTe",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Table 3-5, printed p. 3-11 / PDF p. 39"
-            ]
-          ]
-        }
-      ],
-      "section": "Table 3-5, printed p. 3-11 / PDF p. 39",
-      "scope": "GOES-R ABI civil twin only; never a military payload figure."
-    },
-    {
-      "id": "abi-ir-temp",
-      "levels": [
-        "focal-plane",
-        "abi"
-      ],
-      "row": [
-        "ABI MWIR/LWIR optics and focal planes",
-        "Approximately 60 K",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed p. 3-8 / PDF p. 36"
-            ]
-          ]
-        }
-      ],
-      "section": "Printed p. 3-8 / PDF p. 36",
-      "scope": "GOES-R ABI civil twin only; never a military payload figure."
-    },
-    {
-      "id": "abi-vnir-temp",
-      "levels": [
-        "focal-plane",
-        "abi"
-      ],
-      "row": [
-        "ABI VNIR optics and focal plane",
-        "Approximately 170 K; GOES-R FPM 180 K",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed p. 3-8 / PDF p. 36"
-            ]
-          ]
-        }
-      ],
-      "section": "Printed p. 3-8 / PDF p. 36",
-      "scope": "GOES-R ABI civil twin only; never a military payload figure."
-    },
-    {
-      "id": "abi-cooling",
-      "levels": [
-        "focal-plane",
-        "abi"
-      ],
-      "row": [
-        "ABI cryocooler design",
-        "Two redundant two-stage pulse-tube coolers",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed p. 3-14 / PDF p. 42"
-            ]
-          ]
-        }
-      ],
-      "section": "Printed p. 3-14 / PDF p. 42",
-      "scope": "GOES-R ABI civil twin only; never a military payload figure."
-    },
-    {
-      "id": "tirs2-detectors",
-      "levels": [
-        "focal-plane",
-        "pixel",
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 detector assemblies",
-        "Three QWIP arrays; 640 × 512 physical pixels each",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-spectral",
-              "PDF p. 1, Introduction"
-            ]
-          ]
-        }
-      ],
-      "section": "PDF p. 1, Introduction",
-      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
-    },
-    {
-      "id": "tirs2-effective",
-      "levels": [
-        "focal-plane",
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 effective science row",
-        "1,850 cross-track pixels",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-spectral",
-              "PDF p. 1; two physical rows combined per channel and inter-array overlap"
-            ]
-          ]
-        }
-      ],
-      "section": "PDF p. 1; two physical rows combined per channel and inter-array overlap",
-      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
-    },
-    {
-      "id": "tirs2-swath",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 swath",
-        "185 km",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-build",
-              "Instrument design paragraphs"
-            ]
-          ]
-        }
-      ],
-      "section": "Instrument design paragraphs",
-      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
-    },
-    {
-      "id": "tirs2-gsd",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 ground sampling",
-        "100 m",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-build",
-              "Instrument design paragraphs"
-            ]
-          ]
-        }
-      ],
-      "section": "Instrument design paragraphs",
-      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
-    },
-    {
-      "id": "tirs2-optics",
-      "levels": [
-        "payload",
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 refractive telescope",
-        "Four elements; f/1.64",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-build",
-              "Instrument design paragraphs"
-            ]
-          ]
-        }
-      ],
-      "section": "Instrument design paragraphs",
-      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
-    },
-    {
-      "id": "tirs2-fov",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 field of view",
-        "15 degrees",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-spectral",
-              "PDF p. 1, Introduction"
-            ]
-          ]
-        }
-      ],
-      "section": "PDF p. 1, Introduction",
-      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
-    },
-    {
-      "id": "tirs2-cold",
-      "levels": [
-        "focal-plane",
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 focal-plane design temperature",
-        "43 K",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-build",
-              "Two-stage cryocooler paragraph"
-            ]
-          ]
-        }
-      ],
-      "section": "Two-stage cryocooler paragraph",
-      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
-    },
-    {
-      "id": "tirs2-telescope-temp",
-      "levels": [
-        "payload",
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 telescope design temperature",
-        "185 K",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-build",
-              "Radiators paragraph"
-            ]
-          ]
-        }
-      ],
-      "section": "Radiators paragraph",
-      "scope": "Landsat 9 TIRS-2 civil twin only; never a military payload figure."
-    },
-    {
-      "id": "tirs-bands",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS thermal bands",
-        "10.6-11.2 μm; 11.5-12.5 μm",
-        "spec",
-        {
-          "refs": [
-            [
-              "landsat9-tirs2-nasa",
-              "Spectral Bands table, bands 10 and 11"
-            ]
-          ]
-        }
-      ],
-      "section": "Spectral Bands table, bands 10 and 11",
-      "scope": "Shared NASA TIRS-family spectral-band description."
-    },
-    {
-      "id": "lab-insb-hgcdte",
-      "levels": [
-        "focal-plane"
-      ],
-      "row": [
-        "Reviewed dual-band InSb/HgCdTe device temperature",
-        "77 K",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-irdetectors-ntrs",
-              "PDF p. 3, section A.1"
-            ]
-          ]
-        }
-      ],
-      "section": "PDF p. 3, section A.1",
-      "scope": "Specific reviewed device only, not a material-wide default."
-    },
-    {
-      "id": "lab-qwip",
-      "levels": [
-        "focal-plane"
-      ],
-      "row": [
-        "Reviewed four-band laboratory QWIP array temperature",
-        "45 K",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-irdetectors-ntrs",
-              "PDF p. 7, section A.3"
-            ]
-          ]
-        }
-      ],
-      "section": "PDF p. 7, section A.3",
-      "scope": "Specific NASA Earth-science research array only."
-    },
-    {
-      "id": "nist-efficiency",
-      "levels": [
-        "focal-plane"
-      ],
-      "row": [
-        "Historical cryocooler review at 80 K",
-        "Up to about 20% of Carnot for some space coolers",
-        "reported",
-        {
-          "refs": [
-            [
-              "nist-cryocooler-2009",
-              "PDF p. 4, section 4"
-            ]
-          ]
-        }
-      ],
-      "section": "PDF p. 4, section 4",
-      "scope": "Dated review context only; no selected scenario efficiency."
-    },
-    {
-      "id": "co2-band",
-      "levels": [
-        "plume",
-        "atmosphere"
-      ],
-      "row": [
-        "CO2 molecular emission band",
-        "Near 4.3 μm",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-combustion-bands",
-              "Printed p. 5 / PDF p. 7"
-            ]
-          ]
-        }
-      ],
-      "section": "Printed p. 5 / PDF p. 7",
-      "scope": "General molecular spectroscopy in a civil combustion study; no system performance implication."
-    },
-    {
-      "id": "h2o-band",
-      "levels": [
-        "plume",
-        "atmosphere"
-      ],
-      "row": [
-        "H2O molecular emission band",
-        "Near 2.7 μm",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-combustion-bands",
-              "Printed p. 5 / PDF p. 7"
-            ]
-          ]
-        }
-      ],
-      "section": "Printed p. 5 / PDF p. 7",
-      "scope": "General molecular spectroscopy in a civil combustion study; no system performance implication."
-    },
-    {
-      "id": "geo-altitude",
-      "levels": [
-        "orbits"
-      ],
-      "row": [
-        "Geostationary altitude",
-        "35,786 km",
-        "reported",
-        {
-          "refs": [
-            [
-              "noaa-geo-definition",
-              "Definition paragraph"
-            ]
-          ]
-        }
-      ],
-      "section": "Definition paragraph",
-      "scope": "General circular equatorial GEO definition; no slot positions."
-    },
-    {
-      "id": "geo-period",
-      "levels": [
-        "orbits"
-      ],
-      "row": [
-        "Geosynchronous period",
-        "23 h 56 min 4 s",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-orbit-catalog",
-              "Introductory altitude-and-period example"
-            ]
-          ]
-        }
-      ],
-      "section": "Introductory altitude-and-period example",
-      "scope": "General orbital reference value."
-    },
-    {
-      "id": "molniya-inclination",
-      "levels": [
-        "orbits"
-      ],
-      "row": [
-        "Generic Molniya inclination",
-        "63.4 degrees",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-orbit-catalog",
-              "Medium Earth Orbit"
-            ]
-          ]
-        }
-      ],
-      "section": "Medium Earth Orbit",
-      "scope": "Generic textbook orbit, not real constellation elements."
-    },
-    {
-      "id": "molniya-period",
-      "levels": [
-        "orbits"
-      ],
-      "row": [
-        "Generic Molniya period",
-        "About 12 h",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-orbit-catalog",
-              "Medium Earth Orbit"
-            ]
-          ]
-        }
-      ],
-      "section": "Medium Earth Orbit",
-      "scope": "Generic textbook orbit, not real constellation elements."
-    },
-    {
-      "id": "atmospheric-absorption",
-      "levels": [
-        "atmosphere",
-        "plume"
-      ],
-      "row": [
-        "Atmospheric absorption",
-        "Gases absorb some wavelengths while transmitting others",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-atmospheric-windows",
-              "Absorption Bands and Atmospheric Windows, first two paragraphs"
-            ]
-          ]
-        }
-      ],
-      "section": "Absorption Bands and Atmospheric Windows, first two paragraphs",
-      "scope": "Qualitative molecular physics only; not a quantitative transmission or altitude-dependent model."
-    },
-    {
-      "id": "carnot-reference",
-      "levels": [
-        "focal-plane"
-      ],
-      "row": [
-        "Published ideal refrigerator coefficient of performance",
-        "COP_Carnot = Tc / (Th - Tc)",
-        "reported",
-        {
-          "refs": [
-            [
-              "nist-refrigeration-2020",
-              "PDF pp. 2-3, equation (1) and temperature definitions"
-            ]
-          ]
-        }
-      ],
-      "section": "PDF pp. 2-3, equation (1) and temperature definitions",
-      "scope": "Published thermodynamic identity; Tc and Th are absolute cold and hot temperatures. No calculated result or selected scenario efficiency."
-    },
-    {
-      "id": "spacecraft-bus-structure",
-      "runtimeKey": "bus-structure",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R structure",
-        "Honeycomb core panels, equipment panels and instrument platforms",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Structures, printed pp. 15-9–15-10 / PDF pp. 169–170; Figures 15-15 and 15-16"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-instrument-platform",
-      "runtimeKey": "instrument-platform",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R Earth-pointing platform",
-        "Supports ABI, GLM, star trackers and inertial reference units",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed p. 2-1 / PDF p. 23; Structures, printed p. 15-10 / PDF p. 170"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-solar-cells",
-      "runtimeKey": "solar-cells",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "Photovoltaic cells",
-        "Semiconductors convert light into electrical current",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-spacecraft-power",
-              "Section 3.2.1 Solar Cells, opening paragraphs; incidence and multi-junction cells"
-            ]
-          ]
-        }
-      ],
-      "scope": "General spacecraft engineering principle."
-    },
-    {
-      "id": "spacecraft-solar-strings",
-      "runtimeKey": "solar-strings",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R array circuit",
-        "42 cells in series × 10 parallel strings; 16 circuits",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Solar Array, printed p. 11-3 / PDF p. 135, paragraph above Figure 11-3"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-solar-isolation",
-      "runtimeKey": "solar-isolation",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R array protection",
-        "String and circuit isolation diodes",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Solar Array, printed p. 11-3 / PDF p. 135"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-array-drive",
-      "runtimeKey": "array-drive",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R rotating interface",
-        "Motor drive and resolver; slip rings carry array power",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Solar Array Drive/Slip Ring Assembly, printed p. 15-4 / PDF p. 164"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-array-hinges",
-      "runtimeKey": "array-hinges",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R deployment hardware",
-        "Release devices, spring hinges, dampers, hard stops and latches",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Restraint Mechanisms and Hinges, printed pp. 15-1–15-3 / PDF pp. 161–163"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-sun-pointing",
-      "runtimeKey": "sun-pointing",
-      "levels": [],
-      "row": [
-        "GOES-R solar wing pointing",
-        "Drive and elevation gimbals point the solar instruments and cells toward the Sun",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Solar Array Deployment, printed p. 15-6 / PDF p. 166, final paragraph"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-power-buses",
-      "runtimeKey": "power-buses",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R named power buses",
-        "70 V and 28 V",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Electrical Power Subsystem, printed pp. 11-1–11-2 / PDF pp. 133–134; nominal bus names, not generic spacecraft voltages"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-power-regulation",
-      "runtimeKey": "power-regulation",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R power regulation",
-        "Array shunts, battery buck/boost converters and low-voltage buck converters",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed p. 11-2 / PDF p. 134; PRU module list, printed p. 11-5 / PDF p. 137"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-power-distribution",
-      "runtimeKey": "power-distribution",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R load distribution",
-        "Power-feed switches, current sensing and overcurrent fuses",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Power Regulation Unit and Fuse Board Assemblies, printed pp. 11-5–11-6 / PDF pp. 137–138"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-power-telemetry",
-      "runtimeKey": "power-telemetry",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R power telemetry",
-        "Module temperature/status; array, battery and load currents",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Power Regulation Unit, printed p. 11-5 / PDF p. 137, final paragraph"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-battery-support",
-      "runtimeKey": "battery-support",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R battery role",
-        "Supplies eclipse and peak-load demand; recharges from excess array power",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed pp. 11-2–11-4 / PDF pp. 134–136, Batteries and EPS operation"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-battery-control",
-      "runtimeKey": "battery-control",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R battery charge control",
-        "Cell-bank voltage monitoring, current taper and balancing",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Batteries, printed p. 11-4 / PDF p. 136, charge-control paragraphs"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-battery-thermal",
-      "runtimeKey": "battery-thermal",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R battery thermal hardware",
-        "Temperature sensors, heaters and dedicated radiators",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Batteries, printed p. 11-4 / PDF p. 136; printed p. 14-3 / PDF p. 157, final paragraph"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-attitude-sensors",
-      "runtimeKey": "attitude-sensors",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R attitude measurement",
-        "Star trackers and an inertial measurement unit",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Guidance Navigation & Control, printed p. 12-1 / PDF p. 141, attitude-determination paragraph"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-sun-sensors",
-      "runtimeKey": "sun-sensors",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R Sun sensors",
-        "Coarse analog sensors for Sun acquisition; fine sensor on the Sun-pointing platform",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Sun Sensors, printed pp. 12-2–12-3 / PDF pp. 142–143"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-wheel-principle",
-      "runtimeKey": "wheel-principle",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "Reaction-wheel principle",
-        "Exchange angular momentum between wheel and spacecraft",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-onboard-attitude",
-              "Attitude and Articulation Control, 3-Axis paragraphs; momentum desaturation"
-            ]
-          ]
-        }
-      ],
-      "scope": "General spacecraft engineering principle."
-    },
-    {
-      "id": "spacecraft-wheel-control",
-      "runtimeKey": "wheel-control",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R attitude actuators",
-        "Reaction wheels, with propulsion for momentum management",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed p. 12-1 / PDF p. 141; Propulsion Subsystem, printed p. 13-1 / PDF p. 151"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-propellant-feed",
-      "runtimeKey": "propellant-feed",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R propellant feed",
-        "Tanks, pressurant, management devices, valves, filters and pressure sensors",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Propulsion Subsystem, printed pp. 13-2–13-3 / PDF pp. 152–153; tank and feed-system paragraphs"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-propulsion-role",
-      "runtimeKey": "propulsion-role",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R propulsion functions",
-        "Orbit changes, attitude control and reaction-wheel momentum management",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Propulsion Subsystem, printed p. 13-1 / PDF p. 151, opening paragraph"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-command-gateway",
-      "runtimeKey": "command-gateway",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R command gateway",
-        "Validates commands and formats spacecraft health telemetry",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Command and Telemetry Processor, printed p. 10-2 / PDF p. 126"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-flight-computer",
-      "runtimeKey": "flight-computer",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R onboard computer",
-        "Runs flight software; routes commands, telemetry and instrument data",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "On Board Computer, printed p. 10-3 / PDF p. 127"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-remote-interfaces",
-      "runtimeKey": "remote-interfaces",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R remote interfaces",
-        "Gather telemetry and drive relays, heaters, motors and thruster interfaces",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "RIU/SIU, printed pp. 10-4–10-6 / PDF pp. 128–130; common functions and operational features"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-storage",
-      "runtimeKey": "storage",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "Spacecraft data handling",
-        "Command sequences and data records can be stored in onboard memory",
-        "reported",
-        {
-          "refs": [
-            [
-              "nasa-onboard-data",
-              "Sequence Storage; Spacecraft Clock; Telemetry Packaging and Coding; Data Storage"
-            ]
-          ]
-        }
-      ],
-      "scope": "General spacecraft engineering principle."
-    },
-    {
-      "id": "spacecraft-communications",
-      "runtimeKey": "communications",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R communications roles",
-        "Instrument data; tracking, telemetry and command; relay services",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Communications Subsystem, printed pp. 9-1–9-3 / PDF pp. 117–119; distinct service functions"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-equipment-thermal",
-      "runtimeKey": "equipment-thermal",
-      "levels": [
-        "satellite",
-        "payload"
-      ],
-      "row": [
-        "GOES-R electronics mounting",
-        "Equipment panels conduct and radiate heat toward spacecraft radiators",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed p. 14-3 / PDF p. 157, equipment-panel radiators and wet/dry mounting paragraphs"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-mli",
-      "runtimeKey": "mli",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R heat-flow control",
-        "MLI, low-emissivity coatings and low-conductivity stand-offs reduce heat transfer",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Passive thermal control, printed p. 14-2 / PDF p. 156"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-radiator",
-      "runtimeKey": "radiator",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R radiator panels",
-        "Heat pipes spread heat; optical solar reflectors limit solar absorption and emit heat",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Passive thermal control, printed p. 14-2 / PDF p. 156"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-heaters",
-      "runtimeKey": "heaters",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R heater control",
-        "Thermostatic circuits and computer-controlled circuits with thermistor feedback",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed pp. 14-2–14-3 / PDF pp. 156–157"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-instrument-isolation",
-      "runtimeKey": "instrument-isolation",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R instrument thermal interfaces",
-        "Titanium mounting feet, thermal blankets and dedicated heat-rejection paths",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Earth Pointing Platform, printed p. 14-5 / PDF p. 159"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-gimbal-thermal",
-      "runtimeKey": "gimbal-thermal",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R gimbal thermal control",
-        "MLI around the gimbals and heaters; rotation interfaces remain clear",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Solar Array Wing Assembly, printed p. 14-6 / PDF p. 160"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-propulsion-thermal",
-      "runtimeKey": "propulsion-thermal",
-      "levels": [
-        "satellite"
-      ],
-      "row": [
-        "GOES-R propulsion thermal interfaces",
-        "Blanketed spacecraft cavity; heat shield around the apogee engine",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Printed p. 14-3 / PDF p. 157, MLI and LAE paragraph"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-bench",
-      "runtimeKey": "abi-bench",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI optical bench",
-        "Supports the sensor subsystems",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Table 3-4, printed p. 3-6 / PDF p. 34, Optical Bench row"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-optics",
-      "runtimeKey": "abi-optics",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI image formation",
-        "Four-mirror telescope forms images on three focal-plane modules",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Optical System, printed p. 3-8 / PDF p. 36"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-baffles",
-      "runtimeKey": "abi-baffles",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI optical-port assembly",
-        "Baffles reduce stray light; deployable cover protects against contamination",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Table 3-4, printed p. 3-6 / PDF p. 34; Optical Port Sunshield Assembly, printed p. 3-7 / PDF p. 35"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-cold-optics",
-      "runtimeKey": "abi-cold-optics",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI aft optics",
-        "Beamsplitters, channel filters, windows and cold stops",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Optical System, printed p. 3-8 / PDF p. 36, Aft Optics paragraph"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-analog",
-      "runtimeKey": "abi-analog",
-      "levels": [
-        "satellite",
-        "payload"
-      ],
-      "row": [
-        "ABI detector output",
-        "Filtered scene image becomes analog electrical signals",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Focal Plane Modules, printed p. 3-9 / PDF p. 37, first paragraph"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-roic",
-      "runtimeKey": "abi-roic",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI focal-plane array",
-        "Detector array plus its readout integrated circuit",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Focal Plane Modules, printed p. 3-9 / PDF p. 37, second paragraph"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-video",
-      "runtimeKey": "abi-video",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI video processors",
-        "Supply readout timing and bias; collect and format detector samples",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Sensor Unit Electronics, printed p. 3-16 / PDF p. 44"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-digitize",
-      "runtimeKey": "abi-digitize",
-      "levels": [
-        "satellite",
-        "payload"
-      ],
-      "row": [
-        "ABI digitization",
-        "Sensor Unit Electronics digitizes focal-plane data",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Electronics, printed p. 3-15 / PDF p. 43; analog input described on printed p. 3-9 / PDF p. 37"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-packets",
-      "runtimeKey": "abi-packets",
-      "levels": [
-        "satellite",
-        "payload"
-      ],
-      "row": [
-        "ABI digital data path",
-        "Data Processor formats and packetizes; HSIO interfaces with SpaceWire",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Table 3-6, printed p. 3-17 / PDF p. 45, Data Processor and High Speed I/O rows"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-timing",
-      "runtimeKey": "abi-timing",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI timing",
-        "Telemetry and Timing card generates system clocks and handles telemetry",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Table 3-6, printed p. 3-17 / PDF p. 45, Telemetry and Timing row"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-controller",
-      "runtimeKey": "abi-controller",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI instrument controller",
-        "A single-board computer operates the instrument",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Table 3-6, printed p. 3-17 / PDF p. 45, Instrument Controller row"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-peripherals",
-      "runtimeKey": "abi-peripherals",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI peripheral controls",
-        "Calibration target, heaters, covers and telescope focus motor",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Sensor Unit Electronics, printed p. 3-16 / PDF p. 44, P&TC paragraph"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-scanners",
-      "runtimeKey": "abi-scanners",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI scan controls",
-        "Motor-driver circuitry moves mirrors; encoder circuitry reports position",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Optical System, printed p. 3-7 / PDF p. 35; Table 3-6, printed p. 3-17 / PDF p. 45"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-power",
-      "runtimeKey": "abi-power",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI electronics power",
-        "Power supply converts spacecraft input to instrument rails",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Table 3-6, printed p. 3-17 / PDF p. 45, Power Supply row"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-cce",
-      "runtimeKey": "abi-cce",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI cryocooler feedback",
-        "Cold-head thermometer feeds power-amplifier duty-cycle control",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Cryocooler Control Electronics, printed p. 3-17 / PDF p. 45"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-cooler",
-      "runtimeKey": "abi-cooler",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI cooler heat path",
-        "Focal planes → cooler → loop heat pipes → radiator",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Cryocooler, printed p. 3-14 / PDF p. 42"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-shroud",
-      "runtimeKey": "abi-shroud",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI scan-shroud heat path",
-        "Shields collect solar heat; constant-conductance heat pipes carry it away",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Scan Shroud Assembly, printed p. 3-14 / PDF p. 42"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
-    {
-      "id": "spacecraft-abi-heaters",
-      "runtimeKey": "abi-heaters",
-      "levels": [
-        "payload"
-      ],
-      "row": [
-        "ABI heater functions",
-        "Survival, operational and outgas heating",
-        "spec",
-        {
-          "refs": [
-            [
-              "goes-r-databook",
-              "Heaters, printed p. 3-15 / PDF p. 43"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named GOES-R/ABI civil design. Representative geometry does not inherit these specifications."
-    },
     {
       "id": "comprehensive-abi-optical-bench",
       "runtimeKey": "comp-abi-optical-bench",
@@ -4845,195 +3458,6 @@
       "scope": "General NASA spacecraft architecture example; does not establish a GOES-R science-recorder type or capacity.",
       "excerpt": "telemetry may be written to a mass storage device until transmission is feasible.",
       "body": "Onboard memory stores command sequences for execution and measurement records awaiting transmission. These are different storage roles; this general explanation does not establish a GOES-R recorder type or capacity."
-    },
-    {
-      "id": "tirs2-scene-select",
-      "runtimeKey": "tirs-scene-select",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 scene-select mechanism",
-        "Mirror selects Earth, a blackbody target or a space view",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-architecture-2018",
-              "PDF p. 4, instrument description; PDF p. 19, scene-select mechanism"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named civil TIRS-2 design presented in 2018."
-    },
-    {
-      "id": "tirs2-motion-hardware",
-      "runtimeKey": "tirs-motion",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 mechanism hardware",
-        "Mirror, motor, bearings, position encoders and motor-control electronics",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-architecture-2018",
-              "PDF p. 19, SSM/MCE paths; PDF p. 20, Scene Select Mechanism and MCE rows"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named civil TIRS-2 design presented in 2018."
-    },
-    {
-      "id": "tirs2-optical-baffles",
-      "runtimeKey": "tirs-baffles",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 internal baffles",
-        "Lens-region baffles and spacers control the optical path",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-architecture-2018",
-              "PDF p. 17, additional baffles at lenses 2 and 3; PDF p. 19, optics and filter assembly"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named civil TIRS-2 design presented in 2018."
-    },
-    {
-      "id": "tirs2-focal-electronics",
-      "runtimeKey": "tirs-fpe",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 focal-plane electronics",
-        "FPE connects detector assemblies to the main electronics through an interface board",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-architecture-2018",
-              "PDF pp. 14–15, new FIB and FPE cross-strapping; PDF p. 19, FPA/FPE/FIB/MEB paths"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named civil TIRS-2 design presented in 2018."
-    },
-    {
-      "id": "tirs2-main-electronics",
-      "runtimeKey": "tirs-meb",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 main electronics",
-        "Separate boards for command/data, power, thermal control, mechanism control and high-speed interfaces",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-architecture-2018",
-              "PDF p. 6, GSFC electrical responsibility; PDF p. 19, MEB-A/B board labels and interface legend; PDF p. 20, Electrical row"
-            ]
-          ]
-        }
-      ],
-      "scope": "Functional board roles read from the labeled civil design diagram, not circuit schematics."
-    },
-    {
-      "id": "tirs2-redundancy",
-      "runtimeKey": "tirs-redundancy",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 redundant interfaces",
-        "Paired electronics with selected cross-connections and cooler switching",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-architecture-2018",
-              "PDF pp. 14–15, MEB/CCE/FPE/encoder cross-strapping and FIB/RSE; PDF p. 19, redundant sides"
-            ]
-          ]
-        }
-      ],
-      "scope": "Selected TIRS-2 civil design connections; not every box connects to every backup."
-    },
-    {
-      "id": "tirs2-cooler-hardware",
-      "runtimeKey": "tirs-cooler",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 cooler hardware",
-        "Thermomechanical unit, cooler-control electronics and redundancy-switch electronics",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-architecture-2018",
-              "PDF p. 6, Ball cryocooler responsibility; PDF pp. 14–15, RSE linking CCE to TMU; PDF p. 19, cryocooler paths"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named civil TIRS-2 design presented in 2018; no cooler performance inferred."
-    },
-    {
-      "id": "tirs2-thermal-hardware",
-      "runtimeKey": "tirs-thermal",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 thermal hardware",
-        "Radiators, heat pipes, isolation, Earth shield, operational and survival heaters",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-architecture-2018",
-              "PDF p. 6, mechanical/thermal responsibilities; PDF pp. 14 and 20, thermal design; PDF p. 19, temperature-control and survival-heater paths"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named civil TIRS-2 design presented in 2018; no new temperatures admitted."
-    },
-    {
-      "id": "tirs2-launch-restraint",
-      "runtimeKey": "tirs-restraint",
-      "levels": [
-        "tirs2"
-      ],
-      "row": [
-        "TIRS-2 launch restraints",
-        "Earth-shield deployment hardware and a cryocooler launch lock",
-        "spec",
-        {
-          "refs": [
-            [
-              "nasa-tirs2-architecture-2018",
-              "PDF p. 19, Earth Shield Deployment and Cryo-Cooler Launch Lock; PDF p. 20, mechanical/thermal rows"
-            ]
-          ]
-        }
-      ],
-      "scope": "Named civil TIRS-2 design diagram; no release-device internals inferred."
     }
   ]
 }

@@ -1,4 +1,4 @@
-# Adapted from IF. Publishing stays disabled until Reed's launch authorization.
+# Adapted from IF. Reed authorized this public review; noindex remains until launch.
 name: pages
 on: workflow_dispatch
 permissions: { contents: read, pages: write, id-token: write }

@@ -9,6 +9,7 @@ import { occupancyBuilder } from './occupancy.js';
 import { createPartCycle } from './part-cycle.js';
 import { declutterPins } from './pin-layout.js';
 import { chip } from '../evidence.js';
+import { renderComponentDetails } from './component-details.js';
 import { disposeScene } from '../fx.js';
 import * as orbits from '../scenes/orbits.js';
 import * as satellite from '../scenes/satellite.js';
@@ -150,6 +151,7 @@ export function select(id, fly = true) {
   if (!partCycle.selecting) partCycle.stop();
   if (fly) { built[ui.scene]?.setMotion?.(false); emit('scene-settings'); }
   ui.selected = id; $('card').hidden = false; $('card-k').textContent = part.kicker; $('card-t').textContent = part.title; $('card-b').textContent = part.body;
+  renderComponentDetails($('card-components'), part.components, { sceneId: store.C.SCENES[ui.scene].id, partId: id });
   $('card-s').replaceChildren();
   part.specs.forEach((row, index) => {
     const entry = document.createElement('div'), dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = row[0]; dd.textContent = row[1];
@@ -184,7 +186,7 @@ export function cycle(direction) {
   select(parts[index < 0 ? direction < 0 ? parts.length - 1 : 0 : (index + direction + parts.length) % parts.length].id);
 }
 const partCycle = createPartCycle({ parts: () => partsFor(ui.scene).map(part => part.id), selected: () => ui.selected, select,
-  ready: () => !document.hidden && !isCameraMoving() && $('src-pop')?.hidden !== false, changed: updateCycle });
+  ready: () => !document.hidden && !isCameraMoving() && $('src-pop')?.hidden !== false && $('page-sheet')?.hidden !== false, changed: updateCycle });
 export function setMode(mode) {
   if (!modes.includes(mode)) return;
   partCycle.stop();
@@ -237,12 +239,19 @@ export function start() {
     const gl = renderer.getContext(), debug = gl.getExtension('WEBGL_debug_renderer_info'); gpu = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
   } catch { $('veil').textContent = 'WebGL is unavailable. The source and method pages remain available.'; busy = false; return; }
   setQualityPreference(preference);
+  const mainLevels = document.createElement('div'), sideLevels = document.createElement('div');
+  mainLevels.className = 'lm-group'; sideLevels.className = 'lm-group';
+  const sideHeading = document.createElement('p'); sideHeading.className = 'mm-h'; sideHeading.textContent = 'Related views'; sideLevels.append(sideHeading);
+  $('level-menu').append(mainLevels, sideLevels);
   store.C.SCENES.forEach((scene, index) => {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'step'; button.dataset.level = String(index); button.style.setProperty('--c', 'var(--accent)');
     button.innerHTML = `<span class="top"><span class="n">${index < MAIN_LEVELS ? index + 1 : '↳'}</span><span class="t"></span></span><span class="meta">${scene.ready?'Schematic':'Coming next'}</span>`;
-    button.querySelector('.t').textContent = scene.short; button.addEventListener('click', () => void go(index));
-    $('level-menu').append(button);
-    if (index < MAIN_LEVELS) { const desktop = button.cloneNode(true); desktop.addEventListener('click', () => void go(index)); $('steps').append(desktop); }
+    button.querySelector('.t').textContent = scene.short;
+    const item = document.createElement('button'); item.type = 'button'; item.className = 'lm-item'; item.dataset.level = String(index);
+    item.innerHTML = `<span class="n">${index < MAIN_LEVELS ? index + 1 : '↳'}</span><span class="t"></span><span class="meta"></span>`;
+    item.querySelector('.t').textContent = scene.title; item.querySelector('.meta').textContent = scene.scale;
+    item.addEventListener('click', () => void go(index)); (index < MAIN_LEVELS ? mainLevels : sideLevels).append(item);
+    if (index < MAIN_LEVELS) { button.addEventListener('click', () => void go(index)); $('steps').append(button); }
     else { const side = document.createElement('button'); side.className = 'btn'; side.type = 'button'; side.textContent = scene.title; side.dataset.level = String(index); side.addEventListener('click', () => void go(index)); $('side-levels').append(side); }
   });
   document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));

@@ -28,7 +28,7 @@ export function validateGeometryReport(report, { name, builtAt, sceneIds, base =
 export function validatePageReports(reports, { name, modifiedAt, builtAt, base = PREVIEW }) {
   const reject = why => { throw new Error(`${name}: ${why}`); };
   if (!Number.isFinite(modifiedAt) || modifiedAt < builtAt) reject('stale or undated result');
-  const pages = name === 'look' ? ['story'] : ['evidence', 'method', 'glossary'];
+  const pages = name === 'look' ? ['story'] : ['evidence', 'method', 'glossary', 'parts'];
   const expected = pages.flatMap(page => ['desktop', 'phone'].map(form => ({ page, form })));
   if (!Array.isArray(reports) || reports.length !== expected.length) reject('incomplete page/form inventory');
   for (const { page, form } of expected) {

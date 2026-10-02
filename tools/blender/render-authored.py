@@ -23,7 +23,7 @@ def from_three(p):
 
 views = {
     'satellite': ([0,.5,0],[8,7,11]),
-    'payload': ([0,.4,0],[5,5,7]),
+    'payload': ([.6,-.3,.15],[12,10,15]),
     'focal-plane': ([.4,.25,-.2],[4.5,4.8,6]),
 }
 kinds = sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else list(views)

@@ -11,7 +11,7 @@ export const scenarioLabel = scenario => Object.entries(SCENARIO_OPTIONS)
 function scopeOf(claim, current) {
   return claim.scope || (claim.group === 'model'
     ? `${current ? 'Current' : 'Default'} teaching example. Independent of the drawn hardware; no real sensor performance is inferred.`
-    : `${claim.scene?.title || claim.scene?.name || 'Explorer'} · ${claim.mode || ''} layer · ${claim.part?.title || ''}. Civil specifications apply only to the named instrument.`);
+    : `${claim.scene?.title || claim.scene?.name || 'Explorer'} · ${claim.mode ? `${claim.mode} layer · ` : ''}${claim.part?.title || ''}${claim.component ? ` · ${claim.component.title}` : ''}. Civil specifications apply only to the named instrument.`);
 }
 
 export function renderClaimRows(claims, { current = false } = {}) {

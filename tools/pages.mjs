@@ -111,7 +111,7 @@ try {
     const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1,
       isMobile: form === 'phone', hasTouch: form === 'phone' });
     try {
-      for (const name of ['evidence', 'method', 'glossary']) {
+      for (const name of ['evidence', 'method', 'glossary', 'parts']) {
         const page = await context.newPage(), failures = [];
         const extraLinks = [];
         page.on('pageerror', error => failures.push(error.message));
@@ -121,7 +121,7 @@ try {
         await page.evaluate(() => document.fonts.ready);
         if (await page.locator('h1').count() !== 1) failures.push('Expected one h1');
         if (!/noindex/.test(await page.locator('meta[name="robots"]').getAttribute('content') || '')) failures.push('Missing noindex');
-        if (await page.locator('nav[aria-label="Main"] a[aria-current="page"]').count() !== 1) failures.push('Missing active navigation item');
+        if (await page.locator('nav[aria-label="Site"] a[aria-current="page"]').count() !== 1) failures.push('Missing active navigation item');
         const metadata = await page.evaluate(() => {
           const ids = [...document.querySelectorAll('[id]')].map(el => el.id);
           let jsonld;
@@ -204,6 +204,45 @@ try {
           if (await page.locator('[id^="assume-"]').count() < 6) failures.push('Missing assumption sections');
         }
         if (name === 'glossary' && await page.locator('[id^="term-"]').count() < 30) failures.push('Glossary is incomplete');
+        if (name === 'parts') {
+          await page.locator('#parts-register[data-scenario-view="current"]').waitFor();
+          const total=await page.locator('[data-part-entry]').count();
+          if(total<50||await page.locator('[data-component-entry]').count()<150)failures.push('Component catalog is incomplete');
+          if(await page.locator('[data-parts-level]').count()!==10)failures.push('Parts omits a level');
+          const input=page.locator('#parts-search');
+          await input.fill('encoder');
+          if(!await page.locator('#parts-payload-scan-system').isVisible())failures.push('Encoder search did not find scan hardware');
+          await page.locator('a[href="#parts-plume"]').first().click();
+          if(!await page.locator('#parts-plume').isVisible()||await input.inputValue()!==''||new URL(page.url()).searchParams.has('q'))failures.push('Parts chapter link did not reveal its search-hidden destination');
+          await input.fill('encoder');
+          await page.locator('.parts-schematics').evaluate(el=>{el.open=true;});
+          await page.locator('.system-diagram a[href="#parts-satellite-solar-array"]').first().click();
+          if(!await page.locator('#parts-satellite-solar-array').isVisible()||await input.inputValue()!==''||new URL(page.url()).searchParams.has('q'))failures.push('System diagram link did not reveal its search-hidden component');
+          await page.locator('.parts-schematics').evaluate(el=>{el.open=false;});
+          await input.fill('no-such-guardian-component');
+          if(!await page.locator('#parts-empty').isVisible()||await page.locator('[data-part-entry]:visible').count())failures.push('Parts empty state failed');
+          await input.fill('');
+          if(await page.locator('[data-part-entry]:visible').count()!==total)failures.push('Clearing Parts search lost assemblies');
+          await page.locator('.parts-schematics>summary').click();
+          if(await page.locator('.system-diagram').count()!==3)failures.push('Expected three sourced system diagrams');
+          const keys=[...new Set(await page.locator('.system-diagram button[data-src], #parts-satellite-computer button[data-src], #parts-payload-calibration button[data-src], #parts-tirs2-arrays button[data-src]').evaluateAll(els=>els.map(el=>el.dataset.src)))];
+          for(const key of keys) {
+            const button=page.locator(`button[data-src="${key}"]`).first();
+            await button.evaluate(el=>{for(let p=el.parentElement;p;p=p.parentElement)if(p.tagName==='DETAILS')p.open=true;});
+            await button.click();
+            const pop=page.locator('#src-pop');await pop.waitFor({state:'visible'});
+            if(/Not traced|undefined|unknown calculation|unknown assumption/.test(await pop.textContent()))failures.push(`Untraced Parts dialog ${key}`);
+            await page.keyboard.press('Escape');chips++;
+          }
+          const nojs=await browser.newContext({viewport:{width,height},javaScriptEnabled:false});
+          const staticPage=await nojs.newPage();await staticPage.goto(new URL('parts.html',base).href);
+          if(await staticPage.locator('[data-part-entry]').count()!==total||await staticPage.locator('.part-evidence-link').count()<500)failures.push('Parts is incomplete without JavaScript');
+          await nojs.close();
+          // Native deep links carry exact numeric scene/layer/part identities.
+          const links=await page.locator('.part-open').evaluateAll(els=>els.map(el=>new URL(el.href).searchParams.get('view')));
+          if(links.some(view=>!/^\d\.(light|data|heat)\.[a-z0-9-]+$/.test(view||'')))failures.push('Invalid Parts visualizer deep link');
+          await page.locator('.parts-schematics').evaluate(el=>{el.open=false;});
+        }
 
         const hrefs = await page.locator('main a[href]').evaluateAll(els => els.map(el => el.getAttribute('href')));
         await checkLinks(page, [...hrefs, ...extraLinks], failures);
@@ -213,7 +252,7 @@ try {
         }));
         if (layout.overflowing) failures.push(`Horizontal overflow: ${layout.offenders.join(', ')}`);
         await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
-        await page.screenshot({ path: `.local/pages/${name}-${form}.png`, fullPage: true });
+        await page.screenshot({ path: `.local/pages/${name}-${form}.png`, fullPage: !['evidence','parts'].includes(name) });
         reports.push({ page: name, form, url: page.url(), status: failures.length ? 'FAIL' : 'PASS', chips, failures });
         console.log(JSON.stringify(reports.at(-1)));
         await page.close();

@@ -1,36 +1,41 @@
 # The Guardian Ring
 
-> An educational review build about infrared satellite architecture, from orbit to a detector element. Public sources explain the physics; named civil instruments supply detailed specifications.
+> An educational review build about infrared satellite architecture, from orbit to a detector element. Public sources explain the physics; named civil instruments supply detailed engineering examples.
 
-This is a review build, not a launch announcement. The pages retain noindex and nofollow, and robots.txt disallows crawling. Current validation and publication status are recorded in the project README and research/gate-results.md.
+This is a review build, not a launch announcement. Pages retain noindex and nofollow, and robots.txt disallows crawling. Current validation and publication status are recorded in research/BUILD-REVIEW.md and the generated research/gate-results.md. Final acceptance of the component-anatomy revision is pending.
 
 ## Pages
 
-These are the planned canonical addresses, not a claim that the site is publicly available.
+Canonical addresses identify the pages; they do not announce publication or launch.
 
-- [Story](https://reedos.dev/guardian_ring/): The narrated journey, schematic illustrations, and evidence labels.
-- [Explorer](https://reedos.dev/guardian_ring/visualizer.html): Light, Data, and Heat views with source-linked cards and independent mathematical examples.
-- [Evidence](https://reedos.dev/guardian_ring/evidence.html): Source register, claim evidence, and verification status.
+- [Story](https://reedos.dev/guardian_ring/): The narrated journey, schematic illustrations, engineering paths, and evidence labels.
+- [Explorer](https://reedos.dev/guardian_ring/visualizer.html): Light, Data, and Heat views with selectable assemblies, component anatomy, saved comparisons, and independent mathematical examples.
+- [Parts](https://reedos.dev/guardian_ring/parts.html): Searchable component names, functions, source-linked explanations, system diagrams, and links into the 3D assemblies.
+- [Evidence](https://reedos.dev/guardian_ring/evidence.html): Source register, claim evidence, retained teaching choices, and verification status.
 - [Method](https://reedos.dev/guardian_ring/method.html): Formulas, assumptions, and project scope.
-- [Glossary](https://reedos.dev/guardian_ring/glossary.html): Terms used in the explainer.
+- [Glossary](https://reedos.dev/guardian_ring/glossary.html): Physics, spacecraft, optics, electronics, and thermal terminology.
 
-## Explorer
+## Explorer and component anatomy
 
-The main journey covers the geosynchronous ring, representative satellite, reflective payload, cooled focal-plane carrier, exploded detector pixel, and illustrative molecular-emission plume. Side levels cover the ground segment, civil GOES-R ABI, civil Landsat 9 TIRS-2, and qualitative atmospheric absorption. Each level has Light, Data, and Heat views with linked evidence.
+The main journey covers the geosynchronous ring, representative satellite, optical payload, cooled focal-plane package, exploded detector element, and illustrative molecular emission. Side scenes cover the ground segment, civil GOES-R ABI, civil Landsat 9 TIRS-2, and qualitative atmospheric absorption.
 
-All detailed geometry is authored in Blender. Earth imagery uses credited historical NASA composites with artistic color and brightness adjustments. Hardware, orbit positions, plume shape, molecular symbols, drawing colors, and exploded spacing are schematic. The source files and asset provenance are recorded in the repository.
+The spacecraft exposes structure, solar-wing mechanisms, power regulation and batteries, attitude sensors and actuators, propulsion, command/data handling, communications, and thermal hardware. The payload separates scanning, cover/focus mechanisms, calibration references, optics, detector readout, digitization, command/timing, data interfaces, power, and cooling. The focal-plane view distinguishes a detector array and its ROIC from warm video electronics, bias/timing interfaces, and cold-head temperature feedback.
+
+The Explorer and Parts reference share a canonical component catalog. Its named subcomponents carry source evidence. Three system diagrams explain selected GOES-R support, ABI instrument, and TIRS-2 interface paths, with distinct light, data/control, power, heat, and mechanical connections. These are functional explanations, not complete wiring diagrams.
+
+All 3D geometry is authored in Blender. Spacecraft, payload, and focal-plane story stills use the shipped GLBs. Historical NASA Earth composites are credited and artistically adjusted. Hardware positions, package geometry, wires, fasteners, orbit positions, plume shapes, and drawing colors remain schematic.
 
 ## Evidence and scope
 
-Figures are labeled Spec, Vendor, Reported, Calc., or Assumed. Follow each figure's evidence to its exact source location, formula, or assumption. Sources marked unchecked support no claim.
+Figures are labeled Spec, Vendor, Reported, Calc., or Assumed. Each label leads to the exact source location, formula, or assumption. Sources marked unchecked support no claim. The admitted research ledger currently contains 210 facts from directly inspected public material.
 
-GOES-R ABI and Landsat TIRS-2 specifications belong to those named civil instruments. They do not describe military sensors. Generic spacecraft, optics, detector elements, links, and orbit positions are representative and not to scale.
+GOES-R, ABI, and TIRS-2 details belong to those named civil designs. TIRS-2's architecture presentation describes a 2018 design. Neither these sources nor the representative drawings describe military sensor internals or performance.
 
-The calculation examples concern general orbital geometry, vacuum light travel, ideal circular-aperture diffraction, and ideal blackbody radiation. Source photon radiance is not a detector count. Vacuum propagation time is not warning latency. No real sensor sensitivity, detection threshold, resolution, array format, false-alarm rate, coverage, or end-to-end performance is estimated.
+Calculation examples concern orbital geometry, vacuum light travel, ideal circular-aperture diffraction, and ideal blackbody radiation. Source photon radiance is not a detector count, and vacuum propagation time is not warning latency. No real sensor sensitivity, threshold, resolution, array format, false-alarm rate, coverage, or end-to-end performance is estimated.
 
-Atmospheric absorption is qualitative. Molecular emission-band examples come from a civil combustion study. The explainer supplies no operational visibility or quantitative transmission model. Public ground-system references identify component roles, not software internals or current operational status.
+Atmospheric absorption is qualitative. Molecular emission-band examples come from a civil combustion study. Ground-system sources identify architecture and component roles, not operational algorithms or current operating status. HBTSS and real constellation positions are excluded.
 
-ABI aperture and standalone detector data rate remain unverified. Detector material alone does not select an operating temperature. Real plume temperature and intensity, quantitative atmospheric transmission, and military hardware detail are not filled with estimates. HBTSS inclusion, real constellation positions, and hero attribution remain editorial decisions for Reed. Consult the Evidence and Method pages for the admitted claims and limitations.
+ABI aperture and standalone detector data rate remain unverified. The reviewed sources do not establish analog-amplifier circuitry, ADC precision, standalone ADC packaging, cooler compressor internals, detailed vibration cancellation, connector pinouts, or a specific harness/shielding scheme. Detector material alone does not select an operating temperature. Generic power ratings, battery/recorder capacities, propulsion ratings, real plume intensity, and quantitative atmospheric transmission are not supplied by estimates.
 
 ## Publication statement
 

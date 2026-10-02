@@ -18,7 +18,7 @@
   <a class="brand" href="index.html" aria-label="The Guardian Ring, the story"><span class="mark ring-mark" aria-hidden="true"></span><span class="brand-t">The Guardian Ring</span></a>
   <nav class="topnav" id="topnav" aria-label="Site">
     <a href="visualizer.html" aria-current="page">Visualizer</a><a href="index.html">The story</a><span class="sep" aria-hidden="true"></span>
-    <a href="evidence.html">Evidence</a><a href="method.html">Method</a><a href="glossary.html">Glossary</a>
+    <a href="evidence.html">Evidence</a><a href="method.html">Method</a><a href="glossary.html">Glossary</a><a href="parts.html">Parts</a>
   </nav>
   <button type="button" class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="topnav"><span aria-hidden="true"></span>Menu</button>
 </header>
@@ -30,14 +30,17 @@
       <button type="button" class="level-pick" id="level-pick" aria-haspopup="true" aria-expanded="false" aria-controls="level-menu"><span class="lp-k" id="lp-k">Level 1 of 6</span><span class="lp-t" id="lp-t">The ring</span><i aria-hidden="true"></i></button>
       <div class="pop level-menu" id="level-menu" role="group" aria-label="Levels" hidden></div>
       <div class="mode-slot" id="mode-slot"></div>
-      <button type="button" class="more-btn" id="more-btn" aria-haspopup="true" aria-expanded="false" aria-controls="more-menu" aria-label="More: view, share and quality"><span aria-hidden="true">⋯</span></button>
+      <button type="button" class="more-btn" id="more-btn" aria-haspopup="true" aria-expanded="false" aria-controls="more-menu" aria-label="More: view, share, quality, present and hide details"><span aria-hidden="true">⋯</span></button>
       <div class="pop more-menu" id="more-menu" role="group" aria-label="More" hidden>
-        <p class="mm-h">This view</p><button type="button" class="mm-item" id="share-btn">Share this view</button>
-        <label class="quality-label" for="quality">Rendering quality<select id="quality"><option value="max">Max quality</option><option value="auto">Auto quality</option><option value="laptop">Battery saver</option></select></label>
-        <button type="button" class="mm-item" id="reset-view">Overview</button>
-        <button type="button" class="mm-item" id="presentation-view" aria-pressed="false">Present</button>
-        <button type="button" class="mm-item" id="inspector-toggle" aria-expanded="true" aria-controls="inspector">Hide details</button>
-        <p class="mm-note">Public-source educational model. Drawing choices and mathematical examples are identified.</p>
+        <section class="mm-view" id="mm-view" aria-labelledby="mm-view-title"><h2 class="mm-h" id="mm-view-title">This view</h2></section>
+        <section class="mm-tools" id="mm-tools" aria-labelledby="mm-tools-title">
+          <h2 class="mm-h" id="mm-tools-title">Tools</h2>
+          <button type="button" class="mm-item" id="share-btn">Share this view</button>
+          <label class="mm-select" for="quality"><span>Rendering</span><select id="quality" aria-label="Rendering quality"><option value="max">Max quality</option><option value="auto">Auto quality</option><option value="laptop">Battery saver</option></select></label>
+          <button type="button" class="mm-item" id="presentation-view" aria-pressed="false">Present</button>
+          <button type="button" class="mm-item" id="inspector-toggle" aria-expanded="true" aria-controls="inspector">Hide details</button>
+        </section>
+        <p class="mm-note">Personal educational project based on cited public sources. Not an official publication of my employer or of the agencies or companies discussed. Models are schematic; estimates and assumptions are identified.</p>
       </div>
     </div>
     <div class="body">
@@ -45,7 +48,7 @@
         <div class="view" id="view">
           <canvas id="gl" tabindex="0" aria-label="Schematic 3D architecture. Drag to orbit, scroll to zoom."></canvas><div class="pins" id="pins"></div>
           <div class="hud tl"><span class="ttl" id="hud-title">The ring</span><span class="sub" id="hud-sub">Earth and orbit families · schematic scale</span></div>
-          <div class="hud bl"><p class="hint">Drag to orbit · scroll to zoom<br>1–6 levels · L D H layers · ← → parts</p></div>
+          <div class="hud bl"><p class="hint">Drag to orbit · right-drag to pan · scroll to zoom<br>Pointer over the view: 1–6 levels · L D H layers · ← → parts</p></div>
           <div class="hud tr"><div class="mode" role="group" aria-label="Layer">
             <button type="button" data-mode="light" aria-pressed="true" style="--c: var(--mwir)"><i></i>Light</button>
             <button type="button" data-mode="data" aria-pressed="false" style="--c: var(--eth)"><i></i>Data</button>
@@ -58,9 +61,12 @@
           <button type="button" class="btn" id="back-out" hidden>← The ring</button>
           <div class="part-transport" role="group" aria-label="Part navigation and auto-cycle">
             <label class="view-part" for="part-select"><span>Part</span><select id="part-select" aria-label="Selected part"><option value="">0. Overview</option></select></label>
-            <button type="button" class="btn" id="card-prev" aria-label="Previous part"><span aria-hidden="true">‹</span><span class="pn-t">Previous</span></button>
+            <div class="part-nav" role="group" aria-label="Part navigation">
+              <button type="button" class="btn" id="card-prev" aria-label="Previous part"><span aria-hidden="true">‹</span><span class="pn-t">Previous</span></button>
+              <button type="button" class="btn" id="reset-view" aria-label="Overview: show the whole level">Overview</button>
+              <button type="button" class="btn" id="card-next" aria-label="Next part"><span class="pn-t">Next</span><span aria-hidden="true">›</span></button>
+            </div>
             <button type="button" class="btn" id="part-play" aria-pressed="false">Auto-cycle</button>
-            <button type="button" class="btn" id="card-next" aria-label="Next part"><span class="pn-t">Next</span><span aria-hidden="true">›</span></button>
           </div>
         </div>
       </div>
@@ -74,8 +80,8 @@
           </section>
           <section class="pane-parts" id="pane-parts" role="tabpanel" aria-labelledby="tab-parts">
           <p class="intro" id="intro"></p><button type="button" class="intro-more" id="intro-more" aria-controls="intro" aria-expanded="false" hidden>Read overview</button><div class="parts-head"><span class="eyebrow">Numbered in the view</span></div><ul class="parts" id="parts"></ul>
-          <article class="card" id="card" hidden><span class="k" id="card-k"></span><h3 id="card-t"></h3><p id="card-b"></p><dl class="specs" id="card-s"></dl><button type="button" class="btn" id="card-drill" hidden></button></article>
-          <section class="side-levels"><h3 class="eyebrow">Side levels</h3><div id="side-levels"></div></section>
+          <article class="card" id="card" hidden><h3 id="card-t"></h3><p class="k card-function" id="card-k"></p><div class="card-door"><button type="button" class="btn go" id="card-drill" hidden></button><button type="button" class="btn card-more" id="card-more" aria-label="Show all of this component's details">Details <span aria-hidden="true">↑</span></button></div><p id="card-b"></p><section class="card-components" id="card-components" aria-label="Assembly components" hidden></section><dl class="specs" id="card-s"></dl></article>
+          <section class="side-levels"><h3 class="eyebrow">Related views</h3><div id="side-levels"></div><a class="catalog-link" href="parts.html">Browse the component catalog →</a></section>
           </section>
           <footer class="pane-note">Personal educational project based on cited public sources. Not an official publication of my employer or of the agencies or companies discussed. Models are schematic; estimates and assumptions are identified.</footer>
         </div>

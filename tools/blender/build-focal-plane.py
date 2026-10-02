@@ -1,4 +1,4 @@
-"""Level 4 focal-plane carrier GLB, version 2.
+"""Level 4 focal-plane carrier GLB, version 4.
 
 Run: Blender 5.2 --background --python tools/blender/build-focal-plane.py
 
@@ -9,12 +9,13 @@ All coordinates are arbitrary drawing units; Three.js export is Y-up.
 """
 import ast
 import bpy
+import importlib.util
 from pathlib import Path
 from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 2
+VERSION = 4
 OUT.mkdir(parents=True, exist_ok=True)
 
 
@@ -99,6 +100,45 @@ for obj in bpy.context.scene.objects:
     for modifier in obj.modifiers:
         if modifier.type == 'BEVEL' and modifier.width <= .004: modifier.segments = 1
 
+# Explicit warm timing/bias and cryocooler-control assemblies complete the
+# interfaces around the detector. Public ABI roles support these names; the
+# card arrangement, component packages, harness construction and counts remain
+# representative. This is not an electrical schematic or ABI hardware replica.
+spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
+h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
+hm=h.palette()
+spec=importlib.util.spec_from_file_location('payload_expansion',Path(__file__).with_name('payload-expansion.py'))
+expansion=importlib.util.module_from_spec(spec);spec.loader.exec_module(expansion)
+h.role('BiasTiming')
+h.enclosure('Warm bias and timing tray',(2.04,.03,1.78),(1.80,.29,1.16),hm,True)
+expansion.card(h,hm,'Readout bias and timing',(2.04,.195,1.78),(1.62,.94),'clock')
+for x in [1.47,1.72,1.97,2.22]:
+    h.box('Representative bias regulator',(x,.28,1.45),(.14,.070,.12),hm['chip'],.006)
+    h.line('Bias routing',[(x,.219,1.38),(x,.219,1.26),(x+.11,.219,1.26)],.004,hm['copper'])
+h.connector('Bias and timing output',(1.44,.25,1.83),.32,hm)
+h.line('Timing to video harness',[(2.61,.26,1.30),(2.84,.26,1.15),(2.82,.25,.47),(2.67,.21,.33)],.023,hm['loom'])
+h.line('Bias and timing to detector flex',[(1.44,.25,1.91),(1.20,.35,1.80),(.84,.35,1.07),(.83,.30,.59)],.020,hm['loom'])
+
+h.role('ThermalFeedback')
+h.enclosure('Cryocooler control electronics tray',(2.13,.07,-2.62),(1.90,.33,1.21),hm,True)
+expansion.card(h,hm,'Cold-head control electronics',(2.13,.27,-2.62),(1.70,1.01),'drive')
+h.box('Cold-head resistance thermometer',(-.64,.263,-1.00),(.17,.035,.11),hm['edge'],.004)
+for dx in [-.034,.034]:h.line('Thermometer lead',[(-.64+dx,.285,-1.0),(-.50+dx,.30,-1.17),(-.13+dx,.28,-1.66),(.41+dx,.28,-1.91),(1.40+dx,.34,-2.33)],.008,hm['copper'])
+h.line('Cooler power-amplifier cable',[(1.42,.31,-2.80),(1.08,.25,-2.45),(.95,.21,-1.89),(.97,.20,-1.38)],.031,hm['loom'])
+h.line('Warm control heat path',[(2.86,.07,-2.63),(3.16,.06,-2.63),(3.18,.06,-1.90)],.030,hm['silver'])
+h.box('Control-board heat-rejection interface',(3.20,.03,-1.92),(.17,.25,.43),hm['silver'],.015)
+
+h.role('WarmReadout')
+# Distinct package leads, service connectors and a shield frame make the warm
+# video board legible without inventing a signal-chain specification.
+for side in [-1,1]:
+    for i in range(8):
+        h.box('Video package terminal',(2.11+side*.35,.137,-.29+(i-3.5)*.068),(.058,.022,.019),hm['goldedge'],.002)
+for x in [1.38,2.69]:h.box('Warm video shield rail',(x,.29,-.1),(.04,.23,1.66),hm['silver'],.008)
+for z in [-.92,.72]:h.box('Warm video shield end',(2.04,.28,z),(1.23,.20,.038),hm['silver'],.008)
+for x in [1.43,2.66]:
+    for z in [-.94,.74]:h.screw((x,.42,z),hm['edge'],r=.027)
+
 geometry = [obj for obj in bpy.context.scene.objects if obj.type in {'MESH', 'CURVE'}]
 bpy.ops.object.select_all(action='DESELECT')
 for obj in geometry: obj.select_set(True)
@@ -108,12 +148,12 @@ bpy.ops.object.convert(target='MESH')
 root = group('GuardianFocalPlane', version=VERSION, level='focal-plane',
     representative=True, physicalScale=False, assumption='look-model',
     units='Arbitrary drawing units, not meters.',
-    description='Open cold shield, detector/ROIC package, carrier mounts, thermal strap, cooler, flex and warm video electronics.',
+    description='Open cold shield, detector/ROIC package, isolated carrier, thermal strap, cooler, flex, warm video electronics, bias/timing board and separate cold-head thermometer feedback to cryocooler control electronics. Civil ABI component roles; packaging and layout as drawn.',
     sourceGeometry='tools/blender/build-focal-plane.py and build-hardware-look.py: focal_plane()',
     upAxis='Y', detectorFacing='+Y', noPixelFormat=True,
     defaultCamera=[6.0, 6.0, 8.0], defaultTarget=[.48, .25, -.25])
 roles = {name: group(name, root, role=name, representative=True)
-         for name in ['DetectorPackage', 'ColdCarrier', 'ColdShield', 'WarmReadout', 'CoolingAssembly', 'FlexConnection']}
+         for name in ['DetectorPackage', 'ColdCarrier', 'ColdShield', 'WarmReadout', 'CoolingAssembly', 'FlexConnection', 'BiasTiming', 'ThermalFeedback']}
 
 batches = {}
 for obj in list(bpy.context.scene.objects):
@@ -140,6 +180,8 @@ anchor_specs = {
     'AnchorShield': ((-.65, .805, .88), 'Cutaway cold optical enclosure'),
     'AnchorFlex': ((.84, -.26, .07), 'Representative package ribbon interconnect'),
     'AnchorCarrier': ((-.65, -.96, -.43), 'Carrier and supporting standoffs'),
+    'AnchorBiasTiming': ((2.04,-1.78,.42), 'Separate warm bias and timing electronics'),
+    'AnchorThermalFeedback': ((2.13,2.62,.49), 'Cold-head thermometer feedback to separate cryocooler control electronics'),
 }
 for name, (point, role) in anchor_specs.items():
     anchor = group(name, anchors, role=role, representative=True,

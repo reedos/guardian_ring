@@ -9,6 +9,8 @@ import './app/site.js';
 import './app/toprow.js';
 import './app/orbit-controls.js';
 import './app/view-controls.js';
+import './app/page-sheet.js';
+import { moreCue } from './app/more-cue.js';
 
 window.grx = {
   store, setScenario, pin, state: store.ui, go: stage.go, select: stage.select, setMode: stage.setMode,
@@ -19,7 +21,7 @@ window.grx = {
 };
 stage.start();
 const tabs = [...document.querySelectorAll('[data-pane]')], scenario = document.getElementById('pane-scenario'), sheetButton = document.getElementById('sheet-toggle');
-function setSheet(open) { document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel'); }
+function setSheet(open) { document.body.style.removeProperty('--inspector-size'); document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel'); }
 function showPane(which) {
   tabs.forEach(button => { const selected = button.dataset.pane === which; button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1; });
   scenario.hidden = which !== 'scenario';
@@ -35,4 +37,27 @@ tabs.forEach((button, index) => {
     tabs[next].click(); tabs[next].focus();
   });
 });
-sheetButton.addEventListener('click', () => setSheet(!document.body.classList.contains('sheet-open')));
+const scroller = document.querySelector('.panel-scroll');
+moreCue(scroller, { host: document.getElementById('inspector'), label: () => {
+  if (!scenario.hidden) return 'More';
+  const fold = scroller.getBoundingClientRect().bottom - 24;
+  const below = [...document.querySelectorAll('#parts button[data-id]')].filter(button => button.getBoundingClientRect().top > fold).length;
+  return below ? `${below} more part${below === 1 ? '' : 's'}` : 'More';
+}, press: () => { if (matchMedia('(max-width: 1100px)').matches && !document.body.classList.contains('sheet-open')) { setSheet(true); return true; } return false; } });
+document.getElementById('card-more').addEventListener('click', () => setSheet(true));
+let sheetDrag = null, dragged = false;
+sheetButton.addEventListener('pointerdown', event => {
+  if (!matchMedia('(max-width: 1100px)').matches) return;
+  sheetDrag = { y: event.clientY, height: document.getElementById('inspector').getBoundingClientRect().height }; dragged = false; sheetButton.setPointerCapture(event.pointerId);
+});
+sheetButton.addEventListener('pointermove', event => {
+  if (!sheetDrag) return;
+  const delta = sheetDrag.y - event.clientY; if (Math.abs(delta) > 5) dragged = true; if (!dragged) return;
+  const height = Math.max(150, Math.min(innerHeight * .62, sheetDrag.height + delta));
+  document.body.style.setProperty('--inspector-size', `${height}px`);
+  const open = height > innerHeight * .35; document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel');
+});
+sheetButton.addEventListener('pointerup', () => { sheetDrag = null; });
+sheetButton.addEventListener('pointercancel', () => { sheetDrag = null; dragged = false; });
+sheetButton.addEventListener('click', () => { if (!dragged) setSheet(!document.body.classList.contains('sheet-open')); dragged = false; });
+if (new URLSearchParams(location.search).get('pane') === 'scenario') { showPane('scenario'); setSheet(true); }

@@ -1,0 +1,59 @@
+/* Scoped technical diagrams. Hardware remains Blender-authored; these are
+   readable functional maps, with HTML text independent of SVG arrow scaling. */
+.system-diagram { --sd-light:#e6ba82; --sd-data:#a6f35a; --sd-power:#84d8ff; --sd-heat:#ff7885; --sd-mechanical:#b7b0cf; display:grid; gap:22px; min-width:0; margin:0; padding-block:28px 36px; border-top:1px solid var(--line-2); }
+.system-diagram * { min-width:0; }
+.system-diagram figcaption { display:grid; gap:12px; max-width:84ch; }
+.system-diagram figcaption h3 { margin:0; font:600 clamp(29px,3.3vw,45px)/1.05 var(--display); letter-spacing:.005em; text-transform:uppercase; }
+.system-diagram figcaption p:not(.eyebrow) { color:var(--muted); font:400 14px/1.7 var(--sans); }
+.system-diagram .sd-legend { display:flex; flex-wrap:wrap; gap:9px 23px; padding:12px 0; margin:0; border-block:1px solid var(--line); list-style:none; }
+.system-diagram .sd-legend li { display:flex; align-items:center; gap:8px; font:500 11px/1.45 var(--mono); }
+.system-diagram .sd-legend svg { width:31px; height:19px; flex:none; }
+.system-diagram .sd-light { --sd-edge:var(--sd-light); }
+.system-diagram .sd-data { --sd-edge:var(--sd-data); }
+.system-diagram .sd-power { --sd-edge:var(--sd-power); }
+.system-diagram .sd-heat { --sd-edge:var(--sd-heat); }
+.system-diagram .sd-mechanical { --sd-edge:var(--sd-mechanical); }
+.system-diagram .sd-wire,.system-diagram .sd-tip { fill:none; stroke:var(--sd-edge); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.system-diagram .sd-data .sd-wire { stroke-dasharray:4 3; }
+.system-diagram .sd-heat .sd-wire { stroke-dasharray:1 4; stroke-width:2.6; }
+.system-diagram .sd-mechanical .sd-wire { stroke-dasharray:7 3 1 3; }
+.system-diagram .sd-power .sd-wire { stroke-width:3; }
+.system-diagram .sd-paths { display:grid; gap:26px; }
+.system-diagram .sd-path { display:grid; gap:13px; }
+.system-diagram .sd-path h4 { margin:0; font:600 17px/1.4 var(--sans); color:var(--ink); }
+.system-diagram .sd-flow { display:flex; align-items:stretch; padding:0; margin:0; list-style:none; }
+.system-diagram .sd-node { position:relative; display:flex; flex:1 1 0; flex-direction:column; gap:12px; padding:17px 14px 13px; background:var(--surface); border:1px solid var(--line-2); border-top:2px solid var(--accent); overflow-wrap:anywhere; }
+.system-diagram .sd-component { display:grid; gap:7px; }
+.system-diagram .sd-component + .sd-component { padding-top:12px; border-top:1px solid var(--line); }
+.system-diagram .sd-node-name { display:block; font:600 19px/1.3 var(--display); text-transform:uppercase; letter-spacing:.025em; text-decoration:underline; text-decoration-color:var(--line-2); text-underline-offset:4px; }
+.system-diagram .sd-node-name:hover { color:var(--accent); }
+.system-diagram .sd-role { margin:0; color:var(--muted); font:400 14px/1.65 var(--sans); }
+.system-diagram .sd-node-evidence { display:flex; flex-wrap:wrap; gap:7px; margin-top:auto; padding-top:7px; }
+.system-diagram .sd-node-evidence .chip { font-size:10px; min-height:28px; }
+.system-diagram .sd-connector { display:flex; flex:0 0 62px; align-self:center; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:6px 3px; text-align:center; }
+.system-diagram .sd-arrow { width:38px; height:24px; flex:none; }
+.system-diagram .sd-connection-label { color:var(--sd-edge); font:500 10px/1.5 var(--mono); overflow-wrap:anywhere; }
+.system-diagram .sd-path-note { margin:0; max-width:100ch; padding-left:13px; border-left:2px solid var(--line-2); color:var(--muted); font:400 12px/1.65 var(--sans); }
+.system-diagram .sd-boundary { padding-top:16px; border-top:1px solid var(--line); color:var(--faint); font:400 11px/1.65 var(--sans); }
+@media (max-width:1100px) {
+  .system-diagram .sd-node { padding:14px 11px 12px; }
+  .system-diagram .sd-connector { flex-basis:48px; }
+}
+@media (max-width:900px) {
+  .system-diagram { gap:18px; }
+  .system-diagram .sd-flow { flex-direction:column; }
+  .system-diagram .sd-node { flex:auto; gap:11px; padding:17px; }
+  .system-diagram .sd-node-name { font-size:22px; }
+  .system-diagram .sd-role { font-size:14px; line-height:1.6; }
+  .system-diagram .sd-node-evidence .chip { min-height:34px; padding-inline:11px; }
+  .system-diagram .sd-connector { flex:auto; width:100%; flex-direction:row; gap:14px; padding:12px 16px; justify-content:flex-start; }
+  .system-diagram .sd-arrow { width:27px; height:30px; transform:rotate(90deg); }
+  .system-diagram .sd-connection-label { font-size:11px; text-align:left; }
+  .system-diagram .sd-path-note { font-size:13px; }
+  .system-diagram .sd-boundary { font-size:12px; }
+}
+@media print {
+  .system-diagram { break-before:page; }
+  .system-diagram .sd-path { break-inside:avoid; }
+  .system-diagram .sd-node { background:transparent; }
+}

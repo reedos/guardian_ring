@@ -1,38 +1,33 @@
 # Guardian Ring review build
 
-10/01/2026. The spacecraft-detail revision passed final acceptance against its production build. Reed's device review and separate launch decision remain open.
+10/01/2026. The component-anatomy revision passed full built-preview acceptance. Reed's device review and separate launch decision remain open.
 
-## What is included
+## Current scope
 
-- Six main Blender scenes: Earth and the geosynchronous ring, spacecraft, optical payload, focal plane, detector element, and molecular-emission plume.
-- Four side scenes: representative ground segment, GOES-R ABI, Landsat 9 TIRS-2, and qualitative atmospheric absorption.
-- Light, Data, and Heat cards at every level, with source-linked figures and explicit drawing assumptions.
-- Independent orbit and radiation calculations, a Planck plot, and pinned/current comparisons whose evidence retains the saved scenario.
-- Cited story links into the scenes, prerendered Evidence/Method/Glossary, scenario-preserving navigation, JSON-LD, and `llms.txt`.
-- Ten versioned GLBs and twelve responsive story images. Builders and provenance are listed in `THIRD_PARTY_NOTICES.md`.
+Six pages connect the story, Explorer, Evidence, Method, Glossary, and searchable Parts reference. Ten Blender-authored scenes cover the ring, spacecraft, payload, focal plane, detector element, molecular emission, ground segment, ABI, TIRS-2, and atmosphere. Each has Light, Data, and Heat views with evidence and drawing assumptions.
 
-The revision expands the spacecraft to twelve selectable components per layer, the payload to seven, and the focal plane to six: 138 part states across the ten levels and three layers. Rebuilt open assemblies expose power hardware, mechanisms, avionics, readout electronics, and thermal paths. Their story stills are rendered from the shipped GLBs. The persistent parts selector, Overview, Present, and Hide/Show Details controls restore the reference implementation's navigation affordances.
+The spacecraft has twelve selectable parent assemblies, the payload thirteen, and the focal plane eight. Together with the other levels, that is 162 parent states across the three layers. Nested anatomy names the actual components within each assembly, explains their functions, and attaches evidence. The Explorer and Parts page use the same catalog; repeated appearances are not additional hardware counts.
 
-The content adds 51 engineering facts from the inspected GOES-R Data Book and three NASA references, bringing the admitted research ledger to 85 facts. Revised ABI cards, linked story service maps, and nineteen new glossary definitions explain the engineering chain. See `SPACECRAFT-DETAIL-REVIEW.md` for the revision and `spacecraft-review.md` for source passages.
+Payload v7 exposes scan mirrors, motors, encoders and bearings; port-cover and focus mechanisms; calibration references; stationary aft optics; and separate sensor, instrument, interface, power, and cooling electronics. Focal-plane v4 separates the detector/ROIC package, warm video electronics, bias/timing interface, cold-head thermometer, and cooler feedback. Shapes, package layouts, wiring, and dimensions remain representative. The spacecraft, payload, and focal-plane story stills are rendered from their shipped GLBs.
 
-## Validation
+Three cited system diagrams explain selected GOES-R support paths, ABI instrument paths, and TIRS-2 interfaces. Their component names and evidence come from the same catalog. They distinguish light, data/control, electrical power, heat, and mechanical motion without presenting circuit schematics or complete wiring diagrams.
 
-Typecheck, all 75 unit tests, and the strict evidence audit passed: 0 problems across 365 claim keys, 34,944 scenario-specific instances, 96 scenarios, and 85 research facts. Independent code and source review found no remaining actionable issue. New regressions cover texture disposal and camera movement/view clearance.
+The admitted research ledger contains 210 facts, including the comprehensive component review and the separate TIRS-2 architecture review. The GOES-R Data Book supplies named civil hardware; additional NASA sources support grounding, mechanical isolation, and the TIRS-2 design. See `COMPREHENSIVE-SYSTEMS-REVIEW.md` and `tirs2-architecture-review.md` for exact scope and access outcomes.
 
-All 16 full-scope browser gate commands passed on the production build. Each layout passed 138 component views and 876 camera routes. Both the scenario and visible-part sweeps passed 13,248 states; texture use remained at 19 across all 96 scenario rebuilds. The generated `gate-results.md` records the build hash and detailed results. Final screenshots were also inspected.
+## Validation status
 
-Acceptance covers every scenario, part, and ordered camera route on desktop and phone, plus evidence dialogs, saved comparisons, navigation, renderer quality, and performance. New UI checks cover parts-selector synchronization, Overview, presentation restoration, evidence dwell, long part lists, and a 320-pixel layout. Real GPU checks use Chrome on Reed's RTX 5090; phone-sized browser checks do not replace a test on an actual phone.
+Final typecheck passed, all 81 unit tests passed, and the strict evidence audit found 0 problems across 667 site claims, 96 scenarios, and 210 research facts. All 16 browser gate commands passed against the same production build. `gate-results.md` records the build hash and detailed results, including 1,320 camera routes on each form and 15,552 states in each exhaustive scenario/parts sweep.
+
+The completed checks cover every scenario, parent part, and ordered camera route, plus evidence dialogs, component anatomy, Parts search/navigation, responsive diagrams, saved comparisons, renderer quality, and performance. Real GPU checks used Chrome on Reed's RTX 5090. Worst p95 frame time at maximum quality was 0.90 ms desktop and 0.80 ms phone. Phone-sized browser checks do not replace testing on an actual phone.
 
 ## Supported scope and gaps
 
-The model explains general physics and public architecture. Civil specifications stay attached to ABI or TIRS-2. Their drawn layouts preserve cited component counts but remain representative rather than dimensioned replicas.
+Public civil specifications stay attached to GOES-R, ABI, or TIRS-2. The TIRS-2 architecture source describes a 2018 design, not an as-built bill of materials. General calculations cover orbital geometry, vacuum propagation, ideal diffraction, and ideal blackbody radiation; they do not estimate detector counts or warning latency.
 
-ABI aperture and a standalone detector data rate were not verified. Material choice alone does not supply an operating temperature. No estimate fills these gaps. The model also does not supply received detector counts, real plume intensity, quantitative atmospheric transmission, military sensor parameters, operational coverage, cryocooler input power, or warning latency. These are narrower limits than some proposed outputs in the initial plan; the reasons and admitted sources are in `model-review.md` and `LEVELS-CONTENT-REVIEW.md`.
+The reviewed sources do not establish ABI aperture, a standalone detector data rate, analog-amplifier topology or gain, ADC precision or package layout, cooler compressor internals, detailed vibration cancellation, connector pinouts, or mission-specific shielding and harness construction. These gaps are not filled with invented specifications. Generic bus voltage, array power, battery capacity, propulsion rating, recorder capacity, and instrument temperature are also unassigned.
 
-The generic spacecraft has no assigned bus voltage, array power, battery capacity, propulsion rating, ADC precision, or recorder capacity. Published electrical figures are explicitly GOES-R specifications. Internal layouts, repeated model components, wiring, and dimensions remain representative. HBTSS and operational constellation positions are excluded; the ring and ground level remain schematic architecture.
+Real plume intensity, quantitative atmospheric transmission, military hardware detail, operational coverage, and sensor detection performance remain outside the model. HBTSS and operational constellation positions are excluded. Sources that could not be opened remain unchecked and support no claims.
 
-## Publishing and the next step
+## Publication
 
-Reed authorized a public repository and GitHub Pages review. A separate launch call is still required.
-
-Send the verified review URL only in this chat. Noindex remains on, and the link stays out of the public README, repository homepage field, portfolio, and sitemap. Reed's phone review comes before a separate launch call. Public Pages has no sign-in restriction; anyone who obtains the URL can access it.
+Reed authorized a public repository and GitHub Pages review; launch requires a separate call. Keep noindex/nofollow and the crawler block. Share a verified review URL only in this chat, not in the public README, repository homepage field, portfolio, or sitemap. Public Pages has no sign-in restriction.

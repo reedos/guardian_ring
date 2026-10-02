@@ -404,6 +404,50 @@ export const SOURCES = { ...{
     "status": "verified",
     "section": "Attitude and Articulation Control: 3-Axis, Celestial Reference, Inertial Reference; general principles only"
   },
+  "nasa-grounding-4001a": {
+    "title": "NASA-HDBK-4001A: Electrical Grounding Architecture for Uncrewed Spacecraft",
+    "publisher": "NASA Office of the Chief Engineer",
+    "url": "https://standards.nasa.gov/system/files/tmp/NASA-HDBK-4001A_Final_07152025_0.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Revision A, 07/2025; approval-day discrepancy between cover and history",
+    "accessed": "10/01/2026",
+    "status": "verified",
+    "section": "Foreword; Section 1; Section 5.2.8. General guidance only; not a spacecraft wiring specification."
+  },
+  "nasa-goes-dual-isolation-2019": {
+    "title": "In-Flight Line-Of-Sight Pointing Performance for the GOES-16 and GOES-17 Spacecraft",
+    "publisher": "NASA NTRS / GOES-R project authors, AAS 19-133",
+    "url": "https://ntrs.nasa.gov/api/citations/20190002517/downloads/20190002517.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "published": "02/01/2019",
+    "accessed": "10/01/2026",
+    "status": "verified",
+    "section": "PDF pp. 2–5, passive platform and reaction-wheel isolation. No performance values or control algorithms adopted."
+  },
+  "nasa-tirs2-design-status-2018-unchecked": {
+    "title": "TIRS-2 design-status presentation (NTRS 20180007426)",
+    "publisher": "NASA NTRS",
+    "url": "https://ntrs.nasa.gov/api/citations/20180007426/downloads/20180007426.pdf?attachment=true",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "2018 identifier; document date unverified",
+    "attempted": "10/01/2026",
+    "unchecked": "Direct web open returned Internal Error. Stopped this source action, reported it, and did not retry or cite search snippets.",
+    "status": "unchecked"
+  },
+  "nasa-tirs2-architecture-2018": {
+    "title": "Landsat 9 TIRS-2 Architecture and Design",
+    "publisher": "NASA Goddard Space Flight Center / IGARSS 2018",
+    "url": "https://ntrs.nasa.gov/api/citations/20180005348/downloads/20180005348.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "2018 design presentation",
+    "accessed": "10/01/2026",
+    "status": "verified",
+    "section": "PDF pp. 4, 6, 14–15, 17, 19–20; full electrical block diagram visually inspected on PDF p. 19"
+  },
   "sda-tracking-layer-leo-altitude": {
     "title": "SDA approximate LEO altitude (seed alias)",
     "publisher": "GAO source pointer",

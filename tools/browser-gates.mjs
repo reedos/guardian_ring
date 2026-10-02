@@ -27,6 +27,16 @@ const checkPart=({scene,mode,id})=>{
  if(picker?.value!==id)bad.push('part picker is not synchronized with selected card');
  if(!rendered(card))bad.push('selected card is hidden');
  if(!selected||document.getElementById('card-t')?.textContent!==selected.title||document.getElementById('card-b')?.textContent!==selected.body)bad.push('card content does not match selected part');
+ const title=document.getElementById('card-t'),role=document.getElementById('card-k');
+ if(!(title.compareDocumentPosition(role)&Node.DOCUMENT_POSITION_FOLLOWING)||role.textContent!==selected?.kicker)bad.push('component name is not followed by its function');
+ const components=selected?.components||[],anatomy=[...document.querySelectorAll('#card-components .component-detail')];
+ if(anatomy.length!==components.length)bad.push('assembly component details are missing or stale');
+ components.forEach((component,i)=>{
+  const article=anatomy[i];
+  if(article?.dataset.component!==component.id||article?.querySelector('h5')?.textContent!==component.title||article?.querySelector('.component-role')?.textContent!==(component.role||undefined))bad.push(`${component.id}: component name/function mismatch`);
+  const keys=[...(article?.querySelectorAll('[data-src]')||[])].map(el=>el.dataset.src);
+  if(JSON.stringify(keys)!==JSON.stringify((component.specs||[]).map((_,n)=>`component:${sceneId}:${id}:${component.id}:${n}`)))bad.push(`${component.id}: component evidence is not synchronized`);
+ });
  if(!rendered(pin)||pin?.classList.contains('off'))bad.push('selected pin is hidden');
  if(pin?.getAttribute('aria-pressed')!=='true'||button?.getAttribute('aria-pressed')!=='true')bad.push('selected pin/button state missing');
  if(rendered(pin)){const r=pin.querySelector('.num').getBoundingClientRect(),v=document.getElementById('view').getBoundingClientRect();if(r.left<v.left||r.right>v.right||r.top<v.top||r.bottom>v.bottom)bad.push('selected pin lies outside view');}
@@ -111,6 +121,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
      await show(page,sc.i,mode,from);
      await page.evaluate(()=>grx.setTransitions('quick'));
      const r=await page.evaluate(fly,{id:to});states++;
+     if(states%50===0)console.log(`Flights: ${states} routes checked (${sc.id}/${mode})`);
      if(r.hits||(r.motionRequired&&r.frames<2)){
       const problem=`${sc.id}/${mode}/${from||'overview'} → ${to}: ${JSON.stringify(r)}`;
       fail.push(problem);console.error(problem);
@@ -232,9 +243,63 @@ export async function run(name,form=process.argv[2]||'desktop'){
   if(await page.locator('#inspector').isVisible())fail.push('Present forgot previously hidden details');
   await page.locator('#part-select').selectOption({index:1});await audit('part choice restores details');
   if(!await page.locator('#inspector').isVisible())fail.push('part picker did not reveal details');
-  await moreChoice('#reset-view');
-  if(await page.locator('#part-select').inputValue()!==''||await page.evaluate(()=>grx.state.selected)!==null)fail.push('More Overview did not reset selection');
-  states++;audited.push('More Overview');
+  const transport=await page.locator('#reset-view').evaluate(el=>{const group=el.closest('.part-nav');return !!group?.contains(document.getElementById('card-prev'))&&group.contains(document.getElementById('card-next'))&&!el.closest('#more-menu')&&el.checkVisibility();});
+  if(!transport)fail.push('Overview is not visible beside Previous and Next');
+  await page.locator('#reset-view').click();
+  if(await page.locator('#part-select').inputValue()!==''||await page.evaluate(()=>grx.state.selected)!==null)fail.push('persistent Overview did not reset selection');
+  states++;audited.push('persistent Overview');
+  await page.locator('#more-btn').click();
+  if(!await page.locator('#mm-tools #share-btn').isVisible()||!await page.locator('#mm-tools .mm-select').isVisible())fail.push('More tools are not grouped with rendering controls');
+  await page.keyboard.press('Escape');
+  // Reference reading preserves the exact explorer state and camera. These
+  // real navigation clicks must open the IF-style sheet, including the catalog.
+  await show(page,1,'data');
+  const referenceStart=await page.evaluate(()=>({state:{...grx.state},camera:grx.camera.position.toArray(),scenario:{...grx.store.scenario}}));
+  for(const file of ['evidence.html','method.html','glossary.html','parts.html']){
+   const link=page.locator(`#topnav a[href^="${file}"]`);
+   if(!await link.isVisible())await page.locator('#menu-btn').click();
+   await link.click();await page.locator('#page-sheet').waitFor({state:'visible'});
+   const embedded=page.frameLocator('#ps-frame');await embedded.locator('h1').waitFor();
+   await audit(`${file}/reference sheet`,'#page-sheet button,#page-sheet a');
+   const external=new URL(await page.locator('#ps-open').getAttribute('href'));
+   if(external.searchParams.has('embed'))fail.push(`${file}: Open as a page retains embed`);
+   for(const [key,value]of Object.entries(referenceStart.scenario))if(external.searchParams.get(key)!==value)fail.push(`${file}: reference sheet lost ${key}`);
+   if(await embedded.locator('.topbar').isVisible())fail.push(`${file}: embedded page repeats the site header`);
+   if(file==='evidence.html'||file==='parts.html'){
+    const chip=embedded.locator('button[data-src]:visible').first();await chip.click();
+    await embedded.locator('#src-pop').waitFor({state:'visible'});await page.keyboard.press('Escape');
+    await embedded.locator('#src-pop').waitFor({state:'hidden'});
+    // Wait for an erroneous iframe close message, rather than racing its delivery.
+    await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+    if(!await page.locator('#page-sheet').isVisible()||!await chip.evaluate(el=>el===document.activeElement))fail.push(`${file}: source Escape closed its parent sheet or lost focus`);
+    states++;audited.push(`${file}/nested source Escape`);
+   }
+   if(file==='parts.html'){
+    const evidenceLink=embedded.locator('.part-evidence-link').first(),destination=new URL(await evidenceLink.getAttribute('href'),BASE);
+    await evidenceLink.click();await page.waitForFunction(()=>document.getElementById('ps-t').textContent==='Evidence');
+    const linked=new URL(await page.locator('#ps-open').getAttribute('href'));
+    if(!linked.pathname.endsWith('/evidence.html')||linked.hash!==destination.hash||linked.searchParams.has('embed')||await page.locator('#ps-frame').getAttribute('title')!=='Evidence')fail.push('reference sheet navigation left stale title or Open as a page destination');
+    for(const [key,value]of Object.entries(referenceStart.scenario))if(linked.searchParams.get(key)!==value)fail.push(`reference cross-page navigation lost ${key}`);
+    states++;audited.push('reference cross-page title and destination');
+   }
+   // Escape from inside the iframe must close the parent sheet as well.
+   await embedded.locator('h1').click();await page.keyboard.press('Escape');
+   await page.locator('#page-sheet').waitFor({state:'hidden'});
+   const after=await page.evaluate(()=>({state:{...grx.state},camera:grx.camera.position.toArray(),inert:document.getElementById('topbar').inert}));
+   if(JSON.stringify(after.state)!==JSON.stringify(referenceStart.state)||after.camera.some((v,i)=>Math.abs(v-referenceStart.camera[i])>1e-6)||after.inert)fail.push(`${file}: closing the sheet lost the view or kept the background inert`);
+  }
+  // A catalog deep link is handled by the live viewer, not another page load.
+  const catalog=page.locator('#topnav a[href^="parts.html"]');if(!await catalog.isVisible())await page.locator('#menu-btn').click();await catalog.click();
+  const partLink=page.frameLocator('#ps-frame').locator('a.part-open').first();await partLink.waitFor();
+  const partView=new URL(await partLink.getAttribute('href'),BASE).searchParams.get('view').split('.');
+  await partLink.click();await page.locator('#page-sheet').waitFor({state:'hidden'});
+  await page.waitForFunction(v=>!grx.isBusy()&&grx.state.scene===Number(v[0])&&grx.state.mode===v[1]&&grx.state.selected===(v[2]||null),partView);
+  states++;audited.push('catalog component link returns to live viewer');
+  if(form==='phone'){
+   if(await page.locator('#sheet-toggle').getAttribute('aria-expanded')==='true')await page.locator('#sheet-toggle').click();
+   await page.locator('#card-more').click();await audit('Details expands phone sheet');
+   if(await page.locator('#sheet-toggle').getAttribute('aria-expanded')!=='true')fail.push('Details did not expand the phone sheet');
+  }
   if(await page.locator('#intro-more').isVisible()){
    await page.locator('#intro-more').click();await audit('expanded overview prose');
    if(await page.locator('#intro-more').getAttribute('aria-expanded')!=='true'||!await page.locator('#intro').evaluate(el=>el.classList.contains('open')))fail.push('Read overview did not reveal complete introduction');
@@ -266,14 +331,14 @@ export async function run(name,form=process.argv[2]||'desktop'){
   await page.locator('#more-btn').click();const select=page.getByRole('combobox',{name:'Rendering quality'});for(const pref of ['laptop','max','auto']){await select.selectOption(pref);await inspect(pref==='laptop'?4:0,`preference ${pref}`,pref);}
   await select.selectOption('laptop');await page.reload();await page.waitForFunction(()=>window.grx?.built[grx.state.scene]);await page.locator('#more-btn').click();if(await select.inputValue()!=='laptop')fail.push('battery-saver preference did not persist');await inspect(4,'persisted battery saver','laptop');await select.selectOption('auto');details.renderChecks=rows;
  } else if(name==='links'){
-  for(const file of ['index.html','visualizer.html','evidence.html','method.html','glossary.html']){await page.goto(new URL(file,BASE).href);states++;if(!/noindex/.test(await page.locator('meta[name=robots]').getAttribute('content')))fail.push(`${file}: missing noindex`);if(await page.locator('h1').count()!==1)fail.push(`${file}: requires one h1`);const links=await page.locator('a[href]').evaluateAll(as=>as.map(a=>a.getAttribute('href')).filter(h=>h&&!/^(https?:|mailto:)/.test(h)));for(const href of links){const url=new URL(href,new URL(file,BASE));const response=await page.request.get(url.href);if(!response.ok())fail.push(`${file}: ${href} HTTP ${response.status()}`);if(url.searchParams.has('view')){await page.goto(url.href);await page.waitForFunction(()=>window.grx?.built[grx.state.scene]&&!grx.isBusy());const expected=url.searchParams.get('view').split('.');const state=await page.evaluate(()=>grx.state);if(state.scene!==Number(expected[0])||state.mode!==expected[1]||state.selected!==(expected[2]||null))fail.push(`${href}: did not land on the requested view`);}}}
+  for(const file of ['index.html','visualizer.html','evidence.html','method.html','glossary.html','parts.html']){await page.goto(new URL(file,BASE).href);states++;if(!/noindex/.test(await page.locator('meta[name=robots]').getAttribute('content')))fail.push(`${file}: missing noindex`);if(await page.locator('h1').count()!==1)fail.push(`${file}: requires one h1`);if(!await page.locator('#topnav a[href^="parts.html"]').count()||!await page.locator('#menu-btn').count())fail.push(`${file}: shared Parts/navigation menu is missing`);if(file!=='visualizer.html'&&!await page.locator('#top-cta').isVisible())fail.push(`${file}: visualizer entry is not persistently visible`);const links=await page.locator('a[href]').evaluateAll(as=>as.map(a=>a.getAttribute('href')).filter(h=>h&&!/^(https?:|mailto:)/.test(h)));for(const href of links){const url=new URL(href,new URL(file,BASE));const response=await page.request.get(url.href);if(!response.ok())fail.push(`${file}: ${href} HTTP ${response.status()}`);if(url.searchParams.has('view')){await page.goto(url.href);await page.waitForFunction(()=>window.grx?.built[grx.state.scene]&&!grx.isBusy());const expected=url.searchParams.get('view').split('.');const state=await page.evaluate(()=>grx.state);if(state.scene!==Number(expected[0])||state.mode!==expected[1]||state.selected!==(expected[2]||null))fail.push(`${href}: did not land on the requested view`);}}}
 
   // A source-reading detour must retain all four scenario choices.
   const wanted={orbit:'leo',aperture:'civil',band:'lwir',detector:'qwip'};
   await page.goto(new URL('visualizer.html?'+new URLSearchParams(wanted),BASE).href);
   await page.waitForFunction(()=>window.grx?.built[grx.state.scene]);
   if(!await page.evaluate(()=>grx.state.selected))fail.push('URL without view lost its first-card default');
-  for(const file of ['index.html','evidence.html','method.html','glossary.html','visualizer.html']){
+  for(const file of ['index.html','evidence.html','method.html','glossary.html','parts.html','visualizer.html']){
    const link=page.locator('nav a[href^="'+file+'"]').first();
    // Use the phone's real navigation affordance before following its hidden link.
    if(!await link.isVisible()&&await page.locator('#menu-btn').isVisible())await page.locator('#menu-btn').click();
