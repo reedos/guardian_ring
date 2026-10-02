@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BOLTZMANN_J_K, SPEED_OF_LIGHT_M_S, carnotRefrigeratorCOP, diffractionRadians,
+import { BOLTZMANN_J_K, SPEED_OF_LIGHT_M_S, carnotRefrigeratorCOP, coolerEnergyBalance, diffractionRadians,
   integratePlanckBand, lightTimeSeconds, photonEnergyJ, planckPhotonSpectralRadiance, planckSpectralRadiance } from './radiometry';
 
 describe('ideal radiation in SI units', () => {
@@ -54,6 +54,19 @@ describe('ideal radiation in SI units', () => {
     expect(diffractionRadians(500e-9, 0.1)).toBeCloseTo(6.1e-6, 12);
     expect(diffractionRadians(500e-9, 0.2)).toBeCloseTo(3.05e-6, 12);
     expect(carnotRefrigeratorCOP(100, 300)).toBe(0.5);
+  });
+  it('conserves energy across a refrigerator boundary without assigning a rated power', () => {
+    // Test inputs are arbitrary mathematical quantities, not hardware claims.
+    const cold = 3, work = 7, rejected = coolerEnergyBalance(cold, work);
+    expect(cold + work - rejected).toBe(0);
+    expect(coolerEnergyBalance(cold * 1000, work * 1000)).toBe(rejected * 1000);
+    expect(coolerEnergyBalance(0, 0)).toBe(0);
+    expect(coolerEnergyBalance(0, work)).toBe(work);
+    for (const invalid of [-1, Infinity, NaN]) {
+      expect(() => coolerEnergyBalance(invalid, 1)).toThrow(RangeError);
+      expect(() => coolerEnergyBalance(1, invalid)).toThrow(RangeError);
+    }
+    expect(() => coolerEnergyBalance(Number.MAX_VALUE, Number.MAX_VALUE)).toThrow(RangeError);
   });
   it('rejects invalid physical inputs and integration settings', () => {
     for (const invalid of [0, -1, NaN, Infinity]) expect(() => photonEnergyJ(invalid)).toThrow(RangeError);

@@ -1,6 +1,10 @@
 import { illustrated } from './illustrated.js';
 const scene=illustrated({
-  url:'models/tirs2.glb?v=4',
+  teaching:'tirs2',signal:'AnchorArrays',signalRadius:.50,
+  phaseHighlights:{readout:'Readout',digitize:'Readout'},
+  lessonNote:'Optical connections, not traced rays. Mirror angles, packaging, and playback time are illustrative; this is not the TIRS-2 optical prescription.',
+  mechanisms:[{node:'TIRSSceneSelect',axis:[0,0,1],range:.52,motion:'reference'}],
+  url:'models/tirs2.glb?v=5',
   camera:{pos:[12,12,16],target:[.3,.5,.1],min:3,max:38},cameraPhone:{pos:[11.5,13,18.5]},distance:6,
   points:{telescope:'AnchorTelescope',arrays:'AnchorArrays',cooling:'AnchorCooling','scene-select':'AnchorSceneSelect',blackbody:'AnchorBlackbody',readout:'AnchorReadout',electronics:'AnchorElectronics',radiator:'AnchorRadiator',filters:'AnchorFilters'},
   views:{
@@ -26,9 +30,9 @@ const scene=illustrated({
     {text:'RADIATOR / EARTH SHIELD',p:[3.62,1.166,-2.07],size:[2.33,.22],yaw:Math.PI,partIds:['radiator']},
   ],
   paths:{
-    light:[[[-2.35,1.10,5.3],'AnchorSceneSelect',[-2.35,1.10,1.30],[-2.35,1.10,-.7],'AnchorFilters','AnchorArrays'],['AnchorBlackbody','AnchorSceneSelect']],
-    data:[['AnchorArrays',[-.39,.66,-1.48],'AnchorReadout','AnchorElectronics',[5.70,1.11,.64]],['AnchorElectronics',[1.50,1.0,2.40],'AnchorSceneSelect']],
-    heat:[['AnchorArrays',[-1.50,.53,-3.12],'AnchorCooling',[1.30,.55,-3.65],'AnchorRadiator',[4.30,2.10,-4.13]],['AnchorElectronics',[3.72,.14,-1.02],'AnchorRadiator']],
+    light:[{kind:'light',exclusive:true,phases:['earth'],start:.28,points:[[-4.50,1.10,3.17],[-2.35,1.10,3.17],[-2.35,1.10,1.30],[-2.35,1.10,-.7],'AnchorFilters','AnchorArrays']},{kind:'light',exclusive:true,phases:['blackbody'],start:.28,points:['AnchorBlackbody',[-2.35,1.10,3.17],[-2.35,1.10,1.30],[-2.35,1.10,-.7],'AnchorFilters','AnchorArrays']},{kind:'light',exclusive:true,phases:['space'],start:.28,points:[[-2.35,3.75,3.17],[-2.35,1.10,3.17],[-2.35,1.10,1.30],[-2.35,1.10,-.7],'AnchorFilters','AnchorArrays']}],
+    data:[{kind:'analog',points:['AnchorArrays',[-.39,.66,-1.48],'AnchorReadout']},{kind:'image-data',phases:['digitize','transfer'],points:['AnchorReadout','AnchorElectronics',[5.70,1.11,.64]]},{kind:'command',points:['AnchorElectronics',[1.50,1.0,2.40],'AnchorSceneSelect']},{kind:'feedback',points:['AnchorSceneSelect',[-2.35,1.10,2.65],[.40,1.10,2.16],'AnchorElectronics']}],
+    heat:[{kind:'heat',phases:['lift'],points:['AnchorArrays',[-1.50,.53,-3.12],'AnchorCooling']},{kind:'heat',phases:['reject'],points:['AnchorCooling',[1.30,.55,-3.65],'AnchorRadiator']},{kind:'radiation',points:['AnchorRadiator',[4.30,2.10,-4.13]]},{kind:'electrical',points:['AnchorElectronics',[1.48,.50,-3.12],'AnchorCooling']},{kind:'feedback',phases:['sense'],points:['AnchorArrays',[-.5,.75,-2.40],[1.48,.50,-3.12]]},{kind:'heat',phases:['reject'],points:['AnchorElectronics',[3.72,.14,-1.02],'AnchorRadiator']}],
   },
 });
 export const preload=scene.preload;

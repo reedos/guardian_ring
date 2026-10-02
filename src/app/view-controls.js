@@ -40,6 +40,7 @@ function setPresentation(enabled) {
   document.body.classList.toggle('presentation-view', enabled);
   present.setAttribute('aria-pressed', String(enabled));
   present.textContent = enabled ? 'Exit presentation' : 'Present';
+  $('presentation-exit').hidden = !enabled;
   collapseInspector(enabled || previousCollapsed);
 }
 
@@ -62,6 +63,7 @@ picker.addEventListener('change', () => {
 on('part-inspect', revealCard);
 $('reset-view').addEventListener('click', overview);
 present.addEventListener('click', () => setPresentation(!document.body.classList.contains('presentation-view')));
+$('presentation-exit').addEventListener('click', () => { setPresentation(false); $('more-btn').focus({ preventScroll: true }); });
 details.addEventListener('click', () => {
   const wasCollapsed = document.body.classList.contains('inspector-collapsed');
   if (document.body.classList.contains('presentation-view')) setPresentation(false);
@@ -70,9 +72,6 @@ details.addEventListener('click', () => {
 addEventListener('keydown', event => {
   if (event.key === 'Escape' && document.body.classList.contains('presentation-view')) setPresentation(false);
 });
-on('select', () => {
-  syncParts();
-  if (!document.body.classList.contains('presentation-view')) collapseInspector(false);
-});
+on('select', syncParts);
 for (const event of ['scene', 'mode', 'scenario']) on(event, () => { syncParts(); syncIntroduction(true); });
 syncParts();

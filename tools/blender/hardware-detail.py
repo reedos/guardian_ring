@@ -123,6 +123,13 @@ def ribbon(name,points,width,mat):
     faces=[(i*2,i*2+1,i*2+3,i*2+2) for i in range(len(points)-1)]
     d=bpy.data.meshes.new(name);d.from_pydata(verts,[],faces);d.update();o=bpy.data.objects.new(name,d);bpy.context.collection.objects.link(o);finish(o,name,mat,.005)
     s=o.modifiers.new('Ribbon thickness','SOLIDIFY');s.thickness=.015;return o
+def motion(objects,name,pivot,axis):
+    """Keep only explicitly selected moving faces in an authored pivot group.
+    Coordinates and axis are Three.js Y-up drawing units, not actuator limits.
+    """
+    for o in objects:
+        o['motionGroup']=name;o['motionPivot']=list(pivot);o['motionAxis']=list(axis)
+
 def export(path,rootname,version,level,anchors,description):
     for o in bpy.context.scene.objects:
         if o.type=='CURVE':o.data.resolution_u=1
@@ -132,17 +139,24 @@ def export(path,rootname,version,level,anchors,description):
     bpy.context.view_layer.objects.active=geometry[0];bpy.ops.object.convert(target='MESH')
     root=bpy.data.objects.new(rootname,None);bpy.context.collection.objects.link(root)
     for k,v in dict(version=version,level=level,representative=True,physicalScale=False,assumption='look-model',description=description,units='Arbitrary drawing units; component counts and layout as drawn.',upAxis='Y').items():root[k]=v
-    batches={};groups={}
+    batches={};groups={};motions={}
     for o in list(bpy.context.scene.objects):
-        if o.type=='MESH':batches.setdefault((o.get('assetRole','Structure'),tuple(mt.name for mt in o.data.materials)),[]).append(o)
-    for (r,names),objects in batches.items():
+        if o.type=='MESH':batches.setdefault((o.get('assetRole','Structure'),tuple(mt.name for mt in o.data.materials),o.get('motionGroup','')),[]).append(o)
+    for (r,names,moving),objects in batches.items():
         if r not in groups:
             g=bpy.data.objects.new(r,None);bpy.context.collection.objects.link(g);g.parent=root;g['representative']=True;groups[r]=g
         bpy.ops.object.select_all(action='DESELECT')
         for o in objects:o.select_set(True)
         bpy.context.view_layer.objects.active=objects[0]
         if len(objects)>1:bpy.ops.object.join()
-        o=bpy.context.object;o.name=r+' — '+names[0];o.parent=groups[r];o['representative']=True;o['solidForCamera']=True
+        o=bpy.context.object;o.name=r+' — '+(moving+' — ' if moving else '')+names[0]
+        parent=groups[r]
+        if moving:
+            if moving not in motions:
+                g=bpy.data.objects.new(moving,None);bpy.context.collection.objects.link(g);g.parent=groups[r];g.location=p(o['motionPivot'])
+                g['representative']=True;g['motionAxis']=list(o['motionAxis']);g['inspectionPose']='Identity rotation; all camera occupancy and authored views use this pose.';motions[moving]=g
+            parent=motions[moving]
+        bpy.context.view_layer.update();world=o.matrix_world.copy();o.parent=parent;o.matrix_world=world;o['representative']=True;o['solidForCamera']=True
     for name,q in anchors.items():
         o=bpy.data.objects.new(name,None);bpy.context.collection.objects.link(o);o.parent=root;o.location=p(q);o['threePosition']=q;o['representative']=True
     bpy.context.view_layer.update();verts=[];tris=0

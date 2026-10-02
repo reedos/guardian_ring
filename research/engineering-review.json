@@ -1,0 +1,70 @@
+{
+  "reviewed": "10/01/2026",
+  "scope": "First-principles and civil-application review for the learning journey. No real sensor performance, operational constellation state, or cooler rating is inferred. Scene geometry and playback remain representative.",
+  "result": "No arithmetic correction was needed in the existing orbit, photon-energy, Planck-band, diffraction, or Carnot functions. The principal gaps were explanatory behavior and animation semantics.",
+  "findings": [
+    {
+      "priority": "P1",
+      "area": "Orbit playback",
+      "location": "src/scenes/orbits.js; tools/blender/build-orbits.py",
+      "finding": "Earth and GEO already co-rotate correctly in the illustration. Other orbit-family markers were static. The authored compressed HEO ellipse and the independent physical teaching HEO have different eccentricities.",
+      "action": "Use each drawing guide's own parameters for its moving marker. Advance mean anomaly uniformly and solve Kepler's equation; do not use uniform true anomaly or silently combine different ellipse shapes. Keep the accelerated illustration clock distinct from real elapsed orbital time.",
+      "implementation": "Pure helpers added in src/model/orbits.ts; scene integration belongs to the animation work. No physical orbital inputs were changed.",
+      "claimKey": "learning:orbit-motion"
+    },
+    {
+      "priority": "P1",
+      "area": "Flow semantics",
+      "location": "src/scenes/illustrated.js",
+      "finding": "All layers used a common fractional path clock. Catmull-Rom tension zero does keep each segment straight, but its zero tangents ease the glyph to zero speed at every vertex.",
+      "action": "Distinguish optical propagation, data sequence, and thermal energy transfer. Use arclength for optical glyphs and identify illustrative timing. Do not draw heat-transfer glyphs as actual refrigerant trajectories or imply a pulse-tube cooler circulates gas continuously in one direction.",
+      "sourceRefs": [["nist-refrigeration-2020", "PDF pp. 6–7, section F1.3; PDF p. 14, section F1.3.2, oscillating pressures and mass flows"]]
+    },
+    {
+      "priority": "P1",
+      "area": "Controls and preserved context",
+      "location": "src/model/engine.ts; src/app/stage.js; src/app/scenario.js",
+      "finding": "Detector choice has no quantitative output; this is scientifically appropriate without device-specific inputs. The old scenario listener nevertheless rebuilt every scene and reset selection, including when only a reference choice changed.",
+      "action": "Present material choices as a reference catalog, explain the missing dependencies, and preserve the current scene, selected part, and camera when changing independent teaching inputs. Do not invent a temperature or spectral-response curve from a material name.",
+      "implementation": "Finding handed to the learning-control owner; no scene or UI changes made by this audit."
+    },
+    {
+      "priority": "P1",
+      "area": "Cooler energy accounting",
+      "location": "src/model/radiometry.ts; src/engineering-evidence.js",
+      "action": "Show Qhot = Qcold + Win as a complete-cycle energy balance. The warm side rejects absorbed heat plus supplied work. Startup or cooldown requires an additional stored-energy term. This identity alone cannot determine a real cooler's capacity or efficiency.",
+      "implementation": "Added coolerEnergyBalance(heatRemoved, inputWork), with no defaults or mission values, and registered the symbolic equation with its boundary assumption.",
+      "claimKey": "learning:cooler-balance"
+    },
+    {
+      "priority": "P2",
+      "area": "Optional future physics experiments",
+      "action": "An explicit ideal-source temperature control would make the existing Planck curve more instructive; an aperture-only laboratory control could show inverse aperture scaling. Each would require its own visible assumed input and evidence row. Neither should compute military image resolution, detector counts, thresholds, or performance.",
+      "implementation": "Not implemented. The existing fixed source and aperture remain unchanged; no arbitrary new nominal inputs were added."
+    }
+  ],
+  "equations": [
+    {"id": "kepler-illustration-motion", "formula": "M(t) = M0 + 2πt/T; M = E − e sin E; x = a(cos E − e); y = a√(1 − e²)sin E", "boundary": "Ideal ellipse, focus at origin, pericenter on positive x. Coordinate units follow a. Drawing parameters are not a spacecraft ephemeris."},
+    {"id": "cooler-energy-balance", "formula": "Qhot = Qcold + Win", "boundary": "Nonnegative energy magnitudes in matching units over a complete cycle, or matching steady average powers. No net stored energy."}
+  ],
+  "sourceChecks": [
+    {"id": "noaa-abi-fire-product", "url": "https://www.star.nesdis.noaa.gov/goesr/product_land_fire.php", "status": "verified", "outcome": "Direct page opened", "locator": "Improvements and Benefits; Calibration and Validation", "admitted": "ABI civil fire-monitoring application and the need for product processing and validation."},
+    {"id": "nasa-tirs2-water-application", "url": "https://www.nasa.gov/missions/landsat/new-landsat-infrared-instrument-ships-from-nasa/", "status": "verified", "outcome": "Direct page opened", "locator": "Taking Earth’s temperatures from orbit, transpiration and evaporation paragraphs", "admitted": "Plant and soil cooling supports a civil water-use example; radiation measurements are inputs to derived products."},
+    {"id": "nasa-landsat-water-planning", "url": "https://science.nasa.gov/missions/landsat/ten-years-of-tirs-data-for-a-thirsty-world/", "status": "verified", "outcome": "Direct page opened", "locator": "Idaho Department of Water Resources paragraph; OpenET figure caption", "admitted": "Landsat-derived evapotranspiration supports water planning; OpenET uses an ensemble of satellite-driven models."},
+    {"id": "nasa-spacecraft-thermal-control-2026", "url": "https://www.nasa.gov/smallsat-institute/sst-soa/thermal-control/", "status": "verified", "outcome": "Direct page opened", "locator": "7.1, equation 1; 7.2.1, opening paragraph", "admitted": "Spacecraft energy accounting and the distinction between conduction and radiation. No hardware ratings or blanket effectiveness adopted."},
+    {"id": "nasa-first-law-internal-energy", "url": "https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/first-law-internal-energy/", "status": "verified", "outcome": "Direct page opened", "locator": "First Law of Thermodynamics equation and following sign-convention paragraph", "admitted": "Derivation of a complete-cycle cooler balance from energy conservation."},
+    {"id": "nasa-jpl-kepler-coordinates", "url": "https://ssd.jpl.nasa.gov/planets/approx_pos.html", "status": "verified", "outcome": "Direct page opened", "locator": "Formulae for using the Keplerian elements, steps 3–4; Solution of Kepler’s Equation", "admitted": "Generic coordinate conversion and iteration only. No planetary ephemeris parameters are used."},
+    {"id": "nasa-orbit-equation", "url": "https://pwg.gsfc.nasa.gov/stargaze/Smotion.htm", "status": "verified", "outcome": "Existing source directly reopened successfully", "locator": "Opening discussion and Kepler’s Equation", "admitted": "Mean anomaly advances uniformly; true anomaly changes nonuniformly along an ellipse."},
+    {"id": "noaa-planck-function", "url": "https://ncc.nesdis.noaa.gov/planck.html", "status": "verified", "outcome": "Existing source directly reopened successfully", "locator": "Wavelength Planck and inverse-Planck sections", "admitted": "Radiance-temperature conversion and per-micrometer spectral-density units."},
+    {"id": "nist-refrigeration-2020", "url": "https://trc.nist.gov/cryogenics/Papers/Review/2020-Review_of_Refrigeration_Methods.pdf", "status": "verified", "outcome": "Existing source directly opened successfully", "locator": "PDF p. 2, equation 1; PDF pp. 6–7, section F1.3; PDF p. 14, section F1.3.2", "admitted": "Ideal refrigerator COP and regenerative cooler oscillating-flow semantics only. No numerical hardware performance adopted."},
+    {"id": "usgs-c2-atmospheric-auxiliary-unchecked", "url": "https://www.usgs.gov/landsat-missions/landsat-collection-2-atmospheric-auxiliary-data", "status": "unchecked", "outcome": "Direct web open returned Internal Error. No retry, alternate route, or source content admitted."},
+    {"id": "usgs-c2-evapotranspiration-unchecked", "url": "https://www.usgs.gov/landsat-missions/landsat-collection-2-provisional-actual-evapotranspiration-science-product", "status": "unchecked", "outcome": "Direct web open returned Internal Error. No retry, alternate route, or source content admitted."}
+  ],
+  "validation": {
+    "pureModelAndEvidenceTests": "34 passed across four targeted files",
+    "typecheck": "Passed",
+    "claimAudit": "0 problems across 924 site claims, 96 scenarios, and 241 existing research facts at integration time",
+    "invariants": ["Kepler equation residual, circular limit, symmetry, periodicity, ellipse equation, agreement with polar radius, equal swept areas, and faster pericenter motion", "Cooler cycle energy conservation, unit scaling, zero input, invalid input rejection, and overflow rejection", "Existing Planck integral, Stefan-Boltzmann consistency, photon conversion, and source independence remain covered"],
+    "gpu": "Not run by this audit; exclusive production validation remains with the parent task"
+  }
+}

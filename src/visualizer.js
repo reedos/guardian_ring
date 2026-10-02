@@ -1,4 +1,4 @@
-import { store, setScenario, pin } from './app/store.js';
+import { store, setScenario, pin, on } from './app/store.js';
 import * as stage from './app/stage.js';
 import { THREE } from './kit.js';
 import { SCENARIO_OPTIONS } from './model/engine.ts';
@@ -10,6 +10,8 @@ import './app/toprow.js';
 import './app/orbit-controls.js';
 import './app/view-controls.js';
 import './app/page-sheet.js';
+import './app/learning-journey.js';
+import { mountAnimationControls } from './app/animation-controls.js';
 import { moreCue } from './app/more-cue.js';
 
 window.grx = {
@@ -20,15 +22,42 @@ window.grx = {
   setQualityPreference: stage.setQualityPreference, isBusy: stage.isBusy, isCameraMoving: stage.isCameraMoving,
   flightProgress: stage.getFlightProgress,
 };
-stage.start();
+const animationControls = mountAnimationControls(document.getElementById('animation-controls'), { getTeaching: stage.getTeaching, preparePlayback: stage.preparePlayback });
+for (const event of ['scene', 'mode', 'scene-settings']) on(event, () => animationControls.sync());
 const tabs = [...document.querySelectorAll('[data-pane]')], scenario = document.getElementById('pane-scenario'), sheetButton = document.getElementById('sheet-toggle');
 function setSheet(open) { document.body.style.removeProperty('--inspector-size'); document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel'); }
-function showPane(which) {
+function showPane(which, { reset = true } = {}) {
   tabs.forEach(button => { const selected = button.dataset.pane === which; button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1; });
   scenario.hidden = which !== 'scenario';
   document.querySelectorAll('.panel-scroll > :not(#pane-scenario):not(.pane-note)').forEach(element => element.classList.toggle('pane-off', which === 'scenario'));
-  document.querySelector('.panel-scroll').scrollTop = 0;
+  if (reset) document.querySelector('.panel-scroll').scrollTop = 0;
 }
+on('pane-request', ({ pane, reset = true }) => showPane(pane, { reset }));
+on('experiment', experiment => {
+  showPane('scenario'); setSheet(true);
+  requestAnimationFrame(() => {
+    const section = document.querySelector(`[data-math-section="${experiment}"]`);
+    section?.scrollIntoView({ block: 'nearest' });
+    section?.querySelector('summary')?.focus({ preventScroll: true });
+  });
+});
+on('restore-pane', saved => {
+  showPane(saved.pane, { reset: false });
+  setSheet(saved.expanded);
+  if (saved.size) document.body.style.setProperty('--inspector-size', saved.size);
+  document.body.classList.toggle('inspector-collapsed', saved.collapsed);
+  document.getElementById('inspector-toggle').setAttribute('aria-expanded', String(!saved.collapsed));
+  document.getElementById('inspector-toggle').textContent = saved.collapsed ? 'Show details' : 'Hide details';
+  for (const details of document.querySelectorAll('#card-components details')) details.open = saved.details.includes(details.dataset.component);
+  document.querySelector('.panel-scroll').scrollTop = saved.scroll;
+  if (saved.restoreFocus) {
+    const candidates = [...document.querySelectorAll('button, select, a[href]')];
+    const previous = candidates.find(node => saved.focus?.id && node.id === saved.focus.id)
+      || candidates.find(node => saved.focus?.level && node.dataset.level === saved.focus.level && node.checkVisibility())
+      || candidates.find(node => saved.focus?.part && node.dataset.id === saved.focus.part && node.checkVisibility());
+    (previous?.checkVisibility() ? previous : document.getElementById('part-select')).focus({ preventScroll: true });
+  }
+});
 tabs.forEach((button, index) => {
   button.addEventListener('click', () => { showPane(button.dataset.pane); if (button.dataset.pane === 'scenario') setSheet(true); });
   button.addEventListener('keydown', event => {
@@ -62,3 +91,4 @@ sheetButton.addEventListener('pointerup', () => { sheetDrag = null; });
 sheetButton.addEventListener('pointercancel', () => { sheetDrag = null; dragged = false; });
 sheetButton.addEventListener('click', () => { if (!dragged) setSheet(!document.body.classList.contains('sheet-open')); dragged = false; });
 if (new URLSearchParams(location.search).get('pane') === 'scenario') { showPane('scenario'); setSheet(true); }
+stage.start();

@@ -1,5 +1,7 @@
 import { illustrated } from './illustrated.js';
 const scene=illustrated({
+  teaching:'focal-plane',signal:'AnchorArray',signalRadius:.48,
+  phaseHighlights:{absorb:'DetectorPackage',integrate:'DetectorPackage',digitize:'WarmReadout'},
   url:'models/focal-plane.glb?v=5',
   camera:{pos:[5.7,6.2,8.7],target:[.5,.1,-.35],min:2,max:25},distance:5.2,
   cameraPhone:{pos:[7,8.5,13]},
@@ -22,8 +24,15 @@ const scene=illustrated({
   ],
   paths:{
     light:[[[-.8,2.7,.15],'AnchorArray']],
-    data:[['AnchorArray',[.2,.52,.28],[.8,.15,.28],[1.5,.18,.28],'AnchorReadout'],['AnchorBiasTiming',[1.17,.48,1.22],'AnchorFlex','AnchorArray']],
-    heat:[['AnchorArray',[-.77,.35,-.8],'AnchorColdStage'],['AnchorColdStage',[.5,.44,-1.36],[1.4,.4,-1.6],[2.4,1,-1.9]],['AnchorReadout',[2.6,.4,-.8],[2.9,1,-1.4]],[[-.64,.30,-1],[-.13,.40,-1.66],'AnchorThermalFeedback',[.95,.38,-1.89]]],
+    data:[{kind:'analog',points:['AnchorArray',[.2,.52,.28],[.8,.15,.28],[1.5,.18,.28],'AnchorReadout']},{kind:'command',points:['AnchorBiasTiming',[1.17,.48,1.22],'AnchorFlex','AnchorArray']},{kind:'image-data',phases:['digitize','transfer'],points:['AnchorReadout',[2.80,.42,.30],[3.45,.42,.30]]}],
+    heat:[
+      {kind:'heat',phases:['lift'],points:['AnchorArray',[-.77,.35,-.8],'AnchorColdStage']},
+      {kind:'heat',phases:['reject'],points:['AnchorColdStage',[.5,.44,-1.36],[1.4,.4,-1.6],[2.4,1,-1.9]]},
+      {kind:'heat',phases:['reject'],points:['AnchorReadout',[2.6,.4,-.8],[2.9,1,-1.4]]},
+      {kind:'feedback',phases:['sense'],points:[[-.64,.30,-1],[-.13,.40,-1.66],'AnchorThermalFeedback']},
+      {kind:'electrical',points:['AnchorThermalFeedback',[1.08,.25,-2.45],[.95,.21,-1.89],[.97,.20,-1.38]]},
+
+    ],
   },
 });
 export const preload=scene.preload;

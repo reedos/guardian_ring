@@ -24,3 +24,13 @@ html{scroll-behavior:smooth;scroll-padding-top:96px}[hidden]{display:none!import
 .hero-cap { display: flex; align-items: center; gap: 12px; max-width: calc(100% - 2 * var(--gutter)); white-space: normal; }
 .hero-cap .chip { flex: none; }
 @media (max-width: 760px) { .hero-cap { font-size: 9px; line-height: 1.5; } .hero { padding-bottom: 100px; } }
+/* Entry points share the same type, surfaces and accent as the story. */
+.learning-entry { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 36px; padding-block: 42px; border-bottom: 1px solid var(--line); }
+.learning-entry h2 { margin-block: 10px 16px; }
+.learning-entry p { max-width: 58ch; color: var(--muted); line-height: 1.65; }
+.learning-entry-options { display: grid; gap: 12px; align-content: center; }
+.learning-entry-options a { display: grid; gap: 8px; min-width: 0; padding: 20px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; }
+.learning-entry-options a:hover, .learning-entry-options a:focus-visible { border-color: var(--accent); }
+.learning-entry-options strong { color: var(--accent); font-size: 14px; }
+.learning-entry-options span { color: var(--muted); font-size: 12px; line-height: 1.6; }
+@media (max-width: 760px) { .learning-entry { grid-template-columns: minmax(0,1fr); gap: 18px; padding-block: 28px; } }

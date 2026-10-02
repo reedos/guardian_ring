@@ -1,5 +1,7 @@
 // Merge these catalogs into the shared IF evidence registry. All dates are access/review dates unless noted.
+import { ENGINEERING_SOURCES, ENGINEERING_CALCS, ENGINEERING_ASSUMPTIONS } from '../engineering-evidence.js';
 export const MODEL_SOURCES = {
+  ...ENGINEERING_SOURCES,
   'nist-codata-2022': {
     title: 'Fundamental Physical Constants: complete listing, 2022 CODATA adjustment', publisher: 'NIST',
     url: 'https://physics.nist.gov/cuu/Constants/Table/allascii.txt', dated: '2022 adjustment; current table checked 10/01/2026',
@@ -45,6 +47,7 @@ export const MODEL_SOURCES = {
 };
 
 export const MODEL_CALCS = {
+  ...ENGINEERING_CALCS,
   'orbit-period': {
     title: 'Two-body orbital period', how: 'T = 2π√(a³/μ), where a is the ellipse’s semi-major axis (the center-to-center radius for a circular orbit). The satellite mass is neglected. GEO uses the public reference altitude; other choices use the stated teaching geometry. Earth is treated as spherical; perturbations are omitted.',
     inputs: ['semi-major axis', 'Earth GM from NASA/JPL', 'model-orbits assumption'],
@@ -84,6 +87,7 @@ export const MODEL_CALCS = {
 };
 
 export const MODEL_ASSUMPTIONS = {
+  ...ENGINEERING_ASSUMPTIONS,
   'model-orbits': {
     title: 'General orbit examples', value: 'A spherical Earth and negligible satellite mass',
     why: 'The sphere uses the published equatorial radius, 6,378.137 km. GEO uses a 35,786 km circular reference altitude. HEO is a teaching ellipse with period one half of the published sidereal day and eccentricity 0.722, evaluated at apogee. MEO and LEO are arbitrary circular examples at 20,000 km and 1,000 km. These are not program or spacecraft orbital parameters, and no constellation is computed.',

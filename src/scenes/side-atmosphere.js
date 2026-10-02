@@ -1,5 +1,6 @@
 import { illustrated } from './illustrated.js';
 const scene=illustrated({
+  teaching:'atmosphere',signal:'AnchorCO2',signalRadius:.30,
   url:'models/atmosphere.glb?v=2',
   camera:{pos:[6.4,4.8,8.5],target:[0,1.8,0],min:2.5,max:24},
   cameraPhone:{pos:[8.2,6.5,11]},distance:6,
@@ -12,9 +13,9 @@ const scene=illustrated({
     h2o:{pos:[-5.7,3.2,6],target:[-1.9,1.55,.34]},
   },
   paths:{
-    light:[[[.4,4.5,.6],[.4,3.2,.6],'AnchorBands'],[[-.9,4.5,.3],[-.9,2.5,.3],[-.9,.35,.3]]],
-    data:[['AnchorContext',[1.8,1,1],[1.8,2.3,1],'AnchorBands']],
-    heat:[['AnchorBands',[.9,2.6,1.6],[1.6,2.9,1.7]]],
+    light:[{kind:'light',phases:['arrive'],points:[[1.95,4.5,.43],'AnchorCO2']},{kind:'light',phases:['transmit'],points:[[-.9,4.5,.3],[-.9,.35,.3]]}],
+    data:[],
+    heat:[{kind:'radiation',phases:['emit'],points:['AnchorH2O',[-2.6,2.9,1.7]]}],
   },
 });
 export const preload=scene.preload;

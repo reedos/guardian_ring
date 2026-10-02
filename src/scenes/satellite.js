@@ -1,5 +1,6 @@
 import { illustrated } from './illustrated.js';
 const scene = illustrated({
+  teaching:'satellite',
   url:'models/satellite.glb?v=7',
   camera:{pos:[8,6.5,13.5],target:[0,1.35,.25],min:1.8,max:32},distance:4.2,
   cameraPhone:{pos:[9.5,8,20]},
@@ -29,8 +30,8 @@ const scene = illustrated({
   ],
   paths:{
     light:[[[0,2.78,4.2],'AnchorPayload'],[[-1.06,2.44,2.3],'AnchorAttitude']],
-    data:[['AnchorPayload',[.3,2.08,.5],'AnchorComputer'],['AnchorComputer',[.8,2.05,-.4],'AnchorAntenna'],['AnchorAttitude',[-1.1,1.94,.3],'AnchorComputer'],['AnchorComputer',[0,1.20,1.25],'AnchorWheels']],
-    heat:[['AnchorSolarArray',[2.1,1.4,.1],'AnchorPower'],['AnchorBattery',[-.18,.91,.70],'AnchorPower'],['AnchorComputer',[1.22,1.85,.90],'AnchorRadiator',[2.75,1.5,2.3]]],
+    data:[{kind:'image-data',phases:['readout'],points:['AnchorPayload',[.3,2.08,.5],'AnchorComputer']},{kind:'image-data',points:['AnchorComputer',[.8,2.05,-.4],'AnchorAntenna']},{kind:'feedback',points:['AnchorAttitude',[-1.1,1.94,.3],'AnchorComputer']},{kind:'command',points:['AnchorComputer',[0,1.20,1.25],'AnchorWheels']}],
+    heat:[{kind:'electrical',points:['AnchorSolarArray',[2.1,1.4,.1],'AnchorPower']},{kind:'electrical',points:['AnchorBattery',[-.18,.91,.70],'AnchorPower']},{kind:'heat',phases:['reject'],points:['AnchorComputer',[1.22,1.85,.90],'AnchorRadiator']},{kind:'radiation',points:['AnchorRadiator',[2.75,1.5,2.3]]}],
   },
 });
 export const preload=scene.preload;

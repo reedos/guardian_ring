@@ -1,4 +1,4 @@
-"""ABI civil assembly v5; nine inspectable groups, representative packaging.
+"""ABI civil assembly v6; nine inspectable groups, representative packaging.
 GOES-R component vocabulary; four telescope mirrors and three focal modules.
 Layout and optical angles as drawn, not a flight prescription. CPU export only.
 """
@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('civil',Path(__file__).with_name('civil-detail.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c);h=c.load_h()
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=5
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=6
 c.bench(h,m,(.35,-.26,.10),(10.8,8.2))
 h.role('Telescope')
 mirrors=[(-3.40,1.05,.55,.59),(-2.40,.97,-.65,.37),(-1.43,1.08,.47,.44),(-.48,.94,-.65,.30)]
@@ -19,8 +19,8 @@ for i,(x,y,z,r) in enumerate(mirrors,1):
     h.ring('Telescope mirror retaining ring '+str(i),(x,y,z+.040),r*1.13,r*1.045,.045,m['silver'],'z',48)
 c.plaque(h,m,'Telescope',(-2.4,-.08,1.43),2.5)
 h.role('ScanSystem')
-c.scan(h,m,'North south scan',(-3.20,.87,3.0),(.64,.25,.72),scale=.85)
-c.scan(h,m,'East west scan',(-1.28,.86,2.78),(-.64,.45,.63),scale=.69,axis='y')
+c.scan(h,m,'North south scan',(-3.20,.87,3.0),(.64,.25,.72),scale=.85,motion='ABIScanNorthSouth')
+c.scan(h,m,'East west scan',(-1.28,.86,2.78),(-.64,.45,.63),scale=.69,axis='y',motion='ABIScanEastWest')
 c.plaque(h,m,'Scan mirrors',(-2.48,-.06,3.78),2.48)
 h.role('Calibration')
 c.blackbody(h,m,'Internal calibration target',(.20,.63,2.62),.34)

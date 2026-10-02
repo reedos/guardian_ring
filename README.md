@@ -14,6 +14,8 @@ The spacecraft cutaway exposes solar cells and deployment hardware, power regula
 
 The civil instruments expose their optical, calibration, detector, electronic and thermal assemblies as separate selections. The smaller levels distinguish detector interconnects and packaging, ground reception and storage, and molecular species. Component callouts remain readable as the camera moves; surface nameplates appear only when their text is clear.
 
+Guiding questions connect each level to a physics experiment and the next level. Side visits return to the original component and view. Replayable sequences distinguish light, electrical signals, image data, commands, measured feedback, power, conduction, and radiation. Civil examples connect ABI with wildfire monitoring and Landsat thermal observations with derived water-use products. Animation timing and drawing geometry remain illustrative.
+
 This edition is under review. The site is unlisted and retains noindex; its review link is shared directly with the reviewer.
 
 ## Follow the evidence
@@ -28,6 +30,7 @@ Hardware, orbit positions, plume shapes, and animated paths are schematic. Publi
 - [Comprehensive component review](research/COMPREHENSIVE-SYSTEMS-REVIEW.md)
 - [TIRS-2 architecture review](research/tirs2-architecture-review.md)
 - [Public design-practice additions and completeness review](research/PUBLIC-DESIGN-GAP-REVIEW.md)
+- [First-principles and civil-application review](research/engineering-review.json)
 - [Intelligence Factory UI parity review](research/UI-PARITY-REVIEW.md)
 - [Build review and supported scope](research/BUILD-REVIEW.md)
 - [Browser and unit-test acceptance record](research/gate-results.md)

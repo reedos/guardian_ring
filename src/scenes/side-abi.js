@@ -1,6 +1,9 @@
 import { illustrated } from './illustrated.js';
 const scene=illustrated({
-  url:'models/abi.glb?v=5',
+  teaching:'abi',signal:'AnchorFocalPlanes',signalRadius:.43,
+  phaseHighlights:{readout:'Readout',digitize:'Readout'},
+  mechanisms:[{node:'ABIScanNorthSouth',axis:[1,0,0],normal:[.64,.25,.72],range:.19,motion:'scan'},{node:'ABIScanEastWest',axis:[0,1,0],normal:[-.64,.45,.63],range:.17,motion:'scan'}],
+  url:'models/abi.glb?v=6',
   camera:{pos:[12,12,16],target:[.4,.35,.1],min:3,max:38},cameraPhone:{pos:[11.5,13,18.5]},distance:6,
   points:{telescope:'AnchorTelescope',bands:'AnchorBands','focal-planes':'AnchorFocalPlanes','scan-system':'AnchorScanSystem',calibration:'AnchorCalibration',readout:'AnchorReadout',controller:'AnchorController',thermal:'AnchorThermal',power:'AnchorPower'},
   views:{
@@ -26,9 +29,9 @@ const scene=illustrated({
     {text:'CRYOCOOLER / RADIATOR',p:[-.04,.002,-1.59],size:[2.33,.22],partIds:['thermal']},
   ],
   paths:{
-    light:[[[-3.2,1.2,5.1],'AnchorScanSystem',[-3.4,1.05,.55],[-2.40,.97,-.65],[-1.43,1.08,.47],[-.48,.94,-.65],'AnchorBands','AnchorFocalPlanes'],['AnchorCalibration','AnchorScanSystem']],
-    data:[['AnchorFocalPlanes',[3.39,.72,1.39],'AnchorReadout',[3.68,.71,1.73],'AnchorController',[5.75,.95,.64]],['AnchorController',[3.56,.84,2.07],'AnchorReadout','AnchorScanSystem']],
-    heat:[['AnchorFocalPlanes',[2.13,.48,-1.33],'AnchorThermal','AnchorRadiator',[4.0,2.2,-4.2]],['AnchorPower','AnchorController'],['AnchorReadout',[2.77,.12,2.74],[4.10,.12,1.77],'AnchorRadiator']],
+    light:[{kind:'light',points:[[-3.2,1.2,5.1],'AnchorScanSystem',[-3.4,1.05,.55],[-2.40,.97,-.65],[-1.43,1.08,.47],[-.48,.94,-.65],'AnchorBands','AnchorFocalPlanes']},{kind:'light',exclusive:true,phases:['reference'],points:['AnchorCalibration','AnchorScanSystem',[-3.4,1.05,.55],'AnchorBands','AnchorFocalPlanes']}],
+    data:[{kind:'analog',points:['AnchorFocalPlanes',[3.39,.72,1.39],'AnchorReadout']},{kind:'image-data',points:['AnchorReadout',[3.68,.71,1.73],'AnchorController',[5.75,.95,.64]]},{kind:'command',points:['AnchorController',[3.56,.84,2.07],[-3.98,1.0,3.0],'AnchorScanSystem']},{kind:'feedback',points:['AnchorScanSystem',[-4.20,1.0,3.0],[-4.5,1.0,1.9],[3.0,.85,1.9],'AnchorController']}],
+    heat:[{kind:'heat',phases:['lift'],points:['AnchorFocalPlanes',[2.13,.48,-1.33],'AnchorThermal']},{kind:'heat',phases:['reject'],points:['AnchorThermal','AnchorRadiator']},{kind:'radiation',points:['AnchorRadiator',[4.0,2.2,-4.2]]},{kind:'electrical',points:['AnchorPower',[-2.60,.42,-2.63],'AnchorThermal']},{kind:'feedback',phases:['sense'],points:['AnchorCooler',[-1.10,.65,-2.9],[-2.60,.42,-2.63]]},{kind:'heat',phases:['reject'],points:['AnchorReadout',[2.77,.12,2.74],[4.10,.12,1.77],'AnchorRadiator']}],
   },
 });
 export const preload=scene.preload;

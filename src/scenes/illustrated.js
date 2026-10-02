@@ -1,11 +1,14 @@
 // Shared scene contract for Blender-authored teaching assemblies. All distances
 // here are drawing coordinates; evidence and physical inputs live in the model.
 import * as THREE from 'three';
-import { copyModel, litScene, preloadModel, teachingLine } from './model-scene.js';
+import { copyModel, litScene, preloadModel } from './model-scene.js';
 import { printDecals, textTexture, stick } from './print-kit.js';
 import { labelController } from './label-visibility.js';
+import { createTeachingSequence } from './teaching-sequence.js';
+import { teachingProgram } from './teaching-programs.js';
+import { createTeachingFlows, createSignalIndicator, createPhaseHighlights } from './teaching-flows.js';
+import { createMirrorDemo } from './mirror-demo.js';
 
-const COLORS = { light:'#e6ba82', data:'#a6f35a', heat:'#ff6b78' };
 export function illustrated(config) {
   return {
     preload: () => preloadModel(config.url),
@@ -40,26 +43,55 @@ export function illustrated(config) {
         return [id,{pos,view:authored||{pos:eye.toArray(),target:[...pos]}}];
       }));
       const hotspots = make(config.points), dataHotspots = make(config.dataPoints||config.points,config.dataViews), heatHotspots = make(config.heatPoints||config.points,config.heatViews);
-      const paths = [], groups = Object.fromEntries(Object.entries(COLORS).map(([mode,color]) => {
-        const group = new THREE.Group(); group.name = `${mode}-teaching-overlay`; scene.add(group);
-        for (const input of config.paths?.[mode]||[]) {
-          const points = input.map(resolve), line = teachingLine(points,color,.75); group.add(line);
-          const geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...points[0])]);
-          const particle = new THREE.Points(geometry,new THREE.PointsMaterial({color,size:.07,transparent:true,opacity:.9,depthWrite:false}));
-          particle.userData.teachingOverlay = true; group.add(particle);
-          paths.push({particle,curve:new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)),false,'catmullrom',0),offset:paths.length*.23});
+      const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const id=config.teaching||config.url.split('/').at(-1).split('.')[0];
+      const paths=createTeachingFlows(config.paths||{},resolve);scene.add(paths.root);
+      const indicator=config.signal?createSignalIndicator(resolve(config.signal),config.signalRadius||.36,config.absorptionSignal?['integrate']:['absorb','integrate']):null;if(indicator)scene.add(indicator.root);
+      const absorption=config.absorptionSignal?createSignalIndicator(resolve(config.absorptionSignal),config.signalRadius||.36,['absorb']):null;if(absorption)scene.add(absorption.root);
+      const highlights=createPhaseHighlights(asset,config.phaseHighlights);
+      const pivots=(config.mechanisms||[]).map(m=>{
+        const node=asset.getObjectByName(m.node);if(!node)throw new Error(`Missing authored mechanism pivot: ${m.node}`);
+        return {...m,node,rest:node.quaternion.clone()};
+      });
+      const mirrors=pivots.filter(p=>p.normal).map(p=>createMirrorDemo(p.node,p.normal));for(const mirror of mirrors)scene.add(mirror.line);
+      let mode='light',clock=createTeachingSequence(teachingProgram(id,mode),{reduced});
+      const listeners=new Set();
+      const changed=()=>{for(const fn of listeners)fn(teaching.state());};
+      let unclock=clock.subscribe(changed);
+      function pose(state){
+        for(const mechanism of pivots){
+          mechanism.node.quaternion.copy(mechanism.rest);
+          if(state.inspection)continue;
+          const phase=state.step.id,p=state.progress;
+          let angle=0;
+          if(mechanism.motion==='scan')angle=phase==='slew'?Math.sin(p*Math.PI*2)*mechanism.range:0;
+          if(mechanism.motion==='reference'){
+            const u=Math.min(1,p/.25),ease=u*u*(3-2*u);
+            angle=phase==='blackbody'?mechanism.range*ease:phase==='space'?mechanism.range*(1-2*ease):0;
+          }
+          mechanism.node.rotateOnAxis(new THREE.Vector3(...mechanism.axis),angle);
         }
-        return [mode,group];
-      }));
+        if(pivots.length)asset.updateMatrixWorld(true);
+        paths.update(state,mode);indicator?.update(state);absorption?.update(state);highlights.update(state);for(const mirror of mirrors)mirror.update(state);
+      }
+      const teaching={
+        state:()=>({...clock.state(),mode,legend:paths.legend(mode,clock.state().steps),note:config.lessonNote||'Drawing motion and sequence timing are illustrative; no real instrument performance is simulated.'}),
+        subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
+        play(){clock.play();pose(clock.state());},pause(){clock.pause();pose(clock.state());},
+        step(delta){clock.step(delta);pose(clock.state());},reset(){clock.reset();pose(clock.state());},
+        setInspection(value){clock.setInspection(value);pose(clock.state());},
+        setSuspended(value){clock.setSuspended(value);},
+      };
       const solids=[];asset.traverse(o=>{if(o.isMesh&&!o.userData.teachingOverlay&&!o.userData.printed&&o.userData.solidForCamera!==false)solids.push(o);});
       const printed=labelController(labels,solids);
-      const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-      return { scene,asset,quality,model,camera,hotspots,dataHotspots,heatHotspots,solids,labels,
+      pose(clock.state());
+      return { scene,asset,quality,model,camera,hotspots,dataHotspots,heatHotspots,solids,labels,teaching,
         updateLabels:printed.update,
-        flows:groups.light.children,dataFlows:groups.data.children,heatFlows:groups.heat.children,
+        flows:paths.records.filter(r=>r.mode==='light').map(r=>r.group),dataFlows:paths.records.filter(r=>r.mode==='data').map(r=>r.group),heatFlows:paths.records.filter(r=>r.mode==='heat').map(r=>r.group),
         look:{exposure:1,bloom:0,threshold:1,ao:0,env:'studio'},
-        setMode(mode) { for(const [id,group] of Object.entries(groups)) group.visible=id===mode; },
-        update(time) { if(reduced)return; for(const {particle,curve,offset} of paths){const p=curve.getPoint((time*.15+offset)%1);particle.geometry.attributes.position.setXYZ(0,p.x,p.y,p.z);particle.geometry.attributes.position.needsUpdate=true;} },
+        setMode(next) {if(mode!==next){mode=next;unclock();clock=createTeachingSequence(teachingProgram(id,mode),{reduced});unclock=clock.subscribe(changed);}pose(clock.state());changed();},
+        setModel(next){this.model=next;},
+        update(time) {pose(clock.tick(time));},
       };
     },
   };

@@ -83,3 +83,16 @@ export function carnotRefrigeratorCOP(coldTemperatureK: number, hotTemperatureK:
   if (hotTemperatureK <= coldTemperatureK) throw new RangeError('Hot temperature must exceed cold temperature');
   return coldTemperatureK / (hotTemperatureK - coldTemperatureK);
 }
+
+/** Cycle energy balance: heat rejected equals heat absorbed plus work supplied.
+ * Inputs are nonnegative energy magnitudes in matching units, or matching steady average powers.
+ * This does not determine whether a cooler can provide the requested cooling or its efficiency.
+ */
+export function coolerEnergyBalance(heatRemoved: number, inputWork: number): number {
+  if (!Number.isFinite(heatRemoved) || heatRemoved < 0 || !Number.isFinite(inputWork) || inputWork < 0) {
+    throw new RangeError('Heat removed and work supplied must be finite and nonnegative');
+  }
+  const rejectedHeat = heatRemoved + inputWork;
+  if (!Number.isFinite(rejectedHeat)) throw new RangeError('Heat balance exceeds the finite numerical range');
+  return rejectedHeat;
+}

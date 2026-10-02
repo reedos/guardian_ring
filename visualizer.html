@@ -68,17 +68,22 @@
             </div>
             <button type="button" class="btn" id="part-play" aria-pressed="false">Auto-cycle</button>
           </div>
+          <button type="button" class="btn presentation-exit" id="presentation-exit" hidden>Exit presentation</button>
         </div>
+        <section class="animation-controls" id="animation-controls" aria-label="Illustrative animation" hidden></section>
       </div>
       <aside class="panel" id="inspector" aria-label="Components">
         <div class="pane-tabs" role="tablist" aria-label="Side pane"><button type="button" class="sheet-toggle" id="sheet-toggle" aria-expanded="false" aria-label="Expand the panel"><i aria-hidden="true"></i></button><button type="button" role="tab" id="tab-parts" data-pane="parts" aria-controls="pane-parts" aria-selected="true">Parts<span class="tab-n" id="parts-n"></span></button><button type="button" role="tab" id="tab-scenario" data-pane="scenario" aria-controls="pane-scenario" aria-selected="false" tabindex="-1">Scenario</button><span class="pane-sum" id="pane-sum">GEO · MWIR</span></div>
         <div class="panel-scroll">
           <section class="scenario pane-scenario" id="pane-scenario" role="tabpanel" aria-labelledby="tab-scenario" hidden>
-            <h2 id="sc-h" class="sc-h">Scenario controls</h2><p class="note">Explore general orbital geometry and ideal optics. The mathematical examples are separate from the representative hardware; civil specifications stay with the named instrument.</p>
-            <div class="sc-controls" id="scenario-controls"></div>
+            <h2 id="sc-h" class="sc-h">Try the physics</h2><p class="note">Change one teaching input and inspect the result. These independent examples do not change the hardware specifications.</p>
+            <div id="physics-results" class="scenario-lab"></div>
+            <details class="scenario-adjust" id="scenario-adjust"><summary>Adjust the teaching inputs</summary><div class="sc-controls" id="scenario-controls"></div></details>
+            <p class="sr-only" id="scenario-announcement" role="status" aria-live="polite" aria-atomic="true"></p>
             <div class="sc-compare"><button type="button" class="btn" id="sc-pin" aria-pressed="false">Pin to compare</button><span id="sc-pinned"></span></div>
           </section>
           <section class="pane-parts" id="pane-parts" role="tabpanel" aria-labelledby="tab-parts">
+          <section class="learning-guide" id="learning-guide" aria-labelledby="learning-question"><p class="eyebrow">In this level</p><h2 id="learning-question"></h2><p id="learning-takeaway"></p><button type="button" class="learning-try" id="learning-try"></button><button type="button" class="btn learning-next" id="learning-next" hidden></button></section>
           <p class="intro" id="intro"></p><button type="button" class="intro-more" id="intro-more" aria-controls="intro" aria-expanded="false" hidden>Read overview</button><div class="parts-head"><span class="eyebrow">Numbered in the view</span></div><ul class="parts" id="parts"></ul>
           <article class="card" id="card" hidden><h3 id="card-t"></h3><p class="k card-function" id="card-k"></p><div class="card-door"><button type="button" class="btn go" id="card-drill" hidden></button><button type="button" class="btn card-more" id="card-more" aria-label="Show all of this component's details">Details <span aria-hidden="true">↑</span></button></div><p id="card-b"></p><section class="card-components" id="card-components" aria-label="Assembly components" hidden></section><dl class="specs" id="card-s"></dl></article>
           <section class="side-levels"><h3 class="eyebrow">Related views</h3><div id="side-levels"></div><a class="catalog-link" href="parts.html">Browse the component catalog →</a></section>

@@ -10,7 +10,7 @@ import { createPartCycle } from './part-cycle.js';
 import { declutterPins, pinLabelBox, avoidPinObstacles } from './pin-layout.js';
 import { chip } from '../evidence.js';
 import { renderComponentDetails } from './component-details.js';
-import { disposeScene } from '../fx.js';
+import { createVisitHistory, retainedPart, capturePane, refreshScenarioContent } from './exploration-context.js';
 import * as orbits from '../scenes/orbits.js';
 import * as satellite from '../scenes/satellite.js';
 import * as payload from '../scenes/payload.js';
@@ -28,6 +28,7 @@ export const isSide = i => i >= MAIN_LEVELS;
 const $ = id => document.getElementById(id), ui = store.ui, view = $('view'), canvas = $('gl');
 const modes = ['light', 'data', 'heat'], keys = { light: 'PARTS', data: 'PARTS_DATA', heat: 'PARTS_HEAT' };
 export const built = [], composers = [];
+const visits = createVisitHistory();
 export const camera = new THREE.PerspectiveCamera(35, 1, .05, 100);
 export const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true; controls.dampingFactor = .1; controls.minDistance = 3; controls.maxDistance = 20;
@@ -66,6 +67,11 @@ export const isCameraMoving = () => busy || !!tween;
 // Progress belongs to the last camera pose played, not a gate callback's clock.
 // Keep the completed value after tween is cleared so observers can record u=1.
 export const getFlightProgress = () => renderedFlightProgress;
+export const getTeaching = () => built[ui.scene]?.teaching || null;
+const inspect = active => getTeaching()?.setInspection(active);
+function captureView() {
+  return { scene: ui.scene, mode: ui.mode, selected: ui.selected, position: camera.position.toArray(), target: controls.target.toArray(), pane: capturePane() };
+}
 export const destination = () => ui.scene;
 export const stageActive = () => $('viewer').contains(document.activeElement) || $('viewer').matches(':hover');
 export const observeFrame = fn => { frameObservers.add(fn); return () => frameObservers.delete(fn); };
@@ -79,6 +85,7 @@ export function settle() {
   controls.update(); camera.updateMatrixWorld(); updatePins();
 }
 export function flyTo(pos, target, duration = .9) {
+  inspect(true);
   const limits = { minDistance: controls.minDistance, maxDistance: controls.maxDistance, minPolarAngle: controls.minPolarAngle, maxPolarAngle: controls.maxPolarAngle };
   const move = { p0: camera.position.clone(), t0: controls.target.clone(), p1: new THREE.Vector3(...pos), t1: new THREE.Vector3(...target), limits, start: 0, duration: duration * TRANSITIONS[transitions] * 1000 };
   constrainCameraPose(move.p1, move.t1, limits);
@@ -154,6 +161,7 @@ function buildPanel() {
   $('intro').textContent = scene.intro; $('parts-n').textContent = ` ${parts.length}`;
   $('lp-k').textContent = isSide(ui.scene) ? 'Side level' : `Level ${ui.scene + 1} of ${MAIN_LEVELS}`;
   $('lp-t').textContent = scene.title; $('back-out').hidden = !isSide(ui.scene);
+  if (isSide(ui.scene)) $('back-out').textContent = `← Back to ${store.C.SCENES[visits.peek()?.scene ?? 0].title.replace(/^The /, 'the ')}`;
   document.querySelectorAll('[data-level]').forEach(button => button.setAttribute('aria-current', +button.dataset.level === ui.scene ? 'step' : 'false'));
   $('parts').replaceChildren(); $('pins').replaceChildren();
   parts.forEach((part, index) => {
@@ -176,7 +184,7 @@ function updateCycle() {
 export function select(id, fly = true) {
   const part = partsFor(ui.scene).find(candidate => candidate.id === id); if (!part) return;
   if (!partCycle.selecting) partCycle.stop();
-  if (fly) { built[ui.scene]?.setMotion?.(false); emit('scene-settings'); }
+  if (fly) { inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); }
   ui.selected = id; $('card').hidden = false; $('card-k').textContent = part.kicker; $('card-t').textContent = part.title; $('card-b').textContent = part.body;
   renderComponentDetails($('card-components'), part.components, { sceneId: store.C.SCENES[ui.scene].id, partId: id });
   $('card-s').replaceChildren();
@@ -208,6 +216,8 @@ export function overview() {
   const preset = built[ui.scene]?.camera; if (!preset) return;
   partCycle.stop(); deselect(); flyTo(preset.pos, preset.target);
 }
+// Playback starts from the whole assembly, after the camera reaches its safe preset.
+export function preparePlayback() { overview(); settle(); inspect(false); emit('scene-settings'); }
 export function cycle(direction) {
   const parts = partsFor(ui.scene); if (!parts.length) return;
   const index = parts.findIndex(part => part.id === ui.selected);
@@ -218,20 +228,24 @@ const partCycle = createPartCycle({ parts: () => partsFor(ui.scene).map(part => 
 export function setMode(mode) {
   if (!modes.includes(mode)) return;
   partCycle.stop();
-  const previous=hotspotsFor(ui.scene)[ui.selected]?.view;
+  const selected = ui.selected;
+  const previous=hotspotsFor(ui.scene)[selected]?.view;
   ui.mode = mode; document.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
   if (ui.scene >= 0) {
     built[ui.scene]?.setMode(mode);
-    const id=hasPart(ui.scene,ui.selected)?ui.selected:partsFor(ui.scene)[0]?.id;
+    const id=selected === null ? null : hasPart(ui.scene,selected)?selected:partsFor(ui.scene)[0]?.id;
     const next=hotspotsFor(ui.scene)[id]?.view;
     buildPanel();
     if(id)select(id,!!previous&&JSON.stringify(previous)!==JSON.stringify(next));
   }
   emit('mode', mode);
 }
-export async function go(index) {
+export async function go(index, { record = true, restore = null } = {}) {
   if (typeof index === 'string') index = store.C.SCENES.findIndex(scene => scene.id === index);
   if (!Number.isInteger(index) || index < 0 || index >= sceneCount) return;
+  const firstView = ui.scene < 0;
+  if (record) visits.enter(captureView(), index, isSide(index));
+  built[ui.scene]?.teaching?.pause();
   const epoch = ++buildEpoch; busy = true; partCycle.stop(); $('veil').hidden = false; $('veil').classList.remove('off'); $('veil').textContent = 'Preparing the scene…';
   try {
     if (!built[index]) {
@@ -243,18 +257,30 @@ export async function go(index) {
     }
     if (epoch !== buildEpoch) return;
     ui.scene = index; ui.selected = null; tween = null; renderedFlightProgress = 1;
+    if (restore) ui.mode = restore.mode;
     const preset = built[index].camera; camera.position.set(...preset.pos); controls.target.set(...preset.target); camera.near = preset.near; camera.far = preset.far; controls.minDistance = preset.min; controls.maxDistance = preset.max;
     controls.update(); built[index].setMode(ui.mode); buildPanel(); resize(); emit('scene', index);
-    select(partsFor(index)[0]?.id, false); $('veil').hidden = true;
+    if (restore) {
+      document.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === ui.mode)));
+      const id = retainedPart(partsFor(index), restore.selected);
+      if (id) { inspect(true); select(id, false); } else deselect();
+      camera.position.fromArray(restore.position); controls.target.fromArray(restore.target); settle();
+      emit('mode', ui.mode); emit('restore-pane', { ...restore.pane, restoreFocus: true });
+    } else { select(partsFor(index)[0]?.id, false); if (!firstView) emit('pane-request', { pane: 'parts', reset: true }); }
+    $('veil').hidden = true; emit('scene-settings');
   } catch (error) { $('veil').textContent = 'The viewer could not start. Reload to try again; the source and method pages remain available.'; throw error; }
   finally { if (epoch === buildEpoch) busy = false; }
 }
-export async function show({ scene = ui.scene, mode = ui.mode, part = null }) { if (modes.includes(mode)) ui.mode = mode; await go(scene); setMode(mode); if (part) select(part); }
-export async function backOut() { await go(0); }
+export async function show({ scene = ui.scene, mode = ui.mode, part = null }) { if (modes.includes(mode)) ui.mode = mode; await go(scene, { record: false }); setMode(mode); if (part) select(part); }
+export async function backOut() { const origin = visits.back(); await go(origin?.scene ?? 0, { record: false, restore: origin }); }
 on('scenario', () => {
   if (!started) return;
-  built.forEach(item => item && disposeScene(item.scene)); built.length = 0;
-  return go(Math.max(0, ui.scene));
+  // Scene geometry represents hardware, not these independent mathematical inputs.
+  // Refresh model-aware teaching overlays and evidence without resetting the view.
+  if (ui.scene < 0) return;
+  refreshScenarioContent({ built, model: store.M, parts: partsFor(ui.scene), selected: ui.selected,
+    refreshPanel: buildPanel, select, deselect, pane: capturePane(), restorePane: pane => emit('restore-pane', pane) });
+  emit('scene-settings');
 });
 function median(values) { const sorted = [...values].sort((a, b) => a - b); return sorted[Math.floor(sorted.length / 2)] || 0; }
 function govern(now) {
@@ -292,7 +318,11 @@ export function start() {
   document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
   $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('part-play').addEventListener('click', () => partCycle.toggle()); $('back-out').addEventListener('click', backOut);
   $('quality').addEventListener('change', event => setQualityPreference(event.target.value));
-  controls.addEventListener('start', () => { tween = null; partCycle.stop(); });
+  controls.addEventListener('start', () => { tween = null; partCycle.stop(); inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); });
+  document.addEventListener('visibilitychange', () => {
+    const suspended = document.hidden || $('src-pop')?.hidden === false || $('page-sheet')?.hidden === false;
+    getTeaching()?.setSuspended?.(suspended); built[ui.scene]?.setSuspended?.(suspended);
+  });
   new ResizeObserver(resize).observe(view);
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && partCycle.playing) partCycle.stop();
@@ -304,6 +334,8 @@ export function start() {
   let last = performance.now();
   renderer.setAnimationLoop(now => {
     const dt = Math.max(0, (now - last) / 1000); last = now;
+    const suspended = document.hidden || $('src-pop')?.hidden === false || $('page-sheet')?.hidden === false;
+    getTeaching()?.setSuspended?.(suspended); built[ui.scene]?.setSuspended?.(suspended);
     if (document.hidden || ui.scene < 0 || !built[ui.scene]) return;
     const cpuStart = performance.now();
     if (tween) { const u = Math.max(0, Math.min(1, (now - tween.start) / tween.duration)); poseAt(tween, u, camera.position, controls.target); renderedFlightProgress = u; if (u >= 1) tween = null; }

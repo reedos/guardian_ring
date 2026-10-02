@@ -316,6 +316,7 @@ PC, real GPU).
 | `parts.mjs` | every numbered part has a pin and a card |
 | `labels.mjs desktop` / `phone` | printed names are unobstructed when shown, every nameplate has a clear authored desktop view, selected component callouts stay readable |
 | `ui.mjs` | controls don't collide, phone and desktop |
+| `learning.mjs desktop` / `phone` | playback, source-reading hold, reduced-motion stepping, retained scenarios and nested side visits work |
 | `coplanar.mjs` | no flush surfaces that flicker |
 | `flights.mjs` | 0 camera moves through geometry, both forms |
 | `perf.mjs desktop` / `phone` | inside budget |

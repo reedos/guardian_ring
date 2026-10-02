@@ -1,5 +1,6 @@
 import { illustrated } from './illustrated.js';
 const scene=illustrated({
+  teaching:'plume',
   url:'models/plume.glb?v=2',
   camera:{pos:[8,5.8,11],target:[0,3.2,0],min:3,max:28},distance:7,
   points:{source:'AnchorSource',bands:'AnchorBands',timeline:'AnchorTimeline',co2:'AnchorCO2',h2o:'AnchorH2O'},
@@ -11,9 +12,9 @@ const scene=illustrated({
     h2o:{pos:[-5.0,3.4,6.8],target:[-1.65,2.75,-.025]},
   },
   paths:{
-    light:[['AnchorSource',[2.5,2.3,1],[3.5,3.8,1.5]],['AnchorBands',[3,4.5,1],[4,5.2,1.5]]],
-    data:[['AnchorSource',[.8,2.5,1],'AnchorBands',[.8,5,.8],'AnchorTimeline']],
-    heat:[['AnchorSource',[-.6,2.5,.5],[-1,4.2,.5],'AnchorTimeline']],
+    light:[{kind:'radiation',phases:['emit'],points:['AnchorCO2',[3.5,4.7,1.5]]},{kind:'radiation',phases:['emit'],points:['AnchorH2O',[-3.5,3.7,1.5]]}],
+    data:[{kind:'timeline',points:[[2.9,1.3,1.9],[2.9,5.0,1.9]]}],
+    heat:[{kind:'radiation',phases:['emit'],points:['AnchorSource',[3.5,2.8,1.5]]}],
   },
 });
 export const preload=scene.preload;

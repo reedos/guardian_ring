@@ -43,11 +43,12 @@ def card(h,m,name,at,size=(1.4,.82),kind='digital'):
         for dx in [-.35,0,.35]:h.box(name+' driver heat spreader',(x+dx,y+.23,z),(.22,.035,.27),m['edge'],.004)
     h.connector(name+' schematic electrical interface',(x,y+.05,z+d/2+.09),min(.66,w*.7),m)
 
-def scan(h,m,name,at,normal,scale=1,axis='x'):
+def scan(h,m,name,at,normal,scale=1,axis='x',motion=None):
     x,y,z=at;s=scale
     h.box(name+' deck',(x,.08,z),(1.95*s,.12,1.15*s),m['silver'])
-    plate(h,m,name+' mirror backing',at,(.94*s,.81*s),normal,'dark',.09)
-    n=Vector(normal).normalized();plate(h,m,name+' optical face',Vector(at)+n*.061,(.84*s,.71*s),normal)
+    backing=plate(h,m,name+' mirror backing',at,(.94*s,.81*s),normal,'dark',.09)
+    n=Vector(normal).normalized();face=plate(h,m,name+' optical face',Vector(at)+n*.061,(.84*s,.71*s),normal)
+    if motion:h.motion([backing,face],motion,at,(1,0,0) if axis=='x' else (0,1,0))
     if axis=='x':
         for sign in [-1,1]:
             xx=x+sign*.58*s

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { copyModel, litScene, preloadModel, teachingLine } from './model-scene.js';
+import { DRAWN_ORBITS, drawnOrbitPosition } from './orbit-motion.js';
 
 const URL = 'models/earth-orbits.glb?v=2';
 // A fixed lighting direction for the illustration, unrelated to a date or ephemeris.
@@ -45,6 +46,12 @@ export function build({ quality, model }) {
   family.heo.visible = false; family.meo.visible = false; family.leo.visible = false;
   const satellites = []; asset.traverse(o => { if (o.userData.role === 'representative-satellite') satellites.push(o); });
   const moving = { value: !matchMedia('(prefers-reduced-motion: reduce)').matches };
+  let elapsed=0,suspended=false;
+  const orbiters=DRAWN_ORBITS.map(spec=>{
+    const node=asset.getObjectByName(`${spec.family.toUpperCase()}_Satellite_${String(spec.index).padStart(2,'0')}`);
+    if(!node)throw new Error(`Missing drawn orbiter: ${spec.family} ${spec.index}`);
+    return {spec,node,radial:node.position.clone().normalize(),attitude:node.quaternion.clone()};
+  });
   const layerGroups = Object.fromEntries(['light','data','heat'].map(id => [id, new THREE.Group()]));
   Object.values(layerGroups).forEach(group => spin.add(group));
   // Every overlay below is an identified illustration, not a performance model.
@@ -83,9 +90,21 @@ export function build({ quality, model }) {
     setMode(mode) { for (const [id,group] of Object.entries(layerGroups)) group.visible = id === mode; },
     setPart(id) { if(family[id])family[id].visible=true; },
     setMotion(play) { moving.value = play; last = null; },
+    setSuspended(value) {const next=!!value;if(next!==suspended){suspended=next;last=null;}},
+    setModel(next){this.model=next;},
     motion() { return moving.value; },
     setFamily(id,visible) { if (family[id]) family[id].visible = visible; },
     families() { return Object.fromEntries(Object.entries(family).map(([id,group])=>[id,group.visible])); },
-    update(time) { if (last !== null && moving.value) spin.rotation.y += Math.min(.1,Math.max(0,time-last))*.065; last=time; locate(); },
+    update(time) {
+      const dt=last===null?0:Math.max(0,time-last);last=time;
+      if(moving.value&&!suspended&&dt<=1){
+        elapsed+=dt;spin.rotation.y=elapsed*.065;
+        for(const {spec,node,radial,attitude} of orbiters){
+          node.position.set(...drawnOrbitPosition(spec,elapsed));
+          node.quaternion.setFromUnitVectors(radial,node.position.clone().normalize()).multiply(attitude);
+        }
+      }
+      locate();
+    },
   };
 }

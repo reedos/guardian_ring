@@ -1,5 +1,7 @@
 import { illustrated } from './illustrated.js';
 const scene=illustrated({
+  teaching:'pixel',signal:'AnchorReadout',absorptionSignal:'AnchorAbsorber',signalRadius:.42,
+  phaseHighlights:{absorb:'Absorber',integrate:'Readout'},
   url:'models/pixel.glb?v=2',
   camera:{pos:[4.7,3.6,6],target:[0,1.25,0],min:2,max:18},distance:5.5,
   points:{absorber:'AnchorAbsorber',contact:'AnchorContact',readout:'AnchorReadout',bump:'AnchorBump',support:'AnchorSupport',output:'AnchorOutput'},
@@ -13,8 +15,8 @@ const scene=illustrated({
   },
   paths:{
     light:[[[0,3.6,.1],'AnchorAbsorber']],
-    data:[['AnchorAbsorber','AnchorContact','AnchorBump',[0,.5,.1],'AnchorReadout','AnchorOutput']],
-    heat:[['AnchorAbsorber',[.75,1.8,.6],[.75,.5,.6],[1.5,.3,.9]],['AnchorReadout',[1.1,.5,-.21],[1.5,.7,-.5]]],
+    data:[{kind:'charge',phases:['integrate','readout'],points:['AnchorAbsorber','AnchorContact','AnchorBump',[0,.5,.1],'AnchorReadout']},{kind:'analog',phases:['digitize','transfer'],points:['AnchorReadout','AnchorOutput']}],
+    heat:[{kind:'heat',phases:['lift','reject'],points:['AnchorAbsorber',[.75,1.8,.6],[.75,.5,.6],'AnchorSupport']},{kind:'heat',phases:['reject'],points:['AnchorReadout',[1.1,.5,-.21],'AnchorSupport']}],
   },
 });
 export const preload=scene.preload;

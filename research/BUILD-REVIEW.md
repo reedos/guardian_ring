@@ -1,6 +1,6 @@
 # Guardian Ring review build
 
-10/01/2026. The expanded component-anatomy and label revision is undergoing full built-preview acceptance. Reed's device review and separate launch decision remain open.
+10/02/2026. The expanded anatomy, readable labels, guided exploration, and engineering-animation revision is undergoing combined built-preview acceptance. Reed's device review and separate launch decision remain open.
 
 ## Current scope
 
@@ -14,7 +14,15 @@ Physical nameplates use a visibility guard that hides covered, edge-on or unread
 
 Three cited system diagrams explain selected GOES-R support paths, ABI instrument paths, and TIRS-2 interfaces. Their component names and evidence come from the same catalog. They distinguish light, data/control, electrical power, heat, and mechanical motion without presenting circuit schematics or complete wiring diagrams.
 
+Each level now provides a guiding question, a takeaway, a contextual physics link, and a separate next-level action. Side visits restore the originating component, layer, camera, panel and keyboard focus. Changing a teaching input retains the scene and selection, including Overview, while updating calculated results and evidence. The physics panel leads with the result and lets the reader expand inputs and derivations. Detector material choices are explicitly a reference catalog, with no quantitative response inferred from the material name. ABI wildfire monitoring and Landsat water-use applications connect observations to validated derived products.
+
+Replayable sequences distinguish light, detector signals, analog measurements, image data, commands, measured feedback, electrical power, conducted heat and radiation. The clock supports pause, reset and deliberate stepping; reading evidence suspends playback without overriding the user's pause choice. Reduced-motion preferences start with a stable scene. Component inspection restores the validated stationary pose before camera navigation. ABI v6 and TIRS-2 v5 isolate moving mirror assemblies from their fixed supports. Their paths show representative optical connections rather than a complete instrument prescription. Orbit markers remain on their drawing guides, with uniform mean-anomaly advance and nonuniform motion around an ellipse; Earth and GEO co-rotate.
+
+The first-principles review checked energy conservation, optical and electrical interface meanings, warm and cold boundaries, mechanism supports, and the relation between drawing coordinates and physical calculations. It corrected a power route that ended at a cold strap, moved radiated heat to the actual radiator face, separated command and encoder directions, and kept calibration reference views sequential. The cooler equation explicitly assumes no net stored energy over a complete cycle. General design practices and these demonstrations do not establish flight qualification, a complete bill of materials, or real instrument performance.
+
 The admitted research ledger contains 241 facts, including 31 new rows from the public spacecraft-design gap review. It contains 40 verified research sources; the runtime registry also includes seven existing model sources. The additions cover computer support functions, mechanical interfaces, contamination control, protective surfaces, ground equipment and detector packaging. The historically verified GOES-R Data Book supplies named civil hardware; newly opened NASA, ESA and ECSS sources support general design practices and explicitly named civil examples. See `PUBLIC-DESIGN-GAP-REVIEW.md`, `design-practices-facts.json`, `COMPREHENSIVE-SYSTEMS-REVIEW.md` and `tirs2-architecture-review.md` for scope, exact locators and access outcomes. Fresh failed access attempts are recorded separately and supply no new claims.
+
+The engineering-learning review adds six directly verified primary sources for civil applications, thermal accounting, and Kepler coordinates, bringing the runtime registry to 53 sources. Its five additional claims attach to the same evidence system. Two unsuccessful USGS opens remain unchecked and uncited. Exact locators and boundaries are recorded in `engineering-review.json`.
 
 ## Validation status
 

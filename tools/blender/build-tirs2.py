@@ -1,4 +1,4 @@
-"""TIRS-2 civil assembly v4; nine groups. Public NASA architecture vocabulary.
+"""TIRS-2 civil assembly v5; nine groups. Public NASA architecture vocabulary.
 Lens/array counts retained; packaging and dimensions as drawn. Fixed filters
 and ground-set alignment shims, not an added on-orbit focus actuator.
 """
@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('civil',Path(__file__).with_name('civil-detail.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c);h=c.load_h()
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=4
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=5
 m['lens']=h.material('Refractive element teaching blue',(.16,.38,.47),.25,.22)
 c.bench(h,m,(.40,-.27,.10),(10.4,8.25))
 h.role('Telescope')
@@ -20,9 +20,10 @@ for x in [-3.26,-1.44]:h.box('Optical bench rail',(x,.20,.31),(.07,.10,2.77),m['
 c.plaque(h,m,'Refractive telescope',(-2.36,-.055,1.98),2.42)
 h.role('SceneSelect')
 h.ring('Scene-select bearing housing',(-2.35,1.10,2.89),.70,.47,.23,m['silver'],'z',48)
-h.ring('Scene-select rotor',(-2.35,1.10,3.03),.55,.44,.12,m['dark'],'z',48)
-c.plate(h,m,'Scene-select mirror backing',(-2.35,1.10,3.17),(.98,1.14),(.70,0,.71),'dark',.095)
-c.plate(h,m,'Scene-select reflective surface',(-2.307,1.10,3.213),(.88,1.04),(.70,0,.71))
+rotor=h.ring('Scene-select rotor',(-2.35,1.10,3.03),.55,.44,.12,m['dark'],'z',48)
+backing=c.plate(h,m,'Scene-select mirror backing',(-2.35,1.10,3.17),(.98,1.14),(.70,0,.71),'dark',.095)
+face=c.plate(h,m,'Scene-select reflective surface',(-2.307,1.10,3.213),(.88,1.04),(.70,0,.71))
+h.motion([rotor,backing,face],'TIRSSceneSelect',(-2.35,1.10,3.03),(0,0,1))
 h.cyl('Scene-select drive motor',(-3.19,1.10,2.83),.22,.44,m['dark'],'z',32)
 h.cyl('Scene-select encoder housing',(-2.35,1.10,2.65),.35,.09,m['edge'],'z',32)
 for xx in [-2.92,-1.78]:h.box('Scene-select bearing support',(xx,.55,2.89),(.17,1.04,.27),m['silver'])

@@ -7,6 +7,53 @@ export const SIDEREAL_DAY_SECONDS = 86164.09054;
 function positive(value: number, name: string) {
   if (!Number.isFinite(value) || value <= 0) throw new RangeError(`${name} must be finite and positive`);
 }
+function elliptic(eccentricity: number) {
+  if (!Number.isFinite(eccentricity) || eccentricity < 0 || eccentricity >= 1) {
+    throw new RangeError('Elliptic eccentricity must be finite and in [0, 1)');
+  }
+}
+function wrappedRadians(angle: number): number {
+  const remainder = angle % (2 * Math.PI);
+  return remainder > Math.PI ? remainder - 2 * Math.PI : remainder < -Math.PI ? remainder + 2 * Math.PI : remainder;
+}
+
+/** Uniform mean anomaly, wrapped to [-pi, pi]. Elapsed time and period use the same time unit. */
+export function meanAnomalyRadians(elapsedSeconds: number, periodSeconds: number, initialPhase = 0): number {
+  positive(periodSeconds, 'Period');
+  if (!Number.isFinite(elapsedSeconds) || !Number.isFinite(initialPhase)) throw new RangeError('Time and phase must be finite');
+  // Reduce before multiplying so long-running illustration clocks do not overflow.
+  return wrappedRadians(wrappedRadians(initialPhase) + 2 * Math.PI * ((elapsedSeconds % periodSeconds) / periodSeconds));
+}
+
+/** Solve M = E - e sin(E) in radians. Bracketed Newton steps also handle nearly parabolic ellipses. */
+export function eccentricAnomalyRadians(meanAnomaly: number, eccentricity: number): number {
+  elliptic(eccentricity);
+  if (!Number.isFinite(meanAnomaly)) throw new RangeError('Mean anomaly must be finite');
+  const mean = wrappedRadians(meanAnomaly);
+  if (eccentricity === 0 || mean === 0 || Math.abs(mean) === Math.PI) return mean;
+  let low = -Math.PI, high = Math.PI, eccentric = mean;
+  for (let iteration = 0; iteration < 80; iteration++) {
+    const residual = eccentric - eccentricity * Math.sin(eccentric) - mean;
+    if (residual === 0) return eccentric;
+    if (residual > 0) high = eccentric; else low = eccentric;
+    const newton = eccentric - residual / (1 - eccentricity * Math.cos(eccentric));
+    const next = newton > low && newton < high ? newton : (low + high) / 2;
+    if (Math.abs(next - eccentric) <= Number.EPSILON * Math.max(1, Math.abs(next))) return next;
+    eccentric = next;
+  }
+  return eccentric;
+}
+
+/** Focus at the origin; +x points to pericenter, motion initially toward +y. Length units follow a.
+ * Drawing coordinates are valid inputs, but must not be presented as physical spacecraft distances.
+ */
+export function orbitalPlanePosition(semiMajorAxis: number, eccentricity: number, meanAnomaly: number) {
+  positive(semiMajorAxis, 'Semi-major axis');
+  const eccentric = eccentricAnomalyRadians(meanAnomaly, eccentricity);
+  const x = semiMajorAxis * (Math.cos(eccentric) - eccentricity);
+  const y = semiMajorAxis * Math.sqrt((1 - eccentricity) * (1 + eccentricity)) * Math.sin(eccentric);
+  return { x, y, radius: Math.hypot(x, y), eccentricAnomalyRadians: eccentric };
+}
 
 /** Keplerian period for a negligible-mass body, with distance measured from the central body's center. */
 export function orbitalPeriodSeconds(semiMajorAxisM: number, gmM3S2 = EARTH_GM_M3_S2): number {
@@ -24,9 +71,7 @@ export function semiMajorAxisMeters(periodSeconds: number, gmM3S2 = EARTH_GM_M3_
 /** Radius at a true anomaly in radians; this is ellipse geometry, not an ephemeris. */
 export function orbitalRadiusMeters(semiMajorAxisM: number, eccentricity: number, trueAnomalyRadians: number): number {
   positive(semiMajorAxisM, 'Semi-major axis');
-  if (!Number.isFinite(eccentricity) || eccentricity < 0 || eccentricity >= 1) {
-    throw new RangeError('Elliptic eccentricity must be finite and in [0, 1)');
-  }
+  elliptic(eccentricity);
   if (!Number.isFinite(trueAnomalyRadians)) throw new RangeError('True anomaly must be finite');
   return semiMajorAxisM * (1 - eccentricity ** 2) / (1 + eccentricity * Math.cos(trueAnomalyRadians));
 }

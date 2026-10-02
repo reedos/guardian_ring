@@ -1237,3 +1237,92 @@ body.app .panel-scroll > * { min-width: 0; }
 .scenario-comparison [data-comparison-side='current'] .comparison-value { color: var(--accent); }
 .scenario-comparison .chip { justify-self: end; }
 @media (max-width: 760px) { .scenario-comparison .chip { min-height: 36px; } }
+
+/* A short learning path inside IF's existing inspector and transport shell. */
+.learning-guide { display: grid; gap: 10px; padding: 0 0 18px; border-bottom: 1px solid var(--line); }
+.learning-guide .eyebrow, .learning-guide p { margin: 0; }
+.learning-guide h2 { margin: 0; color: var(--ink); font: 500 28px/1.08 var(--display); }
+.learning-guide > p:not(.eyebrow) { color: var(--muted); font: 400 12px/1.6 var(--sans); }
+.learning-try, .math-adjust { appearance: none; border: 0; padding: 10px 0; min-height: 44px; background: none; color: var(--accent); text-align: left; cursor: pointer; font: 500 12px/1.5 var(--sans); text-decoration: underline; text-underline-offset: 4px; }
+.learning-next { width: 100%; min-height: 44px; white-space: normal; justify-content: space-between; text-align: left; font-size: 11px; line-height: 1.5; }
+.learning-example { padding-top: 12px; border-top: 1px solid var(--line); }
+.learning-example summary { cursor: pointer; padding-block: 10px; min-height: 44px; color: var(--ink); font: 500 12px/1.5 var(--sans); }
+.learning-example p { margin: 8px 0 12px; color: var(--muted); font: 400 12px/1.6 var(--sans); }
+.learning-source { display: block; width: fit-content; padding-block: 12px; min-height: 44px; color: var(--accent); font: 400 11px/1.5 var(--sans); text-underline-offset: 3px; }
+.component-detail summary { cursor: pointer; position: relative; display: grid; gap: 6px; min-height: 44px; padding: 8px 26px 8px 0; list-style: none; }
+.component-detail summary::-webkit-details-marker { display: none; }
+.component-detail summary::after { content: '+'; position: absolute; top: 10px; right: 2px; color: var(--accent); font: 400 20px/1 var(--mono); }
+.component-detail[open] summary::after { content: '−'; }
+.component-detail summary .component-role { display: block; }
+.component-detail .component-title { color: var(--ink); font: 600 24px/1.08 var(--display); text-transform: uppercase; }
+.component-detail > p { margin: 10px 0; }
+.component-detail:not([open]) > :not(summary) { display: none; }
+.component-detail:has(summary) { display: block; }
+.scenario-adjust { border: 1px solid var(--line-2); padding: 0 14px; }
+.scenario-adjust > summary { min-height: 48px; display: list-item; padding: 15px 0; cursor: pointer; color: var(--ink); font: 500 12px/1.4 var(--sans); }
+.scenario-adjust .sc-controls { padding-bottom: 18px; }
+.sc-input-note { margin: 0; color: var(--muted); font: 400 11px/1.6 var(--sans); }
+.sc-group > a { color: var(--accent); font: 400 11px/1.5 var(--sans); }
+.scenario-lab { display: grid; gap: 16px; }
+.scenario-lab details { margin-top: 14px; border-top: 1px solid var(--line-2); }
+.scenario-lab details > summary { min-height: 44px; padding: 13px 0; cursor: pointer; color: var(--ink); font: 500 11px/1.5 var(--sans); }
+.scenario-lab .math-current { border-color: #e6ba8270; }
+.scenario-lab .math-context-tag { margin: 0; color: var(--accent); font: 500 10px/1.4 var(--mono); }
+.scenario-lab .math-adjust { margin-top: 8px; }
+.scenario-lab > a { color: var(--muted); font: 400 11px/1.5 var(--sans); }
+.learning-try:focus-visible, .math-adjust:focus-visible, summary:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
+.presentation-exit[hidden] { display: none; }
+.animation-controls { flex: none; padding: 10px 14px; border-top: 1px solid var(--line); background: var(--surface); min-width: 0; }
+.animation-controls[hidden] { display: none; }
+.animation-controls button { min-height: 44px; }
+.animation-transport { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.animation-transport .btn { padding-inline: 10px; font-size: 10px; line-height: 1.3; }
+.animation-transport [data-action='play'] { min-width: 125px; justify-content: center; color: var(--accent); }
+.animation-transport [data-action='previous'], .animation-transport [data-action='next'] { min-width: 44px; justify-content: center; font-size: 18px; }
+.animation-counter { margin-left: auto; color: var(--muted); font: 400 10px/1.5 var(--mono); white-space: nowrap; }
+.animation-controls .animation-step { margin: 7px 0 0; color: var(--ink); font: 500 17px/1.2 var(--display); }
+.animation-explanation { min-width: 0; }
+.animation-explanation > summary, .orbit-playback-note > summary { min-height: 36px; cursor: pointer; padding: 10px 0; color: var(--muted); font: 400 10px/1.4 var(--sans); }
+.animation-description { margin: 0 0 8px; max-width: 88ch; color: var(--muted); font: 400 11px/1.5 var(--sans); }
+.animation-legend { display: flex; flex-wrap: wrap; gap: 7px 14px; min-width: 0; margin-block: 8px; }
+.animation-legend > span { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font: 400 9px/1.4 var(--mono); }
+.animation-legend i { width: 14px; height: 2px; flex: none; }
+.animation-note { margin: 8px 0 0; color: var(--muted); font: 400 9px/1.5 var(--sans); }
+.animation-evidence { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.orbit-playback { flex: none; padding: 10px 14px; border-top: 1px solid var(--line); background: var(--surface); }
+.orbit-playback[hidden] { display: none; }
+.orbit-playback-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 14px; }
+.orbit-playback .orbit-families { display: flex; gap: 6px; flex-wrap: wrap; }
+.orbit-playback .btn { min-width: 44px; min-height: 44px; padding-inline: 12px; justify-content: center; font-size: 10px; }
+.orbit-playback #day-play { color: var(--accent); min-width: 126px; }
+.orbit-playback [data-family][aria-pressed='true'] { border-color: var(--accent); color: var(--accent); }
+.orbit-playback-note { max-width: 860px; margin: auto; }
+.orbit-playback-note p { margin: 0; color: var(--muted); font: 400 11px/1.5 var(--sans); }
+@media (min-width: 1101px) {
+  .animation-controls { display: grid; grid-template-columns: minmax(300px,.9fr) minmax(0,1.1fr); column-gap: 20px; align-items: start; }
+  .animation-transport { grid-column: 1; grid-row: 1; }
+  .animation-step { grid-column: 1; grid-row: 2; }
+  .animation-explanation { grid-column: 2; grid-row: 1 / span 2; }
+  .animation-explanation[open] > summary { padding-top: 0; min-height: 25px; }
+}
+@media (max-width: 760px) {
+  .learning-guide { gap: 8px; padding-bottom: 12px; }
+  .learning-guide h2 { font-size: 25px; }
+  .card-components { gap: 8px; padding-block: 12px; }
+  .component-detail + .component-detail { padding-top: 8px; }
+  .component-detail h5, .component-detail .component-title { font-size: 22px; }
+  .sc-seg button { min-height: 44px; }
+  body.app #back-out { min-height: 44px; }
+  .animation-controls, .orbit-playback { padding: 7px 12px 3px; }
+  .animation-transport { flex-wrap: nowrap; gap: 4px; }
+  .animation-transport .btn { padding-inline: 7px; }
+  .animation-transport [data-action='play'] { min-width: 0; flex: 1 1 115px; }
+  .animation-transport .animation-counter { font-size: 9px; }
+  .animation-controls .animation-step { font-size: 15px; margin-top: 5px; }
+  .animation-explanation > summary, .orbit-playback-note > summary { min-height: 44px; padding-block: 13px; }
+  .animation-explanation[open] { max-height: 150px; overflow: auto; }
+  .orbit-playback-row { gap: 6px; flex-wrap: nowrap; }
+  .orbit-playback #day-play { min-width: 105px; }
+  .orbit-playback .orbit-families { gap: 4px; flex-wrap: nowrap; }
+  .orbit-playback .btn { padding-inline: 6px; font-size: 9px; }
+}
