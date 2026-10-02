@@ -422,6 +422,10 @@ export async function run(name,form=process.argv[2]||'desktop'){
      if(b.teaching){b.teaching.reset();if(index<0)b.teaching.setInspection(true);else b.teaching.seek(index,0);}
      else b.setMotion?.(index>=0);
     },phase.index);
+    // Match IF's settled-view benchmark: 24 uncapped frames can last less than
+    // the pin's 150 ms selection transition. Keep all measured slow frames.
+    await page.waitForTimeout(300);
+    await page.waitForFunction(()=>!document.getAnimations().some(a=>a instanceof CSSTransition&&a.playState==='running'),null,{timeout:5000});
     const r=await page.evaluate(index=>new Promise((resolve,reject)=>{
      const values=[],b=grx.built[grx.state.scene],started=performance.now(),named=index>=0&&!!b.teaching;
      const progressBins=Array(10).fill(0);let last=started,warm=24,restarts=0,completePasses=0,minProgress=1,maxProgress=0,previousProgress=0,calls=0,triangles=0;
@@ -463,8 +467,9 @@ export async function run(name,form=process.argv[2]||'desktop'){
     if(r.tier!==0)fail.push(`${sc.id}/${mode}/${phase.name}: measured tier ${r.tier}, expected 0`);
     if(r.p95>(form==='phone'?7:15))fail.push(`${sc.id}/${mode}/${phase.name}: p95 ${r.p95.toFixed(2)} ms exceeds budget`);
    }
+   console.log(`${sc.id}/${mode}: ${phases.length+2} performance conditions checked`);
   }
-  details.rows=rows;details.worstP95=Math.max(...rows.map(r=>r.p95));console.log(`Worst p95 ${details.worstP95.toFixed(2)} ms`);
+  details.rows=rows;details.settleMilliseconds=300;details.minimumSamples=240;details.worstP95=Math.max(...rows.map(r=>r.p95));console.log(`Worst p95 ${details.worstP95.toFixed(2)} ms`);
  } else if(name==='govern'){
   const rows=[];
   const inspect=async(tier,label,preference=null)=>{

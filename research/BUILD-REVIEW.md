@@ -1,6 +1,6 @@
 # Guardian Ring review build
 
-10/02/2026. The expanded anatomy, readable labels, guided exploration, and engineering-animation revision is undergoing combined built-preview acceptance. Reed's device review and separate launch decision remain open.
+10/02/2026. The expanded anatomy, readable labels, guided exploration, and engineering-animation revision is implemented on `codex/public-design-gap-audit`. Built-preview acceptance is incomplete: 19 of 20 browser gate commands pass; phone performance remains unresolved. This revision has not been merged, pushed, or deployed. Reed's device review and separate launch decision remain open.
 
 ## Current scope
 
@@ -16,6 +16,8 @@ Three cited system diagrams explain selected GOES-R support paths, ABI instrumen
 
 Each level now provides a guiding question, a takeaway, a contextual physics link, and a separate next-level action. Side visits restore the originating component, layer, camera, panel and keyboard focus. Changing a teaching input retains the scene and selection, including Overview, while updating calculated results and evidence. The physics panel leads with the result and lets the reader expand inputs and derivations. Detector material choices are explicitly a reference catalog, with no quantitative response inferred from the material name. ABI wildfire monitoring and Landsat water-use applications connect observations to validated derived products.
 
+The component selector and Previous / Overview / Next controls stay available alongside the lesson. Portrait layouts reserve space for both the model and reading pane; short landscape layouts place the model beside the controls and lesson. Expanded explanations scroll within their available space. Rotation preserves the scene, selection, playback state and keyboard focus. Selected callouts wrap full component names and avoid navigation overlays instead of covering the controls.
+
 Replayable sequences distinguish light, detector signals, analog measurements, image data, commands, measured feedback, electrical power, conducted heat and radiation. The clock supports pause, reset and deliberate stepping; reading evidence suspends playback without overriding the user's pause choice. Reduced-motion preferences start with a stable scene. Component inspection restores the validated stationary pose before camera navigation. ABI v6 and TIRS-2 v5 isolate moving mirror assemblies from their fixed supports. Their paths show representative optical connections rather than a complete instrument prescription. Orbit markers remain on their drawing guides, with uniform mean-anomaly advance and nonuniform motion around an ellipse; Earth and GEO co-rotate.
 
 The first-principles review checked energy conservation, optical and electrical interface meanings, warm and cold boundaries, mechanism supports, and the relation between drawing coordinates and physical calculations. It corrected a power route that ended at a cold strap, moved radiated heat to the actual radiator face, separated command and encoder directions, and kept calibration reference views sequential. The cooler equation explicitly assumes no net stored energy over a complete cycle. General design practices and these demonstrations do not establish flight qualification, a complete bill of materials, or real instrument performance.
@@ -26,7 +28,15 @@ The engineering-learning review adds six directly verified primary sources for c
 
 ## Validation status
 
-Current full acceptance is in progress; the generated `gate-results.md` will record the results and build hash. Earlier revision totals are not acceptance evidence for this build.
+The current production build has SHA-256 `437ad69d3642fd36f7848fe6caeefa00afdb3eb6fa1ffac83877e61520552e50` (sorted relative paths and bytes). Typecheck and all 138 unit tests pass. The evidence audit reports zero problems across 924 site claims, 88,608 scenario instances, 96 scenarios and 241 research facts.
+
+Nineteen of twenty full-scope browser gate commands pass against that unchanged build on the real GPU. Cycle and parts each cover 22,752 selections; camera routes cover 2,091 ordered routes per form. Views cover 237 states per form, label checks 267 per form, learning checks 208 per form, and UI checks 264 desktop / 287 phone states. Quality, links, coplanarity, story and reference-page checks also pass. Desktop performance passes all 169 conditions, with worst p95 11.8 ms against the 15 ms limit.
+
+The complete phone performance run fails 11 of 169 conditions: nine orbit cases and two focal-plane inspection cases, with worst p95 149.3 ms against the unchanged 7 ms limit. Earlier phone sampling also timed out. These failures are not waived. Fixed orbit/spacecraft/orbit/spacecraft comparisons subsequently measured 0.4 / 0.7 / 0.4 / 0.7 ms p95 on the phone layout with the same runtime, stable shader counts, and negligible one-time GPU-fence waits. The desktop comparison also recovered without runtime changes. Shared GPU load is a plausible contributor, but the comparisons do not establish the sole cause or replace the failed full phone run.
+
+The benchmark now uses IF's 300 ms settling approach, followed by a check for finished CSS transitions and 24 warm-up frames. It retains all valid measured intervals, requires at least 240 samples and complete teaching phases, and preserves the 15 ms desktop / 7 ms phone budgets. Failed reports and comparison diagnostics remain in `.local/`; `.local/current-acceptance-summary.json` records freshness checks for this build. Separate GPU workloads were left running. The next step is a full phone run in a controlled GPU environment, then investigation of any remaining failure before merge or publication.
+
+`gate-results.md` is the historical acceptance record for the earlier 10/01/2026 build. Its figures are not acceptance evidence for this revision. The final report generator continues to reject the current failed phone result.
 
 The acceptance suite covers scenarios, parent parts, ordered camera routes, evidence dialogs, component anatomy, Parts search/navigation, responsive diagrams, saved comparisons, renderer quality, physical labels, selected callouts and performance. Phone-sized browser checks do not replace testing on an actual phone.
 

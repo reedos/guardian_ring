@@ -1,5 +1,7 @@
 # Final built-preview acceptance
 
+Historical record for the 10/01/2026 build below. The current branch's 10/02/2026 revision has 19 of 20 gates passed and an unresolved phone performance failure; see [BUILD-REVIEW.md](BUILD-REVIEW.md). This older pass does not authorize publication of the current revision.
+
 Recorded 10/01/2026. Built preview: `http://127.0.0.1:47601/`. All browser results below postdate this production build and include all 10 implemented levels. Scoped development runs and reserved scenes are rejected.
 
 Build SHA-256 (sorted relative paths and bytes): `1f3558fac97ae5ed0d13ea98e3336597f9b55226e7a8b29ed05c5b62fb6e9285`.
