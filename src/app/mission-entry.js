@@ -9,6 +9,6 @@ export function missionEntry(href,storage) {
   try {seen=storage.getItem(MISSION_VISIT_KEY)==='1';}catch{/* optional browser storage */}
   const automatic=!seen&&!url.search&&!url.hash;
   return {requested:explicit||automatic,automatic,
-    remember(){try{storage.setItem(MISSION_VISIT_KEY,'1');}catch{/* optional browser storage */}},
+    remember(){try{storage.setItem(MISSION_VISIT_KEY,'1');return storage.getItem(MISSION_VISIT_KEY)==='1';}catch{return false;}},
   };
 }

@@ -205,7 +205,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   document.addEventListener('pointerdown',cancelEntry,{capture:true});document.addEventListener('keydown',cancelEntry,{capture:true});
   const unready=stage.onTick(()=>{
     if(stage.isBusy()||stage.destination()<0)return;
-    if(!remembered){remembered=true;entry.remember();}
+    if(!remembered){remembered=true;if(!entry.remember()&&entry.automatic)requested=false;}
     if(requested&&!blocked()){requested=false;void start();}
   });
   return {state,start,stop,pause,play,step,next:()=>index<MISSION_CHAPTERS.length-1?enter(index+1):undefined,previous:()=>index>0?enter(index-1):undefined,dispose(){stop();untick();unready();document.removeEventListener('pointerdown',cancelEntry,{capture:true});document.removeEventListener('keydown',cancelEntry,{capture:true});host.remove();menuStart.remove();}};

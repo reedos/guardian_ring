@@ -166,6 +166,12 @@ if(g){const {page}=g,failures=[];let states=0;
      const wanted=new URLSearchParams(query).get('view').split('.');
      check(await page.evaluate(wanted=>grx.state.scene===Number(wanted[0])&&grx.state.mode===wanted[1]&&grx.state.selected===(wanted[2]||null),wanted),`Explicit destination changed: ${query}`);
    }
+   await page.evaluate(()=>localStorage.removeItem('grx-mission-visited-v1'));
+   await page.addInitScript(()=>{const set=Storage.prototype.setItem;Storage.prototype.setItem=function(key,value){if(key==='grx-mission-visited-v1')throw new DOMException('Quota fixture','QuotaExceededError');return set.call(this,key,value);};});
+   await page.goto(new URL('visualizer.html',BASE).href);await page.waitForFunction(()=>window.grx?.built[0]&&!grx.isBusy());await frames(4);
+   check(!(await state()).active,'Failed storage write still launched an automatic introduction');
+   await page.goto(new URL('visualizer.html?mission=1',BASE).href);await page.waitForFunction(()=>window.grx?.mission.state().active&&!grx.mission.state().loading);
+   check((await state()).active,'Unavailable storage blocked an explicit mission request');
  }catch(error){failures.push(error.stack||String(error));}
  await finish(g,failures,{states});
 }

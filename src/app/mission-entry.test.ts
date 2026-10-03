@@ -21,4 +21,9 @@ describe('mission entry intent',()=>{
     expect(entry.requested).toBe(false);expect(()=>entry.remember()).not.toThrow();
     expect(missionEntry('https://example.test/visualizer.html?mission=1',storage).requested).toBe(true);
   });
+  it('reports a failed write even when reading storage works',()=>{
+    const storage={getItem(){return null;},setItem(){throw new Error('quota');}};
+    const entry=missionEntry('https://example.test/visualizer.html',storage);
+    expect(entry.automatic).toBe(true);expect(entry.remember()).toBe(false);
+  });
 });
