@@ -40,9 +40,23 @@ frozen Wave 1 captures and links the original Opus references.
 
 Independent usability review found no confirmed new major regression in the
 390×844 phone or 844×390 landscape captures. The column fits and the detector
-and telescope labels clear their subjects. A remaining compact-layout issue is
-recorded: at 320×568, the fixed scene note and legend can still crowd the small
-illustration, and the selected name may rely on the picker/card. This was not
-established as a new regression and is not claimed fixed here.
+and telescope labels clear their subjects.
+
+The compact follow-up moves the scale note and visual key out of the canvas.
+Short landscape layouts put playback first and retain touch-sized controls.
+On compact portrait screens, expanding Parts or Scenario gives the text a
+reading sheet while retaining Previous / Overview / Next and the part picker.
+In short landscape, expanding uses the right column for reading. Hide details
+and Present restore the canvas. The ordinary 390×844 layout is unchanged.
+
+The reviewer identified hidden playback in the first short-landscape revision,
+then found expanded-sheet conflicts with Hide details and Present. These were
+corrected before release acceptance. Local interaction checks now include those
+actions, the Scenario tab, actual panel bounds, and usable reading height;
+positive scroll height alone is not accepted as evidence that a sheet fits.
+The final local compact checks pass 155 level/layer/rotation states and 87
+playback/reading/presentation interaction states. Typecheck, all 244 unit tests,
+and the strict evidence audit pass after these changes. The independent source
+review found no further confirmed major issue; it did not rerun the browser.
 
 Full PLAN section 9 acceptance remains required before merging this follow-up.

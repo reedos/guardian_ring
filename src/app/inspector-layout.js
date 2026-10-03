@@ -50,6 +50,13 @@ export function mountInspectorLayout() {
       const parent = landscape ? dock : viewer;
       reparent(node, parent);
     }
+    const keyDock=document.querySelector('.compact-scene-key');
+    if(keyDock){
+      if(landscape&&matchMedia('(max-width:700px) and (max-height:400px)').matches){
+        // Playback stays first; a static key must not consume the entire fold.
+        if(dock.lastElementChild!==keyDock)dock.append(keyDock);
+      }else if(keyDock.parentElement!==viewer)view.after(keyDock);
+    }
     const exitParent = landscape ? dock : transport;
     reparent(presentationExit, exitParent);
     // A live phase title is also a useful disclosure label. Reuse that row on
@@ -64,13 +71,15 @@ export function mountInspectorLayout() {
     if (landscape) {
       // The side dock is one scroller. Nested note caps can hide Follow below
       // its own summary, while an uncapped dock pushes the reading pane away.
-      const height = Math.max(0, Math.floor(viewer.parentElement.getBoundingClientRect().height - (panel.checkVisibility() ? 150 : 0)));
+      const paneMinimum = panel.checkVisibility() ? parseFloat(getComputedStyle(panel).minHeight) || 150 : 0;
+      const height = Math.max(0, Math.floor(viewer.parentElement.getBoundingClientRect().height - paneMinimum));
       const value = `${height}px`;
       if (dock.style.getPropertyValue('--playback-max-height') !== value) dock.style.setProperty('--playback-max-height', value);
       return;
     }
     if (!matchMedia('(max-width: 760px)').matches) return;
     const availableHeight = viewer.parentElement.getBoundingClientRect().height;
+    const paneMinimum = panel.checkVisibility() ? parseFloat(getComputedStyle(panel).minHeight) || 150 : 0;
     const minimumNoteHeight = details => {
       const follow = details.querySelector('.orbit-follow-row');
       const followHeight = follow && details.open ? follow.getBoundingClientRect().height + (parseFloat(getComputedStyle(follow).marginTop) || 0) : 0;
@@ -86,7 +95,7 @@ export function mountInspectorLayout() {
       for (const details of notes) if (details.open) minimumControls -= Math.max(0, details.getBoundingClientRect().height - minimumNoteHeight(details));
       document.body.classList.toggle('mission-invitation-retracted', !missionInvitationFits({
         availableHeight, controlsHeight: minimumControls, invitationHeight,
-        paneMinimum: panel.checkVisibility() ? 150 : 0,
+        paneMinimum,
       }));
     }
     const controlsHeight = [...viewer.children].filter(node => node !== view && node.checkVisibility())
@@ -95,7 +104,7 @@ export function mountInspectorLayout() {
       const height = explanationHeightLimit({
         availableHeight,
         fixedControlsHeight: controlsHeight - details.getBoundingClientRect().height,
-        paneMinimum: panel.checkVisibility() ? 150 : 0,
+        paneMinimum,
         summaryMinimum: minimumNoteHeight(details),
       });
       const value = `${height}px`;
@@ -119,5 +128,5 @@ export function measureInspectorLimits() {
   if (dock?.checkVisibility()) return inspectorHeightLimits({ availableHeight, controlsHeight: dock.getBoundingClientRect().height, canvasMinimum: 0 });
   const controlsHeight = [...viewer.children].filter(node => node !== view && node.checkVisibility())
     .reduce((height, node) => height + node.getBoundingClientRect().height, 0);
-  return inspectorHeightLimits({ availableHeight, controlsHeight, canvasMinimum: parseFloat(getComputedStyle(view).minHeight) || 140 });
+  return inspectorHeightLimits({ availableHeight, controlsHeight, canvasMinimum: parseFloat(getComputedStyle(view).minHeight) || 140, paneMinimum:parseFloat(getComputedStyle(document.getElementById('inspector')).minHeight)||150 });
 }

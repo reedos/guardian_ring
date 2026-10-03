@@ -34,8 +34,8 @@ window.grx.mission = mountMissionTour({openFocusDemo:()=>focusDemo.open()});
 focusDemo=mountFocusDemo({beforeOpen(){window.grx.mission.pause();stage.setActivityEnabled(false);stage.getTeaching()?.pause();}});
 window.grx.focusDemo=focusDemo;
 const animationControls = mountAnimationControls(document.getElementById('animation-controls'), { getTeaching: stage.getTeaching, preparePlayback: stage.preparePlayback, stepTeaching:stage.stepTeaching, getAssemblyPresentation:stage.getAssemblyPresentation,setAssemblyView:stage.setAssemblyView,setActivityEnabled:stage.setActivityEnabled,openFocusDemo:()=>focusDemo.open() });
-mountInspectorLayout();
 mountSceneKey();
+mountInspectorLayout();
 for (const event of ['scene', 'mode', 'scene-settings']) on(event, () => animationControls.sync());
 const tabs = [...document.querySelectorAll('[data-pane]')], scenario = document.getElementById('pane-scenario'), sheetButton = document.getElementById('sheet-toggle');
 function setSheet(open) { document.body.style.removeProperty('--inspector-size'); document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel'); }
