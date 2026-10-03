@@ -200,7 +200,7 @@ function updatePins() {
     const spot = hotspotsFor(ui.scene)[button.dataset.id]; if (!spot) continue;
     const p = new THREE.Vector3(...spot.pos).project(camera);
     const x = (p.x + 1) / 2 * width, y = (1 - p.y) / 2 * height;
-    button.hidden = !!orbitTracking || getAssemblyPresentation()?.isPartVisible(button.dataset.id) === false || built[ui.scene]?.isPartVisible?.(button.dataset.id) === false || p.z < -1 || p.z > 1 || x < 12 || x > width - 12 || y < 12 || y > height - 12;
+    button.hidden = !!orbitTracking || getAssemblyPresentation()?.isPartVisible(button.dataset.id) === false || built[ui.scene]?.isPartVisible?.(button.dataset.id, {selected:button.dataset.id===ui.selected}) === false || p.z < -1 || p.z > 1 || x < 12 || x > width - 12 || y < 12 || y > height - 12;
     if (!button.hidden) points.push({ id:button.dataset.id, x, y, button });
   }
   // Keep badges at the component whenever possible. Resolve only local

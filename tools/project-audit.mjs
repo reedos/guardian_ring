@@ -113,14 +113,43 @@ if (gate) {
     }
     // Data/Heat labels can name equipment on GEO rather than the orbit family
     // itself. Hiding GEO must clear those dependent selections as well.
-    for (const [mode, id] of [['data', 'processing'], ['heat', 'power'], ['heat', 'radiator']]) {
+    for (const [mode, id] of [['data', 'processing'], ['data', 'downlink'], ['heat', 'sunlight'], ['heat', 'power'], ['heat', 'radiator']]) {
       await page.evaluate(async ({ mode, id }) => { await grx.show({ scene: 0, mode, part: id }); grx.settle(); }, { mode, id });
       await frames(page);
       check(await page.evaluate(id => grx.state.selected === id && grx.built[0].families().geo, id), `${mode}/${id}: test did not select visible GEO equipment`);
+      check(await page.locator(`#pins .pin[data-id="${id}"]`).isVisible(), `${mode}/${id}: selected equipment lost its marker when its physical path was absent`);
+      const unrelated=page.locator('#orbit-controls [data-family="heo"]');
+      if(await unrelated.getAttribute('aria-pressed')!=='true')await unrelated.click();
+      await unrelated.click();await frames(page);
+      check(await page.evaluate(id=>grx.state.selected===id,id), `${mode}/${id}: hiding another family cleared the GEO selection`);
       await page.locator('#orbit-controls [data-family="geo"]').click(); await page.evaluate(() => grx.settle()); await frames(page);
       check(await page.evaluate(() => grx.state.selected === null && document.getElementById('part-select').value === ''
         && document.getElementById('card').hidden && !grx.built[0].families().geo), `${mode}/${id}: hiding GEO left a selected dependent component`);
       check(await page.locator(`#pins .pin[data-id="${id}"]`).evaluate(node => node.hidden), `${mode}/${id}: hidden GEO retained a dependent pin`);
+    }
+  });
+
+  await run('blocked sunlight retains its selected solar-array marker', async () => {
+    // GEO and its ground reference co-rotate, so this drawing's GEO downlink
+    // does not acquire a changing Earth obstruction during a day. Sunlight
+    // does change orientation and exercises the observed failure directly.
+    for(const [mode,id,port] of [['heat','sunlight','solar']]){
+      const pose=await page.evaluate(async({mode,id,port})=>{
+        await grx.show({scene:0,mode,part:id});const b=grx.built[0];
+        // Sample the drawing's ordinary motion function to choose a blocked
+        // inspection pose. No visibility or path calculation is overridden.
+        let time=performance.now()/1000;b.setMotion(true);b.update(time);
+        for(let sample=0;sample<260&&b.isPartVisible(id);sample++)b.update(time+=.4);
+        b.setMotion(false);grx.select(id);grx.settle();
+        const node=b.heatHotspots.power.node.children.find(child=>child.userData.port===port);
+        const hardware=node.getWorldPosition(new grx.THREE.Vector3());
+        const spot=(mode==='heat'?b.heatHotspots:b.dataHotspots)[id];
+        return {family:b.families().geo,pathVisible:b.isPartVisible(id),selectedVisible:b.isPartVisible(id,{selected:true}),anchorError:hardware.distanceTo(new grx.THREE.Vector3(...spot.pos))};
+      },{mode,id,port});
+      await frames(page);
+      check(pose.family&&!pose.pathVisible, `${mode}/${id}: did not exercise an actually absent physical path`);
+      check(pose.selectedVisible&&pose.anchorError<1e-6, `${mode}/${id}: selected marker did not fall back to its real component port`);
+      check(await page.locator(`#pins .pin[data-id="${id}"]`).isVisible(), `${mode}/${id}: selected marker disappeared with the blocked path`);
     }
   });
 

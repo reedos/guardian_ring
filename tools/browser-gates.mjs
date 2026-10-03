@@ -45,7 +45,12 @@ const checkPart=({scene,mode,id})=>{
 };
 
 async function settleLayout(page){
- await page.evaluate(async()=>{const animations=document.getAnimations().filter(a=>a.effect?.getTiming().iterations!==Infinity);await Promise.all(animations.map(a=>a.finished.catch(()=>{})));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));});
+ await page.evaluate(async()=>{
+  let timeout;
+  const settled=async()=>{const animations=document.getAnimations().filter(a=>a.effect?.getTiming().iterations!==Infinity);await Promise.all(animations.map(a=>a.finished.catch(()=>{})));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));};
+  try{await Promise.race([settled(),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(new Error('Layout did not finish rendering within 5 seconds')),5000);})]);}
+  finally{clearTimeout(timeout);}
+ });
 }
 
 export async function run(name,form=process.argv[2]||'desktop'){
@@ -131,7 +136,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
    // Exercise the native picker against every distinct level/layer list, then
    // check both transport directions from an unselected overview.
    const ids=await page.locator('#parts button[data-id]').evaluateAll(bs=>bs.map(button=>button.dataset.id));
-   const inspect=async(id,label)=>{await page.evaluate(()=>grx.settle());const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});states++;audited.push(`${sc.id}/${mode}/${label}`);fail.push(...result.map(error=>`${sc.id}/${mode}/${label}: ${error}`));};
+   const inspect=async(id,label)=>{await page.evaluate(()=>grx.settle());await settleLayout(page);const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});states++;audited.push(`${sc.id}/${mode}/${label}`);fail.push(...result.map(error=>`${sc.id}/${mode}/${label}: ${error}`));};
    await page.getByRole('combobox',{name:'Selected part'}).selectOption(ids.at(-1));await inspect(ids.at(-1),'pick last part');
    await page.locator('#part-select').selectOption('');await page.evaluate(()=>grx.settle());
    const overview=await page.evaluate(()=>({selected:grx.state.selected,cardHidden:document.getElementById('card').hidden,pressed:document.querySelectorAll('#parts [aria-pressed="true"],#pins [aria-pressed="true"]').length,camera:grx.camera.position.toArray(),expected:grx.built[grx.state.scene].camera.pos}));
@@ -146,6 +151,9 @@ export async function run(name,form=process.argv[2]||'desktop'){
    await show(page,sc.i,'light');
    for(const mode of ['data','heat','light']){
     await page.locator(`[data-mode="${mode}"]`).click();
+    // Layer-specific playback controls can resize the phone canvas. Sample
+    // after ResizeObserver and rendering, with the same unchanged pin bounds.
+    await settleLayout(page);
     const id=await page.evaluate(()=>grx.state.selected);
     const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});states++;
     fail.push(...result.map(error=>`${sc.id}/${mode}/layer-switch: ${error}`));
@@ -154,7 +162,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
   // A layer may expose another face or electronics assembly of the same part.
   // Exercise the actual layer button, not show()'s explicit part flight.
   if(scenes.some(scene=>scene.id==='payload'))for(const [id,mode] of [['scan-system','data'],['thermal','heat']]){
-   await show(page,2,'light',id);await page.locator(`[data-mode="${mode}"]`).click();await page.evaluate(()=>grx.settle());
+   await show(page,2,'light',id);await page.locator(`[data-mode="${mode}"]`).click();await page.evaluate(()=>grx.settle());await settleLayout(page);
    const result=await page.evaluate(checkPart,{scene:2,mode,id}),view=await page.evaluate(checkView);states++;
    fail.push(...result.map(error=>`payload/${id}/layer-button: ${error}`));
    if(view.blocked||view.covers?.length)fail.push(`payload/${id}/layer-button: ${JSON.stringify(view)}`);
@@ -315,20 +323,61 @@ export async function run(name,form=process.argv[2]||'desktop'){
    // Expanded teaching notes, Scenario, and a dragged sheet compete for the
    // same phone height. Check them together, including a shorter viewport.
    const checkPhoneBudget=async label=>{
-    await audit(label,'#hud-btns button,#hud-btns select,#animation-controls .animation-transport button,.orbit-playback button,#sheet-toggle,#tab-parts,#tab-scenario');
+    await audit(label,'#hud-btns button,#hud-btns select,#animation-controls .animation-transport button,.assembly-controls button,.mission-prompt button,.orbit-playback button,#sheet-toggle,#tab-parts,#tab-scenario');
     const problems=await page.evaluate(()=>{
      const bad=[],view=document.getElementById('view').getBoundingClientRect(),panel=document.getElementById('inspector').getBoundingClientRect();
      if(view.height<139.5)bad.push('canvas lost its 140 px minimum');
      if(panel.bottom>innerHeight+.5||panel.height<149.5)bad.push('inspector exceeds the viewport or loses its reading area');
-     for(const node of document.querySelectorAll('#hud-btns button,#hud-btns select,.animation-transport button,.orbit-playback button')){
+     for(const node of document.querySelectorAll('#hud-btns button,#hud-btns select,.animation-transport button,.assembly-controls button,.mission-prompt button,.orbit-playback button')){
       if(!node.checkVisibility())continue;
       const r=node.getBoundingClientRect(),hit=document.elementFromPoint((r.left+r.right)/2,(r.top+r.bottom)/2);
+      if(r.height<43.5)bad.push(`${node.id||node.textContent}: touch target is shorter than 44 px`);
       if(r.bottom>panel.top+.5||r.top<0||r.left<0||r.right>innerWidth||!hit||!(node===hit||node.contains(hit)))bad.push(`${node.id||node.textContent}: transport is not fully exposed above the inspector`);
      }
      return bad;
     });
     fail.push(...problems.map(problem=>`${label}: ${problem}`));
    };
+   // Enter the same running overview a first-time visitor receives. show()
+   // intentionally enters inspection and cannot detect the extra live rows.
+   for(const size of [{width:390,height:667},{width:320,height:667},{width:320,height:721}]){
+    await page.setViewportSize(size);
+    for(const [scene,index] of [['payload',2],['abi',7]]){
+     await page.goto(new URL(`visualizer.html?view=${index}.light`,BASE).href);
+     await page.waitForFunction(()=>window.grx?.built[grx.state.scene]&&!grx.isBusy()&&!grx.isCameraMoving());
+     await settleLayout(page);
+     const defaultState=await page.evaluate(()=>grx.built[grx.state.scene].teaching.state());
+     if(!defaultState.playing||!defaultState.repeating||await page.evaluate(()=>grx.state.selected!==null))fail.push(`${size.width}×${size.height} ${scene}: navigation did not start the running overview`);
+     for(const pane of ['parts','scenario']){
+      await page.locator(`#tab-${pane}`).click();
+      for(const open of [false,true]){
+       const note=page.locator('.animation-explanation');
+       if(await note.evaluate(el=>el.open)!==open)await note.locator('summary').click();
+       await checkPhoneBudget(`${size.width}×${size.height} ${scene} default activity + ${pane} + notes ${open?'open':'closed'}`);
+      }
+     }
+     // Observe an authored later title through normal playback, including the
+     // longest available later phrase that can wrap in the narrow summary.
+     const later=defaultState.steps.reduce((best,step,index)=>index>0&&step.title.length>defaultState.steps[best].title.length?index:best,1);
+     await page.waitForFunction(index=>{const s=grx.built[grx.state.scene].teaching.state();return s.playing&&s.index===index;},later,{timeout:(defaultState.total+1)*4000});
+     await checkPhoneBudget(`${size.width}×${size.height} ${scene} later activity title`);
+    }
+    await page.goto(new URL('visualizer.html?view=0.light',BASE).href);
+    await page.waitForFunction(()=>window.grx?.built[0]&&!grx.isBusy()&&!grx.isCameraMoving());await settleLayout(page);
+    if(!await page.locator('[data-mission="start"]').isVisible())fail.push(`${size.width}×${size.height}: initial mission invitation is hidden`);
+    await page.locator('[data-mission="start"]').click();await page.waitForFunction(()=>!grx.mission.state().loading&&!grx.isCameraMoving());
+    await page.locator('[data-mission="play"]').click();
+    for(const chapter of [0,4]){
+     if(chapter)for(let i=0;i<4;i++){await page.locator('[data-mission="next"]').click();await page.waitForFunction(()=>!grx.mission.state().loading&&!grx.isCameraMoving());}
+     await audit(`${size.width}×${size.height} mission ${chapter} touch controls`,'.mission-active-panel button,.mission-active-panel summary,.mission-transport label');
+     const missionProblems=await page.evaluate(()=>{
+      const bad=[];for(const node of document.querySelectorAll('.mission-active-panel button,.mission-active-panel summary,.mission-transport label'))if(node.checkVisibility()&&node.getBoundingClientRect().height<43.5)bad.push(`${node.textContent}: mission touch target below 44 px`);
+      const view=document.getElementById('view').getBoundingClientRect(),mission=document.querySelector('.mission-active-panel').getBoundingClientRect();
+      if(view.height<139.5||mission.bottom>innerHeight+.5)bad.push('mission exceeded the viewport or lost the canvas minimum');return bad;
+     });fail.push(...missionProblems.map(problem=>`${size.width}×${size.height} mission ${chapter}: ${problem}`));
+    }
+    await page.locator('[data-mission="stop"]').click();
+   }
    for(const size of [{width:390,height:844},{width:320,height:844},{width:390,height:667},{width:320,height:667}]){
     await page.setViewportSize(size);await show(page,'abi','light');
     await page.locator('#animation-controls [data-action="play"]').click();

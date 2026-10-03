@@ -107,7 +107,7 @@ if(gate){
   check(!(await page.locator('#src-pop').innerText()).includes('Not traced'),'Activity evidence is untraced');
   await page.locator('#src-pop .sp-x').click();
   await page.waitForFunction(before=>{const s=grx.built[grx.state.scene].teaching.state();return !s.suspended&&(s.index!==before.index||s.progress!==before.progress);},held);
-  await page.screenshot({path:`.local/activity-${form}-payload.png`});
+  await gate.screenshot({path:`.local/activity-${form}-payload.png`});
   // Chrome freezes background pages in addition to the visibility hold. Test
   // that a real lifecycle suspension cannot jump over the lesson on return.
   lifecycle=await page.context().newCDPSession(page);
@@ -163,14 +163,14 @@ if(gate){
    check(!!shared&&new URL(shared).searchParams.get('follow')==='leo','Share this view omitted the followed spacecraft');
    await page.goto(shared);await ready();await page.waitForFunction(()=>grx.orbitFollow()==='leo'&&!grx.isCameraMoving());
    check(await page.locator('#part-select').inputValue()==='','Shared follow unexpectedly selected a component');
-   await page.screenshot({path:`.local/activity-${form}-follow.png`});
+   await gate.screenshot({path:`.local/activity-${form}-follow.png`});
   }
 
   await page.emulateMedia({reducedMotion:'reduce'});await page.goto(new URL('visualizer.html',BASE).href);await ready();
   await matrix('reduced');
   const ui=await page.evaluate(checkUI,{selector:'[data-mode],#hud-btns button,#part-select,#animation-controls button,#animation-controls summary'});
   check(!ui.length,`Reduced-motion activity controls: ${ui.join('; ')}`);
-  await page.screenshot({path:`.local/activity-${form}-reduced.png`});
+  await gate.screenshot({path:`.local/activity-${form}-reduced.png`});
  }catch(error){failures.push(error.stack||String(error));}
  finally{
   if(lifecycle){try{await lifecycle.send('Page.setWebLifecycleState',{state:'active'});await lifecycle.detach();}catch(error){failures.push(`Lifecycle cleanup: ${error.message}`);}}

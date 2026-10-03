@@ -9,21 +9,33 @@ export function explanationHeightLimit({ availableHeight, fixedControlsHeight, c
   return Math.max(summaryMinimum, Math.min(150, Math.floor(availableHeight - fixedControlsHeight - canvasMinimum - paneMinimum)));
 }
 
+export function missionInvitationFits({ availableHeight, controlsHeight, invitationHeight, canvasMinimum = 140, paneMinimum = 150 }) {
+  return controlsHeight + invitationHeight + canvasMinimum + paneMinimum <= availableHeight;
+}
+
 // Expanded teaching notes share the finite phone height with the inspector.
 // Scroll the note itself rather than allowing it to push navigation offscreen.
 export function mountInspectorLayout() {
   const viewer = document.getElementById('viewer'), view = document.getElementById('view');
   const panel = document.getElementById('inspector'), transport = document.getElementById('hud-btns');
   const playback = [document.getElementById('mission-tour'), document.getElementById('animation-controls'), document.getElementById('orbit-controls')].filter(Boolean);
+  const mission = document.getElementById('mission-tour');
+  const animationNote = document.querySelector('.animation-explanation'), stepTitle = document.querySelector('.animation-step');
+  const stepSummary = animationNote?.querySelector('summary');
+  if (stepSummary) {
+    const prompt = document.createElement('span'); prompt.className = 'explanation-prompt';
+    prompt.append(...stepSummary.childNodes); stepSummary.append(prompt);
+  }
   const presentationExit = document.getElementById('presentation-exit');
   const dock = document.createElement('section');
   dock.id = 'playback-dock'; dock.className = 'playback-dock'; dock.hidden = true;
   dock.setAttribute('aria-label', 'Playback and presentation controls');
   panel.before(dock);
-  let queued = false;
+  let queued = false, invitationHeight = 0;
   function update() {
     queued = false;
     const landscape = matchMedia('(max-width: 1100px) and (max-height: 600px) and (orientation: landscape)').matches;
+    const phonePortrait = matchMedia('(max-width: 760px) and (orientation: portrait)').matches;
     const focused = document.activeElement;
     dock.hidden = !landscape;
     let movedFocus = null;
@@ -40,33 +52,51 @@ export function mountInspectorLayout() {
     }
     const exitParent = landscape ? dock : transport;
     reparent(presentationExit, exitParent);
+    // A live phase title is also a useful disclosure label. Reuse that row on
+    // portrait phones rather than stacking a second generic explanation label.
+    if (stepTitle && stepSummary) {
+      if (phonePortrait) reparent(stepTitle, stepSummary);
+      else if (stepTitle.parentElement === stepSummary) animationNote.before(stepTitle);
+    }
+    const missionActive = document.body.classList.contains('mission-active');
+    if (!phonePortrait || missionActive) document.body.classList.remove('mission-invitation-retracted');
     if (movedFocus?.isConnected && movedFocus.checkVisibility()) movedFocus.focus({ preventScroll: true });
     if (landscape) {
-      const controlsHeight = dock.getBoundingClientRect().height;
-      for (const details of dock.querySelectorAll('.animation-explanation, .orbit-playback-note')) {
-        if (!details.checkVisibility()) continue;
-        const height = explanationHeightLimit({
-          availableHeight: viewer.parentElement.getBoundingClientRect().height,
-          fixedControlsHeight: controlsHeight - details.getBoundingClientRect().height,
-          canvasMinimum: 0,
-          paneMinimum: panel.checkVisibility() ? 150 : 0,
-          summaryMinimum: details.querySelector('summary').getBoundingClientRect().height,
-        });
-        const value = `${height}px`;
-        if (details.style.getPropertyValue('--explanation-max-height') !== value) details.style.setProperty('--explanation-max-height', value);
-      }
+      // The side dock is one scroller. Nested note caps can hide Follow below
+      // its own summary, while an uncapped dock pushes the reading pane away.
+      const height = Math.max(0, Math.floor(viewer.parentElement.getBoundingClientRect().height - (panel.checkVisibility() ? 150 : 0)));
+      const value = `${height}px`;
+      if (dock.style.getPropertyValue('--playback-max-height') !== value) dock.style.setProperty('--playback-max-height', value);
       return;
     }
     if (!matchMedia('(max-width: 760px)').matches) return;
+    const availableHeight = viewer.parentElement.getBoundingClientRect().height;
+    const minimumNoteHeight = details => {
+      const follow = details.querySelector('.orbit-follow-row');
+      const followHeight = follow && details.open ? follow.getBoundingClientRect().height + (parseFloat(getComputedStyle(follow).marginTop) || 0) : 0;
+      return details.querySelector('summary').getBoundingClientRect().height + followHeight;
+    };
+    const notes = [...viewer.querySelectorAll('.animation-explanation, .orbit-playback-note')].filter(details => details.checkVisibility());
+    if (phonePortrait && !missionActive) {
+      if (mission.checkVisibility()) invitationHeight = mission.getBoundingClientRect().height;
+      // Compare the same complete budget while the invitation is retracted,
+      // avoiding a hide/show loop when its missing row creates enough space.
+      let minimumControls = [...viewer.children].filter(node => node !== view && node !== mission && node.checkVisibility())
+        .reduce((height, node) => height + node.getBoundingClientRect().height, 0);
+      for (const details of notes) if (details.open) minimumControls -= Math.max(0, details.getBoundingClientRect().height - minimumNoteHeight(details));
+      document.body.classList.toggle('mission-invitation-retracted', !missionInvitationFits({
+        availableHeight, controlsHeight: minimumControls, invitationHeight,
+        paneMinimum: panel.checkVisibility() ? 150 : 0,
+      }));
+    }
     const controlsHeight = [...viewer.children].filter(node => node !== view && node.checkVisibility())
       .reduce((height, node) => height + node.getBoundingClientRect().height, 0);
-    for (const details of viewer.querySelectorAll('.animation-explanation, .orbit-playback-note')) {
-      if (!details.checkVisibility()) continue;
+    for (const details of notes) {
       const height = explanationHeightLimit({
-        availableHeight: viewer.parentElement.getBoundingClientRect().height,
+        availableHeight,
         fixedControlsHeight: controlsHeight - details.getBoundingClientRect().height,
         paneMinimum: panel.checkVisibility() ? 150 : 0,
-        summaryMinimum: details.querySelector('summary').getBoundingClientRect().height,
+        summaryMinimum: minimumNoteHeight(details),
       });
       const value = `${height}px`;
       if (details.style.getPropertyValue('--explanation-max-height') !== value) details.style.setProperty('--explanation-max-height', value);

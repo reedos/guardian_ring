@@ -175,8 +175,13 @@ export function build({ quality, model }) {
     streams.sunlight.update(sunStart.toArray(),solar.toArray(),elapsed*.28,activeVisible&&solarNormal.dot(ILLUSTRATIVE_SUN)>0&&earthClearSegment(solar.toArray(),farSun.toArray())&&surfaceClear.get(activeNode)(sunStart.toArray(),solar.toArray()));
     streams.radiation.update(thermal.toArray(),heatEnd.toArray(),elapsed*.24,activeVisible&&earthClearSegment(thermal.toArray(),heatEnd.toArray()));
     for(const spot of [dataHotspots.processing,heatHotspots.power]){spot.pos=[...start];spot.view.target=[...start];}
-    midpoint.copy(radio).lerp(receiver,.48); dataHotspots.downlink.pos=midpoint.toArray();dataHotspots.downlink.view.target=midpoint.toArray();
-    midpoint.copy(solar).lerp(sunStart,.7);heatHotspots.sunlight.pos=midpoint.toArray();heatHotspots.sunlight.view.target=midpoint.toArray();
+    // If a physical path is absent, inspection still has a real component to
+    // identify. Anchor its selected marker at the antenna or solar surface,
+    // without reviving a blocked radio or sunlight connection.
+    midpoint.copy(radio);if(streams.downlink.group.visible)midpoint.lerp(receiver,.48);
+    dataHotspots.downlink.pos=midpoint.toArray();dataHotspots.downlink.view.target=midpoint.toArray();
+    midpoint.copy(solar);if(streams.sunlight.group.visible)midpoint.lerp(sunStart,.7);
+    heatHotspots.sunlight.pos=midpoint.toArray();heatHotspots.sunlight.view.target=midpoint.toArray();
     midpoint.copy(thermal).lerp(heatEnd,.65);heatHotspots.radiator.pos=midpoint.toArray();heatHotspots.radiator.view.target=midpoint.toArray();
     nadir.group.visible=focusFamily!==null&&activeVisible;
     if(nadir.group.visible){
@@ -200,10 +205,10 @@ export function build({ quality, model }) {
       if(family[id])family[id].visible=true;
       else if(['processing','downlink','sunlight','power','radiator'].includes(id))family.geo.visible=true;
     },
-    isPartVisible(id) {
+    isPartVisible(id, {selected=false}={}) {
       if(family[id])return family[id].visible;
-      if(id==='downlink')return streams.downlink.group.visible;
-      if(id==='sunlight')return streams.sunlight.group.visible;
+      if(id==='downlink')return family.geo.visible&&(selected||streams.downlink.group.visible);
+      if(id==='sunlight')return family.geo.visible&&(selected||streams.sunlight.group.visible);
       return ['processing','power','radiator'].includes(id)?family[focusFamily||'geo'].visible:true;
     },
     setFocusFamily(id) {

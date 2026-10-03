@@ -19,6 +19,17 @@ export async function openGate(name,form='desktop') {
   const errors=gate.errors;page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await page.goto(new URL('visualizer.html',BASE).href);
   await page.waitForFunction(()=>window.grx?.built[window.grx.state.scene],null,{timeout:90000});
+  if(lifecycle){
+    gate.environmentChecks=[];
+    gate.checkEnvironment=async phase=>{
+      const e=await page.evaluate(()=>({innerWidth,innerHeight,devicePixelRatio,coarse:matchMedia('(pointer: coarse)').matches,maxTouchPoints:navigator.maxTouchPoints})),phone=form==='phone';
+      gate.environmentChecks.push({phase,...e});
+      if(e.innerWidth!==pageOptions.viewport.width||e.innerHeight!==pageOptions.viewport.height||e.devicePixelRatio!==pageOptions.deviceScaleFactor||e.coarse!==phone||e.maxTouchPoints!==(phone?1:0))throw new Error(`Activity device emulation differs from the ordinary ${form} gate at ${phase}: ${JSON.stringify(e)}`);
+      return e;
+    };
+    gate.environment=await gate.checkEnvironment('startup');
+    gate.screenshot=async options=>{const buffer=await lifecycle.screenshot(options);await gate.checkEnvironment(`capture:${options.path}`);return buffer;};
+  }
   await page.evaluate(()=>{grx.setTransitions('instant');grx.settle();});
   const gpu=await page.evaluate(()=>{const gl=grx.renderer().getContext(),ext=gl.getExtension('WEBGL_debug_renderer_info');return ext?gl.getParameter(ext.UNMASKED_RENDERER_WEBGL):'unknown';});
   gate.gpu=gpu;
@@ -35,8 +46,9 @@ export async function openGate(name,form='desktop') {
 }
 export async function show(page,scene,mode,part=null){await page.evaluate(async view=>{await grx.show(view,{scroll:false});grx.settle();},{scene,mode,part});await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));}
 export async function finish(gate,failures=[],details={}){
+  if(gate.checkEnvironment)try{await gate.checkEnvironment('finish');}catch(error){failures.push(error.stack||String(error));}
   failures.push(...gate.errors);fs.mkdirSync('.local/gates',{recursive:true});
-  const report={gate:gate.name,form:gate.form,status:failures.length?'FAIL':'PASS',date:new Date().toISOString(),url:BASE,gpu:gate.gpu,scope:process.env.GR_LEVELS||'all implemented and reserved levels',scenes:gate.scenes,...details,failures};
+  const report={gate:gate.name,form:gate.form,status:failures.length?'FAIL':'PASS',date:new Date().toISOString(),url:BASE,gpu:gate.gpu,scope:process.env.GR_LEVELS||'all implemented and reserved levels',scenes:gate.scenes,...(gate.environment?{environment:gate.environment}:{}),...(gate.environmentChecks?{environmentChecks:gate.environmentChecks}:{}),...details,failures};
   fs.writeFileSync(`.local/gates/${gate.name}-${gate.form}.json`,JSON.stringify(report,null,2));
   if(process.env.GR_LEVELS){
     const archive=`.local/gates/levels/${process.env.GR_LEVELS.replace(/[^a-z0-9,-]/gi,'_')}`;

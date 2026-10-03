@@ -51,7 +51,9 @@ export async function openLifecycleBrowser(options) {
     });
     browser=await chromium.connectOverCDP(endpoint,{noDefaults:true,timeout:15000});
     const context=browser.contexts()[0],page=context.pages()[0];
-    await page.setViewportSize(options.viewport);
+    // Leave Playwright's own default-context viewport unset. Setting it would
+    // install a competing DPR=1 metrics override on its original CDP session.
+    // This session owns all device metrics for the lifecycle page instead.
     const metrics=await context.newCDPSession(page);
     await metrics.send('Emulation.setDeviceMetricsOverride',{width,height,screenWidth:width,screenHeight:height,deviceScaleFactor:options.deviceScaleFactor||1,mobile:!!options.isMobile});
     await metrics.send('Emulation.setTouchEmulationEnabled',{enabled:!!options.hasTouch,maxTouchPoints:1});
@@ -60,6 +62,14 @@ export async function openLifecycleBrowser(options) {
     // A real tab activation sequence restores WasShown without DOM overrides.
     const restoreVisibility=async()=>{await other.bringToFront();await page.bringToFront();};
     await restoreVisibility();
-    return {browser,page,restoreVisibility,close};
+    // Chrome's screenshot scale belongs to the CDP session. Capturing through
+    // Playwright's original session would overwrite this session's phone DPR.
+    const screenshot=async({path:destination})=>{
+      const {data}=await metrics.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+      const buffer=Buffer.from(data,'base64');
+      if(destination)fs.writeFileSync(destination,buffer);
+      return buffer;
+    };
+    return {browser,page,screenshot,restoreVisibility,close};
   } catch(error) {await close();throw error;}
 }

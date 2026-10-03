@@ -25,6 +25,11 @@ export function validateGeometryReport(report, { name, builtAt, sceneIds, base =
   if (name.startsWith('flights-') && report.flightCoverage !== FLIGHT_COVERAGE) reject('missing all-pairs flight coverage');
   if (name.startsWith('activity-')) {
     if(report.activityCoverage!==ACTIVITY_COVERAGE)reject('missing immediate activity coverage');
+    const phone=report.form==='phone', expectedEnvironment={innerWidth:phone?390:1440,innerHeight:phone?844:900,devicePixelRatio:phone?3:1,coarse:phone,maxTouchPoints:phone?1:0};
+    const matchesEnvironment=value=>value&&Object.entries(expectedEnvironment).every(([key,expected])=>value[key]===expected);
+    if(!matchesEnvironment(report.environment))reject('incorrect activity device emulation');
+    const phases=['startup',...['payload','follow','reduced'].map(view=>`capture:.local/activity-${report.form}-${view}.png`),'finish'];
+    if(report.environmentChecks?.length!==phases.length||phases.some(phase=>report.environmentChecks.filter(value=>value.phase===phase&&matchesEnvironment(value)).length!==1))reject('device emulation changed during capture or navigation');
     const expected=sceneIds.filter(id=>id!=='orbits').flatMap(id=>['light','data','heat'].map(mode=>`${id}/${mode}`));
     for(const intent of ['running','paused','reduced']){
       const cases=report.activityCases?.[intent];

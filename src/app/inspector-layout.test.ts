@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { explanationHeightLimit, inspectorHeightLimits } from './inspector-layout.js';
+import { explanationHeightLimit, inspectorHeightLimits, missionInvitationFits } from './inspector-layout.js';
 
 describe('phone inspector height budget', () => {
   it('reserves the canvas and full side-level transport before sizing the pane', () => {
@@ -25,5 +25,18 @@ describe('phone inspector height budget', () => {
   });
   it('rounds a fractional viewport down rather than pushing the pane past its edge', () => {
     expect(explanationHeightLimit({ availableHeight: 543.594, fixedControlsHeight: 185 })).toBe(68);
+  });
+  it('keeps the Follow row exposed with its summary while preserving the phone minima', () => {
+    const height = explanationHeightLimit({ availableHeight: 560, fixedControlsHeight: 176, summaryMinimum: 94 });
+    expect(height).toBe(94);
+    expect(height + 176 + 140 + 150).toBe(560);
+  });
+  it('reclaims the invitation before fixed playback would take space from the canvas or pane', () => {
+    expect(missionInvitationFits({ availableHeight: 544, controlsHeight: 232, invitationHeight: 53 })).toBe(false);
+    expect(missionInvitationFits({ availableHeight: 737, controlsHeight: 232, invitationHeight: 53 })).toBe(true);
+  });
+  it('counts the invitation even while hidden and allows it exactly when the full budget fits', () => {
+    expect(missionInvitationFits({ availableHeight: 575, controlsHeight: 232, invitationHeight: 53 })).toBe(true);
+    expect(missionInvitationFits({ availableHeight: 574.5, controlsHeight: 232, invitationHeight: 53 })).toBe(false);
   });
 });

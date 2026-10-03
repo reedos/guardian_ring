@@ -23,7 +23,7 @@ for (const id of ['geo','heo','meo','leo']) {
       const visible=!b.families()[id];
       if(!visible&&orbitFollow()===id)setOrbitFollow(null);
       b.setFamily(id,visible);
-      if(!visible&&store.ui.selected&&!b.isPartVisible(store.ui.selected))overview();
+      if(!visible&&store.ui.selected&&!b.isPartVisible(store.ui.selected,{selected:true}))overview();
     }
     sync();
   }); family.append(button);
