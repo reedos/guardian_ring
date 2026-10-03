@@ -1,6 +1,6 @@
 # Guardian Ring review build
 
-10/03/2026. Reed expanded the scope to independent usability, physics, and visual-impact reviews plus immediate activity when changing layers. The accepted frozen production build on `codex/part-focus-navigation` is `visualizer-r94RjGs4.js` with `visualizer-D8YZzmoH.css`, built at 3:19:02 a.m. Pacific on 10/03/2026 from local branch commit `301e677`. Build SHA-256: `a4d59af6e272c58c895ed3a7ef0b5cf26cd480f16a3a7a9bf3dcf93e79025ca7`. All 28 full-scope browser commands pass, including 2,091 camera flights on each of desktop and phone. Cycle and Parts each pass 22,752 states across 96 scenarios; cycle textures stay at 57 through all 96 rebuilds. Earlier candidates and partial runs are preserved as history below. Remote deployment of this revision, Reed's device review, and the separate launch decision remain open; noindex stays enabled. See `independent-reviews.md` for the finding-by-finding disposition.
+10/03/2026. Reed expanded the scope to independent usability, physics, and visual-impact reviews plus immediate activity when changing layers. The accepted frozen production build on `codex/part-focus-navigation` is `visualizer-r94RjGs4.js` with `visualizer-D8YZzmoH.css`, built at 3:19:02 a.m. Pacific on 10/03/2026 from local branch commit `301e677`. Build SHA-256: `a4d59af6e272c58c895ed3a7ef0b5cf26cd480f16a3a7a9bf3dcf93e79025ca7`. All 28 full-scope browser commands pass, including 2,091 camera flights on each of desktop and phone. Cycle and Parts each pass 22,752 states across 96 scenarios; cycle textures stay at 57 through all 96 rebuilds. Earlier candidates and partial runs are preserved as history below. The review deployment is confirmed below. Reed's device review and the separate launch decision remain open; noindex stays enabled. See `independent-reviews.md` for the finding-by-finding disposition.
 
 ## Current scope
 
@@ -83,7 +83,7 @@ Earlier integrated-payload diagnostics are historical: an ABI phone condition mi
 
 The benchmark uses IF's 300 ms settling approach, followed by a check for finished CSS transitions and 24 warm-up frames. It retains all valid measured intervals, requires at least 240 samples and complete teaching phases, and preserves the 15 ms desktop / 7 ms phone budgets. Failed reports and comparison diagnostics remain in `.local/`; no failed condition is waived or replaced by a focused pass.
 
-The integration owner regenerated [gate-results.md](gate-results.md) from the completed twenty-eight-command run against the frozen expanded build. Its validator requires full scope, fresh reports, real-GPU rendering, all-pairs camera coverage, current unit tests, and a clean strict evidence audit. The local browser acceptance is complete; remote CI and deployment are not claimed here.
+The integration owner regenerated [gate-results.md](gate-results.md) from the completed twenty-eight-command run against the frozen expanded build. Its validator requires full scope, fresh reports, real-GPU rendering, all-pairs camera coverage, current unit tests, and a clean strict evidence audit. The local browser acceptance is complete. The separate remote CI and review-deployment verification is recorded below.
 
 The acceptance suite covers scenarios, parent parts, ordered camera routes, evidence dialogs, component anatomy, Parts search/navigation, responsive diagrams, saved comparisons, renderer quality, physical labels, selected callouts and performance. Phone-sized browser checks do not replace testing on an actual phone.
 
@@ -97,4 +97,8 @@ Real plume intensity, quantitative atmospheric transmission, military hardware d
 
 ## Publication
 
-Reed authorized a public repository and GitHub Pages review; launch requires a separate call. Keep noindex/nofollow and the crawler block. Share a verified review URL only in this chat, not in the public README, repository homepage field, portfolio, or sitemap. Public Pages has no sign-in restriction.
+Reed authorized a public repository and GitHub Pages review; launch requires a separate call.
+
+Main application commit `451fdbec293ac8a9053f9edc2b556cf17559d5fb` was pushed, and Pages workflow `37126809501` passed remote typecheck, tests, claims, build, and deployment. Deployment completed on 10/03/2026 at 6:38:15 a.m. Pacific. Verification checked 40 deployed files: 37 were byte-identical and three differed only in CRLF/LF line endings, with zero content mismatches. The live phone gate passed all 49 states, covering all ten levels and three layers, picker/evidence access, the catalog, Inside and component links, GEO/LEO mission views, pause, layer activity, and noindex on all six pages. The local evidence is `.local/deployed-bytes.json` and `.local/gates/published-phone.json`. These deployment checks supplement the separately scoped local 28-command acceptance record and independent reviews.
+
+Device review and the launch decision remain open. Keep noindex/nofollow and the crawler block. Share a verified review URL only in this chat, not in the public README, repository homepage field, portfolio, or sitemap. Public Pages has no sign-in restriction.

@@ -166,8 +166,9 @@ acceptance run has passed all 28 full-scope commands, including the 861-state
 desktop and phone Activity gates and 2,091 flights on each form. Cycle and
 Parts each pass 22,752 states across 96 scenarios; cycle textures remain at
 57 through all 96 rebuilds. This reviewer did not independently perform those
-GPU checks. Remote deployment, device review, and the launch decision remain
-open; noindex stays enabled.
+GPU checks. The separate review deployment is confirmed in
+[the build review](BUILD-REVIEW.md). Device review and the launch decision
+remain open; noindex stays enabled.
 
 ## Source check
 

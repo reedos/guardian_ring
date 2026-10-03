@@ -123,7 +123,8 @@ full-scope browser commands pass, including 2,091 flights on each form. Cycle
 and Parts each pass 22,752 states across 96 scenarios; cycle textures stay at
 57 through all 96 rebuilds. The generated [acceptance record](gate-results.md)
 validates the frozen build with fresh typecheck, tests, and evidence audit.
-Remote deployment remains pending.
+The separate review deployment and 49-state live phone check are confirmed in
+[the build review](BUILD-REVIEW.md); they do not expand the independent reviewers' scopes.
 
 Current-build Activity passes 861 states on each form. Learning passes 359
 desktop and 367 phone states; Performance passes 179 on each, with worst p95
@@ -163,5 +164,5 @@ an app change. The updated reviewer record is `.local/reviews/final-usability/re
 The integration owner completed all twenty-eight serialized real-GPU commands
 against `visualizer-r94RjGs4` and regenerated the acceptance record against its
 unchanged build hash. Historical passes and failures remain preserved separately.
-Reed's device review, remote deployment, and separate launch decision remain
-open; noindex stays enabled.
+The review deployment is complete. Reed's device review and separate launch
+decision remain open; noindex stays enabled.
