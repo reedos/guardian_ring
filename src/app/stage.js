@@ -42,7 +42,7 @@ export const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const clearanceStats = { builds: 0, buildMs: 0, standIn: 0, unplanned: 0, plans: 0, planMs: 0, hits: 0, prefetched: 0, clear: true, pending: false };
 let renderer, sceneLook, started = false, busy = false, tween = null, transitions = reduced ? 'instant' : 'full', buildEpoch = 0;
 let renderedFlightProgress = 1;
-let framedPart = null;
+let framedPart = null, framedOverview = false;
 let orbitTracking = null;
 let orbitExitMinimum = null;
 let navigationOwner = null;
@@ -131,7 +131,7 @@ function updateOrbitFollow(suspended) {
 const inspect = active => getTeaching()?.setInspection(active);
 function captureView() {
   const lesson=getTeaching()?.state();
-  return { scene: ui.scene, mode: ui.mode, selected: ui.selected, framedPart, position: camera.position.toArray(), target: controls.target.toArray(), orbitMinimum:ui.scene===0?orbitTracking?.minDistance??orbitExitMinimum:null, minDistance:controls.minDistance, pane: capturePane(), presentation:getAssemblyPresentation()?.capture(), lesson:lesson&&{index:lesson.index,progress:lesson.progress,inspection:lesson.inspection} };
+  return { scene: ui.scene, mode: ui.mode, selected: ui.selected, framedPart, framedOverview, position: camera.position.toArray(), target: controls.target.toArray(), orbitMinimum:ui.scene===0?orbitTracking?.minDistance??orbitExitMinimum:null, minDistance:controls.minDistance, pane: capturePane(), presentation:getAssemblyPresentation()?.capture(), lesson:lesson&&{index:lesson.index,progress:lesson.progress,inspection:lesson.inspection} };
 }
 export const destination = () => ui.scene;
 export const stageActive = () => $('viewer').contains(document.activeElement) || $('viewer').matches(':hover');
@@ -170,6 +170,7 @@ export function flyTo(pos, target, duration = .9, { inspection = true } = {}) {
 function partFrame(spot) {
   return fitComponent(spot.view,view.clientWidth,view.clientHeight,{minDistance:controls.minDistance,maxDistance:controls.maxDistance});
 }
+function overviewFrame() { return built[ui.scene]?.overviewFrame?.(view.clientWidth,view.clientHeight)||built[ui.scene]?.camera; }
 function resize() {
   if (!renderer) return;
   if(built[ui.scene])sceneLook?.apply(built[ui.scene],{sceneId:store.C.SCENES[ui.scene].id,tier:tiers[ui.scene]});
@@ -182,6 +183,10 @@ function resize() {
   const spot=framedPart&&hotspotsFor(ui.scene)[framedPart];
   if(spot?.view?.detailSize){
     const frame=partFrame(spot),position=tween?.p1||camera.position,target=tween?.t1||controls.target;
+    if(position.distanceTo(new THREE.Vector3(...frame.pos))>1e-6||target.distanceTo(new THREE.Vector3(...frame.target))>1e-6)flyTo(frame.pos,frame.target,.35,{inspection:false});
+  }
+  if(framedOverview&&!orbitTracking&&built[ui.scene]?.overviewFrame){
+    const frame=overviewFrame(),position=tween?.p1||camera.position,target=tween?.t1||controls.target;
     if(position.distanceTo(new THREE.Vector3(...frame.pos))>1e-6||target.distanceTo(new THREE.Vector3(...frame.target))>1e-6)flyTo(frame.pos,frame.target,.35,{inspection:false});
   }
   updatePins();
@@ -263,7 +268,7 @@ function updatePins() {
 function buildPanel() {
   const scene = store.C.SCENES[ui.scene], parts = partsFor(ui.scene);
   $('hud-title').textContent = scene.title; $('hud-sub').textContent = scene.scale;
-  if ($('scene-note')) $('scene-note').textContent = scene.id === 'orbits' ? 'Schematic orbits · not to scale\nHistorical NASA Earth textures' : scene.ready ? 'Representative geometry · not to scale\nAnimated paths are illustrative' : 'Reserved level\nViewer test object';
+  if ($('scene-note')) $('scene-note').textContent = scene.id === 'orbits' ? 'Schematic positions · not to scale\nGEO patches: illustrative, not sensor coverage\nHistorical NASA Earth textures' : scene.ready ? 'Representative geometry · not to scale\nAnimated paths are illustrative' : 'Reserved level\nViewer test object';
   $('intro').textContent = scene.intro; $('parts-n').textContent = ` ${parts.length}`;
   $('lp-k').textContent = isSide(ui.scene) ? 'Side level' : `Level ${ui.scene + 1} of ${MAIN_LEVELS}`;
   $('lp-t').textContent = scene.title; $('back-out').hidden = !isSide(ui.scene);
@@ -290,6 +295,7 @@ function updateCycle() {
 export function select(id, fly = true, { reveal = true } = {}) {
   if (orbitTracking) setOrbitFollow(null);
   const part = partsFor(ui.scene).find(candidate => candidate.id === id); if (!part) return;
+  framedOverview=false;
   if (!partCycle.selecting) partCycle.stop();
   if (fly) { inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); }
   ui.selected = id; $('card').hidden = false; $('card-k').textContent = part.kicker; $('card-t').textContent = part.title; $('card-b').textContent = part.body;
@@ -320,14 +326,14 @@ export function select(id, fly = true, { reveal = true } = {}) {
   if (fly && reveal) emit('part-inspect', id);
 }
 export function deselect() {
-  framedPart = null; ui.selected = null; $('card').hidden = true;
+  framedPart = null; framedOverview=false; ui.selected = null; $('card').hidden = true;
   document.querySelectorAll('#parts button, #pins button').forEach(button => { button.setAttribute('aria-pressed', 'false'); button.classList.remove('on'); });
   emit('select', null);
 }
 export function overview() {
   if (orbitTracking) setOrbitFollow(null);
-  const preset = built[ui.scene]?.camera; if (!preset) return;
-  partCycle.stop(); deselect(); flyTo(preset.pos, preset.target);
+  const preset = overviewFrame(); if (!preset) return;
+  partCycle.stop(); deselect(); framedOverview=true; flyTo(preset.pos, preset.target);
 }
 // Covers disappear only for the illustrative cutaway. Camera clearance always
 // includes the complete enclosures, so closing cannot trap a detail camera.
@@ -392,7 +398,7 @@ export async function go(index, { record = true, restore = null, owner = null, r
       built[index].occupancy = builder.result; clearanceStats.builds++; clearanceStats.buildMs = performance.now() - start;
     }
     if (epoch !== buildEpoch) return;
-    ui.scene = index; ui.selected = null; framedPart = null; tween = null; renderedFlightProgress = 1;
+    ui.scene = index; ui.selected = null; framedPart = null; framedOverview=!restore; tween = null; renderedFlightProgress = 1;
     orbitExitMinimum=null;
     if (restore) ui.mode = restore.mode;
     const preset = built[index].camera; camera.position.set(...preset.pos); controls.target.set(...preset.target); camera.near = preset.near; camera.far = preset.far; controls.minDistance = preset.min; controls.maxDistance = preset.max;
@@ -407,6 +413,7 @@ export async function go(index, { record = true, restore = null, owner = null, r
       const id = retainedPart(partsFor(index), restore.selected);
       if (id) { inspect(true); select(id, false); } else deselect();
       framedPart=id&&restore.framedPart===id?id:null;
+      framedOverview=!id&&!!restore.framedOverview;
       camera.position.fromArray(restore.position); controls.target.fromArray(restore.target); settle();
       if(restore.lesson&&getTeaching()){
         getTeaching().seek(restore.lesson.index,restore.lesson.progress);
@@ -416,7 +423,7 @@ export async function go(index, { record = true, restore = null, owner = null, r
         getAssemblyPresentation()?.restore(restore.presentation);
       }
       emit('mode', ui.mode); emit('restore-pane', { ...restore.pane, restoreFocus: true });
-    } else { if(getAssemblyPresentation()){getAssemblyPresentation().setView('assembled');inspect(true);}deselect(); if (!firstView&&resetPane) emit('pane-request', { pane: 'parts', reset: true }); }
+    } else { if(getAssemblyPresentation()){getAssemblyPresentation().setView('assembled');inspect(true);}deselect();framedOverview=true; if (!firstView&&resetPane) emit('pane-request', { pane: 'parts', reset: true }); }
     if(!restore&&owner===null&&activity)previewActivity();
     $('veil').hidden = true; emit('scene-settings');
   } catch (error) { if(epoch!==buildEpoch)return;$('veil').textContent = 'The viewer could not start. Reload to try again; the source and method pages remain available.'; throw error; }
@@ -472,7 +479,7 @@ export function start() {
   document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
   $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('part-play').addEventListener('click', () => partCycle.toggle()); $('back-out').addEventListener('click', backOut);
   $('quality').addEventListener('change', event => setQualityPreference(event.target.value));
-  controls.addEventListener('start', () => { if(orbitTracking)setOrbitFollow(null);framedPart = null; tween = null; partCycle.stop(); inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); });
+  controls.addEventListener('start', () => { if(orbitTracking)setOrbitFollow(null);framedPart = null; framedOverview=false; tween = null; partCycle.stop(); inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); });
   const suspendActivity = () => {
     const suspended = activitySuspended();
     getTeaching()?.setSuspended?.(suspended); built[ui.scene]?.setSuspended?.(suspended);

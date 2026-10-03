@@ -4,6 +4,7 @@ import { DRAWN_ORBITS, drawnOrbitPosition } from './orbit-motion.js';
 import { earthClearSegment, nadirPoint, orbitalFollowPose } from './orbit-presentation.js';
 import { createNadirReference, createOrbitalStream } from './orbit-streams.js';
 import { createSurfacePathClear } from './surface-path.js';
+import { orbitalOverviewPose, createOrbitBackdrop, createGeoViewingPatches } from './orbit-overview.js';
 
 const URL = 'models/earth-orbits.glb?v=4';
 // A fixed lighting direction for the illustration, unrelated to a date or ephemeris.
@@ -93,9 +94,11 @@ export function build({ quality, model }) {
   if (fill) fill.intensity = .06;
   for (const material of Array.isArray(earth.material) ? earth.material : [earth.material]) shadeHistoricalNightMap(material);
   shadeAtmosphericLimb(asset.getObjectByName('Atmosphere'));
+  scene.add(createOrbitBackdrop());
   const family = Object.fromEntries(['geo','heo','meo','leo'].map(id => [id, asset.getObjectByName(id.toUpperCase() + 'Family')]));
-  family.heo.visible = false; family.meo.visible = false; family.leo.visible = false;
+  family.heo.visible = true; family.meo.visible = false; family.leo.visible = false;
   const satellites = []; asset.traverse(o => { if (o.userData.role === 'representative-satellite') satellites.push(o); });
+  const patches=createGeoViewingPatches(satellites.filter(node=>node.parent===family.geo));spin.add(patches);
   const attachments = new Map(satellites.map(node => [node, authoredOrbitalPorts(node)]));
   const surfaceClear = new Map(satellites.map(node => [node, createSurfacePathClear(node)]));
   const followEmphasis = createOrbitFollowEmphasis(asset, satellites);
@@ -126,7 +129,7 @@ export function build({ quality, model }) {
   // Earth-fixed illustrative ground receiver, not a real station or event site.
   const ground = new THREE.Vector3(.25,.48,.88).normalize().multiplyScalar(1.014).toArray();
   const point = featured.geo.position.toArray();
-  const camera = { pos: [7,5,9], target: [0,.2,0], near: .03, far: 120, min: 4.2, max: 25 };
+  const camera = { ...orbitalOverviewPose(1000,600), near: .03, far: 120, min: 2.6, max: 25 };
   const make = (positions, rotating = true) => Object.fromEntries(Object.entries(positions).map(([id,pos]) => [id, { pos:[...pos], local:[...pos], rotating, view:{pos:[...camera.pos],target:[...pos]} }]));
   const hotspots = make({ geo:point, earth:ground, 'orbit-families':[-2,0,.4] });
   const dataHotspots = make({ processing:point, downlink:point, ground });
@@ -147,6 +150,7 @@ export function build({ quality, model }) {
   const leoSpec=orbiters.find(orbiter=>orbiter.spec.family==='leo'&&orbiter.spec.index===1).spec;
   let last = null;
   function locate() {
+    patches.visible=mode==='light'&&family.geo.visible&&!focusFamily;
     scene.updateMatrixWorld(true);
     for (const spot of spots) {
       const p = spot.node?spot.node.getWorldPosition(world):spin.localToWorld(world.set(...spot.local)); spot.pos = p.toArray();
@@ -197,7 +201,7 @@ export function build({ quality, model }) {
     }
   }
   locate();
-  return { scene, quality, model, camera, hotspots, dataHotspots, heatHotspots,
+  return { scene, quality, model, camera, overviewFrame:orbitalOverviewPose, hotspots, dataHotspots, heatHotspots,
     flows:layerGroups.light.children, dataFlows:layerGroups.data.children, heatFlows:layerGroups.heat.children,
     solids:[earth], satellites, look:{ exposure:1, bloom:0, threshold:1, ao:0, env:'night' },
     setMode(next) { mode=next;for (const [id,group] of Object.entries(layerGroups)) group.visible = id === mode; },

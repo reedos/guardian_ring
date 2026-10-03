@@ -10,6 +10,7 @@ document.getElementById('mm-view').hidden = true;
 const play = root.querySelector('#day-play'), family = root.querySelector('.orbit-families');
 const fact=document.createElement('p');fact.className='orbit-follow-fact';fact.hidden=true;
 const explanation=root.querySelector('.orbit-playback-note');
+const patchesNote=document.createElement('p');patchesNote.textContent='Amber GEO viewing patches remain fixed on the rotating ground. Their sizes are illustrative and do not represent sensor coverage. The starfield is illustrative; historical Earth imagery supplies surface context.';explanation.append(patchesNote);
 explanation.querySelector('summary').textContent='Follow a spacecraft · Motion details';
 explanation.querySelector('summary').after(root.querySelector('.orbit-follow-row'),fact);let factFamily=null;
 const current = () => destination() === 0 ? built[0] : null;
