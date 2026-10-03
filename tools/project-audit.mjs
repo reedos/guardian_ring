@@ -70,6 +70,12 @@ if (gate) {
     check(!reduced.playing&&await page.evaluate(p=>grx.focusDemo.state().progress===p,reduced.progress),'Reduced-motion focus diagram started moving without consent');
     await page.locator('#focus-demo [data-focus="close"]').click();await page.emulateMedia({reducedMotion:'no-preference'});
     await page.evaluate(()=>grx.setMode('data'));check(!await launch.isVisible(),'Ideal optical demonstration appears in a non-light layer');
+    await page.evaluate(async()=>{await grx.mission.start();grx.mission.pause();for(let chapter=0;chapter<4;chapter++)await grx.mission.next();grx.settle();});
+    await page.locator('[data-mission="focus"]').click();await frames(page);
+    check(await page.evaluate(()=>grx.focusDemo.state().open&&grx.mission.state().active&&!grx.mission.state().playing),'Mission cannot open the focus example while preserving its chapter');
+    await page.locator('#focus-demo [data-focus="close"]').click();
+    check(await page.evaluate(()=>grx.mission.state().index===4&&!grx.mission.state().playing),'Closing the focus example lost the mission chapter or resumed without consent');
+    await page.evaluate(()=>grx.mission.stop());
   });
 
   await run('keyboard tab switch while the viewer is hovered', async () => {

@@ -27,8 +27,9 @@ window.grx = {
   setAssemblyView:stage.setAssemblyView,
   setOrbitFollow:stage.setOrbitFollow,orbitFollow:stage.orbitFollow,
 };
-window.grx.mission = mountMissionTour();
-const focusDemo=mountFocusDemo({beforeOpen(){window.grx.mission.stop();stage.setActivityEnabled(false);stage.getTeaching()?.pause();}});
+let focusDemo;
+window.grx.mission = mountMissionTour({openFocusDemo:()=>focusDemo.open()});
+focusDemo=mountFocusDemo({beforeOpen(){window.grx.mission.pause();stage.setActivityEnabled(false);stage.getTeaching()?.pause();}});
 window.grx.focusDemo=focusDemo;
 const animationControls = mountAnimationControls(document.getElementById('animation-controls'), { getTeaching: stage.getTeaching, preparePlayback: stage.preparePlayback, stepTeaching:stage.stepTeaching, getAssemblyPresentation:stage.getAssemblyPresentation,setAssemblyView:stage.setAssemblyView,setActivityEnabled:stage.setActivityEnabled,openFocusDemo:()=>focusDemo.open() });
 mountInspectorLayout();

@@ -20,12 +20,14 @@ export const MISSION_CHAPTERS = [
   { scene:'ground',mode:'data',title:'Receive, process, and distribute',body:'The receiver recovers data for processing, operator displays, and storage. This layout supplies no operational warning timeline.' },
 ];
 
-export function mountMissionTour() {
+export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   const owner=Symbol('guided-mission');
   const host=document.createElement('section');host.className='mission-tour';host.id='mission-tour';host.setAttribute('aria-label','Guided mission');
   host.innerHTML='<div class="mission-prompt"><button type="button" class="btn go" data-mission="start">Watch the mission <span aria-hidden="true">→</span></button><span>From orbit to the ground · guided illustration</span></div><div class="mission-active-panel" hidden><div class="mission-heading"><span class="eyebrow">Illustrative mission</span><span class="mission-count"></span></div><div class="mission-copy" aria-live="polite"><strong class="mission-title"></strong><p class="mission-body"></p><p class="mission-phase"></p></div><div class="mission-step-controls" role="group" aria-label="Steps in this chapter" hidden><button type="button" class="btn" data-mission="step-previous" aria-label="Previous mission step">← Step</button><span class="mission-step-count" aria-live="polite"></span><button type="button" class="btn" data-mission="step-next" aria-label="Next mission step">Step →</button></div><details class="mission-explanation"><summary>About this step</summary><p class="mission-description"></p><div class="animation-legend mission-legend" aria-label="Flow legend"></div><div class="animation-evidence mission-evidence"></div><p class="mission-detail-note"></p></details><div class="mission-progress" aria-hidden="true"><i></i></div><div class="mission-transport" role="group" aria-label="Mission playback"><button type="button" class="btn" data-mission="play">Pause</button><button type="button" class="btn" data-mission="previous">← Chapter</button><button type="button" class="btn" data-mission="next">Chapter →</button><button type="button" class="btn" data-mission="stop">Explore this view</button><label><input type="checkbox" data-mission="repeat"> Repeat</label></div><p class="mission-note">Presentation time is compressed. Hardware, routes, and activity are representative; the ordered explanation separates tasks that may overlap.</p></div>';
   document.getElementById('viewer').insertBefore(host,document.getElementById('animation-controls'));
   const find=selector=>host.querySelector(selector),prompt=find('.mission-prompt'),panel=find('.mission-active-panel');
+  const focusDemoButton=document.createElement('button');focusDemoButton.type='button';focusDemoButton.className='btn';focusDemoButton.dataset.mission='focus';focusDemoButton.textContent='See light focus';focusDemoButton.setAttribute('aria-haspopup','dialog');focusDemoButton.hidden=true;find('.mission-copy').append(focusDemoButton);
+  focusDemoButton.addEventListener('click',openFocusDemo);
   const explanation=find('.mission-explanation'),stepControls=find('.mission-step-controls');
   const legend=find('.mission-legend'),evidence=find('.mission-evidence');let explanationKey='';
   const menuStart=document.createElement('button');menuStart.type='button';menuStart.id='mission-launch';menuStart.className='mm-item';menuStart.textContent='Watch the mission';
@@ -58,6 +60,7 @@ export function mountMissionTour() {
     prompt.hidden=active;panel.hidden=!active;document.body.classList.toggle('mission-active',active);
     if(!active)return;
     const chapter=MISSION_CHAPTERS[index];
+    focusDemoButton.hidden=chapter.scene!=='payload'||chapter.mode!=='light';
     orbitFact.hidden=!chapter.follow;
     if(chapter.follow&&factFamily!==chapter.follow){const family=chapter.follow,example=ORBIT_EXAMPLES[family];factFamily=family;orbitFact.innerHTML=`${example.claims.orbitSpeedKmS[1]} ${chip('derived',`orbit-example:${family}:orbitSpeedKmS`,`${family.toUpperCase()} teaching speed`)} · ${example.claims.altitudeKm[1]} altitude ${chip('derived',`orbit-example:${family}:altitudeKm`,'teaching altitude')}<span>Physical circular-orbit example; drawing and playback scales are illustrative.</span>`;}
     find('.mission-count').textContent=`${index+1} / ${MISSION_CHAPTERS.length}`;
