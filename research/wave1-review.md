@@ -9,7 +9,7 @@ Each item requires the full PLAN section 9 acceptance before its merge.
 | 2 | `codex/wave1-02-opening-frame` | Earth-led responsive opening, visible polar loops, subtle illustrative stars and Earth-fixed GEO viewing patches |
 | 3 | `codex/wave1-03-plume` | Responsive plume composition, rising false-color emission, enlarged molecular diagrams and a schematic atmospheric backdrop |
 | 4 | `codex/wave1-04-photon-focus` | A separate interactive ideal focusing diagram with luminous ray ribbons and exact reflection geometry |
-| 5 | Pending | A concise story opening using already verified claims |
+| 5 | `codex/wave1-05-story-hook` | A story opening anchored in GEO altitude and the named TIRS-2 civil temperature |
 | 6 | Pending | Persistent explanatory legends and honest scale context |
 | 7 | Pending | First-visit mission entry preserving explicit links and motion preferences |
 
@@ -68,3 +68,13 @@ diffraction nor a real sensor's response. See `wave1-ideal-focus.md` for the
 opened NASA source and derivation. No hardware GLB was rebuilt.
 
 CPU verification, browser regression, visual comparison and full acceptance are pending.
+
+## Item 5
+
+The opening now connects the planetary scale of GEO with the cold focal plane
+inside the named Landsat 9 TIRS-2 instrument, then invites the reader to follow
+light into information. Both figures use existing verified story claims and
+inline evidence chips. No military temperature is inferred and no Moon
+comparison is used. The publication statement remains verbatim.
+
+CPU verification, paired story screenshots and full acceptance are pending.
