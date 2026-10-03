@@ -1,3 +1,4 @@
+import './app/entry-location.js';
 import { store, setScenario, pin, on } from './app/store.js';
 import * as stage from './app/stage.js';
 import { THREE } from './kit.js';

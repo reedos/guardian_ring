@@ -5,6 +5,7 @@ import { ORBIT_EXAMPLES } from '../orbit-examples.js';
 import { chip } from '../evidence.js';
 import { claimByKey } from '../claims.js';
 import { missionEntry } from './mission-entry.js';
+import { ENTRY_LOCATION } from './entry-location.js';
 
 // These chapters order an explanation. They are not an operations schedule:
 // collecting, transferring, controlling and rejecting heat can happen together.
@@ -22,7 +23,7 @@ export const MISSION_CHAPTERS = [
 ];
 
 export function mountMissionTour({openFocusDemo=()=>{}}={}) {
-  const entry=missionEntry(location.href,{getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
+  const entry=missionEntry(ENTRY_LOCATION,{getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
   const owner=Symbol('guided-mission');
   const host=document.createElement('section');host.className='mission-tour';host.id='mission-tour';host.setAttribute('aria-label','Guided mission');
   host.innerHTML='<div class="mission-prompt"><button type="button" class="btn go" data-mission="start">Watch the mission <span aria-hidden="true">→</span></button><span>From orbit to the ground · guided illustration</span></div><div class="mission-active-panel" hidden><div class="mission-heading"><span class="eyebrow">Illustrative mission</span><span class="mission-count"></span></div><div class="mission-copy" aria-live="polite"><strong class="mission-title"></strong><p class="mission-body"></p><p class="mission-phase"></p></div><div class="mission-step-controls" role="group" aria-label="Steps in this chapter" hidden><button type="button" class="btn" data-mission="step-previous" aria-label="Previous mission step">← Step</button><span class="mission-step-count" aria-live="polite"></span><button type="button" class="btn" data-mission="step-next" aria-label="Next mission step">Step →</button></div><details class="mission-explanation"><summary>About this step</summary><p class="mission-description"></p><div class="animation-legend mission-legend" aria-label="Flow legend"></div><div class="animation-evidence mission-evidence"></div><p class="mission-detail-note"></p></details><div class="mission-progress" aria-hidden="true"><i></i></div><div class="mission-transport" role="group" aria-label="Mission playback"><button type="button" class="btn" data-mission="play">Pause</button><button type="button" class="btn" data-mission="previous">← Chapter</button><button type="button" class="btn" data-mission="next">Chapter →</button><button type="button" class="btn" data-mission="stop">Explore this view</button><label><input type="checkbox" data-mission="repeat"> Repeat</label></div><p class="mission-note">Presentation time is compressed. Hardware, routes, and activity are representative; the ordered explanation separates tasks that may overlap.</p></div>';
