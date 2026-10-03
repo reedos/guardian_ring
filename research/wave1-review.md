@@ -7,7 +7,7 @@ Each item requires the full PLAN section 9 acceptance before its merge.
 | Item | Branch | Scope |
 | --- | --- | --- |
 | 2 | `codex/wave1-02-opening-frame` | Earth-led responsive opening, visible polar loops, subtle illustrative stars and Earth-fixed GEO viewing patches |
-| 3 | Pending | Plume composition and an illustrative emission/absorption scene |
+| 3 | `codex/wave1-03-plume` | Responsive plume composition, rising false-color emission, enlarged molecular diagrams and a schematic atmospheric backdrop |
 | 4 | Pending | A physically consistent ideal optical demonstration with luminous photon paths |
 | 5 | Pending | A concise story opening using already verified claims |
 | 6 | Pending | Persistent explanatory legends and honest scale context |
@@ -31,3 +31,21 @@ These are runtime teaching overlays and camera changes. Hardware GLBs were not
 rebuilt. Any later hardware rebuild must increment its URL version key.
 
 Acceptance and paired screenshots are pending.
+
+## Item 3
+
+The plume keeps its Blender-authored gas surfaces and molecular diagrams.
+The gas surfaces move as an illustrative rising source with a trailing plume;
+the molecular diagrams remain separate and enlarged. A curved ground and soft
+atmospheric glow supply context without a location, altitude scale, absorption
+boundary, or visibility threshold. This intentionally corrects the proposed
+"breaking above the absorbing layer" story: atmospheric transmission cannot be
+represented by a sharp universal shell.
+
+Gas billowing, glow and source position follow the same deterministic lesson
+clock as the teaching paths. Pause and suspension hold them; fading conceals
+the reset at a repeating boundary. Radiation and the source pin follow the gas.
+The overview and source inspection frame the complete teaching composition on
+phone and desktop. No hardware was rebuilt or physical quantity added.
+
+CPU verification, visual comparison and full acceptance are pending.

@@ -71,10 +71,10 @@ export function remainingContent(_model) {
       ],
     },
     plume: {
-      intro: 'An illustrative hot-gas plume introduces molecular infrared emission. Band locations come from a civil combustion study; shape, brightness, and any animation are schematic.',
+      intro: 'Follow a rising source of infrared radiation, then inspect the molecules that give the spectrum its bands. The curved ground and atmosphere provide context; the motion is an illustration, not a flight or visibility calculation.',
       scale: 'Hot-gas source · illustrative geometry',
       light: [
-        card('source', 'Start with emitting gas', 'An illustrative source', 'Hot gases can emit infrared radiation. The colored plume introduces emission as the start of a light path. It has no assigned temperature, radiant intensity, or real vehicle identity.'),
+        card('source', 'Start with emitting gas', 'An illustrative source', 'Hot gases can emit infrared radiation. The rising glow and trailing gas introduce emission as the start of a light path. Shape, motion, atmospheric thickness, and false color are drawing choices. No altitude, temperature, radiant intensity, or real vehicle identity is assigned.'),
         card('bands', 'Keep the molecular bands named', 'Civil combustion spectroscopy', 'A civil combustion study identifies emission bands associated with carbon dioxide and water. These approximate band locations explain molecular spectroscopy; they do not define a military sensor’s passbands.', ['co2-band', 'h2o-band'], 9),
         card('timeline', 'Read the light paths as symbols', 'Schematic rays', 'The drawn rays connect the emitting region to the rest of the explanation. Their count, direction, brightness, and spacing are visual choices, not simulated photons or a sensor measurement.'),
       ],

@@ -1,21 +1,24 @@
 import { illustrated } from './illustrated.js';
+import { createPlumeIllustration, PLUME_FRAME, plumeOverviewPose } from './plume-illustration.js';
 const scene=illustrated({
   teaching:'plume',
   url:'models/plume.glb?v=2',
-  camera:{pos:[8,5.8,11],target:[0,3.2,0],min:3,max:28},distance:7,
+  camera:{...PLUME_FRAME,min:3,max:35},distance:7,
+  illustration:createPlumeIllustration,
+  lessonNote:'False-color rising emission; motion, glow, gas shape and atmosphere thickness are illustrative. No flight trajectory, altitude, absorption threshold or sensor visibility is calculated. Molecules are enlarged diagrams.',
   points:{source:'AnchorSource',bands:'AnchorBands',timeline:'AnchorTimeline',co2:'AnchorCO2',h2o:'AnchorH2O'},
   views:{
-    source:{pos:[5,3.4,7],target:[0,1.4,0]},
-    bands:{pos:[6,5.8,8],target:[.67,4.45,.55]},
-    timeline:{pos:[5,6.8,8],target:[0,5,0]},
+    source:{...PLUME_FRAME,detailSize:[5.4,6.7,3.2]},
+    bands:{...PLUME_FRAME,focus:[0,3.6,0],detailSize:[5.2,4.6,2.6]},
+    timeline:{...PLUME_FRAME,focus:[1,3.3,.8],detailSize:[5.8,5.8,3.2]},
     co2:{pos:[6.0,4.7,6.8],target:[1.85,3.85,.065],focus:[1.85,3.85,-.10],detailSize:[1.4,.75,.65],minDistance:3},
     h2o:{pos:[-5.0,3.4,6.8],target:[-1.65,2.75,-.025],focus:[-1.65,2.63,-.20],detailSize:[1.25,.85,.65],minDistance:3},
   },
   paths:{
     light:[{kind:'radiation',phases:['emit'],points:['AnchorCO2',[3.5,4.7,1.5]]},{kind:'radiation',phases:['emit'],points:['AnchorH2O',[-3.5,3.7,1.5]]}],
     data:[{kind:'timeline',points:[[2.9,1.3,1.9],[2.9,5.0,1.9]]}],
-    heat:[{kind:'radiation',phases:['emit'],points:['AnchorSource',[3.5,2.8,1.5]]}],
+    heat:[{kind:'radiation',phases:['emit'],points:[[0,4.78,0],[3.5,5.8,1.5]]}],
   },
 });
 export const preload=scene.preload;
-export const build=scene.build;
+export function build(options){return {...scene.build(options),overviewFrame:plumeOverviewPose};}

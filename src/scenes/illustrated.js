@@ -49,6 +49,7 @@ export function illustrated(config) {
       const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
       const id=config.teaching||config.url.split('/').at(-1).split('.')[0];
       const paths=createTeachingFlows(config.paths||{},resolve);scene.add(paths.root);
+      const illustration=config.illustration?.({scene,asset,paths,hotspots,dataHotspots,heatHotspots});
       const activityDisplay=config.activityDisplay?createActivityDisplay(asset,config.activityDisplay):null;
       const indicator=config.signal?createSignalIndicator(resolve(config.signal),config.signalRadius||.36,config.absorptionSignal?['integrate']:['absorb','integrate']):null;if(indicator)scene.add(indicator.root);
       const absorption=config.absorptionSignal?createSignalIndicator(resolve(config.absorptionSignal),config.signalRadius||.36,['absorb']):null;if(absorption)scene.add(absorption.root);
@@ -71,6 +72,7 @@ export function illustrated(config) {
         }
         if(pivots.length)asset.updateMatrixWorld(true);
         paths.update(state,mode);activityDisplay?.update(state);indicator?.update(state);absorption?.update(state);highlights.update(state);for(const mirror of mirrors)mirror.update(state);
+        illustration?.update(state,mode);
         if(presentation?.capture().view==='assembled'){
           if(indicator)indicator.root.visible=false;
           if(absorption)absorption.root.visible=false;
