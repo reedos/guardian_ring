@@ -40,6 +40,32 @@ if (gate) {
   };
   const focusIs = id => page.evaluate(id => document.activeElement?.id === id, id);
 
+  await run('ideal focus diagram: controls, source reading and reduced motion', async () => {
+    await scene('payload','optics');
+    const launch=page.locator('.focus-demo-open');await launch.click();
+    await page.locator('#focus-demo').waitFor({state:'visible'});
+    check(await page.evaluate(()=>grx.focusDemo.state().playing&&!grx.built[grx.state.scene].teaching.state().playing),'Focus example failed to start independently of the payload lesson');
+    await page.locator('#focus-demo [data-focus="play"]').click();
+    const held=await page.evaluate(()=>grx.focusDemo.state().progress);await page.waitForTimeout(150);
+    check(await page.evaluate(p=>grx.focusDemo.state().progress===p,held),'Paused focusing diagram advanced');
+    await page.locator('#focus-demo input').focus();await page.keyboard.press('Home');await page.keyboard.press('ArrowRight');
+    check(await page.evaluate(()=>Math.abs(grx.focusDemo.state().progress-.001)<1e-9&&!grx.focusDemo.state().playing),'Focus slider did not hold the requested pulse');
+    await page.locator('#focus-demo [data-focus="step"]').click();
+    check(await page.evaluate(()=>Math.abs(grx.focusDemo.state().progress-.141)<1e-9),'Focus pulse could not be stepped');
+    await page.locator('#focus-demo [data-focus="side"]').click();
+    check(await page.evaluate(()=>grx.focusDemo.state().pitch===0),'Focus side view did not provide a fixed cross-section');
+    await page.locator('#focus-demo [data-focus="play"]').click();await page.locator('#focus-demo summary').click();
+    await frames(page);check(await page.evaluate(()=>!grx.focusDemo.state().playing),'Opening focus evidence did not pause the diagram');
+    check(await page.locator('#focus-demo').evaluate(node=>node.scrollWidth<=node.clientWidth+1),'Focus diagram overflows horizontally');
+    await page.keyboard.press('Escape');await frames(page);
+    check(!await page.locator('#focus-demo').isVisible()&&await launch.evaluate(node=>node===document.activeElement),'Escape failed to close focusing example and return focus');
+    await page.emulateMedia({reducedMotion:'reduce'});await launch.click();await frames(page);
+    const reduced=await page.evaluate(()=>grx.focusDemo.state());await page.waitForTimeout(150);
+    check(!reduced.playing&&await page.evaluate(p=>grx.focusDemo.state().progress===p,reduced.progress),'Reduced-motion focus diagram started moving without consent');
+    await page.locator('#focus-demo [data-focus="close"]').click();await page.emulateMedia({reducedMotion:'no-preference'});
+    await page.evaluate(()=>grx.setMode('data'));check(!await launch.isVisible(),'Ideal optical demonstration appears in a non-light layer');
+  });
+
   await run('keyboard tab switch while the viewer is hovered', async () => {
     await scene('satellite', 'instrument');
     const canvas = await page.locator('#gl').boundingBox();

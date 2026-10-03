@@ -1290,6 +1290,21 @@ body.app .panel-scroll > * { min-width: 0; }
 .scenario-lab > a { color: var(--muted); font: 400 11px/1.5 var(--sans); }
 .learning-try:focus-visible, .math-adjust:focus-visible, summary:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
 .presentation-exit[hidden] { display: none; }
+.focus-demo { width: min(960px,calc(100vw - 28px)); max-height: calc(100dvh - 28px); padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); overflow: auto; }
+.focus-demo::backdrop { background: #000d; backdrop-filter: blur(5px); }
+.focus-demo header { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.focus-demo h2 { margin: 4px 0; font: 500 clamp(26px,5vw,40px)/1.1 var(--display); }
+.focus-demo p { color: var(--muted); font: 400 12px/1.6 var(--sans); }
+.focus-demo canvas { display:block; width:100%; height:clamp(210px,45vh,430px); border:1px solid var(--line); border-radius:8px; touch-action:none; }
+.focus-legend,.focus-transport { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin:12px 0; }
+.focus-legend span { display:flex; align-items:center; gap:6px; font:400 10px/1.4 var(--mono); color:var(--muted); }
+.focus-legend i { width:16px; height:2px; background:#f6a1b8; }
+.focus-legend .focus-mirror { background:#88aec1; }.focus-legend .focus-pixel { background:#8fd9e8; }
+.focus-transport .btn { min-height:44px; }.focus-transport label { display:flex; align-items:center; flex:1; gap:10px; font:400 11px/1.4 var(--sans); min-width:200px; }
+.focus-transport input { flex:1; min-width:0; accent-color:var(--accent); min-height:44px; }
+.focus-demo summary { padding:12px 0; min-height:44px; cursor:pointer; color:var(--accent); font:400 11px/1.5 var(--mono); }
+.focus-demo a { color:var(--accent); }.focus-demo .focus-status { min-height:2lh; color:var(--ink); }
+@media(max-width:600px) { .focus-demo { padding:12px; }.focus-demo header { align-items:flex-start; }.focus-demo header .btn { max-width:110px; white-space:normal; min-height:44px; } }
 .animation-controls { flex: none; padding: 10px 14px; border-top: 1px solid var(--line); background: var(--surface); min-width: 0; }
 .animation-controls[hidden] { display: none; }
 .assembly-controls { display:flex; align-items:center; flex-wrap:wrap; gap:6px 10px; margin-bottom:6px; color:var(--muted); font:400 10px/1.4 var(--mono); grid-column:1 / -1; }

@@ -8,7 +8,7 @@ Each item requires the full PLAN section 9 acceptance before its merge.
 | --- | --- | --- |
 | 2 | `codex/wave1-02-opening-frame` | Earth-led responsive opening, visible polar loops, subtle illustrative stars and Earth-fixed GEO viewing patches |
 | 3 | `codex/wave1-03-plume` | Responsive plume composition, rising false-color emission, enlarged molecular diagrams and a schematic atmospheric backdrop |
-| 4 | Pending | A physically consistent ideal optical demonstration with luminous photon paths |
+| 4 | `codex/wave1-04-photon-focus` | A separate interactive ideal focusing diagram with luminous ray ribbons and exact reflection geometry |
 | 5 | Pending | A concise story opening using already verified claims |
 | 6 | Pending | Persistent explanatory legends and honest scale context |
 | 7 | Pending | First-visit mission entry preserving explicit links and motion preferences |
@@ -49,3 +49,22 @@ The overview and source inspection frame the complete teaching composition on
 phone and desktop. No hardware was rebuilt or physical quantity added.
 
 CPU verification, visual comparison and full acceptance are pending.
+
+## Item 4
+
+“See light focus” in the payload Light controls opens a separate interactive
+ideal prime-focus demonstration. On-axis rays reflect from a mathematical
+paraboloid and converge at its focus. Every route has equal optical path length;
+the animation samples distance, including the exact reflection vertex. A broad
+halo and narrow luminous core follow IF's ribbon treatment. The diagram can be
+rotated, viewed from the side, paused, stepped and scrubbed. Reduced motion
+opens a still frame; opening the evidence pauses playback. Closing restores
+keyboard focus to its launch control.
+
+The underlying representative payload retains its functional optical connections.
+The new diagram explicitly distinguishes calculated ideal geometry from assumed
+proportions, ray count, glow, enlarged cells and pace. It computes neither
+diffraction nor a real sensor's response. See `wave1-ideal-focus.md` for the
+opened NASA source and derivation. No hardware GLB was rebuilt.
+
+CPU verification, browser regression, visual comparison and full acceptance are pending.

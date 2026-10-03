@@ -3,7 +3,7 @@ import { claimByKey } from '../claims.js';
 import { store } from './store.js';
 // Scene-local lesson controls. Stage owns camera/inspection safety and invokes
 // preparePlayback before this module requests any animated hardware state.
-export function mountAnimationControls(host,{getTeaching,preparePlayback,stepTeaching,getAssemblyPresentation=()=>null,setAssemblyView=()=>{},setActivityEnabled=()=>{}}) {
+export function mountAnimationControls(host,{getTeaching,preparePlayback,stepTeaching,getAssemblyPresentation=()=>null,setAssemblyView=()=>{},setActivityEnabled=()=>{},openFocusDemo=()=>{}}) {
   let teaching=null,unsubscribe=null;
   host.classList.add('animation-controls');
   host.innerHTML='<div class="animation-transport" role="group" aria-label="Teaching animation"><button type="button" class="btn" data-action="play" title="Play the complete sequence in overview">Play sequence</button><button type="button" class="btn" data-action="previous" aria-label="Previous animation step" title="Focus on the previous animation step">← Step</button><button type="button" class="btn" data-action="next" aria-label="Next animation step" title="Focus on the next animation step">Step →</button><button type="button" class="btn" data-action="reset">Reset</button><span class="animation-counter"></span></div><span class="animation-step" aria-live="polite"></span><details class="animation-explanation"><summary>How this step works</summary><p class="animation-description"></p><div class="animation-legend" aria-label="Flow legend"></div><div class="animation-evidence"></div><p class="animation-note"></p></details>';
@@ -11,6 +11,8 @@ export function mountAnimationControls(host,{getTeaching,preparePlayback,stepTea
   const assembly=document.createElement('div');assembly.className='assembly-controls';assembly.hidden=true;
   assembly.innerHTML='<span>Electronics</span><div role="group" aria-label="Electronics enclosure view"><button type="button" class="btn" id="assembly-assembled" data-assembly-view="assembled">Assembled</button><button type="button" class="btn" id="assembly-inside" data-assembly-view="inside">Inside</button></div><span class="assembly-note">Illustrative cutaway</span>';
   host.prepend(assembly);
+  const focusButton=document.createElement('button');focusButton.type='button';focusButton.className='btn focus-demo-open';focusButton.textContent='See light focus';focusButton.hidden=true;focusButton.setAttribute('aria-haspopup','dialog');
+  host.querySelector('.animation-transport').append(focusButton);focusButton.addEventListener('click',openFocusDemo);
   const buttons=Object.fromEntries([...host.querySelectorAll('[data-action]')].map(b=>[b.dataset.action,b]));
   const title=host.querySelector('.animation-step'),description=host.querySelector('.animation-description'),counter=host.querySelector('.animation-counter'),legend=host.querySelector('.animation-legend'),note=host.querySelector('.animation-note');
   const evidence=host.querySelector('.animation-evidence');let legendKey='',evidenceKey='';
@@ -19,6 +21,7 @@ export function mountAnimationControls(host,{getTeaching,preparePlayback,stepTea
     const presentation=getAssemblyPresentation();assembly.hidden=!presentation;
     if(presentation){const view=presentation.capture().view;for(const button of assembly.querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.assemblyView===view));assembly.querySelector('.assembly-note').textContent=view==='inside'?'Covers hidden · as drawn':'Choose Inside to see boards';}
     const state=teaching.state();host.dataset.inspection=String(state.inspection);buttons.play.textContent=state.playing?(state.repeating?'Pause & inspect':'Pause sequence'):state.progress===1&&state.index===state.total-1?'Replay sequence':'Play sequence';
+    focusButton.hidden=store.C.SCENES[store.ui.scene]?.id!=='payload'||state.mode!=='light';
     buttons.play.title=state.playing?'Pause motion and reveal the numbered components':'Play the complete sequence in overview';
     buttons.play.setAttribute('aria-pressed',String(state.playing));counter.textContent=`${state.index+1} / ${state.total}`;
     title.textContent=state.step.title;description.textContent=state.step.body;
