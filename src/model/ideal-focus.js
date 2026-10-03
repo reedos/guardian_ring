@@ -19,3 +19,10 @@ export function pointOnFocusRay(ray,progress) {
   const incoming=start.distanceTo(hit),distance=Math.max(0,Math.min(1,progress))*ray.length;
   return distance<=incoming?start.lerp(hit,distance/incoming).toArray():hit.lerp(focus,(distance-incoming)/(ray.length-incoming)).toArray();
 }
+
+export function focusPulseState(rays,progress) {
+  const leading=progress/.8;
+  const firstReflection=Math.min(...rays.map(ray=>new Vector3(...ray.points[0]).distanceTo(new Vector3(...ray.points[1]))/ray.length));
+  return {leading,glow:leading<1?0:Math.max(0,Math.sin(Math.PI*(progress-.8)/.2)),
+    phase:leading<firstReflection?'incoming':leading<1?'reflecting':'arriving'};
+}

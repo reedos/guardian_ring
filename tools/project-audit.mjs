@@ -54,11 +54,15 @@ if (gate) {
     check(await page.evaluate(()=>Math.abs(grx.focusDemo.state().progress-.141)<1e-9),'Focus pulse could not be stepped');
     await page.locator('#focus-demo [data-focus="side"]').click();
     check(await page.evaluate(()=>grx.focusDemo.state().pitch===0),'Focus side view did not provide a fixed cross-section');
+    const angle=await page.evaluate(()=>grx.focusDemo.state().yaw);await page.locator('#focus-demo canvas').focus();await page.keyboard.press('ArrowRight');
+    check(await page.evaluate(before=>grx.focusDemo.state().yaw>before,angle),'Keyboard cannot rotate the focusing diagram');
     await page.locator('#focus-demo [data-focus="play"]').click();await page.locator('#focus-demo summary').click();
     await frames(page);check(await page.evaluate(()=>!grx.focusDemo.state().playing),'Opening focus evidence did not pause the diagram');
     check(await page.locator('#focus-demo').evaluate(node=>node.scrollWidth<=node.clientWidth+1),'Focus diagram overflows horizontally');
     await page.keyboard.press('Escape');await frames(page);
     check(!await page.locator('#focus-demo').isVisible()&&await launch.evaluate(node=>node===document.activeElement),'Escape failed to close focusing example and return focus');
+    await launch.click();await frames(page);check(await page.evaluate(()=>!grx.focusDemo.state().playing),'Reopening visible focus evidence restarted playback');
+    await page.locator('#focus-demo [data-focus="close"]').click();
     await page.emulateMedia({reducedMotion:'reduce'});await launch.click();await frames(page);
     const reduced=await page.evaluate(()=>grx.focusDemo.state());await page.waitForTimeout(150);
     check(!reduced.playing&&await page.evaluate(p=>grx.focusDemo.state().progress===p,reduced.progress),'Reduced-motion focus diagram started moving without consent');
