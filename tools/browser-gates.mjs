@@ -140,10 +140,16 @@ export async function run(name,form=process.argv[2]||'desktop'){
    const ids=await page.locator('#parts button[data-id]').evaluateAll(bs=>bs.map(button=>button.dataset.id));
    const inspect=async(id,label)=>{await page.evaluate(()=>grx.settle());await settleLayout(page);const result=await page.evaluate(checkPart,{scene:sc.i,mode,id});states++;audited.push(`${sc.id}/${mode}/${label}`);fail.push(...result.map(error=>`${sc.id}/${mode}/${label}: ${error}`));};
    await page.getByRole('combobox',{name:'Selected part'}).selectOption(ids.at(-1));await inspect(ids.at(-1),'pick last part');
-   await page.locator('#part-select').selectOption('');await page.evaluate(()=>grx.settle());
-   const overview=await page.evaluate(()=>({selected:grx.state.selected,cardHidden:document.getElementById('card').hidden,pressed:document.querySelectorAll('#parts [aria-pressed="true"],#pins [aria-pressed="true"]').length,camera:grx.camera.position.toArray(),expected:grx.built[grx.state.scene].camera.pos}));
+   await page.locator('#part-select').selectOption('');await page.evaluate(()=>grx.settle());await settleLayout(page);
+   const overview=await page.evaluate(()=>{
+    const built=grx.built[grx.state.scene],view=document.getElementById('view');
+    // The scene contract can author an overview for the actual canvas shape.
+    // Its static camera remains the fallback, not the responsive destination.
+    const expected=built.overviewFrame?.(view.clientWidth,view.clientHeight)||built.camera;
+    return {selected:grx.state.selected,cardHidden:document.getElementById('card').hidden,pressed:document.querySelectorAll('#parts [aria-pressed="true"],#pins [aria-pressed="true"]').length,camera:grx.camera.position.toArray(),target:grx.controls.target.toArray(),expected,finished:grx.flightProgress()===1};
+   });
    states++;audited.push(`${sc.id}/${mode}/overview`);
-   if(overview.selected!==null||!overview.cardHidden||overview.pressed||overview.camera.some((v,i)=>Math.abs(v-overview.expected[i])>1e-6))fail.push(`${sc.id}/${mode}: overview did not restore camera and clear part/card/pins`);
+   if(overview.selected!==null||!overview.cardHidden||overview.pressed||!overview.finished||overview.camera.some((v,i)=>Math.abs(v-overview.expected.pos[i])>1e-6)||overview.target.some((v,i)=>Math.abs(v-overview.expected.target[i])>1e-6))fail.push(`${sc.id}/${mode}: overview did not restore camera and clear part/card/pins`);
    await page.locator('#card-prev').click();await inspect(ids.at(-1),'previous from overview');
    await page.locator('#card-next').click();await inspect(ids[0],'next wraps to first');
   }
