@@ -32,13 +32,16 @@ describe('qualitative plume illustration',()=>{
       const node=new THREE.Group();node.name=name;asset.add(node);
       node.add(new THREE.Mesh(new THREE.BoxGeometry(.1,.1,.1),new THREE.MeshStandardMaterial({transparent:true,opacity:.5})));
     }
-    const pin=()=>({source:{pos:[0,0,0]}}),hotspots=pin(),dataHotspots=pin(),heatHotspots=pin();
+    const pin=()=>({source:{pos:[0,0,0]},bands:{pos:[0,0,0]},timeline:{pos:[2.9,3.15,1.9]}}),hotspots=pin(),dataHotspots=pin(),heatHotspots=pin();
     const ray={mode:'heat',group:new THREE.Group()};
     const view=createPlumeIllustration({scene,asset,paths:{records:[ray]},hotspots,dataHotspots,heatHotspots});
     const clock=createTeachingSequence(steps);clock.seek(0,.5);view.update(clock.state(),'heat');
     expect(hotspots.source.pos).toEqual(dataHotspots.source.pos);expect(hotspots.source.pos).toEqual(heatHotspots.source.pos);
     expect(hotspots.source.pos[1]).toBeCloseTo(view.head.position.y-.26);
     expect(ray.group.position.y+4.78).toBeCloseTo(hotspots.source.pos[1]);
+    expect(hotspots.bands.pos[1]).toBeCloseTo(view.head.position.y-1.1);
+    expect(heatHotspots.timeline.pos[1]).toBeCloseTo(ray.group.position.y+5.29);
+    expect(dataHotspots.timeline.pos).toEqual([2.9,3.15,1.9]);
     expect(asset.getObjectByName('MolecularSymbols')?.parent).toBe(asset);
     const pose=view.head.position.clone();view.update(clock.tick(500),'heat');expect(view.head.position.equals(pose)).toBe(true);
     expect(view.ground.userData.solidForCamera).toBe(false);

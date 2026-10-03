@@ -59,6 +59,8 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
   glow.scale.set(2,2,1);scene.add(glow);
   const heatPaths=paths.records.filter(r=>r.mode==='heat');
   const sourcePins=[hotspots.source,dataHotspots.source,heatHotspots.source];
+  const bandPins=[hotspots.bands,dataHotspots.bands,heatHotspots.bands];
+  hotspots.timeline.pos.splice(0,3,2.675,4.275,.7825);
   let lastKey='';
   return {head,ground,atmosphere,update(state,mode){
     const pose=plumePose(state),key=[pose.height,pose.fade,pose.phase,mode].join(':');
@@ -76,6 +78,8 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
     }
     glow.position.copy(head.position);glow.position.y-=.22;glow.material.opacity=pose.fade*(mode==='data'?.22:.62);
     for(const pin of sourcePins){pin.pos[0]=head.position.x;pin.pos[1]=pose.height-.26;pin.pos[2]=0;}
+    for(const pin of bandPins){pin.pos[0]=head.position.x+.08;pin.pos[1]=pose.height-1.1;pin.pos[2]=.12;}
+    heatHotspots.timeline.pos.splice(0,3,head.position.x+1.75,pose.height+.25,.75);
     for(const path of heatPaths){path.group.position.set(head.position.x,pose.height-5.04,0);}
     head.updateMatrixWorld(true);
   }};
