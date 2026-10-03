@@ -13,6 +13,7 @@ import './app/page-sheet.js';
 import './app/learning-journey.js';
 import { mountAnimationControls } from './app/animation-controls.js';
 import { mountFocusDemo } from './app/focus-demo.js';
+import { mountSceneKey } from './app/scene-key.js';
 import { mountMissionTour } from './app/mission-tour.js';
 import { moreCue } from './app/more-cue.js';
 import { measureInspectorLimits, mountInspectorLayout } from './app/inspector-layout.js';
@@ -33,6 +34,7 @@ focusDemo=mountFocusDemo({beforeOpen(){window.grx.mission.pause();stage.setActiv
 window.grx.focusDemo=focusDemo;
 const animationControls = mountAnimationControls(document.getElementById('animation-controls'), { getTeaching: stage.getTeaching, preparePlayback: stage.preparePlayback, stepTeaching:stage.stepTeaching, getAssemblyPresentation:stage.getAssemblyPresentation,setAssemblyView:stage.setAssemblyView,setActivityEnabled:stage.setActivityEnabled,openFocusDemo:()=>focusDemo.open() });
 mountInspectorLayout();
+mountSceneKey();
 for (const event of ['scene', 'mode', 'scene-settings']) on(event, () => animationControls.sync());
 const tabs = [...document.querySelectorAll('[data-pane]')], scenario = document.getElementById('pane-scenario'), sheetButton = document.getElementById('sheet-toggle');
 function setSheet(open) { document.body.style.removeProperty('--inspector-size'); document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel'); }

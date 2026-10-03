@@ -40,6 +40,15 @@ if (gate) {
   };
   const focusIs = id => page.evaluate(id => document.activeElement?.id === id, id);
 
+  await run('each level and layer identifies its visual key and schematic scale', async()=>{
+    const ids=await page.evaluate(()=>grx.store.C.SCENES.map(scene=>scene.id));
+    for(const id of ids){await scene(id);for(const mode of ['light','data','heat']){
+      await page.evaluate(mode=>grx.setMode(mode),mode);await frames(page);
+      check(await page.locator('#legend .legend-item').count()>0,`${id}/${mode}: visual key is empty`);
+      check(await page.locator('#scene-note').isVisible()&&/not to scale/i.test(await page.locator('#scene-note').innerText()),`${id}/${mode}: schematic scale context is missing`);
+    }}
+  });
+
   await run('ideal focus diagram: controls, source reading and reduced motion', async () => {
     await scene('payload','optics');
     const launch=page.locator('.focus-demo-open');await launch.click();

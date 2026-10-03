@@ -80,7 +80,7 @@ export function illustrated(config) {
         }
       }
       const teaching={
-        state:()=>({...clock.state(),mode,legend:paths.legend(mode,clock.state().steps),note:config.lessonNote||'Drawing motion and sequence timing are illustrative; no real instrument performance is simulated.'}),
+        state:()=>({...clock.state(),mode,legend:paths.legend(mode,clock.state().steps),visibleLegend:paths.legend(mode,clock.state().inspection?[]:[clock.state().step]),note:config.lessonNote||'Drawing motion and sequence timing are illustrative; no real instrument performance is simulated.'}),
         subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
         play(){presentation?.preparePlayback();clock.play();pose(clock.state());},pause(){clock.pause();pose(clock.state());},
         preview({playing=!reduced}={}){presentation?.preparePlayback();clock.seek(0,.15);if(playing)clock.play({repeat:true});pose(clock.state());},

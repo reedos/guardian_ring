@@ -10,7 +10,7 @@ Each item requires the full PLAN section 9 acceptance before its merge.
 | 3 | `codex/wave1-03-plume` | Responsive plume composition, rising false-color emission, enlarged molecular diagrams and a schematic atmospheric backdrop |
 | 4 | `codex/wave1-04-photon-focus` | A separate interactive ideal focusing diagram with luminous ray ribbons and exact reflection geometry |
 | 5 | `codex/wave1-05-story-hook` | A story opening anchored in GEO altitude and the named TIRS-2 civil temperature |
-| 6 | Pending | Persistent explanatory legends and honest scale context |
+| 6 | `codex/wave1-06-scale-legends` | IF-style persistent visual keys and explicit schematic scale context in every level |
 | 7 | Pending | First-visit mission entry preserving explicit links and motion preferences |
 
 ## Item 2
@@ -78,3 +78,18 @@ inline evidence chips. No military temperature is inferred and no Moon
 comparison is used. The publication statement remains verbatim.
 
 CPU verification, paired story screenshots and full acceptance are pending.
+
+## Item 6
+
+Every level now has an always-visible IF-style visual key. Hardware keys follow
+the current layer and active lesson phase, so a command, signal or heat path
+keeps its meaning when it appears during a Light lesson. The ring identifies
+its radiation, communications, sunlight and illustrative patch colors.
+
+Every current asset is schematic. The persistent scale context therefore says
+“not to scale” rather than drawing an unjustified meter or kilometer bar.
+The existing source-backed numerical examples remain in the evidence cards.
+Both the key and scale context participate in the viewer's label-obstacle
+layout. Browser regression covers every level and all three layers.
+
+CPU verification, paired screenshots and full acceptance are pending.
