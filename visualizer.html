@@ -30,11 +30,12 @@
       <button type="button" class="level-pick" id="level-pick" aria-haspopup="true" aria-expanded="false" aria-controls="level-menu"><span class="lp-k" id="lp-k">Level 1 of 6</span><span class="lp-t" id="lp-t">The ring</span><i aria-hidden="true"></i></button>
       <div class="pop level-menu" id="level-menu" role="group" aria-label="Levels" hidden></div>
       <div class="mode-slot" id="mode-slot"></div>
-      <button type="button" class="more-btn" id="more-btn" aria-haspopup="true" aria-expanded="false" aria-controls="more-menu" aria-label="More: view, share, quality, present and hide details"><span aria-hidden="true">⋯</span></button>
+      <button type="button" class="more-btn" id="more-btn" aria-haspopup="true" aria-expanded="false" aria-controls="more-menu" aria-label="More: controls, view, share, quality, present and hide details"><span aria-hidden="true">⋯</span></button>
       <div class="pop more-menu" id="more-menu" role="group" aria-label="More" hidden>
         <section class="mm-view" id="mm-view" aria-labelledby="mm-view-title"><h2 class="mm-h" id="mm-view-title">This view</h2></section>
         <section class="mm-tools" id="mm-tools" aria-labelledby="mm-tools-title">
           <h2 class="mm-h" id="mm-tools-title">Tools</h2>
+          <details class="mm-help"><summary>Controls &amp; shortcuts</summary><p>Drag to orbit. Scroll or pinch to zoom. Right-drag or use two fingers to pan.</p><p>With the pointer over the view: 1–6 choose levels, L / D / H choose layers, and ← / → inspect parts. Use Overview to return to the complete scene.</p></details>
           <button type="button" class="mm-item" id="share-btn">Share this view</button>
           <label class="mm-select" for="quality"><span>Rendering</span><select id="quality" aria-label="Rendering quality"><option value="max">Max quality</option><option value="auto">Auto quality</option><option value="laptop">Battery saver</option></select></label>
           <button type="button" class="mm-item" id="presentation-view" aria-pressed="false">Present</button>
