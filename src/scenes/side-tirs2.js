@@ -9,14 +9,14 @@ const scene=illustrated({
   camera:{pos:[12,12,16],target:[.3,.5,.1],min:3,max:38},cameraPhone:{pos:[11.5,13,18.5]},distance:6,
   points:{telescope:'AnchorTelescope',arrays:'AnchorArrays',cooling:'AnchorCooling','scene-select':'AnchorSceneSelect',blackbody:'AnchorBlackbody',readout:'AnchorReadout',electronics:'AnchorElectronics',radiator:'AnchorRadiator',filters:'AnchorFilters'},
   views:{
-    telescope:{pos:[-.3,6.9,3.6],target:[-2.35,.55,.75]},
+    telescope:{pos:[-.3,6.9,3.6],target:[-2.35,.55,.75],focus:[-2.35,1,.3],detailSize:[2.1,2.2,2.9],minDistance:3.2,labelNodes:['Telescope'],safe:{x0:-.82,x1:.82,y0:-.76,y1:.48}},
     arrays:{pos:[-5.3,10,-5.5],target:[-2.38,.4,-2.6],focus:[-2.38,.36,-2.65],detailSize:[3.1,.9,2.8],minDistance:4},
     cooling:{pos:[-.5,10,-6.9],target:[.55,.48,-3.13],focus:[.30,.40,-3.02],detailSize:[3.8,1.3,2.7],minDistance:3.5},
     'scene-select':{pos:[-.5,4.9,7.1],target:[-2.35,1.10,3.05]},
     blackbody:{pos:[1.8,4.7,7],target:[.17,.74,3]},
     readout:{pos:[3.1,4.7,4.2],target:[1.27,.42,1]},
-    electronics:{pos:[7.9,5.1,4.2],target:[3.72,.54,.64]},
-    radiator:{pos:[6.3,10,-4.6],target:[3.57,.77,-2.71],focus:[3.57,.9,-2.71],detailSize:[3.3,2.0,2.1],minDistance:4},
+    electronics:{pos:[7.9,5.1,4.2],target:[3.72,.54,.64],focus:[3.72,.5,.8],detailSize:[2.7,1.5,4.4],minDistance:4,safe:{x0:-.82,x1:.82,y0:-.6,y1:.5}},
+    radiator:{pos:[6.3,10,-4.6],target:[3.57,.77,-2.71],focus:[3.57,.9,-2.71],detailSize:[3.3,2.0,2.1],minDistance:4,safe:{x0:-.82,x1:.82,y0:-.76,y1:.48}},
     filters:{pos:[.9,5,1],target:[.08,.34,-1.65]},
   },
   labels:[

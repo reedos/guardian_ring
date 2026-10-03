@@ -4,7 +4,7 @@ import { PerspectiveCamera, Vector3 } from 'three';
 // canvas, keeping the authored viewing direction and surrounding hardware.
 // Inspection regions and minimum distances are drawing coordinates, not specs.
 export function fitComponent(preset, width, height, {
-  safe = { x0: -.82, x1: .82, y0: -.76, y1: .76 },
+  safe = preset.safe || { x0: -.82, x1: .82, y0: -.76, y1: .76 },
   minDistance = 0,
   maxDistance = Infinity,
 } = {}) {

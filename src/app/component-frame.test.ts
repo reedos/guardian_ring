@@ -14,13 +14,17 @@ describe('component framing uses the available canvas',()=>{
     const context={pos:[8,5,10],target:[0,1,0]};expect(fitComponent(context,390,420)).toBe(context);
   });
   it.each([[1000,700],[390,420],[390,140],[667,190]])('fits every subject corner at %i by %i', (width,height)=>{
-    const frame=fitComponent(preset,width,height,{safe}),camera=cameraFor(frame,width,height);
-    for(const x of [-1,1])for(const y of [-1,1])for(const z of [-1,1]){
-      const p=new Vector3(preset.focus[0]+x*1.4,preset.focus[1]+y*.4,preset.focus[2]+z*.8).project(camera);
-      expect(p.x).toBeGreaterThanOrEqual(safe.x0);expect(p.x).toBeLessThanOrEqual(safe.x1);
-      expect(p.y).toBeGreaterThanOrEqual(safe.y0);expect(p.y).toBeLessThanOrEqual(safe.y1);
+    // Exercise both a caller override and an authored label lane. Resizing
+    // should retain the scene's lane when the stage supplies only limits.
+    for(const frame of [fitComponent(preset,width,height,{safe}),fitComponent({...preset,safe},width,height,{minDistance:0,maxDistance:30})]){
+      const camera=cameraFor(frame,width,height);
+      for(const x of [-1,1])for(const y of [-1,1])for(const z of [-1,1]){
+        const p=new Vector3(preset.focus[0]+x*1.4,preset.focus[1]+y*.4,preset.focus[2]+z*.8).project(camera);
+        expect(p.x).toBeGreaterThanOrEqual(safe.x0);expect(p.x).toBeLessThanOrEqual(safe.x1);
+        expect(p.y).toBeGreaterThanOrEqual(safe.y0);expect(p.y).toBeLessThanOrEqual(safe.y1);
+      }
+      expect(new Vector3(...frame.pos).distanceTo(new Vector3(...frame.target))).toBeLessThan(new Vector3(...preset.pos).distanceTo(new Vector3(...preset.target)));
     }
-    expect(new Vector3(...frame.pos).distanceTo(new Vector3(...frame.target))).toBeLessThan(new Vector3(...preset.pos).distanceTo(new Vector3(...preset.target)));
   });
   it('retains the safe authored viewing direction and does not mutate the preset',()=>{
     const original=structuredClone(preset),frame=fitComponent(preset,390,420,{safe});

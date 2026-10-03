@@ -7,7 +7,7 @@ const scene=illustrated({
   cameraPhone:{pos:[7,8.5,13]},
   points:{array:'AnchorArray',readout:'AnchorReadout','cold-stage':'AnchorColdStage',shield:'AnchorShield',flex:'AnchorFlex',carrier:'AnchorCarrier','bias-timing':'AnchorBiasTiming','thermal-feedback':'AnchorThermalFeedback'},
   views:{
-    array:{pos:[1.7,3.8,4.6],target:[-.65,.5,0]},
+    array:{pos:[1.7,3.8,4.6],target:[-.65,.5,0],focus:[-.65,.45,0],detailSize:[2.4,1.8,2.5],minDistance:3,labelNodes:['DetectorPackage']},
     readout:{pos:[3.8,3.2,4.2],target:[2.05,.1,-.1],focus:[2.04,.20,-.1],detailSize:[1.65,.6,2.1],minDistance:2.5},
     'cold-stage':{pos:[1.5,3.2,-5],target:[-.1,.2,-1.2]},
     shield:{pos:[1.4,3.8,4.5],target:[-.65,.7,0]},

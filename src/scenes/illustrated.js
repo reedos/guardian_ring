@@ -43,7 +43,7 @@ export function illustrated(config) {
       const make = (positions,views=config.views||{}) => Object.fromEntries(Object.entries(positions).map(([id,point]) => {
         const pos = resolve(point), authored = views[id]||config.views?.[id];
         const eye = new THREE.Vector3(...pos).addScaledVector(direction,config.distance||6);
-        return [id,{pos,view:authored||{pos:eye.toArray(),target:[...pos]}}];
+        return [id,{pos,view:authored||{pos:eye.toArray(),target:[...pos]},...(config.markerRegions?.[id]?{markerRegion:config.markerRegions[id]}:{})}];
       }));
       const hotspots = make(config.points), dataHotspots = make(config.dataPoints||config.points,config.dataViews), heatHotspots = make(config.heatPoints||config.points,config.heatViews);
       const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
