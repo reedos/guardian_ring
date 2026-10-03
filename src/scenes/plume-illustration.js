@@ -60,6 +60,12 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
   const heatPaths=paths.records.filter(r=>r.mode==='heat');
   const sourcePins=[hotspots.source,dataHotspots.source,heatHotspots.source];
   const bandPins=[hotspots.bands,dataHotspots.bands,heatHotspots.bands];
+  // Preserve the molecular structure beneath a finger-sized marker. The layout
+  // moves only its badge and keeps a leader attached to the actual molecule.
+  for(const pins of [hotspots,dataHotspots,heatHotspots]){
+    pins.co2.markerRegion={center:[1.85,3.85,-.1],size:[1.4,.75,.65]};
+    pins.h2o.markerRegion={center:[-1.65,2.63,-.2],size:[1.25,.85,.65]};
+  }
   hotspots.timeline.pos.splice(0,3,2.675,4.275,.7825);
   let lastKey='';
   return {head,ground,atmosphere,update(state,mode){

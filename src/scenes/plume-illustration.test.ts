@@ -32,7 +32,7 @@ describe('qualitative plume illustration',()=>{
       const node=new THREE.Group();node.name=name;asset.add(node);
       node.add(new THREE.Mesh(new THREE.BoxGeometry(.1,.1,.1),new THREE.MeshStandardMaterial({transparent:true,opacity:.5})));
     }
-    const pin=()=>({source:{pos:[0,0,0]},bands:{pos:[0,0,0]},timeline:{pos:[2.9,3.15,1.9]}}),hotspots=pin(),dataHotspots=pin(),heatHotspots=pin();
+    const pin=()=>({co2:{pos:[1.85,3.85,-.1]},h2o:{pos:[-1.65,2.63,-.2]},source:{pos:[0,0,0]},bands:{pos:[0,0,0]},timeline:{pos:[2.9,3.15,1.9]}}),hotspots=pin(),dataHotspots=pin(),heatHotspots=pin();
     const ray={mode:'heat',group:new THREE.Group()};
     const view=createPlumeIllustration({scene,asset,paths:{records:[ray]},hotspots,dataHotspots,heatHotspots});
     const clock=createTeachingSequence(steps);clock.seek(0,.5);view.update(clock.state(),'heat');

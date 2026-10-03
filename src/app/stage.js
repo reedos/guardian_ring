@@ -211,7 +211,17 @@ function updatePins() {
   // Keep badges at the component whenever possible. Resolve only local
   // collisions, with leaders retaining the true anchor for displaced badges.
   const printedBounds=(built[ui.scene]?.labels||[]).filter(label=>label.visible&&label.userData.readability?.bounds).map(label=>label.userData.readability.bounds);
-  const {placements}=layoutAnchoredPins(points,{obstacles:[...printedBounds,...hudBounds],width,height,selected:ui.selected});
+  const markerBounds=[];
+  for(const spot of Object.values(hotspotsFor(ui.scene))){
+    if(!spot.markerRegion)continue;
+    const {center,size}=spot.markerRegion,projected=[];
+    for(const dx of [-1,1])for(const dy of [-1,1])for(const dz of [-1,1]){
+      const p=new THREE.Vector3(center[0]+dx*size[0]/2,center[1]+dy*size[1]/2,center[2]+dz*size[2]/2).project(camera);
+      if(p.z>-1&&p.z<1)projected.push({x:(p.x+1)*width/2,y:(1-p.y)*height/2});
+    }
+    if(projected.length===8)markerBounds.push({left:Math.min(...projected.map(p=>p.x)),right:Math.max(...projected.map(p=>p.x)),top:Math.min(...projected.map(p=>p.y)),bottom:Math.max(...projected.map(p=>p.y))});
+  }
+  const {placements}=layoutAnchoredPins(points,{obstacles:[...printedBounds,...hudBounds,...markerBounds],width,height,selected:ui.selected});
   for (const point of points) {
     const spot = placements.get(point.id), button = point.button;
     const x = Math.max(13,Math.min(width-13,spot.x)), y = Math.max(13,Math.min(height-13,spot.y));
@@ -261,7 +271,12 @@ function updatePins() {
       box=pinLabelBox(x,y,candidate,width,view.clientHeight,reserved,true,label.offsetHeight);
       if(box)break;
     }
-    if(box){label.style.left=`${box.left-x+11}px`;label.style.top=`${box.top-y+11}px`;}
+    if(box){
+      label.style.left=`${box.left-x+11}px`;label.style.top=`${box.top-y+11}px`;
+      const dx=Math.max(box.left,Math.min(box.right,x))-x,dy=Math.max(box.top,Math.min(box.bottom,y))-y;
+      selected.button.style.setProperty('--label-lead-len',`${Math.max(0,Math.hypot(dx,dy)-14)}px`);
+      selected.button.style.setProperty('--label-lead-a',`${Math.atan2(dy,dx)}rad`);
+    }
     else selected.button.classList.add('hide-lbl');
   }
 }
@@ -282,7 +297,7 @@ function buildPanel() {
     const kicker = document.createElement('span'); kicker.className = 'pk'; kicker.textContent = part.kicker;
     row.append(number, title, kicker); row.addEventListener('click', () => select(part.id)); li.append(row); $('parts').append(li);
     const button = document.createElement('button'); button.type = 'button'; button.className = 'pin'; button.dataset.id = part.id; button.setAttribute('aria-label', part.title);
-    button.innerHTML = `<span class="num">${index + 1}</span><span class="lbl"></span>`; button.querySelector('.lbl').textContent = part.title; button.classList.add('hide-lbl'); button.addEventListener('click', () => select(part.id)); $('pins').append(button);
+    button.innerHTML = `<span class="num">${index + 1}</span><span class="label-leader" aria-hidden="true"></span><span class="lbl"></span>`; button.querySelector('.lbl').textContent = part.title; button.classList.add('hide-lbl'); button.addEventListener('click', () => select(part.id)); $('pins').append(button);
   });
   $('card').hidden = true; updateCycle(); updatePins();
 }
