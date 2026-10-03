@@ -11,7 +11,7 @@ Each item requires the full PLAN section 9 acceptance before its merge.
 | 4 | `codex/wave1-04-photon-focus` | A separate interactive ideal focusing diagram with luminous ray ribbons and exact reflection geometry |
 | 5 | `codex/wave1-05-story-hook` | A story opening anchored in GEO altitude and the named TIRS-2 civil temperature |
 | 6 | `codex/wave1-06-scale-legends` | IF-style persistent visual keys and explicit schematic scale context in every level |
-| 7 | Pending | First-visit mission entry preserving explicit links and motion preferences |
+| 7 | `codex/wave1-07-first-visit` | First bare visit opens the mission; returning visits and explicit destinations retain explorer entry |
 
 ## Item 2
 
@@ -91,5 +91,22 @@ Every current asset is schematic. The persistent scale context therefore says
 The existing source-backed numerical examples remain in the evidence cards.
 Both the key and scale context participate in the viewer's label-obstacle
 layout. Browser regression covers every level and all three layers.
+
+CPU verification, paired screenshots and full acceptance are pending.
+
+## Item 7
+
+A first bare visit to the visualizer now enters the existing guided mission.
+The visit is remembered locally. Returning visitors keep ordinary explorer
+entry; explicit views, components, scenarios, panes and hash destinations take
+precedence. The explicit Watch link continues to work on any visit. Reduced
+motion enters a paused mission with its existing manual steps. An interaction
+while initial loading is pending cancels automatic entry.
+
+Unavailable browser storage falls back to the visible Watch button rather than
+replaying an introduction at each visit. General browser gates explicitly use
+a returning-visitor fixture; the full Mission gate independently covers fresh
+entry, returning entry, reduced motion and first-visit component links in
+addition to its previous playback/interruption checks.
 
 CPU verification, paired screenshots and full acceptance are pending.

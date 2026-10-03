@@ -4,6 +4,7 @@ import { teachingFocus } from '../scenes/teaching-focus.js';
 import { ORBIT_EXAMPLES } from '../orbit-examples.js';
 import { chip } from '../evidence.js';
 import { claimByKey } from '../claims.js';
+import { missionEntry } from './mission-entry.js';
 
 // These chapters order an explanation. They are not an operations schedule:
 // collecting, transferring, controlling and rejecting heat can happen together.
@@ -21,6 +22,7 @@ export const MISSION_CHAPTERS = [
 ];
 
 export function mountMissionTour({openFocusDemo=()=>{}}={}) {
+  const entry=missionEntry(location.href,{getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
   const owner=Symbol('guided-mission');
   const host=document.createElement('section');host.className='mission-tour';host.id='mission-tour';host.setAttribute('aria-label','Guided mission');
   host.innerHTML='<div class="mission-prompt"><button type="button" class="btn go" data-mission="start">Watch the mission <span aria-hidden="true">→</span></button><span>From orbit to the ground · guided illustration</span></div><div class="mission-active-panel" hidden><div class="mission-heading"><span class="eyebrow">Illustrative mission</span><span class="mission-count"></span></div><div class="mission-copy" aria-live="polite"><strong class="mission-title"></strong><p class="mission-body"></p><p class="mission-phase"></p></div><div class="mission-step-controls" role="group" aria-label="Steps in this chapter" hidden><button type="button" class="btn" data-mission="step-previous" aria-label="Previous mission step">← Step</button><span class="mission-step-count" aria-live="polite"></span><button type="button" class="btn" data-mission="step-next" aria-label="Next mission step">Step →</button></div><details class="mission-explanation"><summary>About this step</summary><p class="mission-description"></p><div class="animation-legend mission-legend" aria-label="Flow legend"></div><div class="animation-evidence mission-evidence"></div><p class="mission-detail-note"></p></details><div class="mission-progress" aria-hidden="true"><i></i></div><div class="mission-transport" role="group" aria-label="Mission playback"><button type="button" class="btn" data-mission="play">Pause</button><button type="button" class="btn" data-mission="previous">← Chapter</button><button type="button" class="btn" data-mission="next">Chapter →</button><button type="button" class="btn" data-mission="stop">Explore this view</button><label><input type="checkbox" data-mission="repeat"> Repeat</label></div><p class="mission-note">Presentation time is compressed. Hardware, routes, and activity are representative; the ordered explanation separates tasks that may overlap.</p></div>';
@@ -198,7 +200,13 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     const quantized=Math.floor(progress*100);if(quantized!==lastProgress){lastProgress=quantized;find('.mission-progress i').style.width=`${quantized}%`;}
     if(playing&&progress>=1)advance();
   });
-  let requested=new URLSearchParams(location.search).get('mission')==='1';
-  const unready=stage.onTick(()=>{if(requested&&!blocked()&&!stage.isBusy()&&stage.destination()>=0){requested=false;void start();}});
-  return {state,start,stop,pause,play,step,next:()=>index<MISSION_CHAPTERS.length-1?enter(index+1):undefined,previous:()=>index>0?enter(index-1):undefined,dispose(){stop();untick();unready();host.remove();menuStart.remove();}};
+  let requested=entry.requested,remembered=false;
+  const cancelEntry=()=>{requested=false;};
+  document.addEventListener('pointerdown',cancelEntry,{capture:true});document.addEventListener('keydown',cancelEntry,{capture:true});
+  const unready=stage.onTick(()=>{
+    if(stage.isBusy()||stage.destination()<0)return;
+    if(!remembered){remembered=true;entry.remember();}
+    if(requested&&!blocked()){requested=false;void start();}
+  });
+  return {state,start,stop,pause,play,step,next:()=>index<MISSION_CHAPTERS.length-1?enter(index+1):undefined,previous:()=>index>0?enter(index-1):undefined,dispose(){stop();untick();unready();document.removeEventListener('pointerdown',cancelEntry,{capture:true});document.removeEventListener('keydown',cancelEntry,{capture:true});host.remove();menuStart.remove();}};
 }

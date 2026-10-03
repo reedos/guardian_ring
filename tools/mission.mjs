@@ -3,7 +3,7 @@ import {openGate,finish,BASE} from './gate-common.mjs';
 import {checkView} from './gate-geometry.mjs';
 import {checkUI} from './gate-ui.mjs';
 import {teachingFocus} from '../src/scenes/teaching-focus.js';
-const form=process.argv[2]||'desktop',g=await openGate('mission',form);
+const form=process.argv[2]||'desktop',g=await openGate('mission',form,{returning:false});
 if(g){const {page}=g,failures=[];let states=0;
  const check=(ok,message)=>{states++;if(!ok)throw new Error(message);};
  const frames=n=>page.evaluate(n=>new Promise(resolve=>{const tick=()=>--n>0?requestAnimationFrame(tick):resolve();requestAnimationFrame(tick);}),n);
@@ -11,7 +11,12 @@ if(g){const {page}=g,failures=[];let states=0;
  const ready=()=>page.waitForFunction(()=>!grx.mission.state().loading&&!grx.isCameraMoving());
  const press=action=>page.locator(`[data-mission="${action}"]`).click();
  try{
-   check(!(await state()).active,'Mission must be opt-in');
+   await page.waitForFunction(()=>grx.mission.state().active&&!grx.mission.state().loading);await ready();
+   check((await state()).playing&&await page.evaluate(()=>grx.orbitFollow()==='geo'),'First bare visit did not open the guided mission');
+   await press('stop');await page.goto(new URL('visualizer.html',BASE).href);
+   await page.waitForFunction(()=>window.grx?.built[0]&&!grx.isBusy());await frames(4);
+   check(!(await state()).active,'Returning visit restarted the mission');
+   await page.evaluate(()=>{grx.setTransitions('instant');grx.settle();});
    check(await page.locator('[data-mission="start"]').isVisible(),'Mission entry is hidden behind another menu');
   const scenario=await page.evaluate(()=>JSON.stringify(grx.store.scenario));
   if(!await page.locator('[data-mission="start"]').isVisible()){
@@ -148,6 +153,19 @@ if(g){const {page}=g,failures=[];let states=0;
     check(await page.locator('#view').evaluate(el=>el.clientHeight>=120&&el.clientWidth>=200),`Mission details leave too little canvas at ${viewport.width}`);
    }
    await page.keyboard.press('Escape');check(!(await state()).active,'Escape did not exit the mission');
+   await page.evaluate(()=>localStorage.removeItem('grx-mission-visited-v1'));
+   await page.goto(new URL('visualizer.html',BASE).href);
+   await page.waitForFunction(()=>window.grx?.mission.state().active&&!grx.mission.state().loading);await ready();await frames(4);
+   check(!(await state()).playing,'Reduced-motion first visit played without consent');
+   await press('stop');await page.emulateMedia({reducedMotion:'no-preference'});
+   for(const query of ['view=2.light.optics','view=0.light','view=4.data&pane=scenario']){
+     await page.evaluate(()=>localStorage.removeItem('grx-mission-visited-v1'));
+     await page.goto(new URL(`visualizer.html?${query}`,BASE).href);
+     await page.waitForFunction(()=>window.grx?.built[grx.state.scene]&&!grx.isBusy());await frames(4);
+     check(!(await state()).active,`First-visit mission replaced explicit destination ${query}`);
+     const wanted=new URLSearchParams(query).get('view').split('.');
+     check(await page.evaluate(wanted=>grx.state.scene===Number(wanted[0])&&grx.state.mode===wanted[1]&&grx.state.selected===(wanted[2]||null),wanted),`Explicit destination changed: ${query}`);
+   }
  }catch(error){failures.push(error.stack||String(error));}
  await finish(g,failures,{states});
 }

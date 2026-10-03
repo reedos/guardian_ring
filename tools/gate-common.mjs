@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { openLifecycleBrowser } from './lifecycle-browser.mjs';
 export const BASE=process.env.GR_URL||'http://127.0.0.1:47601/';
 export const MODES=['light','data','heat'];
-export async function openGate(name,form='desktop') {
+export async function openGate(name,form='desktop',{returning=true}={}) {
   const gate={browser:null,page:null,errors:[],scenes:[],gpu:'unavailable',name,form};
   try {
   // Exhaustive state checks still await rendered frames, but need not wait for
@@ -16,6 +16,9 @@ export async function openGate(name,form='desktop') {
   if(lifecycle){gate.closeBrowser=lifecycle.close;gate.restoreLifecycleVisibility=lifecycle.restoreVisibility;}
   const page=lifecycle?.page||await browser.newPage(pageOptions);
   gate.page=page;page.setDefaultTimeout(15000);
+  // General scene gates begin as a returning explorer. Mission's gate separately
+  // removes this key and exercises fresh visitors, explicit links and reduced motion.
+  if(returning)await page.addInitScript(()=>localStorage.setItem('grx-mission-visited-v1','1'));
   const errors=gate.errors;page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await page.goto(new URL('visualizer.html',BASE).href);
   await page.waitForFunction(()=>window.grx?.built[window.grx.state.scene],null,{timeout:90000});
