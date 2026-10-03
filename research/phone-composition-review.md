@@ -59,4 +59,14 @@ playback/reading/presentation interaction states. Typecheck, all 244 unit tests,
 and the strict evidence audit pass after these changes. The independent source
 review found no further confirmed major issue; it did not rerun the browser.
 
+Release-gate follow-up corrected the UI gate's stale fixed-camera expectation:
+responsive overview scenes are checked against their authored frame at the
+current canvas size, including target and completed flight. Desktop plume and
+atmosphere checks pass 68 scoped states. The phone run found that the initial
+compact landscape breakpoint also captured 667×375; it is now limited to
+640px width and 360px height. Four focused rotation/playback/Scenario checks
+pass at 844×390 and 667×375, preserving their 140px canvas and 150px reading
+pane minima. The 87 compact interaction cases still pass. Full acceptance must
+run again against the final candidate; these are development results only.
+
 Full PLAN section 9 acceptance remains required before merging this follow-up.

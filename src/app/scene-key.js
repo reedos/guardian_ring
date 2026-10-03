@@ -18,7 +18,7 @@ export function mountSceneKey(){
   // of the molecular diagrams and detector face.
   const view=document.getElementById('view'),note=document.getElementById('scene-note');
   const dock=document.createElement('div');dock.className='compact-scene-key';dock.hidden=true;view.after(dock);
-  const compact=matchMedia('(max-width:760px) and (max-height:640px) and (orientation:portrait), (max-width:700px) and (max-height:400px) and (orientation:landscape)');
+  const compact=matchMedia('(max-width:760px) and (max-height:640px) and (orientation:portrait), (max-width:640px) and (max-height:360px) and (orientation:landscape)');
   const placeKey=()=>{dock.hidden=!compact.matches;(compact.matches?dock:view).append(note,legend);};
   compact.addEventListener('change',placeKey);placeKey();
   let previous='';

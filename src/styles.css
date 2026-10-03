@@ -1487,7 +1487,7 @@ body.activity-playing #pins .pin:not(.on) { visibility: hidden; }
   body.app.sheet-open:not(.mission-active):not(.inspector-collapsed) .viewer > :not(#hud-btns) { display:none; }
   body.app.sheet-open:not(.mission-active):not(.inspector-collapsed) .panel { flex:1 1 0; min-height:0; }
 }
-@media (max-width:700px) and (max-height:400px) and (orientation:landscape) {
+@media (max-width:640px) and (max-height:360px) and (orientation:landscape) {
   body.app .stage .body, body.app.inspector-collapsed .stage .body { grid-template-columns:minmax(0,1fr) minmax(260px,44%); }
   body.app .view, body.app.sheet-open .view { min-height:96px; }
   .part-transport .pn-t { display:none; }

@@ -52,7 +52,7 @@ export function mountInspectorLayout() {
     }
     const keyDock=document.querySelector('.compact-scene-key');
     if(keyDock){
-      if(landscape&&matchMedia('(max-width:700px) and (max-height:400px)').matches){
+      if(landscape&&matchMedia('(max-width:640px) and (max-height:360px)').matches){
         // Playback stays first; a static key must not consume the entire fold.
         if(dock.lastElementChild!==keyDock)dock.append(keyDock);
       }else if(keyDock.parentElement!==viewer)view.after(keyDock);
