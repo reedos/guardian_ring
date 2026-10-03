@@ -62,6 +62,8 @@ if (gate) {
     await page.keyboard.press('Escape');await frames(page);
     check(!await page.locator('#focus-demo').isVisible()&&await launch.evaluate(node=>node===document.activeElement),'Escape failed to close focusing example and return focus');
     await launch.click();await frames(page);check(await page.evaluate(()=>!grx.focusDemo.state().playing),'Reopening visible focus evidence restarted playback');
+    await page.locator('#focus-demo summary').click();await frames(page);
+    check(!await page.locator('#focus-demo details').evaluate(node=>node.open),'Reduced-motion fixture must have its evidence closed');
     await page.locator('#focus-demo [data-focus="close"]').click();
     await page.emulateMedia({reducedMotion:'reduce'});await launch.click();await frames(page);
     const reduced=await page.evaluate(()=>grx.focusDemo.state());await page.waitForTimeout(150);
