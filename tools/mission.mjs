@@ -12,7 +12,9 @@ if(g){const {page}=g,failures=[];let states=0;
  const press=action=>page.locator(`[data-mission="${action}"]`).click();
  try{
    await page.waitForFunction(()=>grx.mission.state().active&&!grx.mission.state().loading);await ready();
-   check((await state()).playing&&await page.evaluate(()=>grx.orbitFollow()==='geo'),'First bare visit did not open the guided mission');
+   check((await state()).playing&&(await state()).establishing&&await page.evaluate(()=>grx.orbitFollow()===null),'First bare visit did not establish the whole Earth before following a spacecraft');
+   await page.waitForFunction(()=>grx.orbitFollow()==='geo'&&!grx.mission.state().establishing);await ready();
+   check((await state()).playing,'First-visit establishing view did not continue into GEO follow');
    await press('stop');await page.goto(new URL('visualizer.html',BASE).href);
    await page.waitForFunction(()=>window.grx?.built[0]&&!grx.isBusy());await frames(4);
    check(!(await state()).active,'Returning visit restarted the mission');

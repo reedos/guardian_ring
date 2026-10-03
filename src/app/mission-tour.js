@@ -38,15 +38,15 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   menuStart.addEventListener('click',()=>void start());
   const orbitFact=document.createElement('p');orbitFact.className='orbit-follow-fact';orbitFact.hidden=true;
   find('.mission-copy').after(orbitFact);let factFamily=null;
-  let active=false,playing=false,loading=false,generation=0,index=0,elapsed=0,phase=-1,cameraHold=false,mutating=false,lastProgress=-1,completed=false,failed=false;
-  const state=()=>({active,playing,loading,index,total:MISSION_CHAPTERS.length,phase,completed,failed,elapsed,chapter:MISSION_CHAPTERS[index]});
+  let active=false,playing=false,loading=false,generation=0,index=0,elapsed=0,phase=-1,cameraHold=false,mutating=false,lastProgress=-1,completed=false,failed=false,establishing=false;
+  const state=()=>({active,playing,loading,index,total:MISSION_CHAPTERS.length,phase,completed,failed,elapsed,establishing,chapter:MISSION_CHAPTERS[index]});
   const blocked=()=>stage.activitySuspended();
   const mutate=fn=>{const previous=mutating;mutating=true;try{return fn();}finally{mutating=previous;}};
   function describeStep(chapter,lesson) {
-    const key=`${index}:${lesson?.index??'orbit'}`;if(key===explanationKey)return;
+    const key=`${index}:${lesson?.index??'orbit'}:${establishing}`;if(key===explanationKey)return;
     explanationKey=key;
     const orbital=chapter.follow;
-    find('.mission-description').textContent=orbital
+    find('.mission-description').textContent=establishing?'Earth and the illustrative GEO patches rotate together. Polar orbit arcs provide architectural context. Distances and patch sizes are schematic, not sensor coverage.':orbital
       ? 'The follow camera magnifies the representative spacecraft. The cross marks its geometric nadir; the trace records that point on the rotating Earth. It does not show a sensor footprint. Moving symbols identify light or radio paths, with separate illustrative drawing and playback scales.'
       : lesson.step.body;
     const types=orbital
@@ -67,7 +67,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     orbitFact.hidden=!chapter.follow;
     if(chapter.follow&&factFamily!==chapter.follow){const family=chapter.follow,example=ORBIT_EXAMPLES[family];factFamily=family;orbitFact.innerHTML=`${example.claims.orbitSpeedKmS[1]} ${chip('derived',`orbit-example:${family}:orbitSpeedKmS`,`${family.toUpperCase()} teaching speed`)} · ${example.claims.altitudeKm[1]} altitude ${chip('derived',`orbit-example:${family}:altitudeKm`,'teaching altitude')}<span>Physical circular-orbit example; drawing and playback scales are illustrative.</span>`;}
     find('.mission-count').textContent=`${index+1} / ${MISSION_CHAPTERS.length}`;
-    find('.mission-title').textContent=chapter.title;find('.mission-body').textContent=chapter.body;
+    find('.mission-title').textContent=establishing?'Start with the whole Earth':chapter.title;find('.mission-body').textContent=establishing?'Watch the planet turn inside its orbital architecture. Next, ride beside a GEO spacecraft.':chapter.body;
     find('[data-mission="play"]').textContent=failed?'Retry':completed?'Replay':playing?'Pause':'Play';
     find('[data-mission="play"]').setAttribute('aria-pressed',String(playing));
     const focused=document.activeElement;
@@ -105,6 +105,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     teaching.seek(next,.72);focusPhase({progress:.72});
   }
   async function enter(next) {
+    if(next!==0)establishing=false;
     const token=++generation;index=next;loading=true;completed=false;failed=false;elapsed=0;phase=-1;cameraHold=false;lastProgress=-1;render();
     const chapter=MISSION_CHAPTERS[index];
     try {
@@ -114,8 +115,8 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
       mutate(()=>{
         stage.setMode(chapter.mode,{activity:false});
         if(chapter.follow){
-          stage.setOrbitFollow(chapter.follow);cameraHold=true;
-          find('.mission-phase').textContent=chapter.follow==='geo'?'An Earth-facing, co-rotating view':'Follow the changing ground beneath the spacecraft';
+          if(establishing)stage.overview();else stage.setOrbitFollow(chapter.follow);cameraHold=true;
+          find('.mission-phase').textContent=establishing?'Earth-fixed GEO patches · polar orbit context':chapter.follow==='geo'?'An Earth-facing, co-rotating view':'Follow the changing ground beneath the spacecraft';
         }else{
           stage.preparePlayback();stage.getTeaching().seek(0,0);focusPhase();
         }
@@ -128,11 +129,12 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   function stop({focus=false}={}) {
     if(!active)return;
     stage.cancelNavigation(owner);
-    generation++;active=false;playing=false;loading=false;cameraHold=false;
+    generation++;active=false;playing=false;loading=false;cameraHold=false;establishing=false;
     mutate(()=>{stage.getTeaching()?.pause();stage.setOrbitFollow(null);stage.built[stage.destination()]?.setMotion?.(false);});
     render();if(focus)document.getElementById('part-select').focus({preventScroll:true});
   }
-  async function start() {
+  async function start({establish=false}={}) {
+    establishing=establish;
     const url=new URL(location.href);url.searchParams.delete('mission');history.replaceState(null,'',url);
     explanation.open=false;explanationKey='';active=true;playing=!stage.reduced;stage.setActivityEnabled(playing);const opening=enter(0);find('[data-mission="play"]').focus();await opening;
   }
@@ -191,7 +193,15 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     }
     const chapter=MISSION_CHAPTERS[index],teaching=stage.getTeaching();
     let progress=0;
-    if(chapter.follow){if(playing&&dt<=1)elapsed+=dt;progress=Math.min(1,elapsed/chapter.duration);}
+    if(chapter.follow){
+      if(playing&&dt<=1)elapsed+=dt;
+      if(establishing&&elapsed>=3){
+        establishing=false;elapsed=0;cameraHold=true;lastProgress=-1;
+        mutate(()=>stage.setOrbitFollow(chapter.follow));
+        find('.mission-phase').textContent='An Earth-facing, co-rotating view';render();return;
+      }
+      progress=Math.min(1,elapsed/(establishing?3:chapter.duration));
+    }
     else {
       const lesson=teaching.state();
       if(lesson.index!==phase){focusPhase();return;}
@@ -207,7 +217,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   const unready=stage.onTick(()=>{
     if(stage.isBusy()||stage.destination()<0)return;
     if(!remembered){remembered=true;if(!entry.remember()&&entry.automatic)requested=false;}
-    if(requested&&!blocked()){requested=false;void start();}
+    if(requested&&!blocked()){requested=false;void start({establish:entry.automatic});}
   });
   return {state,start,stop,pause,play,step,next:()=>index<MISSION_CHAPTERS.length-1?enter(index+1):undefined,previous:()=>index>0?enter(index-1):undefined,dispose(){stop();untick();unready();document.removeEventListener('pointerdown',cancelEntry,{capture:true});document.removeEventListener('keydown',cancelEntry,{capture:true});host.remove();menuStart.remove();}};
 }
