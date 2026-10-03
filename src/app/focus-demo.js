@@ -31,7 +31,7 @@ export function mountFocusDemo({beforeOpen=()=>{}}={}) {
     if(canvas.width!==Math.round(width*ratio)||canvas.height!==Math.round(height*ratio)){canvas.width=Math.round(width*ratio);canvas.height=Math.round(height*ratio);}
     context.setTransform(ratio,0,0,ratio,0,0);context.clearRect(0,0,width,height);
     camera.aspect=width/height;camera.updateProjectionMatrix();
-    const distance=width<500?11:9;
+    const distance=width<500?8:9;
     camera.position.set(Math.sin(yaw)*Math.cos(pitch)*distance,Math.sin(pitch)*distance,1.9+Math.cos(yaw)*Math.cos(pitch)*distance);camera.lookAt(target);camera.updateMatrixWorld();
     const background=context.createRadialGradient(width*.47,height*.5,0,width*.47,height*.5,width*.65);background.addColorStop(0,'#10222c');background.addColorStop(1,'#030609');context.fillStyle=background;context.fillRect(0,0,width,height);
     // Wireframe circles and meridians identify the mathematical surface only.
