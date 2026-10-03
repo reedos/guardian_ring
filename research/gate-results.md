@@ -1,8 +1,8 @@
 # Final built-preview acceptance
 
-Recorded 10/02/2026. Built preview: `http://127.0.0.1:47601/`. All browser results below postdate this production build and include all 10 implemented levels. Scoped development runs and reserved scenes are rejected.
+Recorded 10/03/2026. Built preview: `http://127.0.0.1:47601/`. All browser results below postdate this production build and include all 10 implemented levels. Scoped development runs and reserved scenes are rejected.
 
-Build SHA-256 (sorted relative paths and bytes): `fd3463e001d9a178003bab65f1f226b87c0732f8160756f400fcb708cf77e01d`.
+Build SHA-256 (sorted relative paths and bytes): `a4d59af6e272c58c895ed3a7ef0b5cf26cd480f16a3a7a9bf3dcf93e79025ca7`.
 
 Recorded renderer: ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11). Software rendering rejected.
 
@@ -13,34 +13,48 @@ Recorded renderer: ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D1
 | views | desktop | 237 | PASS |
 | views | phone | 237 | PASS |
 | ui | desktop | 264 | PASS |
-| ui | phone | 287 | PASS |
+| ui | phone | 323 | PASS |
 | coplanar | desktop | 30 | PASS |
 | flights | desktop | 2091 | PASS |
 | flights | phone | 2091 | PASS |
 | govern | desktop | 11 | PASS |
 | govern | phone | 11 | PASS |
-| links | desktop | 14 | PASS |
-| perf | desktop | 169 | PASS; worst p95 3.60 ms |
-| perf | phone | 169 | PASS; worst p95 6.80 ms |
+| links | desktop | 15 | PASS |
+| perf | desktop | 179 | PASS; worst p95 9.70 ms |
+| perf | phone | 179 | PASS; worst p95 1.20 ms |
 | labels | desktop | 267 | PASS |
 | labels | phone | 267 | PASS |
-| learning | desktop | 354 | PASS |
-| learning | phone | 362 | PASS |
+| learning | desktop | 359 | PASS |
+| learning | phone | 367 | PASS |
+| navigation | desktop | 962 | PASS |
+| navigation | phone | 966 | PASS |
+| mission | desktop | 177 | PASS |
+| mission | phone | 180 | PASS |
+| activity | desktop | 861 | PASS |
+| activity | phone | 861 | PASS |
+| project-audit | desktop | 81 | PASS |
+| project-audit | phone | 82 | PASS |
 | look: story | desktop | 28 evidence dialogs | PASS |
 | look: story | phone | 28 evidence dialogs | PASS |
-| pages: evidence | desktop | 936 evidence dialogs | PASS |
+| pages: evidence | desktop | 941 evidence dialogs | PASS |
 | pages: method | desktop | 0 evidence dialogs | PASS |
 | pages: glossary | desktop | 0 evidence dialogs | PASS |
 | pages: parts | desktop | 127 evidence dialogs | PASS |
-| pages: evidence | phone | 936 evidence dialogs | PASS |
+| pages: evidence | phone | 941 evidence dialogs | PASS |
 | pages: method | phone | 0 evidence dialogs | PASS |
 | pages: glossary | phone | 0 evidence dialogs | PASS |
 | pages: parts | phone | 127 evidence dialogs | PASS |
 
-20/20 browser gate commands passed: 18 geometry/UI/label/learning runs plus story and reference-page checks on both forms. Typecheck passed. 156/156 unit tests passed. Strict evidence audit: 0 problems across 936 site claims (89760 scenario instances), 96 scenarios, and 253 research facts.
+28/28 browser gate commands passed: 26 geometry/UI/label/learning runs plus story and reference-page checks on both forms. Typecheck passed. 232/232 unit tests passed. Strict evidence audit: 0 problems across 941 site claims (90240 scenario instances), 96 scenarios, and 253 research facts.
 
 Cycle and parts cover every scenario × level × layer. UI includes open menus, visible keyboard focus, scenarios and sheet states. Learning checks cover sequence controls, source-reading suspension, reduced-motion stepping, context-preserving scenario changes and nested side visits. Quality checks compare reported resolution with the renderer, canvas and actual WebGL drawing buffer. Performance samples selected-part inspection, overview and each teaching-animation phase at tier 0; budgets are 15 ms desktop / 7 ms phone p95. Samples that cross into another phase are discarded before the intended phase resumes. Printed-label checks reject partially obscured lettering and require a clear authored desktop view for every nameplate. Flights cover the overview to each part and every ordered distinct part pair within each level/layer on both forms. Story and reference pages check their evidence dialogs, links, phone layout and noindex metadata.
 
 These are local acceptance results. They do not assert remote CI status or replace Reed’s phone review or launch decision. Noindex remains on. Detailed JSON and screenshots are local under `.local/gates/`, `.local/look/`, `.local/pages/` and `shots/`.
+
+Navigation checks press Next through every part, inspect each manual animation step, and verify overview selection, completed camera movement, mechanism-step routes, useful projected component size, Back restoration, and preservation of deliberate camera adjustments.
+
+Mission checks cover the guided chapters, orbital follow views, source-reading suspension, pause, reduced-motion entry, manual interruption, and canceled pending navigation. Project-audit checks cover keyboard tab and menu focus, presentation exit, current scenarios in repeated new-tab links, hidden orbit-family selections, and filtered or malformed reference-page fragments, including embedded reference pages. Both run on desktop and phone.
+
+Activity checks exercise real layer buttons across every hardware scene and layer with ordinary playback, an explicit pause, and reduced motion. They require meaningful visible poses, rendered geometry changes while playing, stationary geometry while paused, and stable compatible-part selection and cameras. Each layer crosses a natural rendered cycle boundary in the atmosphere example; all scene/layer states independently assert repeat intent. Source reading and Chrome lifecycle freeze/resume hold the lesson without catch-up, orbital follow retains pause/play intent, and the real Share handler preserves the followed spacecraft. Desktop and phone use the same checks.
 
 Performance setup follows the Intelligence Factory benchmark: a 300 ms rendered settling period, no active CSS transitions, then 24 warm-up frames. Each measured condition retains all valid frame intervals; complete teaching phases include at least 240 samples.

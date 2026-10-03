@@ -42,8 +42,8 @@ if (gate) {
     check(!result.length,`${context}: ${result.join('; ')}`);
   };
   try {
-    // The instrument first reads as coordinated, closed assemblies. Selecting
-    // any enclosed component reveals its actual parent before its detail view.
+    // An explicit inspection starts with coordinated, closed assemblies.
+    // Selecting an enclosed component reveals its parent before its detail view.
     await show(page,'payload','light');
     await checkAssembly('assembled','Payload default');
     const internalByMode={};
@@ -181,15 +181,18 @@ if (gate) {
       check(await page.evaluate(expected=>Object.entries(expected).every(([key,value])=>grx.store.scenario[key]===value),scenario),`${saved.label}: reload lost the scenario`);
     }
     for(const legacy of [
-      {view:'2.data',assembly:null,wanted:'assembled',part:null},
+      {view:'2.data',assembly:null,wanted:'inside',part:null,activity:true},
       {view:'2.light.optics',assembly:null,wanted:'assembled',part:'optics'},
       {view:'2.data.controller',assembly:null,wanted:'inside',part:'controller'},
-      {view:'2.data',assembly:'unknown',wanted:'assembled',part:null},
+      {view:'2.data',assembly:'unknown',wanted:'inside',part:null,activity:true},
       {view:'2.data.controller',assembly:'assembled',wanted:'inside',part:'controller'},
     ]) {
       const url=new URL('visualizer.html',BASE);url.searchParams.set('view',legacy.view);
       if(legacy.assembly)url.searchParams.set('assembly',legacy.assembly);
       await reloadPayload(url.href,`Compatible link ${legacy.view}/${legacy.assembly||'default'}`,legacy.wanted,legacy.part);
+      const linkedActivity=await page.evaluate(()=>{const s=grx.built[2].teaching.state();return {playing:s.playing,repeating:s.repeating,inspection:s.inspection};});
+      check(legacy.activity?linkedActivity.playing&&linkedActivity.repeating&&!linkedActivity.inspection:!linkedActivity.playing&&linkedActivity.inspection,
+        `Compatible link ${legacy.view}/${legacy.assembly||'default'}: default activity or explicit part inspection was not preserved`);
     }
     await show(page,'pixel','light');
     await page.waitForFunction(()=>!new URLSearchParams(location.search).has('assembly'));

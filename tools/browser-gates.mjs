@@ -48,7 +48,9 @@ async function settleLayout(page){
  await page.evaluate(async()=>{
   let timeout;
   const settled=async()=>{const animations=document.getAnimations().filter(a=>a.effect?.getTiming().iterations!==Infinity);await Promise.all(animations.map(a=>a.finished.catch(()=>{})));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));};
-  try{await Promise.race([settled(),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(new Error('Layout did not finish rendering within 5 seconds')),5000);})]);}
+  // The desktop orbit hint intentionally waits 10 seconds before its 800 ms
+  // fade. Retain that finite animation in the barrier and allow it to finish.
+  try{await Promise.race([settled(),new Promise((_,reject)=>{timeout=setTimeout(()=>reject(new Error('Layout did not finish rendering within 15 seconds')),15000);})]);}
   finally{clearTimeout(timeout);}
  });
 }
@@ -532,7 +534,9 @@ export async function run(name,form=process.argv[2]||'desktop'){
     recordPerformance(sc.id,mode,phase.name,await samplePerformance({index:phase.index}));
    }
    if(sc.id==='orbits')for(const follow of ['geo','leo']){
-    await page.evaluate(family=>{grx.setOrbitFollow(family);grx.settle();},follow);
+    // Follow preserves the reader's pause intent. Start playback explicitly
+    // for this active-motion benchmark after the previous case's cleanup.
+    await page.evaluate(family=>{grx.built[0].setMotion(true);grx.setOrbitFollow(family);grx.settle();},follow);
     await page.waitForFunction(family=>grx.orbitFollow()===family&&grx.built[0].motion()&&!grx.isCameraMoving(),follow);
     await settlePerformanceView();
     recordPerformance(sc.id,mode,`active follow ${follow.toUpperCase()}`,await samplePerformance({index:0,follow}));

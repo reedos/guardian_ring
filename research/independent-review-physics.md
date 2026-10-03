@@ -25,8 +25,9 @@ the outgoing segment. The normals came from `build-abi.py` and
 from Git history; these invalid routes have been removed.
 
 The revised full-instrument overlays connect named component-role anchors with
-an explicit `optical-connection` type. They are dashed, static functional
-connections, not traced rays. They have no traveling photon heads, arrowheads,
+an explicit `optical-connection` type. They are dashed functional connections
+with fixed geometry, not traced rays. Whole-connection brightness can change
+to identify activity. They have no traveling photon heads, arrowheads,
 or trails. The lesson copy and legend distinguish them from the separate local
 reflection demonstration. The collection and calibration routes in the ABI
 lesson are selected separately. This corrects the teaching claim without
@@ -78,6 +79,20 @@ return phase has no optical propagation activity. Tests use the actual TIRS
 teaching program to check adjacent boundaries, inspection entry, and repeated
 playback, rather than a separate test-only phase list.
 
+The final education and engineering review found a separate TIRS-2 mismatch:
+the traveling full-route marks retained their outgoing bend while the
+scene-select mirror changed orientation. The corrected routes now use the
+same functional optical-connection type without traveling heads or marks.
+Explicit Earth and space direction endpoints and the onboard-blackbody anchor
+connect through scene selection, telescope, filters, and arrays. Reference
+routes are mutually exclusive. Earth can start in its resting selection;
+blackbody and space wait until progress 0.28 in their illustrative phase, after
+the mechanism settles. This is an animation setting, not a physical timing
+claim. Ten targeted optical-routing and mechanism tests passed, checking the
+endpoints, absent propagating marks, exclusivity, and unchanged mechanical
+timing. The separate visual reviewer confirmed the connection and legend in
+desktop and phone samples.
+
 The satellite and ground component-emphasis bindings were checked against their
 current Light, Data, and Heat programs. Shared Light/Data phase names describe
 the same radio or data operation. Heat phases use electrical, heat, or radiation
@@ -128,8 +143,8 @@ overlays. It omits the first and last millionth of a drawing unit to allow
 surface endpoint contact; this is a numerical drawing tolerance, not a physical
 clearance. Its three passing regressions check actual GLB surface normals and
 port offsets, finite segments and endpoint contact, and suppression of the
-grazing-sun obstruction through both GEO magnifications. Root owns runtime
-wiring and final browser validation.
+grazing-sun obstruction through both GEO magnifications. Root integrated the
+runtime correction and owns final browser validation.
 
 The atmosphere timeline was subsequently raised and turned toward the overview
 camera because the earlier geometrically clear route lay below the browser's
@@ -143,9 +158,16 @@ orbit and radiometry implementation was inspected separately and did not show
 an analogous defect: its physical examples remain independent of compressed
 scene coordinates and real sensor performance.
 
-**Current review status:** these corrections are verified at the source and
-CPU-test level. Current-build real-GPU browser acceptance remains pending. Prior
-build passes do not validate the expanded independent-review revision.
+**Current review status:** the independent source and CPU engineering review
+is complete, with no remaining confirmed P1/P2 finding in its checked scope.
+The integrated source passes typecheck, 232 tests across 39 files, and the
+strict evidence audit with zero problems. Root's frozen `visualizer-r94RjGs4`
+acceptance run has passed all 28 full-scope commands, including the 861-state
+desktop and phone Activity gates and 2,091 flights on each form. Cycle and
+Parts each pass 22,752 states across 96 scenarios; cycle textures remain at
+57 through all 96 rebuilds. This reviewer did not independently perform those
+GPU checks. Remote deployment, device review, and the launch decision remain
+open; noindex stays enabled.
 
 ## Source check
 

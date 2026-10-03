@@ -20,7 +20,7 @@ Entering a hardware level or changing Light, Data, or Heat starts repeating acti
 
 An optional guided mission follows GEO and LEO spacecraft above Earth's limb, then traces infrared collection, moving scan mirrors, onboard electronics, thermal support, downlink and ground processing. Pause to inspect evidence or take control at any point. The ordered explanation does not depict a real operational schedule; orbital speed examples are calculated independently of the compressed drawing and playback scales.
 
-This edition is under review. The site is unlisted and retains noindex; its review link is shared directly with the reviewer.
+This edition is under review. The review link is shared directly and noindex remains enabled.
 
 ## Follow the evidence
 
@@ -54,7 +54,7 @@ npm run dev
 
 Before committing, run `npm run typecheck`, `npm test`, and `npm run claims`. For browser acceptance, build the site, start `npm run preview`, then run `npm run gates` in another terminal. The suite requires Chrome and a real GPU and checks desktop and phone layouts. `npx tsx tools/gate-report.mjs` records full-build acceptance using the same JSON-aware loader as the claims audit.
 
-The latest completed CPU checks pass 229 tests across 39 files, typecheck, and a strict evidence audit with zero problems. Full browser acceptance remains pending: all twenty-eight commands must pass against the final frozen build. Targeted visual reviews and superseded diagnostic runs do not replace that requirement.
+The latest completed CPU checks pass 232 tests across 39 files, typecheck, and a strict evidence audit with zero problems. The frozen build passes all 28 browser commands, including 323 phone UI states and 2,091 camera flights on each form. Cycle and Parts each pass 22,752 states across 96 scenarios. Learning passes 359 desktop and 367 phone states; Activity passes 861 on each form. Independent reviews drove verified usability, visual, and engineering corrections. Reed's device review and launch decision remain open; noindex stays enabled. The [build review](research/BUILD-REVIEW.md) records performance results, controlled test conditions, and preserved diagnostic failures.
 
 Contributors should read [AGENTS.md](AGENTS.md) and [PLAN.md](PLAN.md). The verified research records supersede unchecked statements in the original source seed and initial plan.
 
