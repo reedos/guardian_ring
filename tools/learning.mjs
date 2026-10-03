@@ -122,7 +122,12 @@ if (gate) {
         await page.locator('#tab-scenario').click();await frames(3);
         const layout=await page.evaluate(()=>{
           const bad=[],selector='.assembly-controls button,#part-select,#card-prev,#card-next,#reset-view,#animation-controls .animation-transport button';
-          const nodes=[...document.querySelectorAll(selector)],boxes=[];
+          const focus=document.querySelector('.focus-demo-open');
+          const focusExpected=grx.store.C.SCENES[grx.state.scene].id==='payload'&&grx.state.mode==='light';
+          if(!focus||focus.hidden===focusExpected)bad.push('Light-focus action availability does not match the layer');
+          // The focus demonstration belongs only to payload Light. All other
+          // transport and enclosure controls remain mandatory in this check.
+          const nodes=[...document.querySelectorAll(selector)].filter(node=>node!==focus||focusExpected),boxes=[];
           for(const node of nodes) {
             if(!node.checkVisibility()){bad.push(`${node.id||node.textContent}: hidden`);continue;}
             const box=node.getBoundingClientRect(),hit=document.elementFromPoint((box.left+box.right)/2,(box.top+box.bottom)/2);
