@@ -31,7 +31,7 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
     if(!node)throw new Error(`Missing authored plume group: ${name}`);
     head.attach(node);gas.push({node,position:node.position.clone(),quaternion:node.quaternion.clone()});
   }
-  head.rotation.z=Math.PI;head.scale.setScalar(.48);
+  head.rotation.z=Math.PI;head.scale.setScalar(.65);
   const materials=new Map();head.traverse(node=>{
     if(node.isMesh)for(const material of Array.isArray(node.material)?node.material:[node.material])
       materials.set(material,{opacity:material.opacity,emissive:material.emissiveIntensity});
@@ -56,7 +56,7 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
   const map=new THREE.DataTexture(pixels,32,32);map.needsUpdate=true;
   const glow=overlay(new THREE.Sprite(new THREE.SpriteMaterial({map,color:'#f6a1b8',transparent:true,opacity:.65,depthWrite:false,blending:THREE.AdditiveBlending})),
     'False-color emission glow — not a temperature');
-  glow.scale.set(2,2,1);scene.add(glow);
+  glow.scale.set(2.7,2.7,1);scene.add(glow);
   const heatPaths=paths.records.filter(r=>r.mode==='heat');
   const sourcePins=[hotspots.source,dataHotspots.source,heatHotspots.source];
   const bandPins=[hotspots.bands,dataHotspots.bands,heatHotspots.bands];
@@ -74,7 +74,7 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
     }
     for(const [material,rest] of materials){
       material.opacity=rest.opacity*pose.fade;
-      if(Number.isFinite(rest.emissive))material.emissiveIntensity=rest.emissive*(.9+.1*Math.sin(pose.phase));
+      if(Number.isFinite(rest.emissive))material.emissiveIntensity=rest.emissive*(2.6+.18*Math.sin(pose.phase));
     }
     glow.position.copy(head.position);glow.position.y-=.22;glow.material.opacity=pose.fade*(mode==='data'?.22:.62);
     for(const pin of sourcePins){pin.pos[0]=head.position.x;pin.pos[1]=pose.height-.26;pin.pos[2]=0;}
