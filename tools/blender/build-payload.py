@@ -1,4 +1,4 @@
-"""Detailed representative infrared payload and electronics, version 13.
+"""Detailed representative infrared payload and electronics, version 14.
 Blender --background --python tools/blender/build-payload.py.
 The opened telescope and integrated electronics units show subsystem
 relationships with authored removable covers. No military optical prescription, electronics schematic,
@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=13
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=14
 
 # Keep the approved reflective cutaway, then expose the rest of its signal chain.
 source=Path(__file__).with_name('build-hardware-look.py');tree=ast.parse(source.read_text(encoding='utf-8'))
@@ -102,4 +102,4 @@ anchors={
 anchors.update(expanded_anchors)
 anchors.update(electronics_anchors)
 h.export(ROOT/'public/models/payload.glb','GuardianPayload',VERSION,'payload',anchors,
- 'Representative civil-derived payload teaching assembly: orthogonal scan drives, four reflective telescope surfaces, focus and deployable cover, calibration examples, stationary aft optics, cold detector, one closed sensor electronics enclosure, one closed common instrument electronics chassis, separate coordinated cooler-control electronics, defined bulkhead connectors, common mounting interfaces and closed cooling/control paths. Component roles follow public ABI descriptions; layout, optical prescription, packaging and counts of electronic parts are as drawn, not military hardware.')
+ 'Representative civil-derived payload teaching assembly: authored orthogonal scan-mirror pivots with fixed supports, motor and encoder housings; four reflective telescope surfaces; focus and deployable cover; calibration examples; stationary aft optics; cold detector; one closed sensor electronics enclosure; one closed common instrument electronics chassis; separate coordinated cooler-control electronics; defined bulkhead connectors; common mounting interfaces and closed cooling/control paths. Component roles follow public ABI descriptions; layout, optical prescription, packaging, motion ranges and counts of electronic parts are as drawn, not military hardware.')

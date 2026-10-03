@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { EARTH_EQUATORIAL_RADIUS_M, SIDEREAL_DAY_SECONDS, eccentricAnomalyRadians, meanAnomalyRadians,
-  orbitalPeriodSeconds, orbitalPlanePosition, orbitalRadiusMeters, semiMajorAxisMeters, slantRangeMeters } from './orbits';
+import { EARTH_EQUATORIAL_RADIUS_M, EARTH_GM_M3_S2, SIDEREAL_DAY_SECONDS, eccentricAnomalyRadians, meanAnomalyRadians,
+  orbitalPeriodSeconds, orbitalPlanePosition, orbitalRadiusMeters, orbitalSpeedMetersPerSecond, semiMajorAxisMeters, slantRangeMeters } from './orbits';
 
 describe('general two-body orbit mathematics', () => {
   it('matches the published GEO radius to a sidereal period', () => {
@@ -9,6 +9,32 @@ describe('general two-body orbit mathematics', () => {
   });
   it('obeys Kepler scaling when the semi-major axis doubles', () => {
     expect(orbitalPeriodSeconds(2e7) / orbitalPeriodSeconds(1e7)).toBeCloseTo(Math.sqrt(8), 12);
+  });
+  it('recovers circular speed from circumference divided by orbital period', () => {
+    for (const radius of [7e6, 2.6e7, 42164e3]) {
+      expect(orbitalSpeedMetersPerSecond(radius, radius)).toBeCloseTo(2 * Math.PI * radius / orbitalPeriodSeconds(radius), 9);
+    }
+    expect(orbitalSpeedMetersPerSecond(2e7, 2e7) / orbitalSpeedMetersPerSecond(1e7, 1e7)).toBeCloseTo(1 / Math.sqrt(2), 12);
+  });
+  it('preserves orbital energy and apsis angular momentum while speed varies', () => {
+    const a = semiMajorAxisMeters(SIDEREAL_DAY_SECONDS / 2), e = .722;
+    const near = a * (1 - e), far = a * (1 + e);
+    const nearSpeed = orbitalSpeedMetersPerSecond(a, near), farSpeed = orbitalSpeedMetersPerSecond(a, far);
+    expect(nearSpeed).toBeGreaterThan(farSpeed);
+    expect(nearSpeed / farSpeed).toBeCloseTo(far / near, 12);
+    for (const anomaly of [0, .7, Math.PI / 2, Math.PI, 4]) {
+      const r = orbitalRadiusMeters(a, e, anomaly), v = orbitalSpeedMetersPerSecond(a, r);
+      expect((v * v / 2 - EARTH_GM_M3_S2 / r) / (EARTH_GM_M3_S2 / a)).toBeCloseTo(-.5, 12);
+    }
+  });
+  it('agrees with the independently propagated ellipse position over time', () => {
+    const a = 2.7e7, e = .722, period = orbitalPeriodSeconds(a), dt = .05;
+    for (const time of [0, period / 8, period / 3, period / 2]) {
+      const at = (t: number) => orbitalPlanePosition(a, e, meanAnomalyRadians(t, period));
+      const before = at(time - dt), after = at(time + dt), radius = at(time).radius;
+      const finiteDifference = Math.hypot(after.x - before.x, after.y - before.y) / (2 * dt);
+      expect(orbitalSpeedMetersPerSecond(a, radius)).toBeCloseTo(finiteDifference, 4);
+    }
   });
   it('locates the extrema of an ellipse and the quadrature point', () => {
     expect(orbitalRadiusMeters(10, 0.6, 0)).toBeCloseTo(4, 12);
@@ -73,5 +99,12 @@ describe('general two-body orbit mathematics', () => {
     expect(() => eccentricAnomalyRadians(NaN, 0.5)).toThrow(RangeError);
     expect(() => orbitalPlanePosition(1, 1, 0)).toThrow(RangeError);
     expect(() => orbitalPlanePosition(0, 0.5, 0)).toThrow(RangeError);
+    for (const invalid of [0, -1, NaN, Infinity]) {
+      expect(() => orbitalSpeedMetersPerSecond(invalid, 1e7)).toThrow(RangeError);
+      expect(() => orbitalSpeedMetersPerSecond(1e7, invalid)).toThrow(RangeError);
+      expect(() => orbitalSpeedMetersPerSecond(1e7, 1e7, invalid)).toThrow(RangeError);
+    }
+    expect(() => orbitalSpeedMetersPerSecond(1e7, 2e7)).toThrow(RangeError);
+    expect(() => orbitalSpeedMetersPerSecond(1e7, 2.1e7)).toThrow(RangeError);
   });
 });

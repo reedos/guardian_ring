@@ -1,10 +1,13 @@
 import { illustrated } from './illustrated.js';
+import { MIRROR_DEMONSTRATIONS, OPTICAL_CONNECTIONS, OPTICAL_CONNECTION_NOTE } from './optical-routing.js';
 const scene=illustrated({
   teaching:'payload',signal:'AnchorDetector',signalRadius:.20,
-  phaseHighlights:{absorb:'Detector',integrate:'Detector',digitize:'Digitizer'},
-  url:'models/payload.glb?v=13',
-  camera:{pos:[14,12,17],target:[1.4,-.3,.15],min:1.7,max:42},distance:4.3,
-  cameraPhone:{pos:[16,17,26]},
+  phaseHighlights:{command:'ScanDrive',feedback:'EncoderProcessing',absorb:'Detector',integrate:'Detector',digitize:'Digitizer'},
+  lessonNote:OPTICAL_CONNECTION_NOTE,
+  mechanisms:MIRROR_DEMONSTRATIONS.payload,
+  url:'models/payload.glb?v=14',
+  camera:{pos:[11.732,9.786,13.967],target:[1.4,-.3,.15],min:1.7,max:42},distance:4.3,
+  cameraPhone:{pos:[11.34,11.478,17.749]},
   assemblies:[
     {id:'sensor-electronics',title:'Sensor unit electronics',coverRole:'SensorElectronicsCover',partIds:['readout','digitizer'],roles:['Readout','Digitizer','Peripheral'],anchor:'AnchorSensorElectronics'},
     {id:'instrument-electronics',title:'Instrument electronics unit',coverRole:'InstrumentElectronicsCover',partIds:['controller','data-interface','power','scan-system'],roles:['Controller','DataInterface','ScanDrive','EncoderProcessing','PowerSupply'],anchor:'AnchorInstrumentElectronics'},
@@ -19,7 +22,7 @@ const scene=illustrated({
     digitizer:{pos:[2.5,3.5,2.3],target:[2.28,-.96,-.65]},
     controller:{pos:[4.1,4.0,2.7],target:[4.13,-.96,-.43]},
     thermal:{pos:[7.8,3.0,-5.4],target:[4.70,-.8,-2.24]},
-    'scan-system':{pos:[.3,3.8,7],target:[-1.85,.10,3.5]},
+    'scan-system':{pos:[.3,3.8,7],target:[-1.85,.10,3.5],labelNodes:['PayloadScanFirst','PayloadScanSecond']},
     mechanisms:{pos:[-5.4,2.8,1.2],target:[-2.65,-.04,-.48]},
     calibration:{pos:[-5.9,2.4,3.8],target:[-3.29,-.17,.14]},
     'aft-optics':{pos:[1.3,3,-4.8],target:[-.2,-.1,-2.3]},
@@ -56,7 +59,7 @@ const scene=illustrated({
     {text:['BLACKBODY','TARGET'],p:[-3.795,-.24,-.24],size:[.76,.24],face:'left',mount:{prefix:'Calibration_',reach:.2},partIds:['calibration']},
   ],
   paths:{
-    light:[{kind:'light',points:[[-2.43,.30,5.9],'AnchorScanSystem',[-1.14,.16,2.94],'AnchorOptics',[-1.37,.06,1.35],[-1.46,.05,-1.07],[-.42,.05,-1.43],'AnchorAftOptics',[-.78,-.03,-2.66],'AnchorDetector']}],
+    light:OPTICAL_CONNECTIONS.payload,
     data:[
       {kind:'analog',points:['AnchorDetector',[-.33,-.64,-3.29],[.32,-1.19,-3.23],[.74,-1.08,-1.64],'AnchorReadout']},
       {kind:'analog',phases:['digitize'],points:['AnchorReadout',[1.64,-1.04,-.65],'AnchorDigitizer']},

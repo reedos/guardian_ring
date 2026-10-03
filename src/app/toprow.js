@@ -20,9 +20,12 @@ function open(p) {
 export const closeMenus = () => pops.forEach(p => close(p));
 for (const p of pops) {
   p.btn.addEventListener('click', () => (p.menu.hidden ? open(p) : close(p)));
-  // a choice made: a button pressed or a select changed (the rendering select keeps the menu open for a second look)
-  p.menu.addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.closest('label')) close(p); });
-  p.menu.addEventListener('change', e => { if (e.target.id === 'link-view') close(p); });
+  // Restore keyboard continuity when a choice hides its own focused control.
+  // A choice such as Present may already have moved focus to its visible exit;
+  // preserve that deliberate destination instead of returning to this opener.
+  const closeChoice = () => close(p, { focus: p.menu.contains(document.activeElement) });
+  p.menu.addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.closest('label')) closeChoice(); });
+  p.menu.addEventListener('change', e => { if (e.target.id === 'link-view') closeChoice(); });
 }
 addEventListener('keydown', e => { if (e.key !== 'Escape') return; const p = pops.find(q => !q.menu.hidden); if (p) { e.stopPropagation(); close(p, { focus: true }); } }, true);
 document.addEventListener('pointerdown', e => { for (const p of pops) if (!p.menu.hidden && !p.menu.contains(e.target) && !p.btn.contains(e.target)) close(p); }, true);

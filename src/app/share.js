@@ -1,9 +1,9 @@
 // IF's share-link contract, renamed for the Guardian Ring.
 import { store, on } from './store.js';
-import { getAssemblyPresentation } from './stage.js';
+import { getAssemblyPresentation, orbitFollow } from './stage.js';
 import { explorerQuery } from './explorer-url.js';
 let timer;
-const currentQuery = () => explorerQuery(location.search, { ...store.ui, assemblyView:getAssemblyPresentation()?.capture().view });
+const currentQuery = () => explorerQuery(location.search, { ...store.ui, assemblyView:getAssemblyPresentation()?.capture().view, follow:orbitFollow() });
 function write() {
   clearTimeout(timer); timer = setTimeout(() => {
     if (store.ui.scene < 0) return;

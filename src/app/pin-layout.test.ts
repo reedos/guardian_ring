@@ -1,5 +1,82 @@
 import { describe, expect, it } from 'vitest';
-import { overlapsRect, pinLabelBox, declutterPins, avoidPinObstacles } from './pin-layout.js';
+import { overlapsRect, pinLabelBox, declutterPins, avoidPinObstacles, layoutAnchoredPins } from './pin-layout.js';
+
+describe('anchored component markers', () => {
+  const box=(p:{x:number;y:number})=>({left:p.x-14,right:p.x+14,top:p.y-14,bottom:p.y+14});
+  const separated=(placements:Map<string,{x:number;y:number}>)=>{
+    const points=[...placements.values()];
+    for(let i=0;i<points.length;i++)for(let j=i+1;j<points.length;j++)expect(Math.hypot(points[i].x-points[j].x,points[i].y-points[j].y)).toBeGreaterThanOrEqual(30-1e-6);
+  };
+
+  it('leaves already readable anchors exactly in place, including the selected marker', () => {
+    const points=[{id:'a',x:30,y:45},{id:'b',x:160,y:100},{id:'c',x:320,y:190}];
+    const original=structuredClone(points);
+    const result=layoutAnchoredPins(points,{width:390,height:250,selected:'b'});
+    expect([...result.placements.keys()]).toEqual(['a','b','c']);
+    expect(result.unresolved.size).toBe(0);
+    for(const p of points)expect(result.placements.get(p.id)).toEqual({x:p.x,y:p.y,ax:p.x,ay:p.y});
+    expect(points).toEqual(original);
+  });
+
+  it('moves a collided neighbor one spacing away while the selected anchor wins', () => {
+    const points=[{id:'neighbor',x:190,y:145},{id:'selected',x:190,y:145},{id:'clear',x:235,y:145}];
+    const result=layoutAnchoredPins(points,{width:390,height:300,selected:'selected'});
+    expect(result.placements.get('selected')).toEqual({x:190,y:145,ax:190,ay:145});
+    expect(result.placements.get('clear')).toEqual({x:235,y:145,ax:235,ay:145});
+    const moved=result.placements.get('neighbor')!;
+    expect(Math.hypot(moved.x-190,moved.y-145)).toBeCloseTo(30,8);
+    expect(moved).toMatchObject({ax:190,ay:145});
+    separated(result.placements);
+  });
+
+  it('does not propagate a collision into a global ring or move unrelated anchors', () => {
+    const points=[{id:'a',x:100,y:160},{id:'b',x:102,y:160},{id:'c',x:136,y:160},{id:'d',x:172,y:160},{id:'e',x:208,y:160}];
+    const result=layoutAnchoredPins(points,{width:390,height:300});
+    for(const p of points.filter(point=>point.id!=='b'))expect(result.placements.get(p.id)).toMatchObject({x:p.x,y:p.y});
+    expect(result.unresolved.size).toBe(0);
+    separated(result.placements);
+  });
+
+  it('takes the nearby nameplate exit and respects both HUD bounds and viewport edges', () => {
+    const obstacles=[{left:100,right:280,top:100,bottom:140},{left:0,right:390,top:0,bottom:42}];
+    const points=[{id:'selected',x:190,y:152},{id:'edge',x:389,y:175},{id:'hud',x:35,y:25},{id:'clear',x:70,y:190}];
+    const result=layoutAnchoredPins(points,{width:390,height:250,obstacles,selected:'selected'});
+    expect(result.placements.get('selected')).toEqual({x:190,y:158,ax:190,ay:152});
+    expect(result.placements.get('clear')).toMatchObject({x:70,y:190});
+    expect(result.unresolved.size).toBe(0);
+    for(const p of result.placements.values()) {
+      expect(p.x).toBeGreaterThanOrEqual(15);expect(p.x).toBeLessThanOrEqual(375);
+      expect(p.y).toBeGreaterThanOrEqual(15);expect(p.y).toBeLessThanOrEqual(235);
+      for(const obstacle of obstacles)expect(overlapsRect(box(p),obstacle,4)).toBe(false);
+    }
+    separated(result.placements);
+  });
+
+  it('keeps all dense payload pins selectable in a short phone viewport, deterministically', () => {
+    const obstacles=[{left:10,right:225,top:8,bottom:40},{left:16,right:282,top:240,bottom:277},{left:234,right:291,top:95,bottom:117}];
+    for(const selected of ['p0','p6','p12']) {
+      const points=Array.from({length:13},(_,i)=>({id:`p${i}`,x:148+(i%4)*4,y:137+Math.floor(i/4)*3}));
+      const result=layoutAnchoredPins(points,{width:320,height:292,obstacles,selected});
+      expect(result.placements.size).toBe(13);expect(result.unresolved.size).toBe(0);
+      expect(layoutAnchoredPins(points,{width:320,height:292,obstacles,selected})).toEqual(result);
+      const original=points.find(p=>p.id===selected)!;
+      expect(result.placements.get(selected)).toMatchObject({x:original.x,y:original.y});
+      for(const p of result.placements.values()) {
+        expect(Math.hypot(p.x-p.ax,p.y-p.ay)).toBeLessThan(100);
+        for(const obstacle of obstacles)expect(overlapsRect(box(p),obstacle,4)).toBe(false);
+      }
+      separated(result.placements);
+    }
+  });
+
+  it('reports impossible placements while preserving every pin and geometry leader', () => {
+    const points=[{id:'a',x:50,y:50},{id:'b',x:55,y:50}];
+    const result=layoutAnchoredPins(points,{width:100,height:100,obstacles:[{left:0,right:100,top:0,bottom:100}],selected:'b'});
+    expect([...result.placements.keys()]).toEqual(['a','b']);
+    expect(result.unresolved).toEqual(new Set(['a','b']));
+    for(const p of points)expect(result.placements.get(p.id)).toMatchObject({ax:p.x,ay:p.y});
+  });
+});
 
 describe('pin labels respect visible UI reservations',()=>{
   const hud={left:600,right:1050,top:20,bottom:140};

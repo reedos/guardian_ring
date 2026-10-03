@@ -1,0 +1,45 @@
+# Component navigation review
+
+Reviewed 10/02/2026 and expanded 10/03/2026 on `codex/part-focus-navigation`. Scope now includes component selection, lesson stepping, camera framing, pin placement, guided mission transitions, orbital follow cancellation, reference-page navigation, and immediate layer activity. The original navigation-only revision left hardware and scientific claims unchanged; the expanded revision includes earth-orbits v4, payload v14 and cited orbital-speed examples. The shared orbital proxy has 3,566 triangles per proxy across twelve instances; its orbit guides are unchanged. Full acceptance remains pending and requires all twenty-eight browser commands against the next frozen build; `BUILD-REVIEW.md` records current and historical validation separately.
+
+## Defects and corrections
+
+- New levels previously selected the first card while leaving the camera in Overview. The first Next action then advanced past that component. Normal navigation now opens an unselected overview; Next selects and frames the first component, while Previous selects the last. Two-field share links open Overview without briefly selecting a part, opening electronics covers, or stopping Earth rotation. The `grx.show()` test hook retains its explicit first-part default.
+- Manual animation arrows previously called the whole-sequence overview setup before stepping. Step and Reset now pause and frame the authored subject, then apply its lesson pose so component inspection does not erase the mechanism state. Play sequence still uses Overview to show the complete path. Visible Step labels distinguish animation controls from component Previous/Next, whose text now remains visible on phones.
+- The cluster fan displaced readable pins together. The replacement reserves clear geometry anchors, prioritizes the selected anchor, and moves only collided pins around neighboring pins, nameplates, and interface overlays. Leaders retain the original geometry attachment. Search is deterministic and bounded; impossible placements remain explicit in the result rather than silently dropping pins.
+- Some small components used distant fixed camera presets. Responsive fitting now projects an authored component region into the available canvas while retaining its viewing direction and minimum clearance distance. It refits after layout or orientation changes only while the application owns that authored view. A deliberate user orbit or zoom ends automatic refitting.
+- Back previously restored the camera and selection without the paused lesson pose or framing ownership. The saved context now includes lesson phase/progress, inspection state, and the framed component, alongside enclosure presentation. Returning restores the paused mechanism pose and retains responsive fitting when appropriate.
+- Follow cancellation now stops its entry flight and releases camera ownership immediately. A close free view temporarily retains its usable distance, while an authored view restores the ordinary minimum. Back preserves both the close-view context and that deferred minimum.
+- Guided chapters own only their pending navigation request. Manual exploration cancels it without allowing a late load to replace the chosen scene. Automatic phase framing preserves the pane; choosing Scenario during chapter loading remains effective after that chapter arrives.
+- Keyboard tab navigation no longer triggers competing viewer shortcuts. Menus and presentation return focus to visible controls. Filtered claim/source fragments reveal their targets, repeated new-tab links carry current scenario choices, and hiding an orbit family clears its dependent selection. `project-walkthrough.md` records these cross-page corrections.
+- Fresh visual review found the followed spacecraft too small and natural payload activity crowded by pins. Closer follow and payload framing, a smaller closed phone inspector, and suppression of unselected pins during activity resolved those cases in the targeted `visualizer-qrerZ5fz` recheck. Selected callouts now reserve authored component detail regions; the focal-plane case passed visual recheck. The remaining phone scan-mirror case has a separate label-exclusion region with its existing camera and awaits visual recheck. See `independent-reviews.md`.
+
+## Framing scope
+
+Twelve representative component presets now carry explicit drawing regions. These regions and clearance distances are camera-authoring inputs, not physical measurements or new hardware specifications. Presets without regions retain their authored context views.
+
+| Scene | Component presets |
+|---|---|
+| Focal plane | Video readout, flex interconnect |
+| Detector element | Contact, bump interconnect, output |
+| Molecular plume | CO₂, H₂O |
+| Atmosphere | CO₂, H₂O |
+| TIRS-2 | Detector arrays, cooling, radiator |
+
+`src/scenes/teaching-focus.js` explicitly maps every phase in the nine illustrated scenes and three layers to an existing card and hotspot. Eight multi-component phases deliberately use Overview, including shared heat rejection and branched ground processing. Missing mappings throw. TIRS-2 space calibration focuses the scene-select mirror; no physical space target is invented. Detector response, sensor conversion, and interface processing retain separate subjects.
+
+## Verification and release state
+
+The latest completed CPU checks pass typecheck and 229 unit tests across 39 files. Navigation regressions check projected region corners, authored direction and distance limits, deterministic collision handling, retention of pins, and each lesson phase against its actual card and hotspot inventory. The strict evidence audit reports zero problems across 941 claims, 90,240 scenario instances, 96 scenarios and 253 research facts. Final counts must be confirmed after the next integration freeze.
+
+`tools/navigation.mjs` runs on desktop and phone. It presses the real Next, Previous, Overview, Step, Reset, Play, and Back controls across every level and layer. It checks component identity and framing, every lesson's intended subject, completed camera motion, payload/ABI/TIRS-2 routes at paused mechanism poses, representative region occupancy in portrait and landscape, restored lesson state, responsive refitting, and preservation of a user-adjusted camera. The historical `visualizer-DoRoxR9l` navigation reports passed 968 desktop and 972 phone checks; those reports do not validate the expanded revision. Fresh navigation, activity, learning, view, label, UI, flight, scenario, evidence, and performance gates remain required.
+
+The current release suite contains twenty-eight serialized browser commands, including desktop and phone activity gates. The earlier twenty-six-command `visualizer-DoRoxR9l` mission run stopped with eleven commands complete and is superseded in `.local/mission-acceptance.json`; its log and individual reports preserve the historical results. Its CPU baseline was 200 tests across 34 files. The approximately 2:15 a.m. Pacific `visualizer-qrerZ5fz` partial activity attempt also remains diagnostic history: its lifecycle check failed, but no freeze/resume/visibility events were observed, leaving actual browser freezing unconfirmed. Explicit lifecycle holds and the browser harness are being checked before the next build. No current full-suite pass, final build acceptance, remote CI, or deployment is claimed here. The acceptance report must be regenerated only after all twenty-eight commands pass against the same final build. Phone-sized checks do not replace Reed's device review.
+
+The earlier navigation-only baseline passed twenty of twenty-two commands before scope expansion. Its desktop performance run was intentionally interrupted and phone performance did not complete. `.local/navigation-acceptance.json` and `.local/navigation-acceptance.log` preserve that superseded run; it does not validate the current implementation.
+
+## Diagnostic history
+
+The initial full desktop performance run timed out after one condition. A focused local orbit comparison covering nine conditions also exceeded the budget; the unchanged deployed site then timed out after one condition. These results do not establish a cause. Another project's GPU benchmark was active and was left untouched. The idle local Ollama model was temporarily unloaded under Reed's prior authorization while independent acceptance checks continued and has since been restored. Performance remains unresolved until complete current-build runs pass.
+
+The links gate also retained the previous expectation that a URL without `view` selects the first component. It now checks the intended unselected Overview and presses the real first Next control to verify that it selects the first component. The separate `grx.show()` first-part contract remains checked. This changes the obsolete navigation expectation, not the performance budget or release requirements. Failed records are archived in `.local/gate-history/navigation-diagnostics/`; full acceptance is still pending.

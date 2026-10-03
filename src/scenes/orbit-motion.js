@@ -1,7 +1,7 @@
 import { meanAnomalyRadians, orbitalPlanePosition, SIDEREAL_DAY_SECONDS } from '../model/orbits.ts';
 import { compute } from '../model/engine.ts';
 
-// These parameters reproduce build-orbits.py v2 exactly. They describe drawing
+// These parameters reproduce the unchanged build-orbits.py v3 guides exactly. They describe drawing
 // guides, not the separate physical orbit examples or any observed spacecraft.
 export const DRAWN_ORBITS = [
   ...[-.52,.90].map((longitude,i)=>({family:'heo',index:i+1,a:2.2,e:.5,longitude,phase:(51+i*7)*Math.PI*2/240})),

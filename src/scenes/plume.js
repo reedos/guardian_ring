@@ -8,8 +8,8 @@ const scene=illustrated({
     source:{pos:[5,3.4,7],target:[0,1.4,0]},
     bands:{pos:[6,5.8,8],target:[.67,4.45,.55]},
     timeline:{pos:[5,6.8,8],target:[0,5,0]},
-    co2:{pos:[6.0,4.7,6.8],target:[1.85,3.85,.065]},
-    h2o:{pos:[-5.0,3.4,6.8],target:[-1.65,2.75,-.025]},
+    co2:{pos:[6.0,4.7,6.8],target:[1.85,3.85,.065],focus:[1.85,3.85,-.10],detailSize:[1.4,.75,.65],minDistance:3},
+    h2o:{pos:[-5.0,3.4,6.8],target:[-1.65,2.75,-.025],focus:[-1.65,2.63,-.20],detailSize:[1.25,.85,.65],minDistance:3},
   },
   paths:{
     light:[{kind:'radiation',phases:['emit'],points:['AnchorCO2',[3.5,4.7,1.5]]},{kind:'radiation',phases:['emit'],points:['AnchorH2O',[-3.5,3.7,1.5]]}],

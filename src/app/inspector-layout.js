@@ -14,7 +14,7 @@ export function explanationHeightLimit({ availableHeight, fixedControlsHeight, c
 export function mountInspectorLayout() {
   const viewer = document.getElementById('viewer'), view = document.getElementById('view');
   const panel = document.getElementById('inspector'), transport = document.getElementById('hud-btns');
-  const playback = [document.getElementById('animation-controls'), document.getElementById('orbit-controls')];
+  const playback = [document.getElementById('mission-tour'), document.getElementById('animation-controls'), document.getElementById('orbit-controls')].filter(Boolean);
   const presentationExit = document.getElementById('presentation-exit');
   const dock = document.createElement('section');
   dock.id = 'playback-dock'; dock.className = 'playback-dock'; dock.hidden = true;

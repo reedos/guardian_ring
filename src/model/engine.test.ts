@@ -14,6 +14,7 @@ describe('the educational scenario contract', () => {
     expect(result.orbitPeriodSeconds).toBeCloseTo(86164, -1);
     expect(result.altitudeKm).toBeCloseTo(35786, 7);
     expect(result.lightTimeSeconds).toBeCloseTo(0.119369, 6);
+    expect(result.orbitSpeedKmS).toBeCloseTo(3.074661, 6);
   });
 
   it('uses apogee consistently for the teaching ellipse, with about an 11 h 58 min period', () => {
@@ -24,6 +25,26 @@ describe('the educational scenario contract', () => {
     expect(result.outputs.altitudeKm).toBeCloseTo(result.outputs.apogeeAltitudeKm, 7);
     expect(result.outputs.apogeeAltitudeKm).toBeGreaterThan(result.outputs.perigeeAltitudeKm);
     expect(result.outputs.slantRangeKm).toBeCloseTo(result.outputs.apogeeAltitudeKm, 7);
+    expect(result.outputs.orbitSpeedKmS).toBeCloseTo(1.556490, 6);
+    expect(result.claims.orbitSpeedKmS![0]).toContain('at apogee');
+  });
+
+  it('attaches speed to the physical orbit example and its equation, independently of optical choices', () => {
+    for (const orbit of SCENARIO_OPTIONS.orbit) {
+      const reference = compute({ orbit: orbit.id });
+      for (const band of SCENARIO_OPTIONS.band) for (const detector of SCENARIO_OPTIONS.detector) {
+        expect(compute({ orbit: orbit.id, band: band.id, detector: detector.id, aperture: 'civil' }).outputs.orbitSpeedKmS)
+          .toBe(reference.outputs.orbitSpeedKmS);
+      }
+      const claim = reference.claims.orbitSpeedKmS!;
+      expect(claim[1]).toBe(`${reference.outputs.orbitSpeedKmS.toFixed(3)} km/s`);
+      expect(claim[2]).toBe('derived');
+      expect(claim[3]).toMatchObject({ calc: 'orbit-speed', assume: 'model-orbits' });
+      expect(claim[3].refs?.some(([id]) => id === 'nasa-jsc-vis-viva')).toBe(true);
+      expect(orbit.id === 'heo' ? claim[0].includes('apogee') : claim[0].includes('circular')).toBe(true);
+    }
+    expect(compute({ orbit: 'leo' }).outputs.orbitSpeedKmS).toBeGreaterThan(compute({ orbit: 'meo' }).outputs.orbitSpeedKmS);
+    expect(compute({ orbit: 'meo' }).outputs.orbitSpeedKmS).toBeGreaterThan(compute({ orbit: 'geo' }).outputs.orbitSpeedKmS);
   });
 
   it('does not convert a detector material into an instrument temperature', () => {

@@ -44,8 +44,46 @@ function connectFilter({ inputId, rowSelector, emptyId, countId, noun, queryKey 
   }
   input.addEventListener('input', () => filter(true));
   filter();
-  return filter;
+  return {
+    filter,
+    reveal(node) {
+      // Only clear the search that hides this destination. A source citation
+      // must not also discard the reader's independent claim search.
+      const row = node.closest(rowSelector);
+      if (!row?.hidden) return;
+      input.value = '';
+      filter(true);
+    },
+  };
 }
 const filterClaims = connectFilter({ inputId: 'claim-search', rowSelector: '[data-claim-key]', emptyId: 'claim-empty', countId: 'claim-count', noun: 'claim', queryKey: 'q' });
-connectFilter({ inputId: 'source-search', rowSelector: '[data-source-key]', emptyId: 'source-empty', countId: 'source-count', noun: 'source record' });
-on('scenario', () => { hydrateClaims(); filterClaims?.(); });
+const filterSources = connectFilter({ inputId: 'source-search', rowSelector: '[data-source-key]', emptyId: 'source-empty', countId: 'source-count', noun: 'source record' });
+on('scenario', () => { hydrateClaims(); filterClaims?.filter(); });
+
+function revealHash(hash) {
+  let id;
+  try { id = decodeURIComponent(hash.replace(/^#/, '')); } catch { return; }
+  const node = document.getElementById(id);
+  if (!node) return;
+  filterClaims?.reveal(node);
+  filterSources?.reveal(node);
+  node.scrollIntoView();
+}
+// A same-hash click does not dispatch hashchange, so handle it as well. Leave
+// native fragment navigation intact after revealing its destination.
+document.addEventListener('click', event => {
+  if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  const link = event.target.closest?.('a[href]');
+  if (!link) return;
+  // The embedded reference shell rewrites fragments to same-page URLs before
+  // this listener runs. Accept both forms, including repeated same-hash links.
+  const url = new URL(link.getAttribute('href'), location.href);
+  if (url.origin === location.origin && url.pathname === location.pathname && url.search === location.search && url.hash) {
+    revealHash(url.hash);
+    // Clearing a search can change the query. Keep the native jump in this
+    // document rather than reloading an embedded URL with the stale filter.
+    link.setAttribute('href', url.hash);
+  }
+});
+addEventListener('hashchange', () => revealHash(location.hash));
+if (location.hash) requestAnimationFrame(() => revealHash(location.hash));

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { Vector3 } from 'three';
 const load=async (file:string)=>{const b=readFileSync(new URL(`../../public/models/${file}.glb`,import.meta.url));return (await new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'' )).scene;};
-const cases:[string,string,string[]][]=[['abi','ScanSystem',['ABIScanNorthSouth','ABIScanEastWest']],['tirs2','SceneSelect',['TIRSSceneSelect']]];
+const cases:[string,string,string[]][]=[['payload','ScanSystem',['PayloadScanFirst','PayloadScanSecond']],['abi','ScanSystem',['ABIScanNorthSouth','ABIScanEastWest']],['tirs2','SceneSelect',['TIRSSceneSelect']]];
 describe('authored moving faces preserve fixed mounting interfaces',()=>{
   for(const [file,role,pivots] of cases)it(`${file} moves only explicit pivot children and returns exactly to inspection`,async()=>{
     const asset=await load(file);asset.updateMatrixWorld(true);const parent=asset.getObjectByName(role)!;

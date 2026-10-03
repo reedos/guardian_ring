@@ -1,20 +1,20 @@
 // A deterministic presentation clock. Seconds here pace a lesson, never a sensor.
 export function createTeachingSequence(steps, { reduced = false, duration = 3.6 } = {}) {
   if (!steps.length || !Number.isFinite(duration) || duration <= 0) throw new Error('A lesson needs steps and a positive duration');
-  let index = 0, progress = 0, playing = false, inspection = true, suspended = false, last = null;
+  let index = 0, progress = 0, playing = false, inspection = true, suspended = false, repeating = false, last = null;
   const listeners = new Set();
-  const state = () => ({ index, progress, playing, inspection, suspended, reduced, step: steps[index], steps, total: steps.length });
+  const state = () => ({ index, progress, playing, inspection, suspended, repeating, reduced, step: steps[index], steps, total: steps.length });
   const emit = () => { for (const fn of listeners) fn(state()); };
   return {
     state,
     subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    play() { inspection = false; playing = true; last = null; emit(); },
+    play({ repeat = false } = {}) { inspection = false; playing = true; repeating = repeat; last = null; emit(); },
     pause() { playing = false; last = null; emit(); },
-    reset() { index = 0; progress = 0; playing = false; last = null; emit(); },
-    step(delta = 1) { index = (index + Math.trunc(delta) % steps.length + steps.length) % steps.length; progress = .72; playing = false; inspection = false; last = null; emit(); },
+    reset() { index = 0; progress = 0; playing = false; repeating = false; last = null; emit(); },
+    step(delta = 1) { index = (index + Math.trunc(delta) % steps.length + steps.length) % steps.length; progress = .72; playing = false; inspection = false; repeating = false; last = null; emit(); },
     seek(nextIndex, nextProgress = 0) {
       if (!Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= steps.length || !Number.isFinite(nextProgress) || nextProgress < 0 || nextProgress > 1) throw new RangeError('Seek requires a valid step and progress in [0, 1]');
-      index = nextIndex; progress = nextProgress; playing = false; inspection = false; last = null; emit();
+      index = nextIndex; progress = nextProgress; playing = false; inspection = false; repeating = false; last = null; emit();
     },
     setInspection(value) { inspection = !!value; if (inspection) playing = false; last = null; emit(); },
     setSuspended(value) {const next=!!value;if(next!==suspended){suspended=next;last=null;}},
@@ -26,7 +26,10 @@ export function createTeachingSequence(steps, { reduced = false, duration = 3.6 
       progress += dt / duration;
       while (progress >= 1) {
         progress -= 1;
-        if (++index === steps.length) { index = steps.length - 1; progress = 1; playing = false; emit(); break; }
+        if (++index === steps.length) {
+          if (repeating) index = 0;
+          else { index = steps.length - 1; progress = 1; playing = false; emit(); break; }
+        }
         emit();
       }
       return state();

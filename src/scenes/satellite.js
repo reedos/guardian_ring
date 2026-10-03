@@ -1,9 +1,21 @@
 import { illustrated } from './illustrated.js';
 const scene = illustrated({
   teaching:'satellite',
+  // Qualitative emphasis follows the existing hardware and each signal's
+  // receiving role. Color identifies a process, never a measured state.
+  phaseHighlights:{
+    collect:{role:'Payload',kind:'light',intensity:.22},
+    readout:{role:'Computer',kind:'image-data',intensity:.20},
+    transfer:{role:'Links',kind:'image-data',intensity:.24},
+    command:{role:'Wheels',kind:'command',intensity:.22},
+    feedback:{role:'Computer',kind:'feedback',intensity:.18},
+    power:{role:'Power',kind:'electrical',intensity:.20},
+    reject:{role:'Radiator',kind:'heat',intensity:.18},
+    radiate:{role:'Radiator',kind:'radiation',intensity:.16},
+  },
   url:'models/satellite.glb?v=7',
   camera:{pos:[8,6.5,13.5],target:[0,1.35,.25],min:1.8,max:32},distance:4.2,
-  cameraPhone:{pos:[9.5,8,20]},
+  cameraPhone:{pos:[7.885,6.87,16.643]},
   points:{instrument:'AnchorPayload',structure:'AnchorBus','solar-array':'AnchorSolarArray','array-drive':'AnchorArrayDrive',power:'AnchorPower',battery:'AnchorBattery',attitude:'AnchorAttitude',wheels:'AnchorWheels',propulsion:'AnchorPropulsion',computer:'AnchorComputer',links:'AnchorAntenna',radiator:'AnchorRadiator'},
   views:{
     instrument:{pos:[2.7,4.3,5.5],target:[0,2.7,.6]},

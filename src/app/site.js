@@ -43,7 +43,17 @@ document.addEventListener('click', e => { if (nav?.classList.contains('open') &&
 // Method, Glossary, and the back-to-visualizer anchors) would drop whichever scenario is set in the URL, so a
 // source check on Evidence could never lead back to the scenario the reader started from. Computed at click
 // time, from the URL as it stands then, so a scenario set after the page loaded is never stale.
-const crossPage = a => { const h = a.getAttribute('href'); return h && !/^#|^https?:|^mailto:/.test(h); };
+const crossPage = a => {
+  const href = a.getAttribute('href');
+  if (!href || href.trimStart().startsWith('#')) return false;
+  try {
+    const url = new URL(href, location.href);
+    // Assigning a.href below makes a relative URL absolute. Recognize it on
+    // every click so a second new-tab visit uses the newly selected scenario.
+    return /^https?:$/.test(url.protocol) && url.origin === location.origin
+      && url.pathname.startsWith(new URL('.', location.href).pathname);
+  } catch { return false; }
+};
 for (const type of ['click', 'auxclick']) document.addEventListener(type, e => {
   const a = e.target.closest?.('a[href]');
   // Pinned evidence links already carry the saved scenario, not the current one.

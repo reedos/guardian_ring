@@ -2,6 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { createTeachingSequence, polylineSampler } from './teaching-sequence.js';
 const steps = [{id:'first'}, {id:'second'}, {id:'third'}];
 describe('a presentation clock rather than a sensor clock', () => {
+  it('repeats activity continuously while keeping the ordered lesson one-shot', () => {
+    const c=createTeachingSequence(steps,{duration:.5});c.play({repeat:true});
+    for(const t of [0,.5,1,1.5,2])c.tick(t);
+    expect(c.state()).toMatchObject({index:1,progress:0,playing:true,repeating:true});
+    c.pause();c.tick(2.5);expect(c.state().playing).toBe(false);
+    c.setSuspended(true);c.play({repeat:true});c.tick(3);c.tick(3.5);expect(c.state().progress).toBe(0);
+    c.setSuspended(false);c.tick(4);c.tick(4.25);expect(c.state().progress).toBe(.5);
+    c.seek(2);c.play();c.tick(5);c.tick(5.5);expect(c.state()).toMatchObject({index:2,progress:1,playing:false,repeating:false});
+  });
   it('produces the same phase for different frame cadences', () => {
     const run = (times: number[]) => { const c=createTeachingSequence(steps,{duration:2}); c.play(); for(const t of times)c.tick(t); return c.state(); };
     expect(run([0,.1,.7,1.4,2,2.8,3.4])).toMatchObject({index:1,progress:.7});

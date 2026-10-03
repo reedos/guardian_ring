@@ -112,9 +112,9 @@ complex), detection lines from satellites to the plume.
 - Calcs: orbital period from altitude, visible Earth fraction and footprint per orbit, revisit, satellites
   needed for continuous coverage at a minimum elevation.
 - **Centerpiece view: the geosynchronous constellation (Reed, 10/01/2026).** The opening shot of the
-  visualizer and of the story page. The Earth turns under a ring of GEO satellites that hold still over
-  their spots, so the reader sees "geosynchronous" instead of reading it: a day passes in seconds, city
-  lights sweep under the ring, and each satellite's coverage footprint (the Earth disk it sees) stays
+  visualizer and of the story page. Earth and the GEO spacecraft turn together in the inertial view,
+  preserving their ground longitudes, so the reader sees "geosynchronous" instead of reading it. A day
+  passes in seconds, the night side changes with respect to the Sun, and each satellite's footprint stays
   fixed on the ground. Satellites are spaced around the belt for worldwide coverage, with one footprint
   over the Americas so a US reader finds home first. The highly elliptical orbits loop over the North Pole
   to fill the gap GEO cannot see; the MEO and LEO layers fade in as a second beat ("the next
@@ -316,11 +316,20 @@ PC, real GPU).
 | `parts.mjs` | every numbered part has a pin and a card |
 | `labels.mjs desktop` / `phone` | printed names are unobstructed when shown, every nameplate has a clear authored desktop view, selected component callouts stay readable |
 | `ui.mjs` | controls don't collide, phone and desktop |
+| `navigation.mjs desktop` / `phone` | Next inspects every part, manual animation steps focus their subjects, overview stays unselected, responsive framing and Back preserve the reader's view |
 | `learning.mjs desktop` / `phone` | playback, source-reading hold, reduced-motion stepping, retained scenarios and nested side visits work |
+| `mission.mjs desktop` / `phone` | guided chapters and orbital follow views stay clear and usable; pause, source-reading hold, reduced motion, interruption, and cancellation preserve the reader's choices |
+| `activity.mjs desktop` / `phone` | every hardware scene and layer responds immediately with a meaningful activity pose; motion, repeat, explicit pause, reduced motion, source/lifecycle suspension, selected-part framing, orbital follow and shared follow preserve the reader's intent |
+| `project-audit.mjs desktop` / `phone` | keyboard focus, repeated scenario links, hidden-family selections, and filtered or malformed reference fragments work in pages and embedded references |
 | `coplanar.mjs` | no flush surfaces that flicker |
 | `flights.mjs` | 0 camera moves through geometry, both forms |
 | `perf.mjs desktop` / `phone` | inside budget |
 | `links.mjs` | every story-page link lands on its part |
+
+`npm run gates` runs 28 serialized browser commands. The activity runs cover all nine hardware scenes ×
+three layers for running, deliberately paused, and reduced-motion states; they also cross natural repeat
+boundaries in each atmosphere layer. `tools/gate-report.mjs` requires complete, current-build activity
+inventories alongside the other full-scope results. Performance budgets remain unchanged.
 
 ## 10. Phases (stop for Reed at each ★)
 

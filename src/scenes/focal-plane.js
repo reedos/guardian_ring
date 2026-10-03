@@ -8,10 +8,10 @@ const scene=illustrated({
   points:{array:'AnchorArray',readout:'AnchorReadout','cold-stage':'AnchorColdStage',shield:'AnchorShield',flex:'AnchorFlex',carrier:'AnchorCarrier','bias-timing':'AnchorBiasTiming','thermal-feedback':'AnchorThermalFeedback'},
   views:{
     array:{pos:[1.7,3.8,4.6],target:[-.65,.5,0]},
-    readout:{pos:[3.8,3.2,4.2],target:[2.05,.1,-.1]},
+    readout:{pos:[3.8,3.2,4.2],target:[2.05,.1,-.1],focus:[2.04,.20,-.1],detailSize:[1.65,.6,2.1],minDistance:2.5},
     'cold-stage':{pos:[1.5,3.2,-5],target:[-.1,.2,-1.2]},
     shield:{pos:[1.4,3.8,4.5],target:[-.65,.7,0]},
-    flex:{pos:[2.8,3.3,4.6],target:[.8,.25,.26]},
+    flex:{pos:[2.8,3.3,4.6],target:[.8,.25,.26],focus:[.86,.25,.26],detailSize:[1.85,.7,1.05],minDistance:2.3},
     carrier:{pos:[2.5,2.5,5.6],target:[-.6,-.1,.2]},
     'bias-timing':{pos:[4.1,3.7,5.1],target:[2.04,.32,1.78]},
     'thermal-feedback':{pos:[4.5,3.8,-5.4],target:[2.13,.33,-2.62]},

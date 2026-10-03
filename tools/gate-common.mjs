@@ -1,5 +1,6 @@
 import { chromium } from 'playwright';
 import fs from 'node:fs';
+import { openLifecycleBrowser } from './lifecycle-browser.mjs';
 export const BASE=process.env.GR_URL||'http://127.0.0.1:47601/';
 export const MODES=['light','data','heat'];
 export async function openGate(name,form='desktop') {
@@ -8,9 +9,12 @@ export async function openGate(name,form='desktop') {
   // Exhaustive state checks still await rendered frames, but need not wait for
   // display refresh. Camera flights and interaction gates retain normal timing.
   const uncapped=['perf','cycle','parts'].includes(name);
-  const browser=await chromium.launch({channel:'chrome',headless:true,args:['--use-angle=d3d11','--enable-gpu','--ignore-gpu-blocklist',...(uncapped?['--disable-gpu-vsync','--disable-frame-rate-limit']:[])]});
+  const pageOptions=form==='phone'?{viewport:{width:390,height:844},deviceScaleFactor:3,isMobile:true,hasTouch:true}:{viewport:{width:1440,height:900},deviceScaleFactor:1};
+  const lifecycle=name==='activity'?await openLifecycleBrowser(pageOptions):null;
+  const browser=lifecycle?.browser||await chromium.launch({channel:'chrome',headless:true,args:['--use-angle=d3d11','--enable-gpu','--ignore-gpu-blocklist',...(uncapped?['--disable-gpu-vsync','--disable-frame-rate-limit']:[])]});
   gate.browser=browser;
-  const page=await browser.newPage(form==='phone'?{viewport:{width:390,height:844},deviceScaleFactor:3,isMobile:true,hasTouch:true}:{viewport:{width:1440,height:900},deviceScaleFactor:1});
+  if(lifecycle){gate.closeBrowser=lifecycle.close;gate.restoreLifecycleVisibility=lifecycle.restoreVisibility;}
+  const page=lifecycle?.page||await browser.newPage(pageOptions);
   gate.page=page;page.setDefaultTimeout(15000);
   const errors=gate.errors;page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await page.goto(new URL('visualizer.html',BASE).href);
@@ -40,5 +44,5 @@ export async function finish(gate,failures=[],details={}){
     fs.writeFileSync(`${archive}/${gate.name}-${gate.form}.json`,JSON.stringify(report,null,2));
   }
   console.log(`${report.status}: ${failures.length} problems${details.states?`; ${details.states} states`:''}`);for(const f of failures)console.error(f);
-  try { await gate.browser?.close(); } finally { if(failures.length)process.exitCode=1; }
+  try { if(gate.closeBrowser)await gate.closeBrowser();else await gate.browser?.close(); } finally { if(failures.length)process.exitCode=1; }
 }

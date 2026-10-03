@@ -21,21 +21,21 @@ def optic(h, name, center, size, normal, mat, depth=.045):
     return o
 
 
-def scan_axis(h,m,name,at,axis,normal):
+def scan_axis(h,m,name,at,axis,normal,motion):
     x,y,z=at;h.role('ScanSystem')
     # Mirror, backing rib, trunnions, opposed support bearing and motor/encoder.
-    optic(h,name+' mirror backing',at,(.94,.76),normal,m['dark'],.095)
+    moving=[optic(h,name+' mirror backing',at,(.94,.76),normal,m['dark'],.095)]
     p=Vector(at)+Vector(normal).normalized()*.059
-    optic(h,name+' reflective face',p,(.84,.66),normal,m['mirror'],.016)
+    moving.append(optic(h,name+' reflective face',p,(.84,.66),normal,m['mirror'],.016))
     if axis=='x':
         for s in [-1,1]:
-            h.cyl(name+' pivot shaft',(x+s*.64,y,z),.064,.46,m['edge'],'x',24)
+            moving.append(h.cyl(name+' pivot shaft',(x+s*.64,y,z),.064,.46,m['edge'],'x',24))
             h.box(name+' bearing pedestal',(x+s*.72,y-.36,z),(.19,.65,.34),m['silver'])
             h.ring(name+' support bearing',(x+s*.72,y,z),.14,.070,.14,m['dark'],'x',32)
         drive=(x-.97,y,z);enc=(x-1.20,y,z)
     else:
         for s in [-1,1]:
-            h.cyl(name+' pivot shaft',(x,y+s*.54,z),.055,.29,m['edge'],'y',24)
+            moving.append(h.cyl(name+' pivot shaft',(x,y+s*.54,z),.055,.29,m['edge'],'y',24))
         for xx in [x-.60,x+.60]:h.box(name+' yoke side',(xx,y-.14,z),(.10,1.10,.19),m['silver'])
         for yy in [y-.65,y+.43]:h.box(name+' yoke crossmember',(x,yy,z),(1.27,.10,.19),m['silver'])
         h.ring(name+' support bearing',(x,y+.49,z),.13,.065,.12,m['dark'],'y',32)
@@ -46,6 +46,10 @@ def scan_axis(h,m,name,at,axis,normal):
     q=Vector(enc);q[0 if axis=='x' else 1]-=.048
     h.cyl(name+' encoder face',q,.13,.012,m['goldedge'],axis,32,.003)
     h.line(name+' drive and encoder harness',[drive,(drive[0],drive[1]-.30,drive[2]+.28),(x+.40,-1.19,z+.20)],.023,m['loom'])
+    # Tag only the rotating optical assembly. The motor and encoder housings,
+    # bearings, yoke/pedestals and harness retain their fixed bench interfaces.
+    # Grouping changes no vertex position in the authored inspection pose.
+    h.motion(moving,motion,at,(1,0,0) if axis=='x' else (0,1,0))
 
 
 def card(h,m,name,at,size,kind='digital'):
@@ -84,8 +88,8 @@ def expand(h,m):
 
     h.role('ScanSystem')
     h.box('Scanning subsystem mounting deck',(-1.81,-1.24,3.38),(3.75,.12,2.26),m['silver'],.023)
-    scan_axis(h,m,'First orthogonal scan axis',(-2.47,.01,3.94),'x',(.72,.22,.66))
-    scan_axis(h,m,'Second orthogonal scan axis',(-1.14,.16,2.94),'y',(-.66,.10,.74))
+    scan_axis(h,m,'First orthogonal scan axis',(-2.47,.01,3.94),'x',(.72,.22,.66),'PayloadScanFirst')
+    scan_axis(h,m,'Second orthogonal scan axis',(-1.14,.16,2.94),'y',(-.66,.10,.74),'PayloadScanSecond')
     for z in [2.41,4.28]:h.box('Scan deck stiffener',(-1.81,-1.10,z),(3.53,.11,.07),m['dark'],.006)
     # Scan shroud is cut away. Its lower heat-pipe rail remains visible.
     h.box('Scan-shroud side panel',(-3.73,-.34,3.22),(.045,1.59,1.90),m['white'],.012)

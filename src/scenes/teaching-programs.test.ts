@@ -16,4 +16,11 @@ describe('lesson evidence and assembly boundaries',()=>{
     expect(teachingProgram('focal-plane','heat').some((s:{id:string})=>s.id==='radiate')).toBe(false);
     expect(teachingProgram('ground','heat')[0].body).not.toContain('cooler');
   });
+  it('separates the payload command, physical scan, measured feedback, and optical observation',()=>{
+    const steps=teachingProgram('payload','light');
+    expect(steps.slice(0,4).map((step:{id:string})=>step.id)).toEqual(['command','slew','feedback','collect']);
+    for(const step of steps.slice(0,3))expect(step.claimKeys.length).toBeGreaterThan(0);
+    expect(steps[1].body).toContain('harnesses remain fixed');
+    expect(steps[1].body).toContain('drawing choices');
+  });
 });

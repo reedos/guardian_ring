@@ -7,11 +7,11 @@ const scene=illustrated({
   points:{absorber:'AnchorAbsorber',contact:'AnchorContact',readout:'AnchorReadout',bump:'AnchorBump',support:'AnchorSupport',output:'AnchorOutput'},
   views:{
     absorber:{pos:[3.5,4.6,5.2],target:[0,2.3,0]},
-    contact:{pos:[3.3,2.8,4.5],target:[0,1.82,.708]},
+    contact:{pos:[3.3,2.8,4.5],target:[0,1.82,.708],focus:[0,1.82,0],detailSize:[1.95,.35,1.65],minDistance:2.4},
     readout:{pos:[3.4,2.2,5],target:[.44,.326,-.21]},
-    bump:{pos:[3.3,1.65,4.5],target:[0,1.1,.254]},
+    bump:{pos:[3.3,1.65,4.5],target:[0,1.1,.254],focus:[0,1.1,0],detailSize:[.9,1.2,.9],minDistance:2},
     support:{pos:[3.5,1.4,4.7],target:[0,-.03,1.001]},
-    output:{pos:[4.9,1.9,4.5],target:[1.747,.27,.486]},
+    output:{pos:[4.9,1.9,4.5],target:[1.747,.27,.486],focus:[1.62,.20,0],detailSize:[1.0,.7,1.4],minDistance:2.2},
   },
   paths:{
     light:[[[0,3.6,.1],'AnchorAbsorber']],

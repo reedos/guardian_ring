@@ -19,11 +19,10 @@ export function copyModel(url) {
   const group = source.clone(true);
   group.traverse(object => {
     if (!object.isMesh) return;
-    const copy = material => {
-      const result = material.clone();
-      if (result.metalness !== undefined) result.metalness = Math.min(result.metalness, .38);
-      return result;
-    };
+    // Keep Blender's distinction between metal, polymer, foil, and coverglass.
+    // The scene-look environment supplies reflections instead of making every
+    // material less metallic to compensate for a missing environment.
+    const copy = material => material.clone();
     object.material = Array.isArray(object.material) ? object.material.map(copy) : copy(object.material);
   });
   return group;

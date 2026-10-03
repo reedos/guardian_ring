@@ -1,6 +1,7 @@
 // Same gate roles and geometric tests as IF, against the Guardian Ring scene contract.
 import { openGate,show,finish,BASE,MODES } from './gate-common.mjs';
 import { checkView,fly,checkCoplanar } from './gate-geometry.mjs';
+import { checkUI } from './gate-ui.mjs';
 import { TIERS } from '../src/app/render-quality.js';
 import fs from 'node:fs';
 
@@ -41,34 +42,6 @@ const checkPart=({scene,mode,id})=>{
  if(pin?.getAttribute('aria-pressed')!=='true'||button?.getAttribute('aria-pressed')!=='true')bad.push('selected pin/button state missing');
  if(rendered(pin)){const r=pin.querySelector('.num').getBoundingClientRect(),v=document.getElementById('view').getBoundingClientRect();if(r.left<v.left||r.right>v.right||r.top<v.top||r.bottom>v.bottom)bad.push('selected pin lies outside view');}
  return bad;
-};
-
-// Open popups are audited as their own interaction surface: they intentionally
-// cover background controls. Closed-state checks still cover those controls.
-const checkUI=({selector='button,select,summary,.topbar a'})=>{
- const bad=[],label=el=>el.id||el.getAttribute('aria-label')||el.textContent.trim().slice(0,70);
- const rendered=el=>{if(!el.checkVisibility())return false;for(let p=el;p;p=p.parentElement){const s=getComputedStyle(p);if(p.hidden||s.display==='none'||s.visibility==='hidden'||Number(s.opacity)===0)return false;}const r=el.getBoundingClientRect();return r.width>0&&r.height>0;};
- const nodes=[...document.querySelectorAll(selector)].filter(rendered);
- if(!nodes.length)return ['no rendered controls in audited state'];
- const intersection=(a,b)=>({left:Math.max(a.left,b.left),right:Math.min(a.right,b.right),top:Math.max(a.top,b.top),bottom:Math.min(a.bottom,b.bottom)});
- const clip=el=>{let c={left:0,right:innerWidth,top:0,bottom:innerHeight};for(let p=el.parentElement;p;p=p.parentElement){const s=getComputedStyle(p),r=p.getBoundingClientRect();if(/auto|scroll|hidden|clip/.test(s.overflowX))c={...c,left:Math.max(c.left,r.left),right:Math.min(c.right,r.right)};if(/auto|scroll|hidden|clip/.test(s.overflowY))c={...c,top:Math.max(c.top,r.top),bottom:Math.min(c.bottom,r.bottom)};}return c;};
- // Compare only the portions currently exposed by scrolling containers.
- const exposed=nodes.map(el=>({el,r:intersection(el.getBoundingClientRect(),clip(el))})).filter(({r})=>r.right>r.left&&r.bottom>r.top);
- for(let i=0;i<exposed.length;i++)for(let j=i+1;j<exposed.length;j++){const a=exposed[i],b=exposed[j];if(a.el.contains(b.el)||b.el.contains(a.el))continue;const r=intersection(a.r,b.r);if(r.right-r.left>2&&r.bottom-r.top>2)bad.push(`${label(a.el)} overlaps ${label(b.el)}`);}
- const scrollables=[...document.querySelectorAll('*')].filter(el=>el.scrollHeight>el.clientHeight||el.scrollWidth>el.clientWidth).map(el=>[el,el.scrollLeft,el.scrollTop]);
- for(const el of nodes){
-  // Scrollable controls may begin below the fold, but every one must be reachable.
-  const locked=[];for(let p=el.parentElement;p;p=p.parentElement){const s=getComputedStyle(p);if(/hidden|clip/.test(s.overflowX)||/hidden|clip/.test(s.overflowY))locked.push([p,p.scrollLeft,p.scrollTop,s.overflowX,s.overflowY]);}
-  el.scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});
-  for(const [p,x,y,ox,oy] of locked)if((/hidden|clip/.test(ox)&&Math.abs(p.scrollLeft-x)>1)||(/hidden|clip/.test(oy)&&Math.abs(p.scrollTop-y)>1)){bad.push(`${label(el)}: requires scrolling a non-scrollable container`);p.scrollLeft=x;p.scrollTop=y;}
-  const r=el.getBoundingClientRect(),c=clip(el);
-  if(r.left<c.left-1||r.right>c.right+1||r.top<c.top-1||r.bottom>c.bottom+1)bad.push(`${label(el)}: clipped or outside viewport after scrolling`);
-  const x=(r.left+r.right)/2,y=(r.top+r.bottom)/2,top=document.elementFromPoint(x,y);
-  if(!top||!(el===top||el.contains(top)))bad.push(`${label(el)}: center obscured by ${top?label(top):'viewport edge'}`);
- }
- scrollables.forEach(([el,x,y])=>{el.scrollLeft=x;el.scrollTop=y;});
- if(document.documentElement.scrollWidth>innerWidth+1)bad.push('horizontal page overflow');
- return [...new Set(bad)];
 };
 
 async function settleLayout(page){
@@ -410,6 +383,90 @@ export async function run(name,form=process.argv[2]||'desktop'){
   fs.mkdirSync('shots',{recursive:true});await page.screenshot({path:`shots/scaffold-${form}.png`,fullPage:true});
  } else if(name==='perf'){
   const rows=[];await page.evaluate(()=>grx.forceTier(0,{hold:true}));
+  const settlePerformanceView=async()=>{
+    // Match IF's settled-view benchmark: 24 uncapped frames can last less than
+    // the pin's 150 ms selection transition. Keep all measured slow frames.
+    await page.waitForTimeout(300);
+    await page.waitForFunction(()=>!document.getAnimations().some(a=>a instanceof CSSTransition&&a.playState==='running'),null,{timeout:5000});
+  };
+  const samplePerformance=options=>page.evaluate(({index,follow=null,missionChapter=null,part=null})=>new Promise((resolve,reject)=>{
+     const values=[],b=grx.built[grx.state.scene],started=performance.now(),named=index>=0&&!!b.teaching;
+     const scene=grx.state.scene,mode=grx.state.mode,mission=missionChapter!==null;
+     const progressBins=Array(10).fill(0);let last=started,warm=24,restarts=0,completePasses=0,minProgress=1,maxProgress=0,previousProgress=0,calls=0,triangles=0;
+     let running=false,boundary=false,movingSamples=0,cameraTravel=0,targetTravel=0,previousCamera=null,previousTarget=null,unsubscribe=()=>{},warmUntil=0;
+     const completed=state=>state.index===index+1||(index===state.total-1&&state.index===index&&state.progress===1&&!state.playing);
+     // Hold a guided chapter only once its full phase has finished. This keeps
+     // the real mission panel, focused camera, lesson clock and activity live
+     // during measurement without navigating away before a repeat pass.
+     if(mission)unsubscribe=b.teaching.subscribe(state=>{
+      if(running&&!boundary&&completed(state)){boundary=true;grx.mission.pause();}
+     });
+     const clean=()=>{running=false;unsubscribe();if(mission)grx.mission.pause();};
+     const failSample=message=>{clean();reject(new Error(message));};
+     const finish=()=>{
+      values.sort((a,b)=>a-b);const q=grx.quality(),n=values.length;
+      clean();
+      resolve({median:values[Math.floor(n*.5)],p95:values[Math.min(n-1,Math.floor(n*.95))],samples:n,restarts,calls,triangles,tier:q.tiers[grx.state.scene],ratio:q.ratio,
+       progressCoverage:named?{start:0,end:1,completePasses,minSample:minProgress,maxSample:maxProgress,bins:progressBins}:null,
+       followCoverage:follow?{family:follow,movingSamples,cameraTravel,targetTravel}:null,missionChapter:mission?missionChapter:null,selected:mission?part:null});
+     };
+     const tick=now=>{
+      if(now-started>15000){failSample('Performance sampling exceeded 15 seconds');return;}
+      if(grx.state.scene!==scene||grx.state.mode!==mode||grx.isBusy()){failSample('Performance view changed during sampling');return;}
+      if(mission&&(!grx.mission.state().active||grx.mission.state().index!==missionChapter||grx.mission.state().loading||grx.mission.state().failed)){failSample('Guided mission left the requested chapter');return;}
+      // Warm the exact phase at rest, then begin at zero. User Step intentionally
+      // lands at 72%; using it here would omit early mechanism motion entirely.
+      if(warm>0){
+       last=now;
+       // A repeated guided phase must reacquire its original focused camera;
+       // no camera-flight or held lesson frames enter either complete pass.
+       if(mission&&(now<warmUntil||grx.mission.state().phase!==index||grx.isCameraMoving()||document.getAnimations().some(a=>a instanceof CSSTransition&&a.playState==='running'))){requestAnimationFrame(tick);return;}
+       if(--warm===0&&named){
+        if(mission&&grx.state.selected!==part){failSample('Guided phase did not focus its intended component');return;}
+        b.teaching.seek(index,0);boundary=false;running=true;
+        if(mission)grx.mission.play();else b.teaching.play();
+       }
+       requestAnimationFrame(tick);return;
+      }
+      const state=named?b.teaching.state():null;
+      if(named&&(state.index!==index||!state.playing)){
+       if(!completed(state)){failSample('Teaching phase stopped before completing its progress range');return;}
+       completePasses++;
+       // Complete the phase even if 240 samples arrived earlier. At lower frame
+       // rates repeat whole passes until the same minimum sample count is met.
+       // The interval crossing a phase boundary is excluded from both passes.
+       if(values.length>=240){finish();return;}
+       running=false;b.teaching.seek(index,0);
+       if(mission){warm=24;warmUntil=now+300;}else b.teaching.play();
+       last=now;previousProgress=0;restarts++;requestAnimationFrame(tick);return;
+      }
+      if(named&&(!Number.isFinite(state.progress)||state.progress<0||state.progress>1||state.progress<previousProgress||state.suspended||state.inspection)){failSample('Invalid or held teaching phase during performance measurement');return;}
+      if(mission&&(!grx.mission.state().playing||grx.isCameraMoving()||grx.state.selected!==part)){failSample('Guided phase paused or lost its focused view during measurement');return;}
+      if(named&&state.progress===0){last=now;requestAnimationFrame(tick);return;}
+      if(follow&&(!b.motion()||grx.orbitFollow()!==follow||b.focusFamily()!==follow||!b.families()[follow]||grx.isCameraMoving())){failSample('Orbital follow view is not actively moving with the requested spacecraft');return;}
+      const interval=now-last;last=now;
+      if(interval>0&&Number.isFinite(interval)){
+       values.push(interval);const R=grx.renderer();calls=Math.max(calls,R.info.render.calls);triangles=Math.max(triangles,R.info.render.triangles);
+       if(named){previousProgress=state.progress;minProgress=Math.min(minProgress,state.progress);maxProgress=Math.max(maxProgress,state.progress);progressBins[Math.min(9,Math.floor(state.progress*10))]++;}
+       if(follow){
+        const camera=grx.camera.position.toArray(),target=grx.controls.target.toArray();
+        if(![...camera,...target].every(Number.isFinite)){failSample('Orbital follow camera has a nonfinite pose');return;}
+        if(previousCamera){cameraTravel+=Math.hypot(...camera.map((v,i)=>v-previousCamera[i]));targetTravel+=Math.hypot(...target.map((v,i)=>v-previousTarget[i]));}
+        previousCamera=camera;previousTarget=target;movingSamples++;
+       }
+      }
+      if(!named&&values.length>=240){finish();return;}
+      requestAnimationFrame(tick);
+     };requestAnimationFrame(tick);
+    }),options);
+  const recordPerformance=(scene,mode,phase,r)=>{
+    rows.push({scene,mode,phase,...r});states++;
+    if(r.samples<240)fail.push(`${scene}/${mode}/${phase}: fewer than 240 valid samples`);
+    if(r.progressCoverage&&(!r.progressCoverage.completePasses||r.progressCoverage.bins.some(n=>!n)))fail.push(`${scene}/${mode}/${phase}: incomplete phase progress coverage`);
+    if(r.followCoverage&&(r.followCoverage.movingSamples!==r.samples||r.followCoverage.cameraTravel<=1e-4||r.followCoverage.targetTravel<=1e-4))fail.push(`${scene}/${mode}/${phase}: camera/target did not travel throughout active follow sampling`);
+    if(r.tier!==0)fail.push(`${scene}/${mode}/${phase}: measured tier ${r.tier}, expected 0`);
+    if(r.p95>(form==='phone'?7:15))fail.push(`${scene}/${mode}/${phase}: p95 ${r.p95.toFixed(2)} ms exceeds budget`);
+  };
   for(const sc of scenes)for(const mode of MODES){
    await show(page,sc.i,mode);await page.evaluate(()=>grx.forceTier(0,{hold:true}));
    const phases=await page.evaluate(()=>grx.built[grx.state.scene].teaching?.state().steps.map((step,index)=>({name:step.id,index}))||[{name:'orbital playback',index:0}]);
@@ -422,53 +479,47 @@ export async function run(name,form=process.argv[2]||'desktop'){
      if(b.teaching){b.teaching.reset();if(index<0)b.teaching.setInspection(true);else b.teaching.seek(index,0);}
      else b.setMotion?.(index>=0);
     },phase.index);
-    // Match IF's settled-view benchmark: 24 uncapped frames can last less than
-    // the pin's 150 ms selection transition. Keep all measured slow frames.
-    await page.waitForTimeout(300);
-    await page.waitForFunction(()=>!document.getAnimations().some(a=>a instanceof CSSTransition&&a.playState==='running'),null,{timeout:5000});
-    const r=await page.evaluate(index=>new Promise((resolve,reject)=>{
-     const values=[],b=grx.built[grx.state.scene],started=performance.now(),named=index>=0&&!!b.teaching;
-     const progressBins=Array(10).fill(0);let last=started,warm=24,restarts=0,completePasses=0,minProgress=1,maxProgress=0,previousProgress=0,calls=0,triangles=0;
-     const finish=()=>{
-      values.sort((a,b)=>a-b);const q=grx.quality(),n=values.length;
-      resolve({median:values[Math.floor(n*.5)],p95:values[Math.min(n-1,Math.floor(n*.95))],samples:n,restarts,calls,triangles,tier:q.tiers[grx.state.scene],ratio:q.ratio,
-       progressCoverage:named?{start:0,end:1,completePasses,minSample:minProgress,maxSample:maxProgress,bins:progressBins}:null});
-     };
-     const tick=now=>{
-      if(now-started>15000){reject(new Error('Performance sampling exceeded 15 seconds'));return;}
-      // Warm the exact phase at rest, then begin at zero. User Step intentionally
-      // lands at 72%; using it here would omit early mechanism motion entirely.
-      if(warm>0){last=now;if(--warm===0&&named){b.teaching.seek(index,0);b.teaching.play();}requestAnimationFrame(tick);return;}
-      const state=named?b.teaching.state():null;
-      if(named&&(state.index!==index||!state.playing)){
-       const completed=state.index===index+1||(index===state.total-1&&state.index===index&&state.progress===1&&!state.playing);
-       if(!completed){reject(new Error('Teaching phase stopped before completing its progress range'));return;}
-       completePasses++;
-       // Complete the phase even if 240 samples arrived earlier. At lower frame
-       // rates repeat whole passes until the same minimum sample count is met.
-       // The interval crossing a phase boundary is excluded from both passes.
-       if(values.length>=240){finish();return;}
-       b.teaching.seek(index,0);b.teaching.play();last=now;previousProgress=0;restarts++;requestAnimationFrame(tick);return;
-      }
-      if(named&&(!Number.isFinite(state.progress)||state.progress<0||state.progress>1||state.progress<previousProgress||state.suspended||state.inspection)){reject(new Error('Invalid or held teaching phase during performance measurement'));return;}
-      if(named&&state.progress===0){last=now;requestAnimationFrame(tick);return;}
-      const interval=now-last;last=now;
-      if(interval>0&&Number.isFinite(interval)){
-       values.push(interval);const R=grx.renderer();calls=Math.max(calls,R.info.render.calls);triangles=Math.max(triangles,R.info.render.triangles);
-       if(named){previousProgress=state.progress;minProgress=Math.min(minProgress,state.progress);maxProgress=Math.max(maxProgress,state.progress);progressBins[Math.min(9,Math.floor(state.progress*10))]++;}
-      }
-      if(!named&&values.length>=240){finish();return;}
-      requestAnimationFrame(tick);
-     };requestAnimationFrame(tick);
-    }),phase.index);
-    rows.push({scene:sc.id,mode,phase:phase.name,...r});states++;
-    if(r.samples<240)fail.push(`${sc.id}/${mode}/${phase.name}: fewer than 240 valid samples`);
-    if(r.progressCoverage&&(!r.progressCoverage.completePasses||r.progressCoverage.bins.some(n=>!n)))fail.push(`${sc.id}/${mode}/${phase.name}: incomplete phase progress coverage`);
-    if(r.tier!==0)fail.push(`${sc.id}/${mode}/${phase.name}: measured tier ${r.tier}, expected 0`);
-    if(r.p95>(form==='phone'?7:15))fail.push(`${sc.id}/${mode}/${phase.name}: p95 ${r.p95.toFixed(2)} ms exceeds budget`);
+    await settlePerformanceView();
+    recordPerformance(sc.id,mode,phase.name,await samplePerformance({index:phase.index}));
    }
-   console.log(`${sc.id}/${mode}: ${phases.length+2} performance conditions checked`);
+   if(sc.id==='orbits')for(const follow of ['geo','leo']){
+    await page.evaluate(family=>{grx.setOrbitFollow(family);grx.settle();},follow);
+    await page.waitForFunction(family=>grx.orbitFollow()===family&&grx.built[0].motion()&&!grx.isCameraMoving(),follow);
+    await settlePerformanceView();
+    recordPerformance(sc.id,mode,`active follow ${follow.toUpperCase()}`,await samplePerformance({index:0,follow}));
+    await page.evaluate(()=>{grx.setOrbitFollow(null);grx.built[0].setMotion(false);});
+   }
+   console.log(`${sc.id}/${mode}: ${phases.length+2+(sc.id==='orbits'?2:0)} performance conditions checked`);
   }
+  // Exercise the actual guided panel and component camera, as well as the
+  // overview phases above. These cover mirror motion, onboard packet trains,
+  // and received/processed display activity without treating setup as playback.
+  const missionConditions=[
+   {scene:'payload',mode:'light',phase:'slew',part:'scan-system'},
+   {scene:'payload',mode:'data',phase:'transfer',part:'data-interface'},
+   {scene:'ground',mode:'data',phase:'transfer',part:null},
+  ].filter(condition=>scenes.some(scene=>scene.id===condition.scene));
+  for(const condition of missionConditions){
+   const sample=await page.evaluate(async condition=>{
+    grx.mission.stop();await grx.mission.start();grx.mission.pause();
+    let mission=grx.mission.state();
+    while(mission.chapter.scene!==condition.scene||mission.chapter.mode!==condition.mode){
+     if(mission.index===mission.total-1)throw new Error(`Missing performance mission chapter ${condition.scene}/${condition.mode}`);
+     await grx.mission.next();mission=grx.mission.state();
+    }
+    grx.forceTier(0,{hold:true});
+    const teaching=grx.built[grx.state.scene].teaching,index=teaching.state().steps.findIndex(step=>step.id===condition.phase);
+    if(index<0)throw new Error(`Missing performance mission phase ${condition.phase}`);
+    teaching.seek(index,0);grx.settle();
+    return {index,missionChapter:mission.index,part:condition.part};
+   },condition);
+   await page.waitForFunction(({index,missionChapter,part})=>grx.mission.state().index===missionChapter&&grx.mission.state().phase===index&&!grx.isCameraMoving()&&grx.state.selected===part,sample);
+   await settlePerformanceView();
+   recordPerformance(condition.scene,condition.mode,`mission ${condition.phase}`,await samplePerformance(sample));
+   await page.evaluate(()=>grx.mission.stop());
+   console.log(`${condition.scene}/${condition.mode}: guided ${condition.phase} performance checked`);
+  }
+  details.additionalCoverage={orbitalFollow:scenes.some(scene=>scene.id==='orbits')?['geo','leo']:[],mission:missionConditions};
   details.rows=rows;details.settleMilliseconds=300;details.minimumSamples=240;details.worstP95=Math.max(...rows.map(r=>r.p95));console.log(`Worst p95 ${details.worstP95.toFixed(2)} ms`);
  } else if(name==='govern'){
   const rows=[];
@@ -492,7 +543,16 @@ export async function run(name,form=process.argv[2]||'desktop'){
   const wanted={orbit:'leo',aperture:'civil',band:'lwir',detector:'qwip'};
   await page.goto(new URL('visualizer.html?'+new URLSearchParams(wanted),BASE).href);
   await page.waitForFunction(()=>window.grx?.built[grx.state.scene]);
-  if(!await page.evaluate(()=>grx.state.selected))fail.push('URL without view lost its first-card default');
+  if(!await page.evaluate(()=>{
+   const p=grx.built[grx.state.scene].camera;
+   return grx.state.selected===null&&document.getElementById('part-select').value===''&&document.getElementById('card').hidden&&
+     grx.camera.position.distanceTo(new grx.THREE.Vector3(...p.pos))<1e-6;
+  }))fail.push('URL without view did not open an unselected overview');
+  await page.locator('#card-next').click();await page.evaluate(()=>grx.settle());states++;
+  if(!await page.evaluate(()=>{
+   const first=document.querySelector('#part-select option[value]:not([value=""])').value;
+   return grx.state.selected===first&&document.getElementById('part-select').value===first&&!document.getElementById('card').hidden;
+  }))fail.push('First Next from the opening overview skipped the first component');
   for(const file of ['index.html','evidence.html','method.html','glossary.html','parts.html','visualizer.html']){
    const link=page.locator('nav a[href^="'+file+'"]').first();
    // Use the phone's real navigation affordance before following its hidden link.

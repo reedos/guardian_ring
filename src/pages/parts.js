@@ -20,13 +20,20 @@ function filter(update=false) {
 input.addEventListener('input',()=>filter(true));filter();
 // Native details keep long diagrams readable; deep links open their containing sections.
 function revealHash(hash) {
-  const node=document.getElementById(decodeURIComponent(hash.replace(/^#/,'')));
+  let id;
+  try { id=decodeURIComponent(hash.replace(/^#/,'')); } catch { return; }
+  const node=document.getElementById(id);
   if(!node)return;
   // A persistent chapter or diagram link must reveal a search-hidden target.
   if(node.closest('[hidden]')) { input.value=''; filter(true); }
   for(let parent=node.parentElement;parent;parent=parent.parentElement) if(parent instanceof HTMLDetailsElement)parent.open=true;
   node.scrollIntoView();
 }
-document.addEventListener('click',event=>{const link=event.target.closest('a[href^="#"]');if(link)revealHash(link.getAttribute('href'));});
+document.addEventListener('click',event=>{
+  if(event.button||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+  const link=event.target.closest?.('a[href]');if(!link)return;
+  const url=new URL(link.getAttribute('href'),location.href);
+  if(url.origin===location.origin&&url.pathname===location.pathname&&url.search===location.search&&url.hash){revealHash(url.hash);link.setAttribute('href',url.hash);}
+});
 addEventListener('hashchange',()=>revealHash(location.hash));
 if(location.hash) requestAnimationFrame(()=>revealHash(location.hash));

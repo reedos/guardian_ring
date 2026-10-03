@@ -62,6 +62,22 @@ export function orbitalPeriodSeconds(semiMajorAxisM: number, gmM3S2 = EARTH_GM_M
   return 2 * Math.PI * Math.sqrt(semiMajorAxisM ** 3 / gmM3S2);
 }
 
+/** Vis-viva speed in an inertial frame centered on the attracting body.
+ * This helper is restricted to bound, nondegenerate ellipses: 0 < r < 2a.
+ * Lengths are physical meters, not the compressed scene's drawing coordinates.
+ */
+export function orbitalSpeedMetersPerSecond(semiMajorAxisM: number, radiusM: number, gmM3S2 = EARTH_GM_M3_S2): number {
+  positive(semiMajorAxisM, 'Semi-major axis');
+  positive(radiusM, 'Orbital radius');
+  positive(gmM3S2, 'Gravitational parameter');
+  const radiusRatio = radiusM / semiMajorAxisM;
+  if (radiusRatio >= 2) throw new RangeError('A bound ellipse requires orbital radius smaller than twice its semi-major axis');
+  // Equivalent to sqrt(mu * (2/r - 1/a)); avoid subtracting two small reciprocals.
+  const speed = Math.sqrt(gmM3S2 / radiusM) * Math.sqrt(2 - radiusRatio);
+  positive(speed, 'Orbital speed');
+  return speed;
+}
+
 export function semiMajorAxisMeters(periodSeconds: number, gmM3S2 = EARTH_GM_M3_S2): number {
   positive(periodSeconds, 'Period');
   positive(gmM3S2, 'Gravitational parameter');

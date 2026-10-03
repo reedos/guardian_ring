@@ -9,6 +9,8 @@ import { teachingProgram } from './teaching-programs.js';
 import { createTeachingFlows, createSignalIndicator, createPhaseHighlights } from './teaching-flows.js';
 import { createMirrorDemo } from './mirror-demo.js';
 import { createAssemblyPresentation } from './assembly-presentation.js';
+import { createActivityDisplay } from './activity-display.js';
+import { mechanismAngle } from './mechanism-pose.js';
 
 export function illustrated(config) {
   return {
@@ -47,6 +49,7 @@ export function illustrated(config) {
       const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
       const id=config.teaching||config.url.split('/').at(-1).split('.')[0];
       const paths=createTeachingFlows(config.paths||{},resolve);scene.add(paths.root);
+      const activityDisplay=config.activityDisplay?createActivityDisplay(asset,config.activityDisplay):null;
       const indicator=config.signal?createSignalIndicator(resolve(config.signal),config.signalRadius||.36,config.absorptionSignal?['integrate']:['absorb','integrate']):null;if(indicator)scene.add(indicator.root);
       const absorption=config.absorptionSignal?createSignalIndicator(resolve(config.absorptionSignal),config.signalRadius||.36,['absorb']):null;if(absorption)scene.add(absorption.root);
       const highlights=createPhaseHighlights(asset,config.phaseHighlights);
@@ -54,7 +57,7 @@ export function illustrated(config) {
         const node=asset.getObjectByName(m.node);if(!node)throw new Error(`Missing authored mechanism pivot: ${m.node}`);
         return {...m,node,rest:node.quaternion.clone()};
       });
-      const mirrors=pivots.filter(p=>p.normal).map(p=>createMirrorDemo(p.node,p.normal));for(const mirror of mirrors)scene.add(mirror.line);
+      const mirrors=pivots.filter(p=>p.normal).map(p=>createMirrorDemo(p.node,p.normal,{surfaceOffset:p.surfaceOffset||0}));for(const mirror of mirrors)scene.add(mirror.line);
       let mode='light',clock=createTeachingSequence(teachingProgram(id,mode),{reduced});
       const listeners=new Set();
       const changed=()=>{for(const fn of listeners)fn(teaching.state());};
@@ -63,17 +66,11 @@ export function illustrated(config) {
         for(const mechanism of pivots){
           mechanism.node.quaternion.copy(mechanism.rest);
           if(state.inspection)continue;
-          const phase=state.step.id,p=state.progress;
-          let angle=0;
-          if(mechanism.motion==='scan')angle=phase==='slew'?Math.sin(p*Math.PI*2)*mechanism.range:0;
-          if(mechanism.motion==='reference'){
-            const u=Math.min(1,p/.25),ease=u*u*(3-2*u);
-            angle=phase==='blackbody'?mechanism.range*ease:phase==='space'?mechanism.range*(1-2*ease):0;
-          }
+          const angle=mechanismAngle(mechanism,state);
           mechanism.node.rotateOnAxis(new THREE.Vector3(...mechanism.axis),angle);
         }
         if(pivots.length)asset.updateMatrixWorld(true);
-        paths.update(state,mode);indicator?.update(state);absorption?.update(state);highlights.update(state);for(const mirror of mirrors)mirror.update(state);
+        paths.update(state,mode);activityDisplay?.update(state);indicator?.update(state);absorption?.update(state);highlights.update(state);for(const mirror of mirrors)mirror.update(state);
         if(presentation?.capture().view==='assembled'){
           if(indicator)indicator.root.visible=false;
           if(absorption)absorption.root.visible=false;
@@ -84,6 +81,7 @@ export function illustrated(config) {
         state:()=>({...clock.state(),mode,legend:paths.legend(mode,clock.state().steps),note:config.lessonNote||'Drawing motion and sequence timing are illustrative; no real instrument performance is simulated.'}),
         subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
         play(){presentation?.preparePlayback();clock.play();pose(clock.state());},pause(){clock.pause();pose(clock.state());},
+        preview({playing=!reduced}={}){presentation?.preparePlayback();clock.seek(0,.15);if(playing)clock.play({repeat:true});pose(clock.state());},
         step(delta){presentation?.preparePlayback();clock.step(delta);pose(clock.state());},reset(){clock.reset();pose(clock.state());},
         seek(index,progress=0){presentation?.preparePlayback();clock.seek(index,progress);pose(clock.state());},
         setInspection(value){clock.setInspection(value);pose(clock.state());},
@@ -103,7 +101,7 @@ export function illustrated(config) {
       const presentation=config.assemblies?.length?createAssemblyPresentation({asset,assemblies:config.assemblies,onChange:applyPresentation}):null;
       if(presentation)applyPresentation(presentation.state());
       pose(clock.state());
-      return { scene,asset,quality,model,camera,hotspots,dataHotspots,heatHotspots,solids,labels,teaching,presentation,
+      return { scene,asset,quality,model,camera,hotspots,dataHotspots,heatHotspots,solids,labels,teaching,presentation,activityDisplay,
         updateLabels:printed.update,
         flows:paths.records.filter(r=>r.mode==='light').map(r=>r.group),dataFlows:paths.records.filter(r=>r.mode==='data').map(r=>r.group),heatFlows:paths.records.filter(r=>r.mode==='heat').map(r=>r.group),
         look:{exposure:1,bloom:0,threshold:1,ao:0,env:'studio'},

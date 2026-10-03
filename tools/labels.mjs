@@ -36,6 +36,24 @@ if(g){
          const p=plate.userData.readability.bounds;
          if(r.left-view.left<p.right&&r.right-view.left>p.left&&r.top-view.top<p.bottom&&r.bottom-view.top>p.top)bad.push(`selected callout covers ${plate.name}`);
         }
+        const hotspots=({light:b.hotspots,data:b.dataHotspots,heat:b.heatHotspots})[grx.state.mode];
+        for(const name of hotspots?.[grx.state.selected]?.view?.labelNodes||[]){
+         const node=b.asset?.getObjectByName(name),pixels=[];
+         if(!node){bad.push(`missing protected component ${name}`);continue;}
+         // Project actual mesh vertices independently of the viewer's world-box
+         // placement exclusion. The selected name must leave these faces clear.
+         node.traverseVisible(object=>{
+          const positions=object.geometry?.getAttribute('position');if(!object.isMesh||!positions)return;
+          for(let i=0;i<positions.count;i++){
+           const p=new T.Vector3().fromBufferAttribute(positions,i).applyMatrix4(object.matrixWorld).project(grx.camera);
+           if(p.z>=-1&&p.z<=1)pixels.push({x:view.left+(p.x+1)*view.width/2,y:view.top+(1-p.y)*view.height/2});
+          }
+         });
+         if(pixels.length){
+          const region={left:Math.min(...pixels.map(p=>p.x)),right:Math.max(...pixels.map(p=>p.x)),top:Math.min(...pixels.map(p=>p.y)),bottom:Math.max(...pixels.map(p=>p.y))};
+          if(r.left<region.right&&r.right>region.left&&r.top<region.bottom&&r.bottom>region.top)bad.push(`selected callout covers protected component ${name}`);
+         }
+        }
        }
       }
       for(const label of b.labels||[]){

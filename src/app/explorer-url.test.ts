@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { assemblyViewFromQuery, explorerQuery } from './explorer-url.js';
+import { assemblyViewFromQuery, explorerQuery, followFromQuery } from './explorer-url.js';
 
 describe('shared enclosure views', () => {
+  it('retains a supported orbital follow view without leaking it to other scenes',()=>{
+    const query=explorerQuery('?orbit=leo',{scene:0,mode:'data',follow:'leo'});
+    expect(followFromQuery(query)).toBe('leo');
+    expect(followFromQuery(explorerQuery(query,{scene:2,mode:'data'}))).toBeNull();
+    expect(followFromQuery(explorerQuery(query,{scene:0,mode:'light',selected:'earth',follow:'geo'}))).toBeNull();
+    expect(followFromQuery('?follow=invalid')).toBeNull();
+  });
   it('round-trips an Inside overview while preserving independent scenario inputs', () => {
     const search = new URLSearchParams('view=0.light&orbit=heo&aperture=representative&band=lwir&detector=qwip&custom=kept');
     const query = explorerQuery(search, { scene: 2, mode: 'data', assemblyView: 'inside' });

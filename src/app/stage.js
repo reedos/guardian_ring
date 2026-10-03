@@ -7,11 +7,15 @@ import { poseAt, clearPath } from './camera-path.js';
 import { createCameraClearance, constrainCameraPose, CLEARANCE_BAND } from './camera-clearance.js';
 import { occupancyBuilder } from './occupancy.js';
 import { createPartCycle } from './part-cycle.js';
-import { declutterPins, pinLabelBox, avoidPinObstacles } from './pin-layout.js';
+import { layoutAnchoredPins, pinLabelBox } from './pin-layout.js';
+import { fitComponent } from './component-frame.js';
+import { teachingFocus } from '../scenes/teaching-focus.js';
 import { chip } from '../evidence.js';
 import { renderComponentDetails } from './component-details.js';
 import { createVisitHistory, retainedPart, capturePane, refreshScenarioContent } from './exploration-context.js';
 import { assemblyViewFromQuery } from './explorer-url.js';
+import { followFromQuery } from './explorer-url.js';
+import { createSceneLook } from './scene-look.js';
 import * as orbits from '../scenes/orbits.js';
 import * as satellite from '../scenes/satellite.js';
 import * as payload from '../scenes/payload.js';
@@ -36,8 +40,24 @@ controls.enableDamping = true; controls.dampingFactor = .1; controls.minDistance
 export const mobile = matchMedia('(max-width: 760px), (pointer: coarse)').matches;
 export const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const clearanceStats = { builds: 0, buildMs: 0, standIn: 0, unplanned: 0, plans: 0, planMs: 0, hits: 0, prefetched: 0, clear: true, pending: false };
-let renderer, started = false, busy = false, tween = null, transitions = reduced ? 'instant' : 'full', buildEpoch = 0;
+let renderer, sceneLook, started = false, busy = false, tween = null, transitions = reduced ? 'instant' : 'full', buildEpoch = 0;
 let renderedFlightProgress = 1;
+let framedPart = null;
+let orbitTracking = null;
+let orbitExitMinimum = null;
+let navigationOwner = null;
+let lifecycleFrozen = false, resetFrameClock = false, frozenAt = null;
+export const activitySuspended = () => lifecycleFrozen || document.hidden || $('src-pop')?.hidden === false || $('page-sheet')?.hidden === false;
+// A deliberate Pause or manual step survives subsequent layer/level changes.
+// Camera inspection can pause the current pose without changing this preference.
+let activityEnabled = !reduced;
+export function setActivityEnabled(playing) { activityEnabled=!!playing;if(orbitTracking?.entering)orbitTracking.resumeMotion=activityEnabled; }
+function previewActivity() {
+  getTeaching()?.preview?.({playing:activityEnabled});
+  if(orbitTracking?.entering)orbitTracking.resumeMotion=activityEnabled;
+  else built[ui.scene]?.setMotion?.(activityEnabled);
+  emit('scene-settings');
+}
 let ratio = 1, gpu = 'Unavailable', preference = 'auto', governorAt = 0, frameSamples = [], cpuSamples = [], judged = null;
 const tiers = Array(sceneCount).fill(0), ceilings = Array(sceneCount).fill(0), held = new Set(), frameObservers = new Set(), tickers = new Set();
 try { const saved = localStorage.getItem('grx-render-preference'); if (['auto', 'max', 'laptop'].includes(saved)) preference = saved; } catch { /* optional */ }
@@ -64,30 +84,75 @@ export const hasPart = (i, id, mode = ui.mode) => partsFor(i, mode).some(part =>
 const hotspotsFor = i => built[i]?.[ui.mode === 'data' ? 'dataHotspots' : ui.mode === 'heat' ? 'heatHotspots' : 'hotspots'] || {};
 export const occupancy = () => built[ui.scene]?.occupancy || null;
 export const isBusy = () => busy;
+export function cancelNavigation(owner) {
+  if (!busy || owner === null || navigationOwner !== owner) return false;
+  buildEpoch++;busy=false;navigationOwner=null;$('veil').hidden=true;return true;
+}
 export const isCameraMoving = () => busy || !!tween;
 // Progress belongs to the last camera pose played, not a gate callback's clock.
 // Keep the completed value after tween is cleared so observers can record u=1.
 export const getFlightProgress = () => renderedFlightProgress;
 export const getTeaching = () => built[ui.scene]?.teaching || null;
 export const getAssemblyPresentation = () => built[ui.scene]?.presentation || null;
+export const orbitFollow = () => orbitTracking?.family || null;
+export const orbitMotionRequested = () => orbitTracking?.entering?orbitTracking.resumeMotion:built[0]?.motion?.()||false;
+export function setOrbitFollow(family) {
+  if (family === null) {
+    if(orbitTracking){
+      orbitExitMinimum=orbitTracking.minDistance;
+      controls.minDistance=Math.min(orbitExitMinimum,camera.position.distanceTo(controls.target));
+      // Cancel entry too: Free view must immediately release camera ownership.
+      tween=null;
+    }
+    orbitTracking = null; built[0]?.setFocusFamily?.(null); emit('scene-settings'); return;
+  }
+  const current = built[ui.scene];
+  if (ui.scene !== 0 || !['geo', 'leo'].includes(family) || !current?.followTarget) return;
+  partCycle.stop(); deselect(); current.setFamily(family, true); current.setFocusFamily(family);
+  const resumeMotion=orbitTracking?.entering?orbitTracking.resumeMotion:current.motion();
+  current.setMotion(false);
+  const previousMinimum=orbitTracking?.minDistance??orbitExitMinimum??controls.minDistance;
+  orbitExitMinimum=null;
+  controls.minDistance=.4;
+  const pose = current.followTarget(family, { aspect: camera.aspect, fov: camera.fov, minDistance: controls.minDistance });
+  flyTo(pose.pos, pose.target, .9, { inspection: false });
+  orbitTracking = { family, entering: true, resumeMotion, minDistance:previousMinimum }; emit('scene-settings');
+}
+function updateOrbitFollow(suspended) {
+  if (!orbitTracking || ui.scene !== 0 || suspended || tween || busy) return;
+  const current = built[0];
+  if (orbitTracking.entering) {
+    orbitTracking.entering = false; current.setMotion(orbitTracking.resumeMotion); emit('scene-settings');
+  }
+  const pose = current.followTarget(orbitTracking.family, { aspect: camera.aspect, fov: camera.fov, minDistance: controls.minDistance });
+  camera.position.fromArray(pose.pos); controls.target.fromArray(pose.target);
+  controls.update(); camera.updateMatrixWorld();
+}
 const inspect = active => getTeaching()?.setInspection(active);
 function captureView() {
-  return { scene: ui.scene, mode: ui.mode, selected: ui.selected, position: camera.position.toArray(), target: controls.target.toArray(), pane: capturePane(), presentation:getAssemblyPresentation()?.capture() };
+  const lesson=getTeaching()?.state();
+  return { scene: ui.scene, mode: ui.mode, selected: ui.selected, framedPart, position: camera.position.toArray(), target: controls.target.toArray(), orbitMinimum:ui.scene===0?orbitTracking?.minDistance??orbitExitMinimum:null, minDistance:controls.minDistance, pane: capturePane(), presentation:getAssemblyPresentation()?.capture(), lesson:lesson&&{index:lesson.index,progress:lesson.progress,inspection:lesson.inspection} };
 }
 export const destination = () => ui.scene;
 export const stageActive = () => $('viewer').contains(document.activeElement) || $('viewer').matches(':hover');
 export const observeFrame = fn => { frameObservers.add(fn); return () => frameObservers.delete(fn); };
 export const onTick = fn => { tickers.add(fn); return () => tickers.delete(fn); };
+function restoreOrbitMinimum() {
+  if(!orbitTracking&&orbitExitMinimum!==null&&camera.position.distanceTo(controls.target)>=orbitExitMinimum-1e-6){
+    controls.minDistance=orbitExitMinimum;orbitExitMinimum=null;
+  }
+}
 export const TRANSITIONS = { full: 1, quick: .6, instant: 0 };
 export function setTransitions(value) { if (value in TRANSITIONS) { transitions = value; if (value === 'instant') settle(); } }
 export const getTransitions = () => transitions;
 export function settle() {
   if (tween) { camera.position.copy(tween.p1); controls.target.copy(tween.t1); tween = null; }
   renderedFlightProgress = 1;
+  restoreOrbitMinimum();
   controls.update(); camera.updateMatrixWorld(); updatePins();
 }
-export function flyTo(pos, target, duration = .9) {
-  inspect(true);
+export function flyTo(pos, target, duration = .9, { inspection = true } = {}) {
+  if(inspection)inspect(true);
   const limits = { minDistance: controls.minDistance, maxDistance: controls.maxDistance, minPolarAngle: controls.minPolarAngle, maxPolarAngle: controls.maxPolarAngle };
   const move = { p0: camera.position.clone(), t0: controls.target.clone(), p1: new THREE.Vector3(...pos), t1: new THREE.Vector3(...target), limits, start: 0, duration: duration * TRANSITIONS[transitions] * 1000 };
   constrainCameraPose(move.p1, move.t1, limits);
@@ -102,12 +167,24 @@ export function flyTo(pos, target, duration = .9) {
   move.start = performance.now();
   tween = move; renderedFlightProgress = 0;
 }
+function partFrame(spot) {
+  return fitComponent(spot.view,view.clientWidth,view.clientHeight,{minDistance:controls.minDistance,maxDistance:controls.maxDistance});
+}
 function resize() {
   if (!renderer) return;
+  if(built[ui.scene])sceneLook?.apply(built[ui.scene],{sceneId:store.C.SCENES[ui.scene].id,tier:tiers[ui.scene]});
   const width = Math.max(1, view.clientWidth), height = Math.max(1, view.clientHeight);
   ratio = Math.min(devicePixelRatio || 1, TIERS[tiers[Math.max(0, ui.scene)]].ratio);
   renderer.setPixelRatio(ratio); renderer.setSize(width, height, false);
-  camera.aspect = width / height; camera.fov = camera.aspect < .9 ? 48 : 35; camera.updateProjectionMatrix(); updatePins();
+  camera.aspect = width / height; camera.fov = camera.aspect < .9 ? 48 : 35; camera.updateProjectionMatrix();
+  // Refit only a view we still own. A user's orbit/zoom must survive pane and
+  // orientation changes; explicit part selection opts back into authored framing.
+  const spot=framedPart&&hotspotsFor(ui.scene)[framedPart];
+  if(spot?.view?.detailSize){
+    const frame=partFrame(spot),position=tween?.p1||camera.position,target=tween?.t1||controls.target;
+    if(position.distanceTo(new THREE.Vector3(...frame.pos))>1e-6||target.distanceTo(new THREE.Vector3(...frame.target))>1e-6)flyTo(frame.pos,frame.target,.35,{inspection:false});
+  }
+  updatePins();
 }
 function updatePins() {
   if (ui.scene < 0) return;
@@ -123,14 +200,13 @@ function updatePins() {
     const spot = hotspotsFor(ui.scene)[button.dataset.id]; if (!spot) continue;
     const p = new THREE.Vector3(...spot.pos).project(camera);
     const x = (p.x + 1) / 2 * width, y = (1 - p.y) / 2 * height;
-    button.hidden = getAssemblyPresentation()?.isPartVisible(button.dataset.id) === false || p.z < -1 || p.z > 1 || x < 12 || x > width - 12 || y < 12 || y > height - 12;
+    button.hidden = !!orbitTracking || getAssemblyPresentation()?.isPartVisible(button.dataset.id) === false || built[ui.scene]?.isPartVisible?.(button.dataset.id) === false || p.z < -1 || p.z > 1 || x < 12 || x > width - 12 || y < 12 || y > height - 12;
     if (!button.hidden) points.push({ id:button.dataset.id, x, y, button });
   }
-  // The reference viewer's fan keeps nearby parts selectable on a phone. Leaders
-  // retain the true geometry anchor when a marker moves to make room for another.
+  // Keep badges at the component whenever possible. Resolve only local
+  // collisions, with leaders retaining the true anchor for displaced badges.
   const printedBounds=(built[ui.scene]?.labels||[]).filter(label=>label.visible&&label.userData.readability?.bounds).map(label=>label.userData.readability.bounds);
-  const fan=declutterPins(points, { expanded:new Set(points.map(p => p.id)) });
-  const placements=avoidPinObstacles(fan.placements,{obstacles:[...printedBounds,...hudBounds],width,height,selected:ui.selected});
+  const {placements}=layoutAnchoredPins(points,{obstacles:[...printedBounds,...hudBounds],width,height,selected:ui.selected});
   for (const point of points) {
     const spot = placements.get(point.id), button = point.button;
     const x = Math.max(13,Math.min(width-13,spot.x)), y = Math.max(13,Math.min(height-13,spot.y));
@@ -149,6 +225,27 @@ function updatePins() {
     const reserved=[...points.map(p=>p.button.querySelector('.num'))]
       .filter(el=>el.checkVisibility()).map(el=>{const r=el.getBoundingClientRect();return {left:r.left-origin.left,right:r.right-origin.left,top:r.top-origin.top,bottom:r.bottom-origin.top};});
     reserved.push(...hudBounds,...printedBounds);
+    // A label must not sit on the detail the reader came to inspect. For an
+    // authored component region, reserve its projected face as well as pins.
+    // When no clear label lane remains, the picker and card retain its name.
+    const detail=hotspotsFor(ui.scene)[ui.selected]?.view;
+    const regions=[];
+    if(detail?.detailSize){
+      const center=detail.focus||detail.target, size=detail.detailSize;
+      regions.push(new THREE.Box3(new THREE.Vector3(...center).addScaledVector(new THREE.Vector3(...size),-.5),new THREE.Vector3(...center).addScaledVector(new THREE.Vector3(...size),.5)));
+    }
+    for(const name of detail?.labelNodes||[]){
+      const node=built[ui.scene]?.asset?.getObjectByName(name);
+      if(node)regions.push(new THREE.Box3().setFromObject(node));
+    }
+    for(const region of regions){
+      const projected=[];
+      for(const dx of [-1,1])for(const dy of [-1,1])for(const dz of [-1,1]){
+        const point=new THREE.Vector3(dx<0?region.min.x:region.max.x,dy<0?region.min.y:region.max.y,dz<0?region.min.z:region.max.z).project(camera);
+        projected.push({x:(point.x+1)*width/2,y:(1-point.y)*height/2});
+      }
+      reserved.push({left:Math.min(...projected.map(p=>p.x)),right:Math.max(...projected.map(p=>p.x)),top:Math.min(...projected.map(p=>p.y)),bottom:Math.max(...projected.map(p=>p.y))});
+    }
     const x=parseFloat(selected.button.style.left),y=parseFloat(selected.button.style.top),maxWidth=Math.min(270,width-32);
     selected.button.classList.remove('hide-lbl');label.style.maxWidth=`${maxWidth}px`;label.style.width='max-content';
     const naturalWidth=Math.ceil(label.offsetWidth);let box=null;
@@ -190,7 +287,8 @@ function updateCycle() {
   $('part-play').setAttribute('aria-pressed', String(partCycle.playing)); $('part-play').textContent = partCycle.playing ? 'Pause' : 'Auto-cycle';
   $('part-play').title = available ? 'Cycle through the parts, holding each for 8 seconds after the camera arrives. Reading sources pauses the clock; choosing a part stops it.' : 'Available when this level has several parts';
 }
-export function select(id, fly = true) {
+export function select(id, fly = true, { reveal = true } = {}) {
+  if (orbitTracking) setOrbitFollow(null);
   const part = partsFor(ui.scene).find(candidate => candidate.id === id); if (!part) return;
   if (!partCycle.selecting) partCycle.stop();
   if (fly) { inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); }
@@ -217,16 +315,17 @@ export function select(id, fly = true) {
   });
   getAssemblyPresentation()?.revealPart(id);
   built[ui.scene]?.setPart?.(id); emit('scene-settings');
-  const spot = hotspotsFor(ui.scene)[id]; if (fly && spot?.view) flyTo(spot.view.pos, spot.view.target);
+  const spot = hotspotsFor(ui.scene)[id]; if (fly && spot?.view) {const frame=partFrame(spot);flyTo(frame.pos,frame.target);framedPart=id;}
   emit('select', id); updateCycle();
-  if (fly) emit('part-inspect', id);
+  if (fly && reveal) emit('part-inspect', id);
 }
 export function deselect() {
-  ui.selected = null; $('card').hidden = true;
+  framedPart = null; ui.selected = null; $('card').hidden = true;
   document.querySelectorAll('#parts button, #pins button').forEach(button => { button.setAttribute('aria-pressed', 'false'); button.classList.remove('on'); });
   emit('select', null);
 }
 export function overview() {
+  if (orbitTracking) setOrbitFollow(null);
   const preset = built[ui.scene]?.camera; if (!preset) return;
   partCycle.stop(); deselect(); flyTo(preset.pos, preset.target);
 }
@@ -239,6 +338,18 @@ export function setAssemblyView(view) {
 }
 // Playback starts from the whole assembly, after the camera reaches its safe preset.
 export function preparePlayback() { overview(); settle();getAssemblyPresentation()?.preparePlayback();inspect(false);emit('scene-settings'); }
+// Manual animation steps inspect their subject; full playback keeps the whole
+// route visible. The step is applied after selection so its paused mechanism
+// pose is not reset by select() entering hardware inspection.
+export function stepTeaching(direction, { reset = false } = {}) {
+  const teaching=getTeaching();if(!teaching)return;
+  const state=teaching.state(),index=reset?0:(state.index+direction+state.total)%state.total;
+  const id=teachingFocus(store.C.SCENES[ui.scene].id,ui.mode,state.steps[index].id);
+  teaching.pause();getAssemblyPresentation()?.preparePlayback();
+  if(id&&hasPart(ui.scene,id))select(id);else overview();
+  if(reset)teaching.seek(0,0);else teaching.step(direction);
+  emit('scene-settings');
+}
 export function cycle(direction) {
   const parts = partsFor(ui.scene); if (!parts.length) return;
   const index = parts.findIndex(part => part.id === ui.selected);
@@ -246,7 +357,7 @@ export function cycle(direction) {
 }
 const partCycle = createPartCycle({ parts: () => partsFor(ui.scene).map(part => part.id), selected: () => ui.selected, select,
   ready: () => !document.hidden && !isCameraMoving() && $('src-pop')?.hidden !== false && $('page-sheet')?.hidden !== false, changed: updateCycle });
-export function setMode(mode) {
+export function setMode(mode, { activity = true } = {}) {
   if (!modes.includes(mode)) return;
   partCycle.stop();
   const selected = ui.selected;
@@ -258,42 +369,62 @@ export function setMode(mode) {
     const next=hotspotsFor(ui.scene)[id]?.view;
     buildPanel();
     if(id)select(id,!!previous&&JSON.stringify(previous)!==JSON.stringify(next));
+    if(activity)previewActivity();
   }
   emit('mode', mode);
 }
-export async function go(index, { record = true, restore = null } = {}) {
+export async function go(index, { record = true, restore = null, owner = null, resetPane = true, activity = true } = {}) {
   if (typeof index === 'string') index = store.C.SCENES.findIndex(scene => scene.id === index);
   if (!Number.isInteger(index) || index < 0 || index >= sceneCount) return;
+  emit('navigation-request', { scene: index, owner });
+  if (orbitTracking) setOrbitFollow(null);
   const firstView = ui.scene < 0;
   if (record) visits.enter(captureView(), index, isSide(index));
   built[ui.scene]?.teaching?.pause();
-  const epoch = ++buildEpoch; busy = true; partCycle.stop(); $('veil').hidden = false; $('veil').classList.remove('off'); $('veil').textContent = 'Preparing the scene…';
+  const epoch = ++buildEpoch; busy = true; navigationOwner=owner;partCycle.stop(); $('veil').hidden = false; $('veil').classList.remove('off'); $('veil').textContent = 'Preparing the scene…';
   try {
     if (!built[index]) {
       await BUILDERS[index].preload(); if (epoch !== buildEpoch) return;
       built[index] = BUILDERS[index].build({ quality: { ...TIERS[tiers[index]], mobile }, model: store.M });
+      sceneLook.apply(built[index],{sceneId:store.C.SCENES[index].id,tier:tiers[index]});
       built[index].scene.updateMatrixWorld(true);
       const start = performance.now(), builder = occupancyBuilder(built[index].solids, { maxCells: 64_000 }); builder.step();
       built[index].occupancy = builder.result; clearanceStats.builds++; clearanceStats.buildMs = performance.now() - start;
     }
     if (epoch !== buildEpoch) return;
-    ui.scene = index; ui.selected = null; tween = null; renderedFlightProgress = 1;
+    ui.scene = index; ui.selected = null; framedPart = null; tween = null; renderedFlightProgress = 1;
+    orbitExitMinimum=null;
     if (restore) ui.mode = restore.mode;
     const preset = built[index].camera; camera.position.set(...preset.pos); controls.target.set(...preset.target); camera.near = preset.near; camera.far = preset.far; controls.minDistance = preset.min; controls.maxDistance = preset.max;
     controls.update(); built[index].setMode(ui.mode); buildPanel(); resize(); emit('scene', index);
     if (restore) {
+      if(index===0&&restore.orbitMinimum!==null&&Number.isFinite(restore.orbitMinimum)&&Number.isFinite(restore.minDistance)){
+        controls.minDistance=restore.minDistance;orbitExitMinimum=restore.orbitMinimum;
+        built[index].setMotion?.(false);
+      }
       getAssemblyPresentation()?.restore(restore.presentation);
       document.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === ui.mode)));
       const id = retainedPart(partsFor(index), restore.selected);
       if (id) { inspect(true); select(id, false); } else deselect();
+      framedPart=id&&restore.framedPart===id?id:null;
       camera.position.fromArray(restore.position); controls.target.fromArray(restore.target); settle();
+      if(restore.lesson&&getTeaching()){
+        getTeaching().seek(restore.lesson.index,restore.lesson.progress);
+        inspect(restore.lesson.inspection);
+        // Seeking opens electronics for a lesson. Restore closed hardware when
+        // the saved view was a normal exterior inspection.
+        getAssemblyPresentation()?.restore(restore.presentation);
+      }
       emit('mode', ui.mode); emit('restore-pane', { ...restore.pane, restoreFocus: true });
-    } else { if(getAssemblyPresentation()){getAssemblyPresentation().setView('assembled');inspect(true);}select(partsFor(index)[0]?.id, false); if (!firstView) emit('pane-request', { pane: 'parts', reset: true }); }
+    } else { if(getAssemblyPresentation()){getAssemblyPresentation().setView('assembled');inspect(true);}deselect(); if (!firstView&&resetPane) emit('pane-request', { pane: 'parts', reset: true }); }
+    if(!restore&&owner===null&&activity)previewActivity();
     $('veil').hidden = true; emit('scene-settings');
-  } catch (error) { $('veil').textContent = 'The viewer could not start. Reload to try again; the source and method pages remain available.'; throw error; }
-  finally { if (epoch === buildEpoch) busy = false; }
+  } catch (error) { if(epoch!==buildEpoch)return;$('veil').textContent = 'The viewer could not start. Reload to try again; the source and method pages remain available.'; throw error; }
+  finally { if (epoch === buildEpoch) {busy = false;navigationOwner=null;} }
 }
-export async function show({ scene = ui.scene, mode = ui.mode, part = null }) { if (modes.includes(mode)) ui.mode = mode; await go(scene, { record: false }); setMode(mode); if (part) select(part); }
+// Preserve the test hook's default-first-part contract. Normal level navigation
+// uses go(), which opens an honest unselected overview.
+export async function show({ scene = ui.scene, mode = ui.mode, part = null }) { if (modes.includes(mode)) ui.mode = mode; await go(scene, { record: false, activity:false }); setMode(mode,{activity:false}); select(part||partsFor(ui.scene)[0]?.id); }
 export async function backOut() { const origin = visits.back(); await go(origin?.scene ?? 0, { record: false, restore: origin }); }
 on('scenario', () => {
   if (!started) return;
@@ -319,6 +450,7 @@ export function start() {
   if (started) return; started = true;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    sceneLook=createSceneLook(renderer);
     const gl = renderer.getContext(), debug = gl.getExtension('WEBGL_debug_renderer_info'); gpu = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
   } catch { $('veil').textContent = 'WebGL is unavailable. The source and method pages remain available.'; busy = false; return; }
   setQualityPreference(preference);
@@ -340,39 +472,60 @@ export function start() {
   document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
   $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('part-play').addEventListener('click', () => partCycle.toggle()); $('back-out').addEventListener('click', backOut);
   $('quality').addEventListener('change', event => setQualityPreference(event.target.value));
-  controls.addEventListener('start', () => { tween = null; partCycle.stop(); inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); });
-  document.addEventListener('visibilitychange', () => {
-    const suspended = document.hidden || $('src-pop')?.hidden === false || $('page-sheet')?.hidden === false;
+  controls.addEventListener('start', () => { if(orbitTracking)setOrbitFollow(null);framedPart = null; tween = null; partCycle.stop(); inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); });
+  const suspendActivity = () => {
+    const suspended = activitySuspended();
     getTeaching()?.setSuspended?.(suspended); built[ui.scene]?.setSuspended?.(suspended);
+  };
+  document.addEventListener('visibilitychange', suspendActivity);
+  // Chrome can freeze a page independently of visibility. Reset all clocks at
+  // the lifecycle boundary, including short freezes below the gap safeguard.
+  document.addEventListener('freeze', () => {
+    lifecycleFrozen = true; frozenAt = performance.now(); suspendActivity();
+  });
+  document.addEventListener('resume', () => {
+    if (tween && frozenAt !== null) tween.start += performance.now() - frozenAt;
+    lifecycleFrozen = false; frozenAt = null; resetFrameClock = true; suspendActivity();
   });
   new ResizeObserver(resize).observe(view);
   document.addEventListener('keydown', event => {
+    if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
     if (event.key === 'Escape' && partCycle.playing) partCycle.stop();
-    if (!stageActive() || /INPUT|SELECT|TEXTAREA/.test(event.target.tagName)) return;
+    const target = event.target instanceof Element ? event.target : null;
+    if (!stageActive() || target?.closest('input, select, textarea, [contenteditable="true"], [role="tablist"], [role="dialog"], button, a[href], summary')) return;
     if (/^[1-6]$/.test(event.key)) void go(Number(event.key) - 1);
     else if (['l', 'd', 'h'].includes(event.key.toLowerCase())) setMode({ l: 'light', d: 'data', h: 'heat' }[event.key.toLowerCase()]);
     else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); cycle(event.key === 'ArrowLeft' ? -1 : 1); }
   });
   let last = performance.now();
   renderer.setAnimationLoop(now => {
-    const dt = Math.max(0, (now - last) / 1000); last = now;
-    const suspended = document.hidden || $('src-pop')?.hidden === false || $('page-sheet')?.hidden === false;
+    const dt = resetFrameClock ? 0 : Math.max(0, (now - last) / 1000); last = now; resetFrameClock = false;
+    const suspended = activitySuspended();
     getTeaching()?.setSuspended?.(suspended); built[ui.scene]?.setSuspended?.(suspended);
-    if (document.hidden || ui.scene < 0 || !built[ui.scene]) return;
+    if (lifecycleFrozen || document.hidden || ui.scene < 0 || !built[ui.scene]) return;
     const cpuStart = performance.now();
     if (tween) { const u = Math.max(0, Math.min(1, (now - tween.start) / tween.duration)); poseAt(tween, u, camera.position, controls.target); renderedFlightProgress = u; if (u >= 1) tween = null; }
-    controls.update(); built[ui.scene].update(now / 1000); partCycle.tick(dt); tickers.forEach(fn => fn(now / 1000, dt)); updatePins();
-    renderer.render(built[ui.scene].scene, camera);
+    if(!tween)restoreOrbitMinimum();
+    controls.update();
+    // A reader can rotate the released close view around a spacecraft. Keep
+    // that free camera outside Earth until an authored view restores its limit.
+    if(ui.scene===0&&!orbitTracking&&!tween&&camera.position.length()<1.10){camera.position.setLength(1.10);camera.lookAt(controls.target);}
+    built[ui.scene].update(now / 1000); updateOrbitFollow(suspended); partCycle.tick(dt); tickers.forEach(fn => fn(now / 1000, dt)); updatePins();
+    sceneLook.activate(built[ui.scene]);renderer.render(built[ui.scene].scene, camera);
     const cpu = performance.now() - cpuStart; if (dt < .25) { frameSamples.push(dt * 1000); cpuSamples.push(cpu); }
     frameObservers.forEach(fn => fn({ frame: dt * 1000, cpu })); govern(now);
   });
   const [level, mode, part] = (new URLSearchParams(location.search).get('view') || '').split('.');
   const sharedAssemblyView = assemblyViewFromQuery(location.search);
+  const sharedFollow = followFromQuery(location.search);
   if (/^\d$/.test(level) && modes.includes(mode)) {
-    void show({ scene: Number(level), mode, part: part || null }).then(() => {
+    ui.mode=mode;
+    const opening=part?show({scene:Number(level),mode,part}):go(Number(level),{record:false});
+    void opening.then(() => {
       if (ui.scene !== Number(level) || ui.mode !== mode) return;
-      // A shared two-field view explicitly means Overview. Keep show()'s
-      // first-card default for ordinary navigation and the test-hook contract.
+      setMode(mode,{activity:false});
+      // A shared two-field view means Overview. An explicit enclosure choice
+      // remains a still inspection; other overviews offer live layer activity.
       if (!part) overview();
       const presentation = getAssemblyPresentation();
       if (presentation && sharedAssemblyView) {
@@ -382,6 +535,8 @@ export function start() {
         if (ui.selected) presentation.revealPart(ui.selected);
         updatePins(); emit('scene-settings');
       }
+      if(!part&&Number(level)===0&&sharedFollow)setOrbitFollow(sharedFollow);
+      else if(!part&&!sharedAssemblyView)previewActivity();
     });
   }
   else void go(0);

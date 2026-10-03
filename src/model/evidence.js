@@ -26,6 +26,14 @@ export const MODEL_SOURCES = {
     accessed: '10/01/2026', kind: 'primary', status: 'verified',
     quote: 'P^2/a^3 = 4 pi^2/(G (m1+m2))', section: 'Equation 4, Kepler’s Third Law; negligible secondary mass in this model',
   },
+  'nasa-jsc-vis-viva': {
+    title: 'Libration Point Mission Design Considerations: Typical Form of Vis-Viva Equation',
+    publisher: 'NASA Johnson Space Center / Jerry Condon',
+    url: 'https://ntrs.nasa.gov/api/citations/20140003573/downloads/20140003573.pdf',
+    dated: 'Downloaded PDF cover dated 06/15/2017; appended vis-viva slide dated 04/10/2014',
+    accessed: '10/03/2026', kind: 'primary', status: 'verified',
+    quote: 'V² = 2μ/r − μ/a', section: 'PDF p. 173, printed slide 86, Eq. (1); downloaded and visually verified',
+  },
   'nasa-orbit-equation': {
     title: 'How Orbital Motion is Calculated', publisher: 'NASA Goddard Space Flight Center / From Stargazers to Starships',
     url: 'https://pwg.gsfc.nasa.gov/stargaze/Smotion.htm', dated: 'Educational page; publication date not established',
@@ -51,6 +59,11 @@ export const MODEL_CALCS = {
   'orbit-period': {
     title: 'Two-body orbital period', how: 'T = 2π√(a³/μ), where a is the ellipse’s semi-major axis (the center-to-center radius for a circular orbit). The satellite mass is neglected. GEO uses the public reference altitude; other choices use the stated teaching geometry. Earth is treated as spherical; perturbations are omitted.',
     inputs: ['semi-major axis', 'Earth GM from NASA/JPL', 'model-orbits assumption'],
+  },
+  'orbit-speed': {
+    title: 'Two-body orbital speed',
+    how: 'v = √[μ(2/r − 1/a)], where r is distance from Earth’s center and a is the semi-major axis. The result is an Earth-centered inertial speed, not speed over the rotating ground. A circle has r = a and v = √(μ/r). HEO is evaluated at apogee, r = a(1 + e). The calculation uses the physical teaching orbit, never the compressed drawing coordinates. Gravity is the only modeled acceleration; perturbations and maneuvers are omitted.',
+    inputs: ['physical semi-major axis and orbital radius', 'Earth GM from NASA/JPL', 'NASA JSC vis-viva Eq. (1)', 'model-orbits assumption'],
   },
   'orbit-altitude': {
     title: 'Altitude on an ideal ellipse', how: 'r = a(1 − e²)/(1 + e cos ν); altitude = r − R. Perigee and apogee use a(1 − e) − R and a(1 + e) − R. The HEO teaching example is evaluated at apogee, not averaged over time.',

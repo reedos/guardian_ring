@@ -1,6 +1,6 @@
 // Pure teaching calculations. Hardware figures belong to separately named, cited civil cards.
 import { EARTH_EQUATORIAL_RADIUS_M, SIDEREAL_DAY_SECONDS, orbitalPeriodSeconds,
-  orbitalRadiusMeters, semiMajorAxisMeters, slantRangeMeters } from './orbits';
+  orbitalRadiusMeters, orbitalSpeedMetersPerSecond, semiMajorAxisMeters, slantRangeMeters } from './orbits';
 import { diffractionRadians, integratePlanckBand, lightTimeSeconds, photonEnergyJ } from './radiometry';
 
 export const SCENARIO_OPTIONS = {
@@ -52,6 +52,7 @@ export function compute(input: Partial<Scenario> = {}) {
   const bandRadiance = integratePlanckBand(band.min * 1e-6, band.max * 1e-6, temperatureK);
   const outputs = {
     orbitPeriodSeconds: orbitalPeriodSeconds(semiMajorAxisM),
+    orbitSpeedKmS: orbitalSpeedMetersPerSecond(semiMajorAxisM, radiusM) / 1000,
     altitudeKm: (radiusM - EARTH_EQUATORIAL_RADIUS_M) / 1000,
     perigeeAltitudeKm: (semiMajorAxisM * (1 - eccentricity) - EARTH_EQUATORIAL_RADIUS_M) / 1000,
     apogeeAltitudeKm: (semiMajorAxisM * (1 + eccentricity) - EARTH_EQUATORIAL_RADIUS_M) / 1000,
@@ -72,6 +73,8 @@ export function compute(input: Partial<Scenario> = {}) {
     ['nasa-orbit-equation', 'Opening discussion: r = a(1 − e²)/(1 + e cos φ)']];
   const claims: Partial<Record<keyof typeof outputs, SpecRow>> = {
     orbitPeriodSeconds: row('Teaching orbit period', `${(outputs.orbitPeriodSeconds / 3600).toFixed(3)} h`, 'orbit-period', 'model-orbits', ORBIT_REFS),
+    orbitSpeedKmS: row(heo ? 'Teaching orbital speed at apogee' : 'Teaching circular orbital speed', `${outputs.orbitSpeedKmS.toFixed(3)} km/s`, 'orbit-speed', 'model-orbits',
+      [...ORBIT_REFS, ['nasa-jsc-vis-viva', 'PDF p. 173, printed slide 86, Typical Form of Vis-Viva Equation, Eq. (1)']]),
     altitudeKm: row(heo ? 'Teaching altitude at apogee' : 'Teaching circular altitude', `${outputs.altitudeKm.toFixed(0)} km`, 'orbit-altitude', 'model-orbits', altitudeRefs),
     perigeeAltitudeKm: row('Teaching perigee altitude', `${outputs.perigeeAltitudeKm.toFixed(0)} km`, 'orbit-altitude', 'model-orbits', altitudeRefs),
     apogeeAltitudeKm: row('Teaching apogee altitude', `${outputs.apogeeAltitudeKm.toFixed(0)} km`, 'orbit-altitude', 'model-orbits', altitudeRefs),

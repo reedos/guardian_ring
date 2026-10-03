@@ -48,6 +48,9 @@ function setPresentation(enabled) {
   present.textContent = enabled ? 'Exit presentation' : 'Present';
   $('presentation-exit').hidden = !enabled;
   collapseInspector(enabled || previousCollapsed);
+  // Enter on the visible exit, and use the same return target for the exit
+  // button, menu choice, and Escape. Never leave focus in a hidden control.
+  $(enabled ? 'presentation-exit' : 'more-btn').focus({ preventScroll: true });
 }
 
 // A direct part choice must reveal its description even when a long component
@@ -69,7 +72,7 @@ picker.addEventListener('change', () => {
 on('part-inspect', revealCard);
 $('reset-view').addEventListener('click', overview);
 present.addEventListener('click', () => setPresentation(!document.body.classList.contains('presentation-view')));
-$('presentation-exit').addEventListener('click', () => { setPresentation(false); $('more-btn').focus({ preventScroll: true }); });
+$('presentation-exit').addEventListener('click', () => setPresentation(false));
 details.addEventListener('click', () => {
   const wasCollapsed = document.body.classList.contains('inspector-collapsed');
   if (document.body.classList.contains('presentation-view')) setPresentation(false);

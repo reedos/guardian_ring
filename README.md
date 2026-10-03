@@ -16,6 +16,10 @@ The civil instruments expose their optical, calibration, detector, electronic an
 
 Guiding questions connect each level to a physics experiment and the next level. Side visits return to the original component and view. Replayable sequences distinguish light, electrical signals, image data, commands, measured feedback, power, conduction, and radiation. Civil examples connect ABI with wildfire monitoring and Landsat thermal observations with derived water-use products. Animation timing and drawing geometry remain illustrative.
 
+Entering a hardware level or changing Light, Data, or Heat starts repeating activity, with explicit pause and reduced-motion preferences preserved. Inspect a component to hold its view, or play the ordered sequence to follow the whole assembly. Moving mechanisms, typed signals, and whole-connection emphasis show what each layer means; full instrument optical connections do not portray traced rays.
+
+An optional guided mission follows GEO and LEO spacecraft above Earth's limb, then traces infrared collection, moving scan mirrors, onboard electronics, thermal support, downlink and ground processing. Pause to inspect evidence or take control at any point. The ordered explanation does not depict a real operational schedule; orbital speed examples are calculated independently of the compressed drawing and playback scales.
+
 This edition is under review. The site is unlisted and retains noindex; its review link is shared directly with the reviewer.
 
 ## Follow the evidence
@@ -32,6 +36,9 @@ Hardware, orbit positions, plume shapes, and animated paths are schematic. Publi
 - [Public design-practice additions and completeness review](research/PUBLIC-DESIGN-GAP-REVIEW.md)
 - [First-principles and civil-application review](research/engineering-review.json)
 - [Intelligence Factory UI parity review](research/UI-PARITY-REVIEW.md)
+- [Project walkthrough and corrections](research/project-walkthrough.md)
+- [Mission motion and public physics sources](research/mission-motion-review.md)
+- [Independent usability, visual, and engineering reviews](research/independent-reviews.md)
 - [Build review and supported scope](research/BUILD-REVIEW.md)
 - [Browser and unit-test acceptance record](research/gate-results.md)
 - [Asset provenance and credits](THIRD_PARTY_NOTICES.md)
@@ -46,6 +53,8 @@ npm run dev
 ```
 
 Before committing, run `npm run typecheck`, `npm test`, and `npm run claims`. For browser acceptance, build the site, start `npm run preview`, then run `npm run gates` in another terminal. The suite requires Chrome and a real GPU and checks desktop and phone layouts. `npx tsx tools/gate-report.mjs` records full-build acceptance using the same JSON-aware loader as the claims audit.
+
+The latest completed CPU checks pass 229 tests across 39 files, typecheck, and a strict evidence audit with zero problems. Full browser acceptance remains pending: all twenty-eight commands must pass against the final frozen build. Targeted visual reviews and superseded diagnostic runs do not replace that requirement.
 
 Contributors should read [AGENTS.md](AGENTS.md) and [PLAN.md](PLAN.md). The verified research records supersede unchecked statements in the original source seed and initial plan.
 
