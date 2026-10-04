@@ -1554,3 +1554,6 @@ body.app.stage-priority .orbit-playback-row { flex-wrap:wrap; }
 
 body.app.stage-priority .panel-scroll { grid-auto-rows:max-content; }
 body.app.stage-priority .playback-dock { grid-area:auto; height:max-content; }
+@media (max-width:760px) and (orientation:landscape) {
+  body.app.stage-priority #hud-btns { padding-block:2px; row-gap:2px; }
+}
