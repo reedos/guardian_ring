@@ -49,7 +49,7 @@ export const fly = async ({ id = '', assemblyView = '', animationStep = null }) 
   const spot = assemblyView?{view:B.camera}:({light:B.hotspots,data:B.dataHotspots,heat:B.heatHotspots})[st.mode]?.[id];
   const motionRequired = !!spot?.view && (cam.position.distanceTo(new T.Vector3(...spot.view.pos)) > 1e-7 || grx.controls.target.distanceTo(new T.Vector3(...spot.view.target)) > 1e-7);
   const t0 = performance.now(), cs = grx.clearance ? { ...grx.clearance } : null;
-  if(animationStep!==null)grx.stepTeaching(animationStep);
+  if(animationStep!==null)document.querySelector(`#animation-controls [data-action="${animationStep<0?'previous':'next'}"]`).click();
   else if (assemblyView) grx.setAssemblyView(assemblyView);
   else if (id) grx.select(id, true);
   if (readProgress() !== 0) throw new Error('Flight did not begin at rendered progress 0');
@@ -162,21 +162,24 @@ export const checkCoplanar = () => {
             let axis = -1; if (Math.abs(n.y) > 0.9999) axis = 1; else if (Math.abs(n.x) > 0.9999) axis = 0; else if (Math.abs(n.z) > 0.9999) axis = 2; if (axis < 0) continue;
             if (axis === 1 && n.y < 0) continue;
             const sign = Math.sign(n.getComponent(axis)), [a1, a2] = axis === 1 ? [0, 2] : axis === 0 ? [1, 2] : [0, 1];
-            faces.push({ axis, sign, c: va.getComponent(axis), tri: [[va.getComponent(a1), va.getComponent(a2)], [vb.getComponent(a1), vb.getComponent(a2)], [vc.getComponent(a1), vc.getComponent(a2)]], tag, col, name: o.name || o.parent?.name || `mesh-${tag}`, dbl: mt.side === 2 });
+            const coordinates=[va.getComponent(axis),vb.getComponent(axis),vc.getComponent(axis)];
+            faces.push({ axis, sign, c: coordinates[0], lo:Math.min(...coordinates), hi:Math.max(...coordinates), normal:n.toArray(), plane:n.dot(va), na:n.getComponent(axis), nu:n.getComponent(a1), nv:n.getComponent(a2), tri: [[va.getComponent(a1), va.getComponent(a2)], [vb.getComponent(a1), vb.getComponent(a2)], [vc.getComponent(a1), vc.getComponent(a2)]], tag, col, name: o.name || o.parent?.name || `mesh-${tag}`, dbl: mt.side === 2 });
           }
         }
       }
     });
-    // cluster by (axis, sign) then by plane coordinate within tol
+    // Broad phase uses each triangle's axis interval: a slightly tilted face
+    // has no single axis coordinate. The narrow phase compares its actual plane.
     const byKey = new Map();
     for (const f of faces) { const k = f.axis * 2 + (f.sign > 0 ? 1 : 0); if (!byKey.has(k)) byKey.set(k, []); byKey.get(k).push(f); }
     const hits = [];
     const inTri = (px, py, t) => { const [[x0, y0], [x1, y1], [x2, y2]] = t; const d1 = (px - x1) * (y0 - y1) - (x0 - x1) * (py - y1), d2 = (px - x2) * (y1 - y2) - (x1 - x2) * (py - y2), d3 = (px - x0) * (y2 - y0) - (x2 - x0) * (py - y0); return !(((d1 < 0) || (d2 < 0) || (d3 < 0)) && ((d1 > 0) || (d2 > 0) || (d3 > 0))); };
     for (const [k, list] of byKey) {
-      list.sort((a, c) => a.c - c.c);
+      list.sort((a, c) => a.lo - c.lo);
       let s = 0;
       while (s < list.length) {
-        let e = s + 1; while (e < list.length && list[e].c - list[e - 1].c < tol) e++;
+        let e = s + 1, high=list[s].hi;
+        while (e < list.length && list[e].lo-high < tol) {high=Math.max(high,list[e].hi);e++;}
         const cl = list.slice(s, e); s = e;
         if (new Set(cl.map(f => f.tag)).size < 2) continue;
         // rasterize each triangle onto a jittered grid, per tag; count cells covered by 2+ tags
@@ -195,7 +198,15 @@ export const checkCoplanar = () => {
         const pairs = new Map();
         for (const [key, set] of cells) if (set.size > 1) {
           const all = [...set.values()];
-          const fs = all.filter(f => all.some(o => o.tag !== f.tag && Math.abs(o.c - f.c) < tol));
+          const i=Math.floor(key/100003),j=key-i*100003;
+          const px=mnx+(i+.3719)*cell,py=mny+(j+.6143)*cell;
+          const depth=f=>(f.plane-f.nu*px-f.nv*py)/f.na;
+          const fs = all.filter(f => all.some(o => {
+            if(o.tag===f.tag||f.normal.reduce((sum,n,k)=>sum+n*o.normal[k],0)<=.9999)return false;
+            const separation=Math.abs(depth(o)-depth(f));
+            // Convert the same-point axis gap to perpendicular plane distances.
+            return separation*Math.max(Math.abs(f.na),Math.abs(o.na))<tol;
+          }));
           if (fs.length < 2) continue;
           const label = [...new Set(fs.map(f => f.col))].sort().join(' + ');
           const pr = pairs.get(label) || { n: 0, at: null, c: fs[0].c, names: new Set() }; fs.forEach(f => pr.names.add(f.name)); pr.n++; if (!pr.at) { const i = Math.floor(key / 100003), j = key - i * 100003; pr.at = [mnx + i * cell, mny + j * cell]; } pairs.set(label, pr);
