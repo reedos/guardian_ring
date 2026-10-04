@@ -14,7 +14,8 @@ export function plumePose(state) {
 }
 
 export const PLUME_FRAME={pos:[1.3,3.5,11],target:[.3,3,0],focus:[.3,3,0],detailSize:[6,6.7,2.8],minDistance:5};
-export const plumeOverviewPose=(width,height)=>fitComponent(PLUME_FRAME,width,height);
+export const plumeOverviewPose=(width,height)=>fitComponent(PLUME_FRAME,width,height,
+  width<=760?{safe:{x0:-.82,x1:.82,y0:Math.max(-.76,-1+168/height),y1:.76}}:{});
 
 function overlay(node,name) {
   node.name=name;node.userData.teachingOverlay=true;node.userData.solidForCamera=false;

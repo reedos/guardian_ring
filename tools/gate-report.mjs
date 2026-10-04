@@ -7,7 +7,7 @@ import { pathToFileURL } from 'node:url';
 import { SCENES } from '../src/data.js';
 
 export const FULL_SCOPE = 'all implemented and reserved levels';
-export const PREVIEW = 'http://127.0.0.1:47601/';
+export const PREVIEW = process.env.GR_URL || 'http://127.0.0.1:47601/';
 export const FLIGHT_COVERAGE = 'overview-to-each plus every ordered distinct part pair within each level/layer; active LEO follow';
 export const ACTIVITY_COVERAGE = 'all hardware scenes and layers: running, explicit pause, reduced motion; natural rendered repeat boundaries; evidence and lifecycle holds; orbit follow and shared follow';
 export const GEOMETRY_RUNS = ['cycle-desktop','parts-desktop','views-desktop','views-phone','ui-desktop','ui-phone','coplanar-desktop','flights-desktop','flights-phone','govern-desktop','govern-phone','links-desktop','perf-desktop','perf-phone','labels-desktop','labels-phone','learning-desktop','learning-phone','navigation-desktop','navigation-phone','mission-desktop','mission-phone','activity-desktop','activity-phone','project-audit-desktop','project-audit-phone'];

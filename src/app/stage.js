@@ -8,7 +8,7 @@ import { createCameraClearance, constrainCameraPose, CLEARANCE_BAND } from './ca
 import { occupancyBuilder } from './occupancy.js';
 import { layoutAnchoredPins, pinLabelBox } from './pin-layout.js';
 import { fitComponent } from './component-frame.js';
-import { teachingFocus } from '../scenes/teaching-focus.js';
+import { teachingFocus, teachingPartPhase } from '../scenes/teaching-focus.js';
 import { chip } from '../evidence.js';
 import { renderComponentDetails } from './component-details.js';
 import { createVisitHistory, retainedPart, capturePane, refreshScenarioContent } from './exploration-context.js';
@@ -387,7 +387,7 @@ export function cycle(direction) {
   const id=parts[index < 0 ? direction < 0 ? parts.length - 1 : 0 : (index + direction + parts.length) % parts.length].id;
   select(id);
   const teaching=getTeaching(),lesson=teaching?.state();
-  const phase=lesson?.steps.findIndex(step=>teachingFocus(store.C.SCENES[ui.scene].id,ui.mode,step.id)===id)??-1;
+  const phase=lesson?teachingPartPhase(store.C.SCENES[ui.scene].id,ui.mode,id,lesson.steps):-1;
   pendingPartAnimation=direction>0&&phase>=0?{scene:ui.scene,mode:ui.mode,id,teaching,phase}:null;
 }
 export function setMode(mode, { activity = true } = {}) {

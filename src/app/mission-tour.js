@@ -34,6 +34,12 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   const focusDemoButton=document.createElement('button');focusDemoButton.type='button';focusDemoButton.className='btn';focusDemoButton.dataset.mission='focus';focusDemoButton.textContent='See light focus';focusDemoButton.setAttribute('aria-haspopup','dialog');focusDemoButton.hidden=true;find('.mission-copy').append(focusDemoButton);
   focusDemoButton.addEventListener('click',openFocusDemo);
   const explanation=find('.mission-explanation'),stepControls=find('.mission-step-controls');
+  const phasePicker=document.createElement('div');phasePicker.className='mission-phase-picker';phasePicker.setAttribute('role','group');phasePicker.setAttribute('aria-label','Choose an activity in this chapter');phasePicker.hidden=true;
+  explanation.querySelector('summary').after(phasePicker);let phasePickerKey='';
+  phasePicker.addEventListener('click',event=>{
+    const button=event.target.closest('[data-mission-phase]');if(!button)return;
+    const lesson=stage.getTeaching()?.state();if(lesson)step(Number(button.dataset.missionPhase)-lesson.index);
+  });
   const legend=find('.mission-legend'),evidence=find('.mission-evidence');let explanationKey='';
   const menuStart=document.createElement('button');menuStart.type='button';menuStart.id='mission-launch';menuStart.className='mm-item';menuStart.textContent='Watch the mission';
   document.getElementById('mm-tools-title').after(menuStart);
@@ -85,6 +91,15 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     find('[data-mission="next"]').disabled=loading||index===MISSION_CHAPTERS.length-1;
     const lesson=!chapter.follow&&!loading&&!failed?stage.getTeaching()?.state():null;
     stepControls.hidden=true;
+    phasePicker.hidden=!lesson;
+    if(lesson){
+      const key=`${chapter.scene}:${chapter.mode}:${lesson.steps.map(item=>item.id).join(',')}`;
+      if(key!==phasePickerKey){
+        phasePickerKey=key;phasePicker.replaceChildren();
+        lesson.steps.forEach((item,i)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.dataset.missionPhase=String(i);button.textContent=`${i+1}. ${item.title}`;phasePicker.append(button);});
+      }
+      for(const button of phasePicker.children)button.setAttribute('aria-pressed',String(Number(button.dataset.missionPhase)===lesson.index));
+    }
     find('[data-mission="step-previous"]').disabled=!lesson||lesson.index===0;
     find('[data-mission="step-next"]').disabled=!lesson||lesson.index===lesson.total-1;
     find('.mission-step-count').textContent=lesson?`Step ${lesson.index+1} / ${lesson.total}`:'';
