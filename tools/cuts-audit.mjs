@@ -14,6 +14,7 @@ if(g){const {page}=g,failures=[],rows=[];const prefix=form==='phone'?'p':'d';
    if(await page.locator('#side-levels,#presentation-view,#inspector-toggle,#mission-launch,#part-play').count())failures.push('Removed controls remain in the DOM');
    if(supported){
     await page.locator('#tab-scenario').click();
+    await page.locator('#pane-scenario').waitFor({state:'visible'});
     if(!await page.locator('#pane-parts').isVisible()||!await page.locator('#pane-scenario').isVisible())failures.push(`${scene.id}: Try it replaced the Parts panel`);
     failures.push(...await page.evaluate(checkUI,{selector:'#try-it button,#try-it summary,#tab-parts,#hud-btns button'}));
     await page.screenshot({path:`.local/audit-1004/cuts/${prefix}-scenario.png`});
