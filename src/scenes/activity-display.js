@@ -67,12 +67,16 @@ export function createActivityDisplay(asset,{role,materialName,surfaceNormal=[0,
     if(!frontMap){
       // glTF box atlases may rotate the front island. Resolve the texture axes
       // from the authored face coordinates so screen text stays upright.
-      const xs=front.map(p=>p[2]),ys=front.map(p=>p[3]),xmin=Math.min(...xs),ymin=Math.min(...ys),w=Math.max(...xs)-xmin,h=Math.max(...ys)-ymin;
       const a=front[0];
       for(const b of front)for(const c of front){
         if(frontMap)continue;
         const du=b[0]-a[0],dv=b[1]-a[1],eu=c[0]-a[0],ev=c[1]-a[1],det=du*ev-dv*eu;
-        if(Math.abs(det)<1e-8||w<=0||h<=0)continue;
+        if(Math.abs(det)<1e-8)continue;
+        // Several authored monitors may be batched into this mesh and share
+        // one UV island. Normalize one face, never their combined world span.
+        const triangle=[a,b,c],xs=triangle.map(p=>p[2]),ys=triangle.map(p=>p[3]);
+        const xmin=Math.min(...xs),ymin=Math.min(...ys),w=Math.max(...xs)-xmin,h=Math.max(...ys)-ymin;
+        if(w<=0||h<=0)continue;
         const solve=(axis,scale,offset,sign)=>{
           const db=(b[axis]-a[axis])/scale*sign,dc=(c[axis]-a[axis])/scale*sign;
           const x=(db*ev-dc*dv)/det,y=(du*dc-eu*db)/det;

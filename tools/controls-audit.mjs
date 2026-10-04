@@ -44,6 +44,20 @@ if(g){const {page}=g,failures=[],rows=[];
   check(end.selected===start.selected&&end.index===start.index&&end.progress===1,'Next did not play exactly one part activity');
   rows.push({part:start.selected,phase:start.index,completed:end.progress});
   await page.screenshot({path:`.local/controls-audit/${form}-parts.png`});
+  if(form==='phone'){
+    for(const [width,height] of [[390,844],[320,844],[390,667],[320,667]]){
+      await page.setViewportSize({width,height});
+      if(await page.locator('#tab-parts').getAttribute('aria-expanded')==='true')await page.locator('#tab-parts').click();
+      const handle=await page.locator('#tab-parts').boundingBox();
+      await page.mouse.move(handle.x+handle.width/2,handle.y+handle.height/2);await page.mouse.down();
+      await page.mouse.move(handle.x+handle.width/2,Math.max(0,handle.y-220),{steps:10});await page.mouse.up();
+      check(await page.locator('#tab-parts').getAttribute('aria-expanded')==='true',`${width}x${height}: dragging Parts upward closed the sheet`);
+      check(await page.locator('.panel-scroll').isVisible(),`${width}x${height}: dragged sheet content remained hidden`);
+      check(await page.locator('#gl').evaluate(el=>el.getBoundingClientRect().height/innerHeight)>=.45-.001,`${width}x${height}: dragging Parts violated the canvas floor`);
+      rows.push({dragViewport:`${width}x${height}`});
+    }
+    await page.setViewportSize({width:390,height:844});
+  }
   await page.emulateMedia({reducedMotion:'reduce'});
   const reducedURL=new URL(page.url());reducedURL.search='?view=2.light';
   await page.goto(reducedURL.href);

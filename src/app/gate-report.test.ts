@@ -34,6 +34,6 @@ describe('final acceptance report', () => {
       expect(() => validatePageReports(pages.map((page, i) => i === index ? { ...page, status: 'FAIL', failures: ['catalog overflow'] } : page), opts)).toThrow(`parts/${form} failed`);
     }
     expect(() => validatePageReports(pages, { ...opts, modifiedAt: 500 })).toThrow('stale');
-    expect(() => validatePageReports(pages.map((p, i) => i ? p : { ...p, url: p.url.replace('47601', '47600') }), opts)).toThrow('built preview');
+    expect(() => validatePageReports(pages.map((p, i) => i ? p : { ...p, url: p.url.replace(new URL(p.url).origin, 'http://127.0.0.1:47600') }), opts)).toThrow('built preview');
   });
 });
