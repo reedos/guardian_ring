@@ -69,4 +69,9 @@ pass at 844×390 and 667×375, preserving their 140px canvas and 150px reading
 pane minima. The 87 compact interaction cases still pass. Full acceptance must
 run again against the final candidate; these are development results only.
 
-Full PLAN section 9 acceptance remains required before merging this follow-up.
+Full PLAN section 9 acceptance is complete: all 28 built-preview gate commands
+passed on the combined candidate. See `gate-results.md` for the immutable build
+fingerprint, renderer, counts and performance results. The final test-only
+commit corrects the expected availability of the Light-only focus action;
+its complete phone learning rerun passed. No application code changed after
+the accepted build.

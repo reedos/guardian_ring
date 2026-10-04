@@ -1,8 +1,9 @@
 # Wave 1 visual review
 
 Authorized 10/03/2026 after review of `REVIEW-2026-10-03-vs-IF.md`.
-Items 2–7 use separate branches. Changes remain local: no pushes or deployments.
-Each item requires the full PLAN section 9 acceptance before its merge.
+Items 2–7 retain separate development branches. The combined candidate passed
+full PLAN section 9 acceptance before the single release merge, including the
+phone-composition follow-up. Reed authorized merge and deployment.
 
 | Item | Branch | Scope |
 | --- | --- | --- |
@@ -48,7 +49,7 @@ the reset at a repeating boundary. Radiation and the source pin follow the gas.
 The overview and source inspection frame the complete teaching composition on
 phone and desktop. No hardware was rebuilt or physical quantity added.
 
-CPU verification, visual comparison and full acceptance are pending.
+Verified in the combined candidate; see the final acceptance record below.
 
 ## Item 4
 
@@ -67,7 +68,7 @@ proportions, ray count, glow, enlarged cells and pace. It computes neither
 diffraction nor a real sensor's response. See `wave1-ideal-focus.md` for the
 opened NASA source and derivation. No hardware GLB was rebuilt.
 
-CPU verification, browser regression, visual comparison and full acceptance are pending.
+Verified in the combined candidate; see the final acceptance record below.
 
 ## Item 5
 
@@ -77,7 +78,7 @@ light into information. Both figures use existing verified story claims and
 inline evidence chips. No military temperature is inferred and no Moon
 comparison is used. The publication statement remains verbatim.
 
-CPU verification, paired story screenshots and full acceptance are pending.
+Verified in the combined candidate; see the final acceptance record below.
 
 ## Item 6
 
@@ -92,7 +93,7 @@ The existing source-backed numerical examples remain in the evidence cards.
 Both the key and scale context participate in the viewer's label-obstacle
 layout. Browser regression covers every level and all three layers.
 
-CPU verification, paired screenshots and full acceptance are pending.
+Verified in the combined candidate; see the final acceptance record below.
 
 ## Item 7
 
@@ -109,4 +110,20 @@ a returning-visitor fixture; the full Mission gate independently covers fresh
 entry, returning entry, reduced motion and first-visit component links in
 addition to its previous playback/interruption checks.
 
-CPU verification, paired screenshots and full acceptance are pending.
+Verified in the combined candidate; see the final acceptance record below.
+
+## Final combined acceptance — 10/03/2026
+
+Items 2–7 and the phone-composition follow-up passed all 28 full-scope browser
+commands on one immutable production build. This is combined acceptance, not
+six separate per-item gate runs. The individual development branches remain.
+See `gate-results.md` for the build fingerprint and full results.
+
+Application revision: `cc0918d`. Test-only follow-up: `12a3171`, correcting the
+expected availability of the payload Light focus action in the Data-layer
+learning check. The corrected full phone learning run passed. Typecheck and
+244 unit tests pass; the evidence audit reports zero problems.
+
+Reed authorized merge and deployment. Preserve noindex and the unlisted-review
+preference. Later spacecraft-material, cryocooler-calculation, imagery and
+cinematic-loop work is outside this release.

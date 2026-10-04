@@ -2,7 +2,7 @@
 
 Recorded 10/03/2026. Built preview: `http://127.0.0.1:47601/`. All browser results below postdate this production build and include all 10 implemented levels. Scoped development runs and reserved scenes are rejected.
 
-Build SHA-256 (sorted relative paths and bytes): `a4d59af6e272c58c895ed3a7ef0b5cf26cd480f16a3a7a9bf3dcf93e79025ca7`.
+Build SHA-256 (sorted relative paths and bytes): `b0412f858b60927ad538c08736e648946582ccdef2358cbf7b8d372581ff3fae`.
 
 Recorded renderer: ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11). Software rendering rejected.
 
@@ -20,22 +20,22 @@ Recorded renderer: ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D1
 | govern | desktop | 11 | PASS |
 | govern | phone | 11 | PASS |
 | links | desktop | 15 | PASS |
-| perf | desktop | 179 | PASS; worst p95 9.70 ms |
-| perf | phone | 179 | PASS; worst p95 1.20 ms |
+| perf | desktop | 179 | PASS; worst p95 1.00 ms |
+| perf | phone | 179 | PASS; worst p95 0.90 ms |
 | labels | desktop | 267 | PASS |
 | labels | phone | 267 | PASS |
 | learning | desktop | 359 | PASS |
 | learning | phone | 367 | PASS |
 | navigation | desktop | 962 | PASS |
 | navigation | phone | 966 | PASS |
-| mission | desktop | 177 | PASS |
-| mission | phone | 180 | PASS |
+| mission | desktop | 188 | PASS |
+| mission | phone | 191 | PASS |
 | activity | desktop | 861 | PASS |
 | activity | phone | 861 | PASS |
-| project-audit | desktop | 81 | PASS |
-| project-audit | phone | 82 | PASS |
-| look: story | desktop | 28 evidence dialogs | PASS |
-| look: story | phone | 28 evidence dialogs | PASS |
+| project-audit | desktop | 156 | PASS |
+| project-audit | phone | 157 | PASS |
+| look: story | desktop | 30 evidence dialogs | PASS |
+| look: story | phone | 30 evidence dialogs | PASS |
 | pages: evidence | desktop | 941 evidence dialogs | PASS |
 | pages: method | desktop | 0 evidence dialogs | PASS |
 | pages: glossary | desktop | 0 evidence dialogs | PASS |
@@ -45,7 +45,7 @@ Recorded renderer: ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D1
 | pages: glossary | phone | 0 evidence dialogs | PASS |
 | pages: parts | phone | 127 evidence dialogs | PASS |
 
-28/28 browser gate commands passed: 26 geometry/UI/label/learning runs plus story and reference-page checks on both forms. Typecheck passed. 232/232 unit tests passed. Strict evidence audit: 0 problems across 941 site claims (90240 scenario instances), 96 scenarios, and 253 research facts.
+28/28 browser gate commands passed: 26 geometry/UI/label/learning runs plus story and reference-page checks on both forms. Typecheck passed. 244/244 unit tests passed. Strict evidence audit: 0 problems across 941 site claims (90240 scenario instances), 96 scenarios, and 253 research facts.
 
 Cycle and parts cover every scenario × level × layer. UI includes open menus, visible keyboard focus, scenarios and sheet states. Learning checks cover sequence controls, source-reading suspension, reduced-motion stepping, context-preserving scenario changes and nested side visits. Quality checks compare reported resolution with the renderer, canvas and actual WebGL drawing buffer. Performance samples selected-part inspection, overview and each teaching-animation phase at tier 0; budgets are 15 ms desktop / 7 ms phone p95. Samples that cross into another phase are discarded before the intended phase resumes. Printed-label checks reject partially obscured lettering and require a clear authored desktop view for every nameplate. Flights cover the overview to each part and every ordered distinct part pair within each level/layer on both forms. Story and reference pages check their evidence dialogs, links, phone layout and noindex metadata.
 
