@@ -1607,6 +1607,8 @@ body.mission-active .compact-scene-key .animation-step { display:none; }
 
 .compact-scene-key .animation-step[hidden] { display:none; }
 .mm-select:has(input) { min-height:44px; cursor:pointer; }
+.mission-event-note { display:block; margin:8px 16px; color:var(--accent); font:10px var(--mono); text-transform:uppercase; }
+.mission-event-note[hidden],.mission-phase[hidden] { display:none; }
 
 /* In landscape the inspector is beside the stage, so it uses the full row. */
 @media (max-width:760px) and (orientation:landscape) {

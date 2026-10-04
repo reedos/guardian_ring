@@ -12,7 +12,7 @@ const scene=illustrated({
     reject:[{role:'Process_—_Machined_aluminum',kind:'heat',intensity:.025},{role:'Archive_—_Machined_aluminum',kind:'heat',intensity:.025}],
   },
   activityDisplay:{role:'Operations',materialName:'Blank illustrative monitor glass'},
-  lessonNote:'Assumed display activity: abstract screen tiles illustrate received data and processing. They are not real images, telemetry, sensor format, throughput, or an operational timeline.',
+  lessonNote:'Illustrative event. Abstract tiles and the final ALERT demonstrate received data, processing, and notification. They are not a real event, site, operational timeline, threshold, sensor format, or detection performance.',
   url:'models/ground.glb?v=2',
   camera:{pos:[9.5,8.5,13],target:[0,.9,1.15],min:3,max:34},
   cameraPhone:{pos:[10,9.38,14.63]},distance:7,

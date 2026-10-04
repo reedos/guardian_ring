@@ -56,7 +56,7 @@ describe('manual teaching-step focus', () => {
     expect(overviews.sort()).toEqual([
       'payload/heat/reject', 'payload/heat/radiate', 'focal-plane/heat/reject',
       'plume/light/emit', 'atmosphere/data/timeline',
-      'ground/light/transfer', 'ground/data/transfer', 'ground/heat/reject',
+      'ground/heat/reject',
     ].sort());
   });
 

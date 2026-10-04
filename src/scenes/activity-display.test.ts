@@ -13,6 +13,14 @@ function fixture(){
 const state=(id:string,progress:number,inspection=false)=>({step:{id},progress,inspection});
 
 describe('schematic ground display activity',()=>{
+  it('ends processing with a stationary generic alert and clears it on a new receive phase',()=>{
+    const {display,screen}=fixture();display.update(state('transfer',.6));
+    const before=Array.from((screen.material.map as DataTexture).image.data as Uint8Array);
+    display.update(state('transfer',.8));expect(display.state().alert).toBe(true);
+    expect(Array.from((screen.material.map as DataTexture).image.data as Uint8Array)).not.toEqual(before);
+    expect(display.update(state('transfer',.8))).toBe(false);
+    display.update(state('receive',.1));expect(display.state().alert).toBe(false);
+  });
   it('paints only existing operator glass, leaving shared receiver material and hardware unchanged',()=>{
     const {asset,screen,receiver,glass,before,display}=fixture(),nodes:number[]=[];asset.traverse(node=>nodes.push(node.id));
     display.update(state('receive',.4));
