@@ -27,6 +27,8 @@ export function mountSceneKey(){
     const id=store.C.SCENES[store.ui.scene]?.id,mode=store.ui.mode;
     const lesson=getTeaching()?.state(),key=[id,mode,lesson?.step.id,lesson?.inspection].join(':');if(key===previous)return;previous=key;
     const entries=id==='orbits'?orbitLegends[mode]:(lesson?.visibleLegend||[]).map(item=>[item.color,shortLabels[item.kind]||item.label]);
+    if(['satellite','payload','focal-plane'].includes(id)&&mode==='heat')entries.unshift(['linear-gradient(90deg,#84d8ff,#ff786b)','Cold / warm roles · illustrative, not measured']);
+    if(['satellite','payload','focal-plane'].includes(id)&&mode==='data')entries.unshift(['#a6f35a','Electronics / interfaces']);
     legend.replaceChildren();
     for(const [color,label] of entries||[]){const entry=document.createElement('span'),swatch=document.createElement('i');entry.className='legend-item';swatch.className='sw';swatch.style.setProperty('--c',color);entry.append(swatch,document.createTextNode(label));legend.append(entry);}
   };

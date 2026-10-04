@@ -2,6 +2,7 @@ import { illustrated } from './illustrated.js';
 import { MIRROR_DEMONSTRATIONS, OPTICAL_CONNECTIONS, OPTICAL_CONNECTION_NOTE } from './optical-routing.js';
 const scene=illustrated({
   teaching:'payload',signal:'AnchorDetector',signalRadius:.20,
+  layerMaterials:{data:['Detector','Readout','Digitizer','Controller','DataInterface','ScanDrive','EncoderProcessing','Peripheral'],heat:{Detector:'cold',CoolerControl:'warm',Readout:'warm',Digitizer:'warm',Controller:'warm',PowerSupply:'power'}},
   phaseHighlights:{command:'ScanDrive',feedback:'EncoderProcessing',absorb:'Detector',integrate:'Detector',digitize:'Digitizer'},
   lessonNote:OPTICAL_CONNECTION_NOTE,
   mechanisms:MIRROR_DEMONSTRATIONS.payload,

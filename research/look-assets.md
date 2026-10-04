@@ -11,7 +11,7 @@ Reviewed 10/02/2026. The story illustrations accompany ten interactive Blender s
 | Payload cutaway | `public/look/payload.webp` | `public/look/payload-phone.webp` | `tools/blender/render-authored.py`, shipped `payload.glb` v13 |
 | Focal-plane cutaway | `public/look/focal-plane.webp` | `public/look/focal-plane-phone.webp` | `tools/blender/render-authored.py`, shipped `focal-plane.glb` v5 |
 | Detector-element study | `public/look/pixel.webp` | `public/look/pixel-phone.webp` | `tools/blender/render-authored.py`, shipped `pixel.glb` |
-| Molecular plume | `public/look/plume.webp` | `public/look/plume-phone.webp` | `tools/blender/render-authored.py`, shipped `plume.glb` |
+| Molecular plume | `public/look/plume.webp` | `public/look/plume-phone.webp` | `tools/render-plume-still.mjs`, shipped `plume.glb` v3 and the same runtime gas/atmosphere illustration as the explorer |
 
 Each study has separate desktop and phone cameras. Blender 5.2 renders the geometry, textures and lighting. The current authored stills use Cycles with denoising; the ring builder retains its own rendering configuration. `tools/blender/encode-look.py` creates the twelve WebP delivery files without resizing. The PNGs are reproducible source renders and do not ship.
 

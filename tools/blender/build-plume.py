@@ -18,7 +18,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 2
+VERSION = 3
 OUT.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.context.scene.unit_settings.system = 'NONE'
@@ -221,8 +221,15 @@ def molecule(name, center, bent=False):
         obj.parent=node;obj.data.materials.append(bond_mat);obj['teachingOverlay']=True;obj['physicalHardware']=False
 
 
-molecule('CarbonDioxideMoleculeSymbol',(1.85,.1,3.85))
-molecule('WaterMoleculeSymbol',(-1.65,.2,2.75),True)
+molecule('CarbonDioxideMoleculeSymbol',(2.5,-.30,1.45))
+molecule('WaterMoleculeSymbol',(2.5,-.30,.55),True)
+for diagram in symbols.children:
+    center = Vector((2.5,-.30,1.45 if 'Carbon' in diagram.name else .55))
+    for obj in diagram.children:
+        obj.location = center + (obj.location-center)*.65
+        if obj.type == 'MESH':
+            # Atom and bond meshes are object-local; keep their authored shapes.
+            obj.scale *= .65
 
 # Batch only matching material and semantic parent; retain optional symbol group.
 for parent in [source,envelope,ribbons,wisps,*symbols.children]:
@@ -240,8 +247,8 @@ for name, point, role in [
     ('AnchorSource',(.04,-.12,.55),'Illustrative source gas'),
     ('AnchorBands',(.67,-.55,4.45),'Illustrative gas emission region; not a spectrum measurement'),
     ('AnchorTimeline',(-.75,-.15,5.65),'Upper dispersing plume; qualitative event sequence'),
-    ('AnchorCO2',(1.85,-.065,3.85),'Enlarged carbon dioxide molecular symbol'),
-    ('AnchorH2O',(-1.65,.025,2.75),'Enlarged water-vapor molecular symbol'),
+    ('AnchorCO2',(2.5,-.30,1.45),'Enlarged carbon dioxide molecular symbol'),
+    ('AnchorH2O',(2.5,-.30,.55),'Enlarged water-vapor molecular symbol'),
 ]:
     obj=group(name,anchors,role=role,representative=True,threePosition=[point[0],point[2],-point[1]])
     obj.location=point

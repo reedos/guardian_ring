@@ -1,6 +1,7 @@
 import { illustrated } from './illustrated.js';
 const scene = illustrated({
   teaching:'satellite',
+  layerMaterials:{data:['Payload','Computer','Links','Attitude','Wheels'],heat:{Power:'power',Battery:'warm',Computer:'warm',Radiator:'radiator',SolarArrayLeft:'power',SolarArrayRight:'power'}},
   // Qualitative emphasis follows the existing hardware and each signal's
   // receiving role. Color identifies a process, never a measured state.
   phaseHighlights:{

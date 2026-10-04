@@ -15,6 +15,7 @@ export const GEOMETRY_RUNS = ['cycle-desktop','parts-desktop','views-desktop','v
 GEOMETRY_RUNS.push('audit-layout-desktop','audit-layout-phone');
 GEOMETRY_RUNS.push('controls-audit-desktop','controls-audit-phone');
 GEOMETRY_RUNS.push('story-audit-desktop','story-audit-phone');
+GEOMETRY_RUNS.push('visual-audit-desktop','visual-audit-phone');
 
 export function validateGeometryReport(report, { name, builtAt, sceneIds, base = PREVIEW }) {
   const reject = why => { throw new Error(`${name}: ${why}`); };

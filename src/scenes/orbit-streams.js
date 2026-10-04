@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {createFlowRibbon} from './flow-ribbon.js';
 
 const TAU = Math.PI * 2;
 function overlay(object) {
@@ -23,6 +24,7 @@ export function createOrbitalStream(kind, color, { count = 8, width = .055 } = {
   pointGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 3), 3));
   const points = overlay(new THREE.Points(pointGeometry, new THREE.PointsMaterial({ color, size: kind === 'radio' ? 3.5 : 2.5, sizeAttenuation: false, transparent: true, opacity: .85, depthWrite: false, blending: THREE.AdditiveBlending })));
   group.add(spine, mark, points);
+  const ribbon=kind==='light'?createFlowRibbon(color,count*segments):null;if(ribbon)group.add(ribbon.group);
   const a = new THREE.Vector3(), direction = new THREE.Vector3(), u = new THREE.Vector3(), v = new THREE.Vector3(), p = new THREE.Vector3(), q = new THREE.Vector3();
   return { group,
     update(start, end, phase, visible = true) {
@@ -57,6 +59,7 @@ export function createOrbitalStream(kind, color, { count = 8, width = .055 } = {
         }
       }
       marks.needsUpdate = true; dots.needsUpdate = true;
+      ribbon?.update(marks.array,write/6,true);
     },
   };
 }

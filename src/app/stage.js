@@ -428,7 +428,7 @@ export async function go(index, { record = true, restore = null, owner = null, r
     ui.scene = index; ui.selected = null; framedPart = null; framedOverview=!restore; tween = null; renderedFlightProgress = 1;
     orbitExitMinimum=null;
     if (restore) ui.mode = restore.mode;
-    const preset = built[index].camera; camera.position.set(...preset.pos); controls.target.set(...preset.target); camera.near = preset.near; camera.far = preset.far; controls.minDistance = preset.min; controls.maxDistance = preset.max;
+    const preset = {...built[index].camera,...(!restore?built[index].overviewFrame?.(view.clientWidth,view.clientHeight):{})}; camera.position.set(...preset.pos); controls.target.set(...preset.target); camera.near = preset.near; camera.far = preset.far; controls.minDistance = preset.min; controls.maxDistance = preset.max;
     controls.update(); built[index].setMode(ui.mode); buildPanel(); resize(); emit('scene', index);
     if (restore) {
       if(index===0&&restore.orbitMinimum!==null&&Number.isFinite(restore.orbitMinimum)&&Number.isFinite(restore.minDistance)){
