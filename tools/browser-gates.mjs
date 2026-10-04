@@ -551,7 +551,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
   const missionConditions=[
    {scene:'payload',mode:'light',phase:'slew',part:'scan-system'},
    {scene:'payload',mode:'data',phase:'transfer',part:'data-interface'},
-   {scene:'ground',mode:'data',phase:'transfer',part:null},
+   {scene:'ground',mode:'data',phase:'transfer',part:'operations'},
   ].filter(condition=>scenes.some(scene=>scene.id===condition.scene));
   for(const condition of missionConditions){
    const sample=await page.evaluate(async condition=>{
