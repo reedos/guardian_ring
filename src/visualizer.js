@@ -42,7 +42,7 @@ function setSheet(open) { document.body.style.removeProperty('--inspector-size')
 function showPane(which, { reset = true } = {}) {
   tabs.forEach(button => { const selected = button.dataset.pane === which; button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1; });
   scenario.hidden = which !== 'scenario';
-  document.querySelectorAll('.panel-scroll > :not(#pane-scenario):not(.pane-note)').forEach(element => element.classList.toggle('pane-off', which === 'scenario'));
+  document.querySelectorAll('.panel-scroll > :not(#pane-scenario):not(.pane-note):not(#playback-dock)').forEach(element => element.classList.toggle('pane-off', which === 'scenario'));
   if (reset) document.querySelector('.panel-scroll').scrollTop = 0;
 }
 on('pane-request', ({ pane, reset = true }) => showPane(pane, { reset }));

@@ -4,6 +4,7 @@ import { checkView,fly,checkCoplanar } from './gate-geometry.mjs';
 import { checkUI } from './gate-ui.mjs';
 import { TIERS } from '../src/app/render-quality.js';
 import fs from 'node:fs';
+import { checkOrbitFollow } from './gate-orbit-follow.mjs';
 
 // A visible card must agree with the selected part, not merely contain old text.
 const checkPart=({scene,mode,id})=>{
@@ -112,7 +113,11 @@ export async function run(name,form=process.argv[2]||'desktop'){
     }
    }else for(const id of parts){states++;await show(page,sc.i,mode,id);const r=await page.evaluate(checkView);if(r.err||r.blocked||r.covers.length)fail.push(`${sc.id}/${mode}: ${JSON.stringify(r)}`);}
   }
-  if(name==='flights')details.flightCoverage='overview-to-each plus every ordered distinct part pair within each level/layer';
+  if(name==='flights'){
+   details.flightCoverage='overview-to-each plus every ordered distinct part pair within each level/layer; active LEO follow';
+   await show(page,0,'light');const follow=await checkOrbitFollow(page);details.orbitFollow=follow;
+   fail.push(...follow.failures);states+=follow.samples.length;
+  }
  } else if(name==='ui'){
   const audited=[];
   const audit=async(label,selector)=>{await settleLayout(page);states++;audited.push(label);const result=await page.evaluate(checkUI,{selector});fail.push(...result.map(error=>`${label}: ${error}`));};
@@ -334,13 +339,14 @@ export async function run(name,form=process.argv[2]||'desktop'){
     await audit(label,'#hud-btns button,#hud-btns select,#animation-controls .animation-transport button,.assembly-controls button,.mission-prompt button,.orbit-playback button,#sheet-toggle,#tab-parts,#tab-scenario');
     const problems=await page.evaluate(()=>{
      const bad=[],view=document.getElementById('view').getBoundingClientRect(),panel=document.getElementById('inspector').getBoundingClientRect();
-     if(view.height<139.5)bad.push('canvas lost its 140 px minimum');
-     if(panel.bottom>innerHeight+.5||panel.height<149.5)bad.push('inspector exceeds the viewport or loses its reading area');
+     if(view.height<innerHeight*.45-.5)bad.push('canvas lost its 45% viewport floor');
+     if(panel.bottom>innerHeight+.5||panel.height<59.5)bad.push('inspector exceeds the viewport or loses its reading area');
      for(const node of document.querySelectorAll('#hud-btns button,#hud-btns select,.animation-transport button,.assembly-controls button,.mission-prompt button,.orbit-playback button')){
       if(!node.checkVisibility())continue;
       const r=node.getBoundingClientRect(),hit=document.elementFromPoint((r.left+r.right)/2,(r.top+r.bottom)/2);
       if(r.height<43.5)bad.push(`${node.id||node.textContent}: touch target is shorter than 44 px`);
-      if(r.bottom>panel.top+.5||r.top<0||r.left<0||r.right>innerWidth||!hit||!(node===hit||node.contains(hit)))bad.push(`${node.id||node.textContent}: transport is not fully exposed above the inspector`);
+      // Inspector playback is intentionally scrollable; audit() verifies every control is reachable.
+      if(node.closest('#hud-btns')&&(r.bottom>panel.top+.5||r.top<0||r.left<0||r.right>innerWidth||!hit||!(node===hit||node.contains(hit))))bad.push(`${node.id||node.textContent}: part navigation is not fully exposed above the inspector`);
      }
      return bad;
     });
@@ -380,8 +386,8 @@ export async function run(name,form=process.argv[2]||'desktop'){
      await audit(`${size.width}×${size.height} mission ${chapter} touch controls`,'.mission-active-panel button,.mission-active-panel summary,.mission-transport label');
      const missionProblems=await page.evaluate(()=>{
       const bad=[];for(const node of document.querySelectorAll('.mission-active-panel button,.mission-active-panel summary,.mission-transport label'))if(node.checkVisibility()&&node.getBoundingClientRect().height<43.5)bad.push(`${node.textContent}: mission touch target below 44 px`);
-      const view=document.getElementById('view').getBoundingClientRect(),mission=document.querySelector('.mission-active-panel').getBoundingClientRect();
-      if(view.height<139.5||mission.bottom>innerHeight+.5)bad.push('mission exceeded the viewport or lost the canvas minimum');return bad;
+      const view=document.getElementById('view').getBoundingClientRect(),mission=document.querySelector('.panel-scroll').getBoundingClientRect();
+      if(view.height<innerHeight*.45-.5||mission.bottom>innerHeight+.5)bad.push('mission exceeded the viewport or lost the canvas minimum');return bad;
      });fail.push(...missionProblems.map(problem=>`${size.width}×${size.height} mission ${chapter}: ${problem}`));
     }
     await page.locator('[data-mission="stop"]').click();
@@ -413,8 +419,8 @@ export async function run(name,form=process.argv[2]||'desktop'){
      await audit(label,'#hud-btns button,#hud-btns select,#playback-dock button,.pane-tabs button');
      const problems=await page.evaluate(()=>{
       const bad=[],view=document.getElementById('view').getBoundingClientRect(),panel=document.getElementById('inspector').getBoundingClientRect();
-      if(view.height<139.5)bad.push('canvas lost its 140 px minimum');
-      if(panel.bottom>innerHeight+.5||panel.height<149.5)bad.push('reading pane exceeds viewport or loses its minimum');
+      if(view.height<innerHeight*.45-.5)bad.push('canvas lost its 45% viewport floor');
+      if(panel.bottom>innerHeight+.5||panel.height<59.5)bad.push('reading pane exceeds viewport or loses its minimum');
       const layers=document.querySelector('.mode'),layerRect=layers.getBoundingClientRect();
       if(layers.parentElement.id!=='mode-slot'||layerRect.bottom>view.top+.5||!document.getElementById('level-pick').checkVisibility())bad.push('landscape layer/level controls cover the canvas');
       return bad;

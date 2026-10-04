@@ -9,6 +9,9 @@ export function fitComponent(preset, width, height, {
   maxDistance = Infinity,
 } = {}) {
   if (!preset.detailSize) return preset;
+  // Desktop titles occupy the upper-left 360 x 120 px. Keeping the subject
+  // below that band preserves a clear title even for emissive component views.
+  if (width > 760 && height > 400) safe = {...safe, y1:Math.min(safe.y1, 1-240/height)};
   const focus = preset.focus || preset.target;
   if (![preset.pos,preset.target,focus,preset.detailSize].every(v => Array.isArray(v) && v.length === 3 && v.every(Number.isFinite))
       || preset.detailSize.some(v => v <= 0)) throw new TypeError('A component frame needs finite vectors and positive region dimensions.');
