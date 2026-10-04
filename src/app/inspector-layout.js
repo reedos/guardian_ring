@@ -5,6 +5,12 @@ export function inspectorHeightLimits({ availableHeight, controlsHeight, canvasM
   return { minimum: Math.min(paneMinimum, maximum), maximum };
 }
 
+// Expansion is relative to the collapsed handle, not a viewport fraction:
+// the canvas reservation can leave less than 35% of the viewport for a sheet.
+export function inspectorDragExpanded(height, collapsedHeight = 48) {
+  return height > collapsedHeight + 5;
+}
+
 export function explanationHeightLimit({ availableHeight, fixedControlsHeight, canvasMinimum = 140, paneMinimum = 150, summaryMinimum = 44 }) {
   return Math.max(summaryMinimum, Math.min(150, Math.floor(availableHeight - fixedControlsHeight - canvasMinimum - paneMinimum)));
 }

@@ -422,7 +422,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
    await page.locator('#card-next').focus();
    await page.evaluate(()=>{window.rotationScene=grx.built[grx.state.scene];});
    for(const [size,playing] of [[{width:844,height:390},true],[viewport,false]]){
-    if(!playing)await lessonAction(page,'play');
+    if(!playing){await lessonAction(page,'play');await page.locator('#card-next').focus();}
     await page.setViewportSize(size);await settleLayout(page);
     const stable=await page.evaluate(expected=>grx.built[grx.state.scene]===window.rotationScene&&grx.state.selected===null&&window.rotationScene.teaching.state().playing===expected&&document.activeElement?.id==='card-next',playing);
     states++;audited.push(`rotation preserves ${playing?'playing':'paused'} lesson and focus`);

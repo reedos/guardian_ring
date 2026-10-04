@@ -1594,7 +1594,10 @@ body.app .compact-scene-key { grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   body.app #orbit-controls .btn { padding-inline:8px; }
   body.app #orbit-time { width:80px; }
   body.app.stage-priority .panel { max-height:calc(100% - 45dvh - var(--scene-key-height,0px)); }
-  body.app .compact-scene-key { font-size:9px; gap:6px; }
+  body.app .compact-scene-key { grid-template-columns:minmax(0,1fr); font-size:9px; gap:3px; }
+  body.app .compact-scene-key .scaffold-badge { font-size:8px; letter-spacing:0; }
+  body.app .compact-scene-key #legend { flex-wrap:nowrap; justify-content:flex-start; overflow-x:auto; max-width:100%; scrollbar-width:thin; }
+  body.app .compact-scene-key #legend .legend-item { flex:none; white-space:nowrap; text-align:left; }
 }
 
 body.app.mission-active #orbit-explanation { display:none; }

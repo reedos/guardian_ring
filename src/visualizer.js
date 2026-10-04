@@ -17,7 +17,7 @@ import { mountFocusDemo } from './app/focus-demo.js';
 import { mountSceneKey } from './app/scene-key.js';
 import { mountMissionTour } from './app/mission-tour.js';
 import { moreCue } from './app/more-cue.js';
-import { measureInspectorLimits, mountInspectorLayout } from './app/inspector-layout.js';
+import { measureInspectorLimits, mountInspectorLayout, inspectorDragExpanded } from './app/inspector-layout.js';
 
 window.grx = {
   store, setScenario, pin, state: store.ui, go: stage.go, select: stage.select, setMode: stage.setMode,
@@ -97,9 +97,9 @@ for(const handle of [sheetButton,document.getElementById('tab-parts')])handle.ad
   if (!sheetDrag) return;
   const delta = sheetDrag.y - event.clientY; if (Math.abs(delta) > 5) dragged = true; if (!dragged) return;
   const limits = measureInspectorLimits();
-  const height = Math.max(limits.minimum, Math.min(limits.maximum, sheetDrag.height + delta));
+  const height = Math.max(Math.min(limits.minimum,48), Math.min(limits.maximum, sheetDrag.height + delta));
   document.body.style.setProperty('--inspector-size', `${height}px`);
-  const open = height > innerHeight * .35; document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open));if(matchMedia('(max-width:760px)').matches)document.getElementById('tab-parts').setAttribute('aria-expanded',String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel');
+  const open = inspectorDragExpanded(height); document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open));if(matchMedia('(max-width:760px)').matches)document.getElementById('tab-parts').setAttribute('aria-expanded',String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel');
 });
 for(const handle of [sheetButton,document.getElementById('tab-parts')])handle.addEventListener('pointerup', () => { sheetDrag = null; });
 for(const handle of [sheetButton,document.getElementById('tab-parts')])handle.addEventListener('pointercancel', () => { sheetDrag = null; dragged = false; });
