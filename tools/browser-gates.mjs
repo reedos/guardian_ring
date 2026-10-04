@@ -366,6 +366,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
     }
     await page.goto(new URL('visualizer.html?view=0.light',BASE).href);
     await page.waitForFunction(()=>window.grx?.built[0]&&!grx.isBusy()&&!grx.isCameraMoving());await settleLayout(page);
+    await openParts(page);
     if(!await page.locator('[data-mission="start"]').isVisible())fail.push(`${size.width}×${size.height}: initial mission invitation is hidden`);
     await page.locator('[data-mission="start"]').click();await page.waitForFunction(()=>!grx.mission.state().loading&&!grx.isCameraMoving());
     await page.locator('[data-mission="play"]').click();
@@ -378,7 +379,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
       if(view.height<innerHeight*.45-.5||mission.bottom>innerHeight+.5)bad.push('mission exceeded the viewport or lost the canvas minimum');return bad;
      });fail.push(...missionProblems.map(problem=>`${size.width}×${size.height} mission ${chapter}: ${problem}`));
     }
-    await page.locator('[data-mission="stop"]').click();
+    await page.locator('#more-btn').click();await page.locator('[data-mission="stop"]').click();
    }
    for(const size of [{width:390,height:844},{width:320,height:844},{width:390,height:667},{width:320,height:667}]){
     await page.setViewportSize(size);await show(page,'abi','light');
