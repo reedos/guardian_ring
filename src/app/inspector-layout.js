@@ -17,7 +17,7 @@ export function missionInvitationFits({ availableHeight, controlsHeight, invitat
 // Scroll the note itself rather than allowing it to push navigation offscreen.
 export function mountInspectorLayout() {
   const panel = document.getElementById('inspector');
-  const playback = [document.getElementById('mission-tour'), document.getElementById('animation-controls'), document.getElementById('orbit-controls')].filter(Boolean);
+  const playback = [document.getElementById('mission-tour'), document.getElementById('animation-controls'), document.getElementById('orbit-explanation')].filter(Boolean);
   const dock = document.createElement('section');
   dock.id = 'playback-dock'; dock.className = 'playback-dock';
   dock.setAttribute('aria-label', 'Playback and presentation controls');
@@ -25,9 +25,21 @@ export function mountInspectorLayout() {
   // Playback owns a bounded scroller in the inspector, never a canvas row.
   // Reparent existing nodes once so listeners, focus and lesson clocks survive.
   dock.append(...playback);
-  const keyDock = document.querySelector('.compact-scene-key');
-  if (keyDock) dock.append(keyDock);
   document.body.classList.add('stage-priority');
+  const picker=document.querySelector('.view-part'),transport=document.getElementById('hud-btns');
+  const pickerHome=picker.parentElement,viewer=document.getElementById('viewer'),view=document.getElementById('view');
+  const phone=matchMedia('(max-width:760px)');
+  function placeNavigation(){
+    const focused=document.activeElement;
+    for(const tab of document.querySelectorAll('[data-pane]'))tab.setAttribute('role',phone.matches?'button':'tab');
+    document.querySelector('.pane-tabs').setAttribute('role',phone.matches?'group':'tablist');
+    const parts=document.getElementById('tab-parts');
+    if(phone.matches)parts.setAttribute('aria-expanded',String(document.body.classList.contains('sheet-open')));else parts.removeAttribute('aria-expanded');
+    if(phone.matches){panel.querySelector('.panel-scroll').prepend(picker);view.append(transport);}
+    else {pickerHome.prepend(picker);view.after(transport);}
+    if(focused?.isConnected&&focused.checkVisibility())focused.focus({preventScroll:true});
+  }
+  phone.addEventListener('change',placeNavigation);placeNavigation();
 }
 
 export function measureInspectorLimits() {

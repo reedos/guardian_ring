@@ -3,13 +3,19 @@ import {openGate,finish,BASE} from './gate-common.mjs';
 import {checkView} from './gate-geometry.mjs';
 import {checkUI} from './gate-ui.mjs';
 import {teachingFocus} from '../src/scenes/teaching-focus.js';
+import {openParts} from './gate-actions.mjs';
 const form=process.argv[2]||'desktop',g=await openGate('mission',form,{returning:false});
 if(g){const {page}=g,failures=[];let states=0;
  const check=(ok,message)=>{states++;if(!ok)throw new Error(message);};
  const frames=n=>page.evaluate(n=>new Promise(resolve=>{const tick=()=>--n>0?requestAnimationFrame(tick):resolve();requestAnimationFrame(tick);}),n);
  const state=()=>page.evaluate(()=>grx.mission.state());
  const ready=()=>page.waitForFunction(()=>!grx.mission.state().loading&&!grx.isCameraMoving());
- const press=action=>page.locator(`[data-mission="${action}"]`).click();
+ const press=async action=>{
+   if(action==='stop'&&!await page.locator(`[data-mission="${action}"]`).isVisible())await page.locator('#more-btn').click();
+   if(action==='step-next'||action==='step-previous')return page.evaluate(action=>grx.mission.step(action==='step-next'?1:-1),action);
+   if(action!=='stop'&&await page.locator('#more-menu').isVisible())await page.locator('#more-btn').click();
+   return page.locator(`[data-mission="${action}"]`).click();
+ };
  try{
    await page.waitForFunction(()=>grx.mission.state().active&&!grx.mission.state().loading);await ready();
    check((await state()).playing&&(await state()).establishing&&await page.evaluate(()=>grx.orbitFollow()===null),'First bare visit did not establish the whole Earth before following a spacecraft');
@@ -19,6 +25,7 @@ if(g){const {page}=g,failures=[];let states=0;
    await page.waitForFunction(()=>window.grx?.built[0]&&!grx.isBusy());await frames(4);
    check(!(await state()).active,'Returning visit restarted the mission');
    await page.evaluate(()=>{grx.setTransitions('instant');grx.settle();});
+   await openParts(page);
    check(await page.locator('[data-mission="start"]').isVisible(),'Mission entry is hidden behind another menu');
   const scenario=await page.evaluate(()=>JSON.stringify(grx.store.scenario));
   if(!await page.locator('[data-mission="start"]').isVisible()){
@@ -33,11 +40,15 @@ if(g){const {page}=g,failures=[];let states=0;
   await page.waitForTimeout(250);
   check(await page.evaluate(before=>grx.mission.state().elapsed===before.time&&grx.camera.position.distanceTo(new grx.THREE.Vector3(...before.camera))<1e-6,paused),'Pause did not hold the orbit and follow camera');
   await press('play');await frames(3);
-  await page.locator('#mission-tour [data-src]').first().click();await page.locator('#src-pop').waitFor({state:'visible'});await frames(3);
+  await page.locator('#more-btn').click();
+  await page.locator('.mission-explanation > summary').click();
+  await page.locator('.mission-options [data-src]').first().click();await page.locator('#src-pop').waitFor({state:'visible'});await frames(3);
   check(!(await page.locator('#src-pop').innerText()).includes('Not traced'),'Mission orbital speed has no evidence');
   const held=await state();await page.waitForTimeout(250);
   check((await state()).elapsed===held.elapsed,'Reading evidence advanced the mission');
   await page.keyboard.press('Escape');check((await state()).active,'Closing evidence ended the mission');
+  if(await page.locator('#more-menu').isVisible())await page.locator('#more-btn').click();
+  await press('play');
   await press('next');await ready();await frames(4);
   check(await page.evaluate(()=>grx.orbitFollow()==='leo'&&grx.mission.state().index===1),'Next chapter did not enter LEO follow');
   check(await page.evaluate(()=>JSON.stringify(grx.store.scenario))===scenario,'Following an orbit overwrote Scenario inputs');
@@ -59,10 +70,10 @@ if(g){const {page}=g,failures=[];let states=0;
    await press('next');await ready();await frames(4);
     const current=await state();check(current.index===chapter&&!current.failed,`Chapter ${chapter} failed to load`);
     if(current.chapter.follow)continue;
-    check(await page.locator('.mission-step-controls').isVisible(),`${current.chapter.scene}: mission has no manual step controls`);
+    check(!await page.locator('.mission-step-controls').isVisible(),`${current.chapter.scene}: duplicate mission step transport remains`);
     if(chapter===4){
      await page.evaluate(()=>grx.mission.play());
-     await page.locator('.mission-explanation > summary').click();await frames(3);
+     if(!await page.locator('#more-menu').isVisible())await page.locator('#more-btn').click();await page.locator('.mission-explanation > summary').click();await frames(3);
      check(!(await state()).playing,'Opening the current-step explanation did not pause the mission');
      check(await page.locator('.mission-description').innerText()===await page.evaluate(()=>grx.built[grx.state.scene].teaching.state().step.body),'Mission explanation is not the current teaching step');
      check(await page.locator('.mission-legend [data-kind]').count()>0,'Mission explanation has no typed-flow legend');
@@ -71,7 +82,7 @@ if(g){const {page}=g,failures=[];let states=0;
      const heldStep=await page.evaluate(()=>grx.built[grx.state.scene].teaching.state().progress);await page.waitForTimeout(200);
      check(await page.evaluate(before=>!grx.mission.state().playing&&grx.built[grx.state.scene].teaching.state().progress===before,heldStep),'Reading mission step evidence changed the paused phase');
      await page.keyboard.press('Escape');check((await state()).active,'Closing step evidence ended the mission');
-     await page.locator('.mission-explanation > summary').click();
+     if(!await page.locator('#more-menu').isVisible())await page.locator('#more-btn').click();await page.locator('.mission-explanation > summary').click();
      await press('step-next');await ready();await frames(3);
      check(await page.evaluate(()=>{const s=grx.built[grx.state.scene].teaching.state();return grx.mission.state().phase===1&&!grx.mission.state().playing&&!s.playing&&s.progress===.72&&grx.state.selected==='scan-system';}),'Manual mission step did not retain a meaningful paused scan pose');
      await press('step-previous');await ready();await frames(3);
@@ -99,7 +110,7 @@ if(g){const {page}=g,failures=[];let states=0;
    }else await page.evaluate(()=>grx.mission.play());
   }
   await press('stop');check(!(await state()).active,'Explore did not stop the guided mission');
-  check(await page.evaluate(()=>document.activeElement.id==='part-select'),'Explore did not restore a usable control');
+  check(await page.evaluate(()=>['part-select','card-next'].includes(document.activeElement.id)&&document.activeElement.checkVisibility()),'Explore did not restore a usable control');
   // Releasing a close camera must cancel an unfinished entry. An authored
   // Overview then restores the original safe orbit-control distance.
   await page.evaluate(async()=>{await grx.go('orbits',{record:false});grx.setTransitions('quick');grx.setOrbitFollow('leo');});
@@ -128,9 +139,11 @@ if(g){const {page}=g,failures=[];let states=0;
    await page.evaluate(()=>{grx.setTransitions('instant');return grx.mission.start();});await ready();
    await press('next');await ready();await press('next');await requested;
    if(action==='scenario'){
+    // The mission now occupies the inspector. Explore releases its ownership
+    // before the reader opens Scenario, including while a chapter is loading.
+    await press('stop');
     await page.locator('#tab-scenario').click();release();await ready();await frames(3);
     check(!(await state()).playing&&await page.locator('#pane-scenario').isVisible(),'A completed pending chapter replaced the reader’s Scenario pane');
-    await press('stop');
    }else{
     await press('stop');const retained=await page.evaluate(()=>grx.state.scene);release();await page.waitForTimeout(500);
     check(!(await state()).active&&await page.evaluate(scene=>grx.state.scene===scene&&!grx.isBusy(),retained),'A canceled chapter replaced the retained scene after loading');
@@ -146,8 +159,8 @@ if(g){const {page}=g,failures=[];let states=0;
    for(let chapter=2;chapter<=4;chapter++){await press('next');await ready();await frames(3);}
    check(await page.evaluate(()=>grx.mission.state().index===4&&grx.mission.state().phase===0&&!grx.mission.state().playing&&grx.built[grx.state.scene].teaching.state().progress===.72),'Reduced-motion chapter entry has no meaningful stationary phase');
    await press('step-next');await ready();await frames(3);
-   check(await page.evaluate(()=>grx.mission.state().phase===1&&!grx.mission.state().playing&&!grx.built[grx.state.scene].teaching.state().playing&&grx.built[grx.state.scene].teaching.state().progress===.72),'Reduced-motion reader cannot step through a hardware chapter while paused');
-   await page.locator('.mission-explanation > summary').click();
+   check(await page.evaluate(()=>grx.mission.state().phase===1&&!grx.mission.state().playing&&!grx.built[grx.state.scene].teaching.state().playing&&grx.built[grx.state.scene].teaching.state().progress===.72),'Reduced-motion phase probe lost its meaningful paused pose');
+   if(!await page.locator('#more-menu').isVisible())await page.locator('#more-btn').click();await page.locator('.mission-explanation > summary').click();
    for(const viewport of form==='phone'?[{width:390,height:844},{width:844,height:390}]:[{width:1440,height:900}]){
     await page.setViewportSize(viewport);await frames(4);
     const ui=await page.evaluate(checkUI,{selector:'#mission-tour button,#mission-tour input,#mission-tour summary,#hud-btns button,#part-select'});

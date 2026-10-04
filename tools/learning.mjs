@@ -3,6 +3,8 @@
 import { openGate, show, finish, MODES, BASE } from './gate-common.mjs';
 import { checkView, fly } from './gate-geometry.mjs';
 import fs from 'node:fs';
+import {checkUI} from './gate-ui.mjs';
+import {lessonAction,setMotion,openParts} from './gate-actions.mjs';
 
 const form = process.argv[2] || 'desktop';
 const gate = await openGate('learning', form);
@@ -18,7 +20,7 @@ if (gate) {
     function tick() { if (--n <= 0) resolve(); else requestAnimationFrame(tick); }
     requestAnimationFrame(tick);
   }), count);
-  const action = name => page.locator(`#animation-controls [data-action="${name}"]`).click();
+  const action = name => lessonAction(page,name);
   const assemblyAction = view => page.locator(`.assembly-controls [data-assembly-view="${view}"]`).click();
   const checkAssembly = async (wanted, context) => {
     const result = await page.evaluate(view => {
@@ -120,29 +122,11 @@ if (gate) {
         await page.setViewportSize(viewport);
         await page.locator('.animation-explanation').evaluate(node=>{node.open=true;});
         await page.locator('#tab-scenario').click();await frames(3);
-        const layout=await page.evaluate(()=>{
-          const bad=[],selector='.assembly-controls button,#part-select,#card-prev,#card-next,#reset-view,#animation-controls .animation-transport button';
-          const focus=document.querySelector('.focus-demo-open');
-          const focusExpected=grx.store.C.SCENES[grx.state.scene].id==='payload'&&grx.state.mode==='light';
-          if(!focus||focus.hidden===focusExpected)bad.push('Light-focus action availability does not match the layer');
-          // The focus demonstration belongs only to payload Light. All other
-          // transport and enclosure controls remain mandatory in this check.
-          const nodes=[...document.querySelectorAll(selector)].filter(node=>node!==focus||focusExpected),boxes=[];
-          for(const node of nodes) {
-            if(!node.checkVisibility()){bad.push(`${node.id||node.textContent}: hidden`);continue;}
-            const box=node.getBoundingClientRect(),hit=document.elementFromPoint((box.left+box.right)/2,(box.top+box.bottom)/2);
-            if(box.left<0||box.top<0||box.right>innerWidth+.5||box.bottom>innerHeight+.5||!hit||!(node===hit||node.contains(hit)))bad.push(`${node.id||node.textContent}: clipped or covered`);
-            boxes.push({node,box});
-          }
-          for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++) {
-            const a=boxes[i].box,b=boxes[j].box;
-            // Joined transport buttons share a 1 px border. Match the main UI
-            // gate's 2 px intersection tolerance; center-hit checks stay strict.
-            if(Math.min(a.right,b.right)-Math.max(a.left,b.left)>2&&Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>2)bad.push(`${boxes[i].node.id} overlaps ${boxes[j].node.id}`);
-          }
-          if(document.getElementById('view').getBoundingClientRect().height<139.5)bad.push('canvas lost its usable minimum height');
-          return bad;
-        });
+        // Playback now shares the inspector's scroller. Every control must
+        // remain reachable, rather than all being exposed simultaneously.
+        const layout=await page.evaluate(checkUI,{selector:'.assembly-controls button,#part-select,#card-prev,#card-next,#reset-view,#animation-controls .animation-transport button'});
+        const height=await page.locator('#gl').evaluate(el=>el.getBoundingClientRect().height);
+        if(height<viewport.height*.45-.5)layout.push('canvas lost its 45% viewport floor');
         check(!layout.length,`${viewport.width}×${viewport.height}: ${layout.join('; ')}`);
         await assemblyAction('assembled');await assemblyAction('inside');await action('next');
         await checkAssembly('inside',`${viewport.width}×${viewport.height} controls`);
@@ -232,11 +216,11 @@ if (gate) {
 
     // Pause holds an orbiter at its current position; its pin follows that node.
     await show(page,'orbits','light');
-    if (!(await page.evaluate(() => grx.built[0].motion()))) await page.locator('#day-play').click();
+    if (!(await page.evaluate(() => grx.built[0].motion()))) await setMotion(page,!(await page.evaluate(()=>grx.built[0].motion())));
     await page.evaluate(() => { window.learningOrbitStart=grx.built[0].hotspots.heo.node.position.toArray(); });
     await frames(12);
     check(await page.evaluate(() => grx.built[0].hotspots.heo.node.position.distanceTo(new grx.THREE.Vector3(...window.learningOrbitStart))>1e-5), 'Schematic HEO did not advance');
-    await page.locator('#day-play').click();
+    await setMotion(page,!(await page.evaluate(()=>grx.built[0].motion())));
     await page.evaluate(() => { window.learningOrbitPause=grx.built[0].hotspots.heo.node.position.toArray(); });
     await frames(8);
     check(await page.evaluate(() => !grx.built[0].motion() && grx.built[0].hotspots.heo.node.position.distanceTo(new grx.THREE.Vector3(...window.learningOrbitPause))===0), 'Pausing the day did not hold the current orbital pose');
@@ -250,7 +234,7 @@ if (gate) {
     // Open in the same task as Play so even a slow test host cannot consume the
     // remaining step before the source-reading suspension is exercised.
     await page.evaluate(async () => {
-      document.querySelector('#animation-controls [data-action="play"]').click();
+      grx.overview();grx.settle();grx.setSceneActivity(true);
       await Promise.resolve();
       document.querySelector('.animation-evidence [data-src="learning:cooler-balance"]').click();
     });

@@ -6,7 +6,7 @@ import {checkUI} from './gate-ui.mjs';
 const form=process.argv[2]||'desktop',g=await openGate('audit-layout',form);
 if(g){
  const {page,scenes}=g,failures=[],rows=[];
- const directory='.local/audit-1004/glitches';fs.mkdirSync(directory,{recursive:true});
+ const directory=`.local/audit-1004/${process.env.GR_AUDIT_GROUP||'controls'}`;fs.mkdirSync(directory,{recursive:true});
  const prefix=form==='phone'?'p':'d';
  const check=async label=>{
   await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));

@@ -28,7 +28,9 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   const host=document.createElement('section');host.className='mission-tour';host.id='mission-tour';host.setAttribute('aria-label','Guided mission');
   host.innerHTML='<div class="mission-prompt"><button type="button" class="btn go" data-mission="start">Watch the mission <span aria-hidden="true">→</span></button><span>From orbit to the ground · guided illustration</span></div><div class="mission-active-panel" hidden><div class="mission-heading"><span class="eyebrow">Illustrative mission</span><span class="mission-count"></span></div><div class="mission-copy" aria-live="polite"><strong class="mission-title"></strong><p class="mission-body"></p><p class="mission-phase"></p></div><div class="mission-step-controls" role="group" aria-label="Steps in this chapter" hidden><button type="button" class="btn" data-mission="step-previous" aria-label="Previous mission step">← Step</button><span class="mission-step-count" aria-live="polite"></span><button type="button" class="btn" data-mission="step-next" aria-label="Next mission step">Step →</button></div><details class="mission-explanation"><summary>About this step</summary><p class="mission-description"></p><div class="animation-legend mission-legend" aria-label="Flow legend"></div><div class="animation-evidence mission-evidence"></div><p class="mission-detail-note"></p></details><div class="mission-progress" aria-hidden="true"><i></i></div><div class="mission-transport" role="group" aria-label="Mission playback"><button type="button" class="btn" data-mission="play">Pause</button><button type="button" class="btn" data-mission="previous">← Chapter</button><button type="button" class="btn" data-mission="next">Chapter →</button><button type="button" class="btn" data-mission="stop">Explore this view</button><label><input type="checkbox" data-mission="repeat"> Repeat</label></div><p class="mission-note">Presentation time is compressed. Hardware, routes, and activity are representative; the ordered explanation separates tasks that may overlap.</p></div>';
   document.getElementById('viewer').insertBefore(host,document.getElementById('animation-controls'));
-  const find=selector=>host.querySelector(selector),prompt=find('.mission-prompt'),panel=find('.mission-active-panel');
+  let missionOptions=null;
+  const find=selector=>host.querySelector(selector)||missionOptions?.querySelector(selector),prompt=find('.mission-prompt'),panel=find('.mission-active-panel');
+  find('[data-mission="previous"]').textContent='Back';find('[data-mission="next"]').textContent='Next';
   const focusDemoButton=document.createElement('button');focusDemoButton.type='button';focusDemoButton.className='btn';focusDemoButton.dataset.mission='focus';focusDemoButton.textContent='See light focus';focusDemoButton.setAttribute('aria-haspopup','dialog');focusDemoButton.hidden=true;find('.mission-copy').append(focusDemoButton);
   focusDemoButton.addEventListener('click',openFocusDemo);
   const explanation=find('.mission-explanation'),stepControls=find('.mission-step-controls');
@@ -37,7 +39,10 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   document.getElementById('mm-tools-title').after(menuStart);
   menuStart.addEventListener('click',()=>void start());
   const orbitFact=document.createElement('p');orbitFact.className='orbit-follow-fact';orbitFact.hidden=true;
-  find('.mission-copy').after(orbitFact);let factFamily=null;
+  explanation.append(orbitFact);let factFamily=null;
+  missionOptions=document.createElement('section');missionOptions.className='mission-options';missionOptions.hidden=true;
+  missionOptions.append(explanation,find('[data-mission="stop"]'),find('[data-mission="repeat"]').closest('label'));
+  document.getElementById('more-menu').append(missionOptions);
   let active=false,playing=false,loading=false,generation=0,index=0,elapsed=0,phase=-1,cameraHold=false,mutating=false,lastProgress=-1,completed=false,failed=false,establishing=false;
   const state=()=>({active,playing,loading,index,total:MISSION_CHAPTERS.length,phase,completed,failed,elapsed,establishing,chapter:MISSION_CHAPTERS[index]});
   const blocked=()=>stage.activitySuspended();
@@ -60,7 +65,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     find('.mission-detail-note').textContent=orbital?'The physical circular-orbit example is independent of the current Scenario.':lesson.note||'Animation timing and paths are illustrative.';
   }
   function render() {
-    prompt.hidden=active;panel.hidden=!active;document.body.classList.toggle('mission-active',active);
+    prompt.hidden=active;panel.hidden=!active;document.body.classList.toggle('mission-active',active);missionOptions.hidden=!active;
     if(!active)return;
     const chapter=MISSION_CHAPTERS[index];
     focusDemoButton.hidden=chapter.scene!=='payload'||chapter.mode!=='light';
@@ -74,7 +79,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     find('[data-mission="previous"]').disabled=loading||index===0;
     find('[data-mission="next"]').disabled=loading||index===MISSION_CHAPTERS.length-1;
     const lesson=!chapter.follow&&!loading&&!failed?stage.getTeaching()?.state():null;
-    stepControls.hidden=!lesson;
+    stepControls.hidden=true;
     find('[data-mission="step-previous"]').disabled=!lesson||lesson.index===0;
     find('[data-mission="step-next"]').disabled=!lesson||lesson.index===lesson.total-1;
     find('.mission-step-count').textContent=lesson?`Step ${lesson.index+1} / ${lesson.total}`:'';
@@ -131,7 +136,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     stage.cancelNavigation(owner);
     generation++;active=false;playing=false;loading=false;cameraHold=false;establishing=false;
     mutate(()=>{stage.getTeaching()?.pause();stage.setOrbitFollow(null);stage.built[stage.destination()]?.setMotion?.(false);});
-    render();if(focus)document.getElementById('part-select').focus({preventScroll:true});
+    render();if(focus){const picker=document.getElementById('part-select');(picker.checkVisibility()?picker:document.getElementById('card-next')).focus({preventScroll:true});}
   }
   async function start({establish=false}={}) {
     establishing=establish;
@@ -153,7 +158,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     if(find('[data-mission="repeat"]').checked){void enter(0);return;}
     completed=true;pause({remember:false});find('.mission-phase').textContent='Mission walkthrough complete. Explore this view or replay the journey.';
   }
-  host.addEventListener('click',event=>{
+  const handleAction=event=>{
     const action=event.target.closest('[data-mission]')?.dataset.mission;if(!action)return;
     if(action==='start')void start();
     else if(action==='stop')stop({focus:true});
@@ -162,7 +167,9 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     else if(action==='next'&&index<MISSION_CHAPTERS.length-1)void enter(index+1);
     else if(action==='step-previous')step(-1);
     else if(action==='step-next')step(1);
-  });
+  };
+  host.addEventListener('click',handleAction);missionOptions.addEventListener('click',handleAction);
+
   // Reading a changing paragraph should not require racing the lesson clock.
   explanation.addEventListener('toggle',()=>{if(explanation.open&&active&&playing)pause();});
   // An explicit exploration action immediately gives the controls back to the
@@ -219,5 +226,5 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     if(!remembered){remembered=true;if(!entry.remember()&&entry.automatic)requested=false;}
     if(requested&&!blocked()){requested=false;void start({establish:entry.automatic});}
   });
-  return {state,start,stop,pause,play,step,next:()=>index<MISSION_CHAPTERS.length-1?enter(index+1):undefined,previous:()=>index>0?enter(index-1):undefined,dispose(){stop();untick();unready();document.removeEventListener('pointerdown',cancelEntry,{capture:true});document.removeEventListener('keydown',cancelEntry,{capture:true});host.remove();menuStart.remove();}};
+  return {state,start,stop,pause,play,step,next:()=>index<MISSION_CHAPTERS.length-1?enter(index+1):undefined,previous:()=>index>0?enter(index-1):undefined,dispose(){stop();untick();unready();document.removeEventListener('pointerdown',cancelEntry,{capture:true});document.removeEventListener('keydown',cancelEntry,{capture:true});host.remove();menuStart.remove();missionOptions.remove();}};
 }

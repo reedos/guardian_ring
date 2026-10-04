@@ -49,7 +49,7 @@ export const fly = async ({ id = '', assemblyView = '', animationStep = null }) 
   const spot = assemblyView?{view:B.camera}:({light:B.hotspots,data:B.dataHotspots,heat:B.heatHotspots})[st.mode]?.[id];
   const motionRequired = !!spot?.view && (cam.position.distanceTo(new T.Vector3(...spot.view.pos)) > 1e-7 || grx.controls.target.distanceTo(new T.Vector3(...spot.view.target)) > 1e-7);
   const t0 = performance.now(), cs = grx.clearance ? { ...grx.clearance } : null;
-  if(animationStep!==null)document.querySelector(`#animation-controls [data-action="${animationStep<0?'previous':'next'}"]`).click();
+  if(animationStep!==null)grx.stepTeaching(animationStep);
   else if (assemblyView) grx.setAssemblyView(assemblyView);
   else if (id) grx.select(id, true);
   if (readProgress() !== 0) throw new Error('Flight did not begin at rendered progress 0');

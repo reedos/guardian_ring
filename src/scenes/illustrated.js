@@ -82,7 +82,7 @@ export function illustrated(config) {
       const teaching={
         state:()=>({...clock.state(),mode,legend:paths.legend(mode,clock.state().steps),visibleLegend:paths.legend(mode,clock.state().inspection?[]:[clock.state().step]),note:config.lessonNote||'Drawing motion and sequence timing are illustrative; no real instrument performance is simulated.'}),
         subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);},
-        play(){presentation?.preparePlayback();clock.play();pose(clock.state());},pause(){clock.pause();pose(clock.state());},
+        play(options){if(!options?.singleStep)presentation?.preparePlayback();clock.play(options);pose(clock.state());},pause(){clock.pause();pose(clock.state());},
         preview({playing=!reduced}={}){presentation?.preparePlayback();clock.seek(0,.15);if(playing)clock.play({repeat:true});pose(clock.state());},
         step(delta){presentation?.preparePlayback();clock.step(delta);pose(clock.state());},reset(){clock.reset();pose(clock.state());},
         seek(index,progress=0){presentation?.preparePlayback();clock.seek(index,progress);pose(clock.state());},

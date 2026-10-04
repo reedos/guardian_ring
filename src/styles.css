@@ -1554,3 +1554,61 @@ body.app.stage-priority .orbit-playback-row { flex-wrap:wrap; }
 
 body.app.stage-priority .panel-scroll { grid-auto-rows:max-content; }
 body.app.stage-priority .playback-dock { grid-area:auto; height:max-content; }
+
+/* Audit B: one manual part bar; only the mission has transport controls. */
+body.app .part-transport { grid-template-columns:minmax(140px,1fr) auto; }
+body.app.mission-active #hud-btns { display:none; }
+body.app .mission-transport { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
+body.app .mission-transport .btn { min-width:0; }
+body.app .mission-options[hidden] { display:none; }
+body.app .mission-options { border-top:1px solid var(--line); padding:12px; }
+@media (max-width:760px) {
+  body.app.stage-priority .viewer { flex:1 1 0; min-height:45dvh; }
+  body.app.stage-priority .viewer > #view { flex:1 1 0; height:auto; min-height:45dvh; }
+  body.app.stage-priority .panel { flex:0 0 48px; max-height:calc(100% - 45dvh); }
+  body.app.stage-priority:is(.sheet-open,.mission-active) .panel { flex-basis:var(--inspector-size,35dvh); }
+  body.app.stage-priority:not(.sheet-open):not(.mission-active) .panel-scroll,
+  body.app.stage-priority:not(.sheet-open):not(.mission-active) .panel > .more-cue { display:none; }
+  body.app.stage-priority #sheet-toggle,body.app.stage-priority .pane-sum { display:none; }
+  body.app.stage-priority #tab-parts { width:100%; text-align:center; min-height:44px; padding:0; }
+  body.app.stage-priority #tab-parts::after { content:'\2191'; margin-left:12px; }
+  body.app.stage-priority.sheet-open #tab-parts::after { content:'\2193'; }
+  body.app.stage-priority #hud-btns { position:absolute; inset:auto 12px 12px; z-index:8; display:flex; padding:0; background:#080b10e8; border:1px solid var(--line-2); }
+  body.app.stage-priority #hud-btns .part-transport { display:block; }
+  body.app.stage-priority #hud-btns .part-nav { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
+  body.app.stage-priority #hud-btns .part-nav .btn { min-width:0; min-height:44px; padding-inline:8px; }
+  body.app.stage-priority.mission-active #hud-btns { display:none; }
+  body.app.stage-priority .panel-scroll > .view-part { display:grid; gap:6px; }
+  body.app.stage-priority .panel-scroll > .view-part select { min-height:44px; }
+  body.app.stage-priority #scene-note,body.app.stage-priority #legend { bottom:70px; }
+}
+
+body.app #orbit-controls { position:absolute; left:50%; bottom:14px; transform:translateX(-50%); z-index:7; width:max-content; max-width:calc(100% - 28px); display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px 12px; padding:8px; background:#080b10e8; border:1px solid var(--line-2); }
+body.app #orbit-controls[hidden],body.app.mission-active #orbit-controls { display:none; }
+body.app #orbit-controls .orbit-playback-row { margin:0; padding:0; }
+body.app #orbit-controls .btn { padding:0 10px; min-height:44px; }
+body.app #orbit-time { width:120px; min-height:44px; accent-color:var(--accent); }
+body.app .compact-scene-key { grid-template-columns:minmax(0,1fr) minmax(0,1fr); padding:6px 12px; }
+@media (max-width:760px) {
+  body.app #orbit-controls { bottom:68px; width:calc(100% - 24px); padding:4px; gap:4px; }
+  body.app #orbit-controls .btn { padding-inline:8px; }
+  body.app #orbit-time { width:80px; }
+  body.app.stage-priority .panel { max-height:calc(100% - 45dvh - var(--scene-key-height,0px)); }
+  body.app .compact-scene-key { font-size:9px; gap:6px; }
+}
+
+body.app.mission-active #orbit-explanation { display:none; }
+
+@media(max-width:760px){body.app.stage-priority:not(.sheet-open) #tab-scenario{display:none;}}
+.compact-scene-key .animation-step { grid-column:1 / -1; margin:0; font-size:11px; }
+body.mission-active .compact-scene-key .animation-step { display:none; }
+
+.orbit-time-label{display:flex;align-items:center;gap:6px;font:10px var(--mono);color:var(--muted);}
+
+.compact-scene-key .animation-step[hidden] { display:none; }
+.mm-select:has(input) { min-height:44px; cursor:pointer; }
+
+/* In landscape the inspector is beside the stage, so it uses the full row. */
+@media (max-width:760px) and (orientation:landscape) {
+  body.app.stage-priority .panel { max-height:none; height:100%; }
+}

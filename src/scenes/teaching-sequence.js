@@ -1,14 +1,14 @@
 // A deterministic presentation clock. Seconds here pace a lesson, never a sensor.
 export function createTeachingSequence(steps, { reduced = false, duration = 3.6 } = {}) {
   if (!steps.length || !Number.isFinite(duration) || duration <= 0) throw new Error('A lesson needs steps and a positive duration');
-  let index = 0, progress = 0, playing = false, inspection = true, suspended = false, repeating = false, last = null;
+  let index = 0, progress = 0, playing = false, inspection = true, suspended = false, repeating = false, singleStep = false, last = null;
   const listeners = new Set();
   const state = () => ({ index, progress, playing, inspection, suspended, repeating, reduced, step: steps[index], steps, total: steps.length });
   const emit = () => { for (const fn of listeners) fn(state()); };
   return {
     state,
     subscribe(fn) { listeners.add(fn); return () => listeners.delete(fn); },
-    play({ repeat = false } = {}) { inspection = false; playing = true; repeating = repeat; last = null; emit(); },
+    play({ repeat = false, singleStep: one = false } = {}) { singleStep = one; inspection = false; playing = true; repeating = repeat; last = null; emit(); },
     pause() { playing = false; last = null; emit(); },
     reset() { index = 0; progress = 0; playing = false; repeating = false; last = null; emit(); },
     step(delta = 1) { index = (index + Math.trunc(delta) % steps.length + steps.length) % steps.length; progress = .72; playing = false; inspection = false; repeating = false; last = null; emit(); },
@@ -25,6 +25,7 @@ export function createTeachingSequence(steps, { reduced = false, duration = 3.6 
       if (!playing || inspection || suspended || dt > 1) return state();
       progress += dt / duration;
       while (progress >= 1) {
+        if(singleStep){progress=1;playing=false;emit();break;}
         progress -= 1;
         if (++index === steps.length) {
           if (repeating) index = 0;

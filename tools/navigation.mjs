@@ -1,3 +1,4 @@
+import {lessonAction} from './gate-actions.mjs';
 // Exercise the controls a reader actually presses, including the distinction
 // between inspecting parts and stepping through an animated explanation.
 import {openGate,finish,MODES} from './gate-common.mjs';
@@ -27,12 +28,20 @@ if(g){const {page}=g,failures=[];let states=0;
     check(!view.err&&!view.blocked&&!view.covers.length,`${scene.id}/${mode}/${id}: Next framing ${JSON.stringify(view)}`);
    }
    await page.locator('#reset-view').click();await frames();await page.evaluate(()=>grx.settle());
-   check(await page.evaluate(home=>grx.state.selected===null&&grx.camera.position.distanceTo(new grx.THREE.Vector3(...home))<1e-6,home),`${scene.id}/${mode}: Overview did not restore full assembly`);
+   check(await page.evaluate(home=>{
+    const b=grx.built[grx.state.scene],view=document.querySelector('#view');
+    const expected=b.overviewFrame?.(view.clientWidth,view.clientHeight)?.pos||home;
+    return grx.state.selected===null&&grx.camera.position.distanceTo(new grx.THREE.Vector3(...expected))<1e-6;
+   },home),`${scene.id}/${mode}: Overview did not restore the assembly frame for the current stage size`);
    await page.locator('#card-prev').click();await frames();await page.evaluate(()=>grx.settle());
    check(await page.evaluate(id=>grx.state.selected===id,ids.at(-1)),`${scene.id}/${mode}: Previous from Overview did not select final part`);
    if(scene.id==='orbits')continue;
-   await page.locator('#animation-controls [data-action="reset"]').click();await frames();
    const total=await page.evaluate(()=>grx.built[grx.state.scene].teaching.state().total);
+   if(total<3){
+    check(await page.locator('#animation-controls [data-action]:visible').count()===0,`${scene.id}/${mode}: short lesson exposes redundant playback controls`);
+    continue;
+   }
+   await lessonAction(page,'reset');await frames();
    for(let i=0;i<total;i++){
     const lesson=await page.evaluate(()=>grx.built[grx.state.scene].teaching.state());
     const wanted=teachingFocus(scene.id,mode,lesson.step.id);
@@ -40,9 +49,9 @@ if(g){const {page}=g,failures=[];let states=0;
     check(await page.evaluate(id=>grx.state.selected===id&&document.querySelector('#part-select').value===(id||''),wanted),`${scene.id}/${mode}/${lesson.step.id}: animation step did not focus its subject`);
     await page.evaluate(()=>grx.settle());
     if(wanted){const view=await page.evaluate(checkView);check(!view.err&&!view.blocked&&!view.covers.length,`${scene.id}/${mode}/${lesson.step.id}: step framing ${JSON.stringify(view)}`);}
-    await page.locator('#animation-controls [data-action="next"]').click();await frames();
+    await lessonAction(page,'next');await frames();
    }
-   await page.locator('#animation-controls [data-action="play"]').click();await frames();
+   await lessonAction(page,'play');await frames();
    check(await page.evaluate(()=>grx.state.selected===null&&grx.built[grx.state.scene].teaching.state().playing),`${scene.id}/${mode}: full sequence should play in overview`);
   }
   // Real UI flights must finish without using the test hook to force arrival.
@@ -59,7 +68,7 @@ if(g){const {page}=g,failures=[];let states=0;
   // only the rest geometry used by ordinary component inspection.
   for(const scene of ['payload','abi','tirs2']){
    await page.evaluate(async scene=>{grx.setTransitions('instant');await grx.go(scene,{record:false});grx.setMode('light');},scene);
-   await page.locator('#animation-controls [data-action="reset"]').click();await frames();await page.evaluate(()=>{grx.settle();grx.setTransitions('quick');});
+   await lessonAction(page,'reset');await frames();await page.evaluate(()=>{grx.settle();grx.setTransitions('quick');});
    const pivots=scene==='payload'?['PayloadScanFirst','PayloadScanSecond']:scene==='abi'?['ABIScanNorthSouth','ABIScanEastWest']:['TIRSSceneSelect'];
    const rest=await page.evaluate(names=>names.map(name=>grx.built[grx.state.scene].asset.getObjectByName(name).quaternion.toArray()),pivots);
    for(let i=0;i<2;i++){
@@ -89,8 +98,8 @@ if(g){const {page}=g,failures=[];let states=0;
    }
   }
   await page.evaluate(async()=>{grx.setTransitions('instant');await grx.go('abi',{record:false});grx.setMode('light');});
-  await page.locator('#animation-controls [data-action="reset"]').click();
-  await page.locator('#animation-controls [data-action="next"]').click();await frames();
+  await lessonAction(page,'reset');
+  await lessonAction(page,'next');await frames();
   const savedLesson=await page.evaluate(()=>({selected:grx.state.selected,phase:grx.built[7].teaching.state().step.id,pose:grx.built[7].asset.getObjectByName('ABIScanNorthSouth').quaternion.toArray()}));
   await page.evaluate(async()=>{await grx.go('atmosphere');});await page.locator('#back-out').click();await frames();
   check(await page.evaluate(saved=>{const b=grx.built[7],s=b.teaching.state();return grx.state.scene===7&&grx.state.selected===saved.selected&&s.step.id===saved.phase&&!s.playing&&!s.inspection&&b.asset.getObjectByName('ABIScanNorthSouth').quaternion.angleTo(new grx.THREE.Quaternion(...saved.pose))<1e-6;},savedLesson),'Back lost the paused animation subject or mechanism pose');

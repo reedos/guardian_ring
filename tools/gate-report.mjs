@@ -13,6 +13,7 @@ export const ACTIVITY_COVERAGE = 'all hardware scenes and layers: running, expli
 export const GEOMETRY_RUNS = ['cycle-desktop','parts-desktop','views-desktop','views-phone','ui-desktop','ui-phone','coplanar-desktop','flights-desktop','flights-phone','govern-desktop','govern-phone','links-desktop','perf-desktop','perf-phone','labels-desktop','labels-phone','learning-desktop','learning-phone','navigation-desktop','navigation-phone','mission-desktop','mission-phone','activity-desktop','activity-phone','project-audit-desktop','project-audit-phone'];
 
 GEOMETRY_RUNS.push('audit-layout-desktop','audit-layout-phone');
+GEOMETRY_RUNS.push('controls-audit-desktop','controls-audit-phone');
 
 export function validateGeometryReport(report, { name, builtAt, sceneIds, base = PREVIEW }) {
   const reject = why => { throw new Error(`${name}: ${why}`); };
