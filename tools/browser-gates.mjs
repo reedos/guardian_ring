@@ -191,7 +191,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
   await show(page,0,'light','placeholder');
   if(await page.locator('#level-pick').isVisible()){await page.locator('#level-pick').click();await audit('level menu','#level-menu button,#level-pick');await page.keyboard.press('Escape');}
   if(await page.locator('#menu-btn').isVisible()){await page.locator('#menu-btn').click();await audit('main menu','#topnav a,#menu-btn');await page.keyboard.press('Escape');}
-  await page.locator('[data-pane="scenario"]').click();await audit('scenario pane');
+  await page.locator('#tab-scenario').click();await audit('scenario pane');
   const reasoning=page.locator('[data-math-work] > summary');
   for(let i=0;i<await reasoning.count();i++)await reasoning.nth(i).click();
   await audit('expanded physics reasoning');
@@ -243,20 +243,8 @@ export async function run(name,form=process.argv[2]||'desktop'){
   await page.locator('#part-select').focus();const focusedScene=await page.evaluate(()=>grx.state.scene);
   await page.keyboard.press('2');
   if(await page.evaluate(()=>grx.state.scene)!==focusedScene)fail.push('picker keyboard input triggered a level shortcut');
-  // Present and Hide details retain the always-visible picker and transport;
-  // Escape restores the previous detail visibility, as in IF.
-  const moreChoice=async id=>{await page.locator('#more-btn').click();await page.locator(id).click();await settleLayout(page);};
-  await moreChoice('#presentation-view');await audit('presentation');
-  if(await page.locator('#inspector').isVisible())fail.push('Present did not hide details');
-  await page.locator('#card-next').click();
-  if(await page.locator('#inspector').isVisible())fail.push('part navigation unexpectedly ended Present');
-  await page.keyboard.press('Escape');await audit('exit presentation');
-  if(!await page.locator('#inspector').isVisible())fail.push('Escape did not restore details');
-  await moreChoice('#inspector-toggle');await audit('hide details');
-  await moreChoice('#presentation-view');await page.keyboard.press('Escape');
-  if(await page.locator('#inspector').isVisible())fail.push('Present forgot previously hidden details');
-  await page.locator('#card-next').click();await audit('part choice restores details');
-  if(!await page.locator('#inspector').isVisible())fail.push('part picker did not reveal details');
+  if(await page.locator('#presentation-view,#inspector-toggle,#mission-launch').count())fail.push('Cut menu actions remain');
+  await page.locator('#card-next').click();await audit('part choice retains details');
   const transport=await page.locator('#reset-view').evaluate(el=>{const group=el.closest('.part-nav');return !!group?.contains(document.getElementById('card-prev'))&&group.contains(document.getElementById('card-next'))&&!el.closest('#more-menu')&&el.checkVisibility();});
   if(!transport)fail.push('Overview is not visible beside Previous and Next');
   await page.locator('#reset-view').click();
@@ -350,7 +338,9 @@ export async function run(name,form=process.argv[2]||'desktop'){
      await settleLayout(page);
      const defaultState=await page.evaluate(()=>grx.built[grx.state.scene].teaching.state());
      if(!defaultState.playing||!defaultState.repeating||await page.evaluate(()=>grx.state.selected!==null))fail.push(`${size.width}×${size.height} ${scene}: navigation did not start the running overview`);
-     for(const pane of ['parts','scenario']){
+     // Payload and ABI now have Parts only; calculation sections are gated
+     // separately on ring, pixel, and atmosphere by cuts-audit.
+     for(const pane of ['parts']){
       await page.locator(`#tab-${pane}`).click();
       for(const open of [false,true]){
        const note=page.locator('.animation-explanation');
@@ -385,7 +375,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
     await page.setViewportSize(size);await show(page,'abi','light');
     await lessonAction(page,'play');
     await page.locator('.animation-explanation').evaluate(node=>{node.open=true;});
-    await page.locator('#tab-scenario').click();
+    if(await page.locator('#tab-scenario').isVisible())await page.locator('#tab-scenario').click();
     const label=`${size.width}×${size.height} animation notes + Scenario`;
     await checkPhoneBudget(label);
     const handle=await page.locator('#tab-parts').boundingBox();
@@ -403,7 +393,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
       await lessonAction(page,'play');
       await page.locator('.animation-explanation').evaluate(node=>{node.open=true;});
      }else await page.locator('.orbit-playback-note').evaluate(node=>{node.open=true;});
-     await page.locator('#tab-scenario').click();
+     if(lesson==='orbits')await page.locator('#tab-scenario').click();
      const label=`${size.width}×${size.height} ${lesson} landscape playback + Scenario`;
      await audit(label,'#hud-btns button,#hud-btns select,#playback-dock button,.pane-tabs button');
      const problems=await page.evaluate(()=>{
@@ -422,7 +412,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
    await page.locator('#card-next').focus();
    await page.evaluate(()=>{window.rotationScene=grx.built[grx.state.scene];});
    for(const [size,playing] of [[{width:844,height:390},true],[viewport,false]]){
-    if(!playing)await lessonAction(page,'play');
+    if(!playing){await lessonAction(page,'play');await page.locator('#card-next').focus();}
     await page.setViewportSize(size);await settleLayout(page);
     const stable=await page.evaluate(expected=>grx.built[grx.state.scene]===window.rotationScene&&grx.state.selected===null&&window.rotationScene.teaching.state().playing===expected&&document.activeElement?.id==='card-next',playing);
     states++;audited.push(`rotation preserves ${playing?'playing':'paused'} lesson and focus`);

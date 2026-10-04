@@ -862,7 +862,7 @@ body.app .panel-scroll { flex: 1 1 0; min-height: 0; }
 body.app .pane-off { display: none !important; }
 .pane-tabs { display: flex; align-items: stretch; gap: 0; border-bottom: 1px solid var(--line); flex: none; }
 .pane-tabs button { all: unset; cursor: pointer; padding: 12px 18px; font: 600 12px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid transparent; }
-.pane-tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.pane-tabs #tab-parts { color: var(--ink); border-bottom-color: var(--accent); }
 .pane-tabs button:focus-visible { outline: 1px solid var(--accent); outline-offset: -3px; }
 .pane-sum { margin-left: auto; align-self: center; padding: 4px 14px 4px 8px; font: 500 10.5px/1.3 var(--mono); color: var(--muted); text-align: right; min-width: 0; }   /* wraps to a second line rather than cut off */
 body.app .pane-scenario { padding: 0; border: 0; background: none; }
@@ -1047,10 +1047,10 @@ body.app .panel { position: relative; }
 .has-more > .panel-scroll { -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 40px), rgba(0,0,0,.2)); mask-image: linear-gradient(180deg, #000 calc(100% - 40px), rgba(0,0,0,.2)); }
 /* the pane's own scrollbar stays visible, thin, so a long list shows it continues */
 body.app .panel-scroll { scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
-.pane-tabs button[role="tab"] { display: inline-flex; align-items: center; white-space: nowrap; }
+.pane-tabs #tab-parts { display: inline-flex; align-items: center; white-space: nowrap; }
 .tab-n { display: inline-grid; place-items: center; min-width: 20px; height: 18px; margin-left: 8px; padding: 0 5px; border: 1px solid var(--line-2); font: 500 10.5px/1 var(--mono); letter-spacing: 0; color: var(--muted); vertical-align: 1px; }
 .tab-n:empty { display: none; }
-.pane-tabs [aria-selected="true"] .tab-n { border-color: var(--accent); color: var(--accent); }
+.pane-tabs #tab-parts .tab-n { border-color: var(--accent); color: var(--accent); }
 .more-cue { flex: none; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 36px; padding: 0 14px; background: var(--ground); color: var(--ink); border: 0; border-top: 1px solid var(--line-2); border-radius: 0; font: 600 11px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; cursor: pointer; }
 .more-cue i { font-style: normal; color: var(--accent); }
 .more-cue:hover { background: var(--surface); }
@@ -1403,6 +1403,10 @@ body.app .panel-scroll > * { min-width: 0; }
 .mission-step-controls .btn { min-height: 36px; padding-inline: 10px; font-size: 10px; }
 .mission-step-count { color: var(--muted); font: 10px var(--mono); }
 .mission-explanation { margin-top: 4px; min-width: 0; }
+.mission-phase-picker { display:flex; flex-wrap:wrap; gap:6px; margin-block:8px; }
+.mission-phase-picker[hidden] { display:none; }
+.mission-phase-picker .btn { min-height:44px; max-width:100%; white-space:normal; text-align:left; }
+.mission-phase-picker .btn[aria-pressed="true"] { border-color:var(--accent); color:var(--accent); }
 .mission-explanation > summary { min-height: 36px; padding-block: 10px; cursor: pointer; color: var(--accent); font: 500 11px/1.4 var(--sans); }
 .mission-explanation[open] { max-height: 190px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .mission-description { margin: 0 0 8px; max-width: 88ch; color: var(--muted); font: 400 11px/1.5 var(--sans); }
@@ -1594,7 +1598,10 @@ body.app .compact-scene-key { grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   body.app #orbit-controls .btn { padding-inline:8px; }
   body.app #orbit-time { width:80px; }
   body.app.stage-priority .panel { max-height:calc(100% - 45dvh - var(--scene-key-height,0px)); }
-  body.app .compact-scene-key { font-size:9px; gap:6px; }
+  body.app .compact-scene-key { grid-template-columns:minmax(0,1fr); font-size:9px; gap:3px; }
+  body.app .compact-scene-key .scaffold-badge { font-size:8px; letter-spacing:0; }
+  body.app .compact-scene-key #legend { flex-wrap:nowrap; justify-content:flex-start; overflow-x:auto; max-width:100%; scrollbar-width:thin; }
+  body.app .compact-scene-key #legend .legend-item { flex:none; white-space:nowrap; text-align:left; }
 }
 
 body.app.mission-active #orbit-explanation { display:none; }
@@ -1606,7 +1613,22 @@ body.mission-active .compact-scene-key .animation-step { display:none; }
 .orbit-time-label{display:flex;align-items:center;gap:6px;font:10px var(--mono);color:var(--muted);}
 
 .compact-scene-key .animation-step[hidden] { display:none; }
+/* Reserve the same legend row across layers so detail cameras do not refit
+   merely because a qualitative key has more entries. */
+@media(min-width:761px) and (min-height:600px){body.app .compact-scene-key{min-height:84px;}}
 .mm-select:has(input) { min-height:44px; cursor:pointer; }
+.try-it { margin:12px 0 20px; border:1px solid var(--line-2); }
+.try-it[hidden],#learning-try[hidden] { display:none; }
+.try-it>summary { min-height:44px; padding:12px 14px; box-sizing:border-box; cursor:pointer; color:var(--accent); font:12px var(--mono); }
+.try-it .pane-scenario { padding:14px; }
+body.app #try-it #tab-scenario { display:list-item; }
+@media (min-width:1101px),(min-width:761px) and (min-height:601px) {
+  body.app #level-pick { display:block; flex:0 0 120px; border:0; border-left:1px solid var(--line); background:var(--ground); color:var(--accent); cursor:pointer; font:11px var(--mono); }
+  body.app #level-pick>* { display:none; }
+  body.app #level-pick::before { content:'Side levels'; }
+  body.app #level-menu { left:auto; right:44px; }
+}
+.mission-transport .btn[hidden] { display:none; }
 .mission-event-note { display:block; margin:8px 16px; color:var(--accent); font:10px var(--mono); text-transform:uppercase; }
 .mission-event-note[hidden],.mission-phase[hidden] { display:none; }
 

@@ -19,7 +19,7 @@ if(gate){
  async function enter(scene){
   if(await page.locator('#level-pick').isVisible()){
    await page.locator('#level-pick').click();await page.locator(`#level-menu [data-level="${scene.i}"]`).click();
-  }else await page.locator(`${scene.i<6?'#steps':'#side-levels'} [data-level="${scene.i}"]`).click();
+  }else await page.locator(`#steps [data-level="${scene.i}"]`).click();
   await page.waitForFunction(index=>grx.state.scene===index&&!grx.isBusy(),scene.i);await ready();await frames(3);
  }
  // Hash visible explanatory geometry and its material emphasis. Non-ray

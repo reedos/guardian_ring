@@ -8,7 +8,7 @@ import { createCameraClearance, constrainCameraPose, CLEARANCE_BAND } from './ca
 import { occupancyBuilder } from './occupancy.js';
 import { layoutAnchoredPins, pinLabelBox } from './pin-layout.js';
 import { fitComponent } from './component-frame.js';
-import { teachingFocus } from '../scenes/teaching-focus.js';
+import { teachingFocus, teachingPartPhase } from '../scenes/teaching-focus.js';
 import { chip } from '../evidence.js';
 import { renderComponentDetails } from './component-details.js';
 import { createVisitHistory, retainedPart, capturePane, refreshScenarioContent } from './exploration-context.js';
@@ -387,7 +387,7 @@ export function cycle(direction) {
   const id=parts[index < 0 ? direction < 0 ? parts.length - 1 : 0 : (index + direction + parts.length) % parts.length].id;
   select(id);
   const teaching=getTeaching(),lesson=teaching?.state();
-  const phase=lesson?.steps.findIndex(step=>teachingFocus(store.C.SCENES[ui.scene].id,ui.mode,step.id)===id)??-1;
+  const phase=lesson?teachingPartPhase(store.C.SCENES[ui.scene].id,ui.mode,id,lesson.steps):-1;
   pendingPartAnimation=direction>0&&phase>=0?{scene:ui.scene,mode:ui.mode,id,teaching,phase}:null;
 }
 export function setMode(mode, { activity = true } = {}) {
@@ -490,7 +490,7 @@ export function start() {
   setQualityPreference(preference);
   const mainLevels = document.createElement('div'), sideLevels = document.createElement('div');
   mainLevels.className = 'lm-group'; sideLevels.className = 'lm-group';
-  const sideHeading = document.createElement('p'); sideHeading.className = 'mm-h'; sideHeading.textContent = 'Related views'; sideLevels.append(sideHeading);
+  const sideHeading = document.createElement('p'); sideHeading.className = 'mm-h'; sideHeading.textContent = 'Side levels'; sideLevels.append(sideHeading);
   $('level-menu').append(mainLevels, sideLevels);
   store.C.SCENES.forEach((scene, index) => {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'step'; button.dataset.level = String(index); button.style.setProperty('--c', 'var(--accent)');
@@ -501,7 +501,6 @@ export function start() {
     item.querySelector('.t').textContent = scene.title; item.querySelector('.meta').textContent = scene.scale;
     item.addEventListener('click', () => void go(index)); (index < MAIN_LEVELS ? mainLevels : sideLevels).append(item);
     if (index < MAIN_LEVELS) { button.addEventListener('click', () => void go(index)); $('steps').append(button); }
-    else { const side = document.createElement('button'); side.className = 'btn'; side.type = 'button'; side.textContent = scene.title; side.dataset.level = String(index); side.addEventListener('click', () => void go(index)); $('side-levels').append(side); }
   });
   document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
   $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('back-out').addEventListener('click', backOut);

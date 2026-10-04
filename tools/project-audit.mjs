@@ -88,36 +88,37 @@ if (gate) {
     await page.evaluate(()=>grx.mission.stop());
   });
 
-  await run('keyboard tab switch while the viewer is hovered', async () => {
-    await scene('satellite', 'instrument');
-    const canvas = await page.locator('#gl').boundingBox();
-    await page.mouse.move(canvas.x + canvas.width / 2, canvas.y + canvas.height / 2);
-    await page.locator('#tab-parts').focus();
-    check(await page.locator('#viewer').evaluate(node => node.matches(':hover')), 'Keyboard test did not establish viewer hover');
-    await page.keyboard.press('ArrowRight'); await frames(page);
-    check(await page.evaluate(() => grx.state.selected === 'instrument' && !document.getElementById('pane-scenario').hidden
-      && document.activeElement.id === 'tab-scenario'), 'ArrowRight from Parts changed the selected component or failed to keep Scenario active');
-    await page.keyboard.press('ArrowLeft'); await frames(page);
-    check(await page.evaluate(() => grx.state.selected === 'instrument' && document.getElementById('pane-scenario').hidden
-      && document.activeElement.id === 'tab-parts'), 'ArrowLeft from Scenario changed the selected component or failed to restore Parts');
-  });
-
-  await run('menu and presentation keyboard continuity', async () => {
-    await scene('satellite', 'instrument');
-    await more(); await page.locator('#inspector-toggle').focus(); await page.keyboard.press('Enter');
-    await page.locator('#more-menu').waitFor({ state: 'hidden' });
-    check(await focusIs('more-btn'), 'An ordinary More choice left focus in its hidden menu');
-    await more(); await page.locator('#inspector-toggle').focus(); await page.keyboard.press('Enter');
-    check(await page.locator('#inspector').isVisible(), 'Details could not be restored after a keyboard menu choice');
-    for (const exit of ['Escape', 'button']) {
-      await more(); await page.locator('#presentation-view').focus(); await page.keyboard.press('Enter');
-      await page.locator('#presentation-exit').waitFor({ state: 'visible' });
-      check(await focusIs('presentation-exit'), `Present did not focus its visible exit (${exit})`);
-      if (exit === 'Escape') await page.keyboard.press('Escape');
-      else await page.keyboard.press('Enter');
-      check(await focusIs('more-btn') && !await page.locator('#presentation-exit').isVisible()
-        && !await page.locator('body').evaluate(node => node.classList.contains('presentation-view')), `${exit} did not leave presentation with focus on More`);
+  await run('Parts keyboard controls retain selection', async () => {
+    await scene('satellite','instrument');await openParts(page);
+    const parts=page.locator('#tab-parts');
+    const isExpanded=()=>page.evaluate(()=>document.body.classList.contains('sheet-open'));
+    const initiallyExpanded=await isExpanded();
+    await parts.focus();
+    for(const key of ['ArrowLeft','ArrowRight','Home','End']){
+      await page.keyboard.press(key);await frames(page);
+      check(await isExpanded()===initiallyExpanded,`${key} incorrectly toggled the Parts disclosure`);
+      check(await page.evaluate(()=>grx.state.selected==='instrument'&&document.activeElement.id==='tab-parts'),`${key} changed the selected component or Parts focus`);
     }
+    check(await parts.getAttribute('aria-selected')===null,'Parts retains unsupported tab selection semantics');
+    check(await page.locator('#pane-parts').getAttribute('role')==='region','Parts content retains obsolete tabpanel semantics');
+    if(form==='phone'){
+      for(const key of ['Space','Enter']){
+        const before=await isExpanded();await page.keyboard.press(key);await frames(page);
+        check(await isExpanded()!==before,`${key} did not toggle the Parts disclosure`);
+        check(await parts.getAttribute('aria-expanded')===String(!before),`${key} left stale Parts expanded semantics`);
+      }
+    }
+    await scene('orbits','geo');await openParts(page);
+    await page.locator('#tab-scenario').focus();await page.keyboard.press('Enter');await frames(page);
+    check(await page.evaluate(()=>document.querySelector('#try-it').open&&grx.state.selected==='geo'),'Try it keyboard disclosure changed the selected component');
+  });
+  await run('menu keyboard continuity', async () => {
+    await scene('satellite','instrument');
+    await more();await page.locator('#share-btn').focus();await page.keyboard.press('Enter');
+    await page.locator('#more-menu').waitFor({state:'hidden'});
+    check(await focusIs('more-btn'),'Share left focus in the hidden menu');
+    await more();await page.locator('#quality').focus();await page.keyboard.press('Escape');
+    check(await focusIs('more-btn'),'Escape failed to return from Rendering');
     if (form === 'phone') {
       await page.locator('#level-pick').focus(); await page.keyboard.press('Enter');
       await page.locator('#level-menu [data-level="2"]').focus(); await page.keyboard.press('Enter');

@@ -1,4 +1,4 @@
-"""Level 4 focal-plane carrier GLB, version 5.
+"""Level 4 focal-plane carrier GLB, version 6.
 
 Run: Blender 5.2 --background --python tools/blender/build-focal-plane.py
 
@@ -15,7 +15,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 5
+VERSION = 6
 OUT.mkdir(parents=True, exist_ok=True)
 
 
@@ -141,6 +141,14 @@ for x in [1.43,2.66]:
     for z in [-.94,.74]:h.screw((x,.42,z),hm['edge'],r=.027)
 
 geometry = [obj for obj in bpy.context.scene.objects if obj.type in {'MESH', 'CURVE'}]
+# Keep cold-end thermal hardware distinct from warm housings/controllers in
+# teaching colors. Parent component roles, geometry and anchors stay unchanged.
+for obj in geometry:
+    name = obj.name.lower()
+    if 'cold finger' in name or 'thermal strap' in name:
+        obj['thermalSubrole'] = 'ColdFingerAndStrap'
+    elif 'cold-head resistance thermometer' in name:
+        obj['thermalSubrole'] = 'ColdHeadThermometer'
 bpy.ops.object.select_all(action='DESELECT')
 for obj in geometry: obj.select_set(True)
 bpy.context.view_layer.objects.active = geometry[0]
@@ -155,20 +163,24 @@ root = group('GuardianFocalPlane', version=VERSION, level='focal-plane',
     defaultCamera=[6.0, 6.0, 8.0], defaultTarget=[.48, .25, -.25])
 roles = {name: group(name, root, role=name, representative=True)
          for name in ['DetectorPackage', 'ColdCarrier', 'ColdShield', 'WarmReadout', 'CoolingAssembly', 'FlexConnection', 'BiasTiming', 'ThermalFeedback']}
+thermal_roles = {
+    'ColdFingerAndStrap': group('ColdFingerAndStrap', roles['CoolingAssembly'], representative=True),
+    'ColdHeadThermometer': group('ColdHeadThermometer', roles['ThermalFeedback'], representative=True),
+}
 
 batches = {}
 for obj in list(bpy.context.scene.objects):
     if obj.type != 'MESH': continue
-    key = (obj['assetRole'], tuple(mat.name for mat in obj.data.materials))
+    key = (obj['assetRole'], tuple(mat.name for mat in obj.data.materials), obj.get('thermalSubrole', ''))
     batches.setdefault(key, []).append(obj)
-for (role, names), objects in batches.items():
+for (role, names, thermal_role), objects in batches.items():
     bpy.ops.object.select_all(action='DESELECT')
     for obj in objects: obj.select_set(True)
     bpy.context.view_layer.objects.active = objects[0]
     if len(objects) > 1: bpy.ops.object.join()
     obj = bpy.context.object
     obj.name = role + ' — ' + names[0]
-    obj.parent = roles[role]
+    obj.parent = thermal_roles[thermal_role] if thermal_role else roles[role]
     obj['representative'] = True
     obj['solidForCamera'] = True
     obj['assetRole'] = role

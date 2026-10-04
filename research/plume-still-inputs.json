@@ -3,6 +3,6 @@
   "inputs": {
     "public/models/plume.glb": "7753be893471d616279abdbb00bf3fd2d34f3f31f1f19adc583489b5ebf6ce94",
     "src/scenes/plume.js": "f60b6c4e99a79c5aefa064240c259d0d75ee35bbae2c5cd1168c5e579739e08e",
-    "src/scenes/plume-illustration.js": "51c7a3dca624533a2c4ce92a102040a4542f018ec6b8f957de855672728f60af"
+    "src/scenes/plume-illustration.js": "eb77f50ab39618737a36d15571c0561de72f9d147c3e0f39ab4c069bda061925"
   }
 }

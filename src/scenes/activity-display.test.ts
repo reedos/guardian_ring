@@ -1,5 +1,6 @@
 import { describe,expect,it } from 'vitest';
-import { Group,Mesh,BoxGeometry,MeshStandardMaterial,DataTexture } from 'three';
+import { Group,Mesh,BoxGeometry,MeshStandardMaterial,DataTexture,Vector2 } from 'three';
+import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import { createActivityDisplay } from './activity-display.js';
 
 function fixture(){
@@ -13,6 +14,21 @@ function fixture(){
 const state=(id:string,progress:number,inspection=false)=>({step:{id},progress,inspection});
 
 describe('schematic ground display activity',()=>{
+  it('fills each screen in a batched pair with the complete upright alert',()=>{
+    const asset=new Group(),owner=new Group();owner.name='Operations';asset.add(owner);
+    const left=new BoxGeometry(1.2,.8,.05),right=left.clone();right.translate(1.6,0,0);
+    const geometry=mergeGeometries([left,right]),uv=geometry.getAttribute('uv'),normal=geometry.getAttribute('normal');
+    for(let i=0;i<uv.count;i++)if(normal.getZ(i)>.999){const u=uv.getX(i),v=uv.getY(i);uv.setXY(i,.375+v*.25,.125+(1-u)*.25);}
+    const screen=new Mesh(geometry,new MeshStandardMaterial({name:'glass'}));owner.add(screen);
+    const display=createActivityDisplay(asset,{role:'Operations',materialName:'glass'});display.update(state('transfer',1));
+    const texture=screen.material.map as DataTexture;
+    for(const start of [0,left.getAttribute('uv').count]){
+      const mapped=[];
+      for(let i=start;i<start+left.getAttribute('uv').count;i++)if(normal.getZ(i)>.999)mapped.push(new Vector2(uv.getX(i),uv.getY(i)).applyMatrix3(texture.matrix));
+      expect(Math.min(...mapped.map(p=>p.x))).toBeCloseTo(0);expect(Math.max(...mapped.map(p=>p.x))).toBeCloseTo(1);
+      expect(Math.min(...mapped.map(p=>p.y))).toBeCloseTo(0);expect(Math.max(...mapped.map(p=>p.y))).toBeCloseTo(1);
+    }
+  });
   it('ends processing with a stationary generic alert and clears it on a new receive phase',()=>{
     const {display,screen}=fixture();display.update(state('transfer',.6));
     const before=Array.from((screen.material.map as DataTexture).image.data as Uint8Array);

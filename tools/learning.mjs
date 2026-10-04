@@ -121,7 +121,7 @@ if (gate) {
       for(const viewport of [{width:390,height:844},{width:320,height:667},{width:844,height:390},{width:667,height:375}]) {
         await page.setViewportSize(viewport);
         await page.locator('.animation-explanation').evaluate(node=>{node.open=true;});
-        await page.locator('#tab-scenario').click();await frames(3);
+        await openParts(page);await frames(3);
         // Playback now shares the inspector's scroller. Every control must
         // remain reachable, rather than all being exposed simultaneously.
         const layout=await page.evaluate(checkUI,{selector:'.assembly-controls button,#part-select,#card-prev,#card-next,#reset-view,#animation-controls .animation-transport button'});
@@ -249,7 +249,7 @@ if (gate) {
     await frames(4);
     check(!(await sequence()).playing, 'Closing evidence overrode explicit pause');
 
-    // A scenario edit updates calculations without discarding the inspected view.
+    // Shared scenario updates preserve hardware context even where no Try it control is offered. The real input controls are exercised on the ring by ui.mjs.
     await show(page, 'payload', 'data');
     await page.locator('#part-select').selectOption('controller');
     await checkAssembly('inside','Scenario origin');
@@ -258,13 +258,11 @@ if (gate) {
       camera:grx.camera.position.toArray(), target:grx.controls.target.toArray(), pinned:grx.store.pinned,
       presentation:grx.built[grx.state.scene].presentation.capture(),
     }; });
-    await page.locator('#tab-scenario').click();
-    await page.locator('#scenario-adjust').evaluate(node => { node.open = true; });
     const choice = await page.evaluate(() => grx.store.scenario.orbit === 'leo' ? 'geo' : 'leo');
-    await page.locator(`[data-choice="orbit"][data-value="${choice}"]`).click();
+    await page.evaluate(orbit=>grx.setScenario({orbit}),choice);
     check(await page.evaluate(() => {
       const old=window.learningBefore, built=grx.built[grx.state.scene];
-      return built===old.scene && built.model===grx.store.M && grx.state.selected===old.selected && grx.state.mode===old.mode && grx.store.pinned===old.pinned && grx.camera.position.distanceTo(new grx.THREE.Vector3(...old.camera))<1e-6 && grx.controls.target.distanceTo(new grx.THREE.Vector3(...old.target))<1e-6 && document.querySelector('#tab-scenario').getAttribute('aria-selected')==='true'&&JSON.stringify(built.presentation.capture())===JSON.stringify(old.presentation);
+      return built===old.scene && built.model===grx.store.M && grx.state.selected===old.selected && grx.state.mode===old.mode && grx.store.pinned===old.pinned && grx.camera.position.distanceTo(new grx.THREE.Vector3(...old.camera))<1e-6 && grx.controls.target.distanceTo(new grx.THREE.Vector3(...old.target))<1e-6 && document.querySelector('#try-it').hidden&&JSON.stringify(built.presentation.capture())===JSON.stringify(old.presentation);
     }), 'Scenario edit lost hardware/view/selection/comparison/pane context');
     await page.locator('#part-select').selectOption('');
     await page.evaluate(async () => { await grx.setScenario({detector:grx.store.scenario.detector==='qwip'?'hgcdte':'qwip'}); });
