@@ -234,7 +234,7 @@ if (gate) {
     // Open in the same task as Play so even a slow test host cannot consume the
     // remaining step before the source-reading suspension is exercised.
     await page.evaluate(async () => {
-      grx.overview();grx.settle();grx.setSceneActivity(true);
+      grx.settle();grx.setSceneActivity(true);
       await Promise.resolve();
       document.querySelector('.animation-evidence [data-src="learning:cooler-balance"]').click();
     });
