@@ -163,10 +163,11 @@ if(g){const {page}=g,failures=[];let states=0;
    if(!await page.locator('#more-menu').isVisible())await page.locator('#more-btn').click();await page.locator('.mission-explanation > summary').click();
    for(const viewport of form==='phone'?[{width:390,height:844},{width:844,height:390}]:[{width:1440,height:900}]){
     await page.setViewportSize(viewport);await frames(4);
-    const ui=await page.evaluate(checkUI,{selector:'#mission-tour button,#mission-tour input,#mission-tour summary,#hud-btns button,#part-select'});
+    const ui=await page.evaluate(checkUI,{selector:'#more-menu button,#more-menu input,#more-menu select,#more-menu summary'});
     check(!ui.length,`Mission step/details controls collide at ${viewport.width}: ${ui.join('; ')}`);
     check(await page.locator('#view').evaluate(el=>el.clientHeight>=120&&el.clientWidth>=200),`Mission details leave too little canvas at ${viewport.width}`);
    }
+   await page.keyboard.press('Escape');check(!await page.locator('#more-menu').isVisible()&&(await state()).active,'Escape did not close mission details while retaining the tour');
    await page.keyboard.press('Escape');check(!(await state()).active,'Escape did not exit the mission');
    await page.evaluate(()=>localStorage.removeItem('grx-mission-visited-v1'));
    await page.goto(new URL('visualizer.html',BASE).href);

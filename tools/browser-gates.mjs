@@ -311,8 +311,8 @@ export async function run(name,form=process.argv[2]||'desktop'){
   states++;audited.push('catalog component link returns to live viewer');
   if(form==='phone'){
    if(await page.evaluate(()=>document.body.classList.contains('sheet-open')))await page.locator('#tab-parts').click();
-   await page.locator('#card-more').click();await audit('Details expands phone sheet');
-   if(await page.locator('#sheet-toggle').getAttribute('aria-expanded')!=='true')fail.push('Details did not expand the phone sheet');
+   await page.locator('#tab-parts').click();await audit('Parts handle expands phone sheet');
+   if(await page.locator('#tab-parts').getAttribute('aria-expanded')!=='true')fail.push('Parts handle did not expand the phone sheet');
   }
   if(await page.locator('#intro-more').isVisible()){
    await page.locator('#intro-more').click();await audit('expanded overview prose');
