@@ -31,8 +31,12 @@ if(g){const {page}=g,failures=[];let states=0;
    await page.locator('#card-prev').click();await frames();await page.evaluate(()=>grx.settle());
    check(await page.evaluate(id=>grx.state.selected===id,ids.at(-1)),`${scene.id}/${mode}: Previous from Overview did not select final part`);
    if(scene.id==='orbits')continue;
-   await page.locator('#animation-controls [data-action="reset"]').click();await frames();
    const total=await page.evaluate(()=>grx.built[grx.state.scene].teaching.state().total);
+   if(total<3){
+    check(await page.locator('#animation-controls [data-action]:visible').count()===0,`${scene.id}/${mode}: short lesson exposes redundant playback controls`);
+    continue;
+   }
+   await page.locator('#animation-controls [data-action="reset"]').click();await frames();
    for(let i=0;i<total;i++){
     const lesson=await page.evaluate(()=>grx.built[grx.state.scene].teaching.state());
     const wanted=teachingFocus(scene.id,mode,lesson.step.id);
