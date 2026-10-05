@@ -13,7 +13,7 @@ export function plumePose(state) {
   };
 }
 
-export const PLUME_FRAME={pos:[1.3,3.5,11],target:[.3,3,0],focus:[.3,3,0],detailSize:[6,6.7,2.8],minDistance:5};
+export const PLUME_FRAME={pos:[1.3,3.5,11],target:[.3,2.7,0],focus:[.3,2.7,0],detailSize:[6.8,7.4,3.5],minDistance:5};
 export const plumeOverviewPose=(width,height)=>fitComponent(PLUME_FRAME,width,height,
   width<=760?{safe:{x0:-.82,x1:.82,y0:Math.max(-.76,-1+168/height),y1:.76}}:{});
 
@@ -22,7 +22,7 @@ function overlay(node,name) {
   return node;
 }
 
-export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots,heatHotspots}) {
+export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots,heatHotspots,earth}) {
   const head=overlay(new THREE.Group(),'Illustrative rising emission — no trajectory scale');scene.add(head);
   // Animate the existing Blender-authored gas surfaces. Molecular diagrams stay
   // separate at their enlarged teaching scale, never masquerading as gas density.
@@ -32,16 +32,22 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
     if(!node)throw new Error(`Missing authored plume group: ${name}`);
     head.attach(node);gas.push({node,position:node.position.clone(),quaternion:node.quaternion.clone()});
   }
-  head.rotation.z=Math.PI;head.scale.setScalar(1.15);
+  head.rotation.z=Math.PI;head.scale.set(.92,.65,.92);
   const materials=new Map();head.traverse(node=>{
     if(node.isMesh)for(const material of Array.isArray(node.material)?node.material:[node.material])
       materials.set(material,{opacity:Math.min(.8,material.opacity*2.2),emissive:material.emissiveIntensity});
   });
 
-  const ground=overlay(new THREE.Mesh(new THREE.SphereGeometry(10,80,48),new THREE.MeshStandardMaterial({color:'#102433',roughness:1,metalness:0})),
-    'Schematic curved ground — no geographic location');
-  ground.position.set(0,-10,-4);scene.add(ground);
-  const atmosphere=overlay(new THREE.Mesh(new THREE.SphereGeometry(10.3,80,48),new THREE.ShaderMaterial({
+  // Reuse the Blender-authored Earth and credited historical NASA texture from
+  // the ring. This is a scale-separated backdrop, never an event-site marker.
+  const ground=overlay(earth,
+    'Earth context — historical NASA imagery, no event location');
+  ground.removeFromParent();ground.position.set(0,-4,-4);ground.scale.setScalar(5);
+  ground.rotation.set(0,.8,0);
+  // Daylight geography provides context; city-light emission is not appropriate
+  // under this scene's illustrative daylight lighting.
+  ground.material.emissiveIntensity=0;scene.add(ground);
+  const atmosphere=overlay(new THREE.Mesh(new THREE.SphereGeometry(5.08,80,48),new THREE.ShaderMaterial({
     transparent:true,depthWrite:false,side:THREE.FrontSide,blending:THREE.AdditiveBlending,
     uniforms:{tint:{value:new THREE.Color('#659cbb')}},
     vertexShader:'varying vec3 normalView;varying vec3 eyeView;void main(){vec4 p=modelViewMatrix*vec4(position,1.0);normalView=normalize(normalMatrix*normal);eyeView=-p.xyz;gl_Position=projectionMatrix*p;}',
@@ -59,6 +65,8 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
     'False-color emission glow — not a temperature');
   glow.scale.set(5.4,5.4,1);scene.add(glow);
   const inset=overlay(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([[1.85,.05,.32],[3.15,.05,.32],[3.15,1.95,.32],[1.85,1.95,.32]].map(p=>new THREE.Vector3(...p))),new THREE.LineBasicMaterial({color:'#659cbb',transparent:true,opacity:.45,depthWrite:false})), 'Molecular diagrams — enlarged inset');scene.add(inset);
+  const insetBack=overlay(new THREE.Mesh(new THREE.PlaneGeometry(1.3,1.9),new THREE.MeshBasicMaterial({color:'#080e15',side:THREE.DoubleSide})), 'Molecular inset backing');
+  insetBack.position.set(2.5,1,.08);scene.add(insetBack);
   const heatPaths=paths.records.filter(r=>r.mode==='heat');
   const sourcePins=[hotspots.source,dataHotspots.source,heatHotspots.source];
   const bandPins=[hotspots.bands,dataHotspots.bands,heatHotspots.bands];

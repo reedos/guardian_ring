@@ -29,7 +29,7 @@ The GOES-R Data Book and the TIRS-2 design presentation support the named civil 
 
 Ring caption: **Schematic constellation. Orbital distances compressed; satellites and atmospheric limb enlarged. Positions and count are illustrative.** Earth geography uses historical NASA composites. Lighting and colors are adjusted for the artwork; this is neither a current Earth observation nor a quantitative map.
 
-Plume caption: **Illustrative molecular emission. Shape, colors, flow lines, and molecule sizes are schematic; no physical scale or radiometric performance is implied.** The illustration contains no real vehicle, launch site, country, or operational sensor. Everything in this render is original procedural geometry/shading; no external plume photo or simulation was used.
+Plume caption: **Illustrative molecular emission. Shape, colors, flow lines, and molecule sizes are schematic; no physical scale or radiometric performance is implied.** The illustration contains no real vehicle, launch site, or operational sensor. The plume remains original procedural geometry and shading, with no external plume photo or simulation. The photon-level backdrop now reuses the historical NASA Earth image and Blender-authored Earth from the ring. Recognizable geography is context, not a plotted launch location. Earth, plume, atmospheric rim, and molecules use separate illustrative scales.
 
 ## NASA Blue Marble surface texture
 

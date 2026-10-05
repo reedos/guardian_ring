@@ -40,6 +40,6 @@ The following files are original Blender-authored geometry or renders. The NASA-
 | `payload.webp`, `payload-phone.webp` | `tools/blender/render-authored.py` | Original render of the shipped payload GLB |
 | `focal-plane.webp`, `focal-plane-phone.webp` | `tools/blender/render-authored.py` | Original render of the shipped focal-plane GLB |
 | `pixel.webp`, `pixel-phone.webp` | `tools/blender/build-hardware-look.py` | Original procedural render |
-| `plume.webp`, `plume-phone.webp` | `tools/blender/build-plume-look.py` | Original procedural geometry and volume shading |
+| `plume.webp`, `plume-phone.webp` | `tools/render-plume-still.mjs` | Runtime plume illustration plus the credited historical NASA Earth texture above |
 
-`tools/blender/encode-look.py` converts the source stills to these WebPs. The source PNGs and downloaded NASA JPEGs remain local research material; the GLBs contain their required delivery textures. No remote model or image download is needed at runtime.
+`tools/blender/encode-look.py` converts the Blender source stills to WebP; `tools/render-plume-still.mjs` captures and encodes the runtime plume stills. The source PNGs and downloaded NASA JPEGs remain local research material; the GLBs contain their required delivery textures. No remote model or image download is needed at runtime.

@@ -2,7 +2,8 @@
   "date": "10/4/2026",
   "inputs": {
     "public/models/plume.glb": "7753be893471d616279abdbb00bf3fd2d34f3f31f1f19adc583489b5ebf6ce94",
-    "src/scenes/plume.js": "f60b6c4e99a79c5aefa064240c259d0d75ee35bbae2c5cd1168c5e579739e08e",
-    "src/scenes/plume-illustration.js": "eb77f50ab39618737a36d15571c0561de72f9d147c3e0f39ab4c069bda061925"
+    "public/models/earth-orbits.glb": "b3098facc66e35ca6a351cb0355ee64a75d8e5ead9c15f3f9533e28f92edd8ec",
+    "src/scenes/plume.js": "cf3a3fa7f5eee77b59389790cefc157d749e6fa92ca2b93ed99cd81e5e6d2751",
+    "src/scenes/plume-illustration.js": "cc7075084b216dc671bfaaf507d0a074ab0f03562a457cb56c52318cb7bc6301"
   }
 }

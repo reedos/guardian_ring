@@ -16,6 +16,6 @@ try{for(const [suffix,width,height] of [['',1600,1000],['-phone',780,960]]){
  const conversion=spawnSync('python',['-c','from PIL import Image; import sys; Image.open(sys.argv[1]).convert("RGB").save(sys.argv[2],quality=92)',`.local/story-render/plume${suffix}.png`,`public/look/plume${suffix}.webp`],{encoding:'utf8'});
  if(conversion.status)throw new Error(conversion.stderr);
 }
- const inputs=['public/models/plume.glb','src/scenes/plume.js','src/scenes/plume-illustration.js'];
+ const inputs=['public/models/plume.glb','public/models/earth-orbits.glb','src/scenes/plume.js','src/scenes/plume-illustration.js'];
  fs.writeFileSync('research/plume-still-inputs.json',JSON.stringify({date:new Date().toLocaleDateString('en-US'),inputs:Object.fromEntries(inputs.map(file=>[file,createHash('sha256').update(fs.readFileSync(file)).digest('hex')]))},null,2)+'\n');
 }finally{await browser.close();}

@@ -34,7 +34,9 @@ describe('qualitative plume illustration',()=>{
     }
     const pin=()=>({co2:{pos:[1.85,3.85,-.1]},h2o:{pos:[-1.65,2.63,-.2]},source:{pos:[0,0,0]},bands:{pos:[0,0,0]},timeline:{pos:[2.9,3.15,1.9]}}),hotspots=pin(),dataHotspots=pin(),heatHotspots=pin();
     const ray={mode:'heat',group:new THREE.Group()};
-    const view=createPlumeIllustration({scene,asset,paths:{records:[ray]},hotspots,dataHotspots,heatHotspots});
+    const earth=new THREE.Mesh(new THREE.SphereGeometry(1),new THREE.MeshStandardMaterial({map:new THREE.Texture()}));
+    const view=createPlumeIllustration({scene,asset,paths:{records:[ray]},hotspots,dataHotspots,heatHotspots,earth});
+    expect(view.ground).toBe(earth);expect(view.ground.material.map).toBeTruthy();
     const clock=createTeachingSequence(steps);clock.seek(0,.5);view.update(clock.state(),'heat');
     expect(hotspots.source.pos).toEqual(dataHotspots.source.pos);expect(hotspots.source.pos).toEqual(heatHotspots.source.pos);
     expect(hotspots.source.pos[1]).toBeCloseTo(view.head.position.y-.26);

@@ -71,7 +71,7 @@ export function remainingContent(_model) {
       ],
     },
     plume: {
-      intro: 'Follow a rising source of infrared radiation, then inspect the molecules that give the spectrum its bands. The curved ground and atmosphere provide context; the motion is an illustration, not a flight or visibility calculation.',
+      intro: 'Follow a rising source of infrared radiation, then inspect the molecules that give the spectrum its bands. Historical NASA Earth imagery and an enlarged atmospheric rim provide context. Earth, plume, and molecules use separate drawing scales; no event location, flight, or visibility is calculated.',
       scale: 'Hot-gas source · illustrative geometry',
       light: [
         card('source', 'Start with emitting gas', 'An illustrative source', 'Hot gases can emit infrared radiation. The rising glow and trailing gas introduce emission as the start of a light path. Shape, motion, atmospheric thickness, and false color are drawing choices. No altitude, temperature, radiant intensity, or real vehicle identity is assigned.'),

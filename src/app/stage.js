@@ -293,7 +293,7 @@ function buildPanel() {
   const scene = store.C.SCENES[ui.scene], parts = partsFor(ui.scene);
   document.body.classList.toggle('atmosphere-view', scene.id === 'atmosphere');
   $('hud-title').textContent = scene.title; $('hud-sub').textContent = scene.scale;
-  if ($('scene-note')) $('scene-note').textContent = scene.id === 'orbits' ? 'Schematic · not to scale\nHistorical Earth imagery\nPatches are not sensor coverage' : scene.ready ? 'Representative geometry\nNot to scale · illustrative paths' : 'Reserved level\nViewer test object';
+  if ($('scene-note')) $('scene-note').textContent = scene.id === 'orbits' ? 'Schematic · not to scale\nHistorical Earth imagery\nPatches are not sensor coverage' : scene.id === 'plume' ? 'Historical NASA Earth imagery · not to scale\nIllustrative event · no site' : scene.ready ? 'Representative geometry\nNot to scale · illustrative paths' : 'Reserved level\nViewer test object';
   $('intro').textContent = scene.intro; $('parts-n').textContent = ` ${parts.length}`;
   $('lp-k').textContent = isSide(ui.scene) ? 'Side level' : `Level ${ui.scene + 1} of ${MAIN_LEVELS}`;
   $('lp-t').textContent = scene.title; $('back-out').hidden = !isSide(ui.scene);
