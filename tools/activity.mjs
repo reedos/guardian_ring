@@ -14,7 +14,15 @@ if(gate){
  const lesson=()=>page.evaluate(()=>{const s=grx.built[grx.state.scene].teaching.state();return {index:s.index,progress:s.progress,total:s.total,playing:s.playing,repeating:s.repeating,inspection:s.inspection,suspended:s.suspended};});
  const camera=()=>page.evaluate(()=>({position:grx.camera.position.toArray(),target:grx.controls.target.toArray(),selected:grx.state.selected}));
  const stableCamera=async(before,context)=>check(await page.evaluate(saved=>grx.state.selected===saved.selected&&grx.camera.position.distanceTo(new grx.THREE.Vector3(...saved.position))<1e-5&&grx.controls.target.distanceTo(new grx.THREE.Vector3(...saved.target))<1e-5,before),`${context}: compatible layer change replaced the selected part or camera`);
- const layer=async mode=>{await page.locator(`[data-mode="${mode}"]`).click();await frames(3);};
+ const layer=async mode=>{
+  // Atmosphere has one public view. Preserve exhaustive engine coverage for
+  // legacy shared Data/Heat links without pretending it has visible toggles.
+  if(await page.evaluate(()=>grx.store.C.SCENES[grx.state.scene].id==='atmosphere')){
+   check(!await page.locator('[data-mode]:visible').count(),'Atmosphere exposes removed layer toggles');
+   await page.evaluate(value=>grx.setMode(value),mode);
+  }else await page.locator(`[data-mode="${mode}"]`).click();
+  await frames(3);
+ };
  const action=name=>lessonAction(page,name);
  async function enter(scene){
   if(await page.locator('#level-pick').isVisible()){
@@ -62,7 +70,9 @@ if(gate){
     check(!s.inspection&&s.progress>0&&s.progress<1,`${kind}/${key}: layer did not immediately show a meaningful lesson pose`);
     check(s.playing===running&&(!running||s.repeating),`${kind}/${key}: wrong activity/pause intent`);
     check(first.marks>0||first.display,`${kind}/${key}: no visible explanatory marks or display activity`);
-    check(await page.locator('.animation-step').isVisible(),`${kind}/${key}: current activity has no visible explanation`);
+    if(scene.id==='atmosphere'){
+     check(!await page.locator('.animation-step').isVisible()&&await page.locator('#legend').isVisible()&&!!(await page.locator('#legend').innerText()).trim(),`${kind}/${key}: simplified view must replace sequence captions with its visible physical legend`);
+    }else check(await page.locator('.animation-step').isVisible(),`${kind}/${key}: current activity has no visible explanation`);
     await stableCamera(before,`${kind}/${key}`);
     await frames(12);const next=await lesson(),second=await geometry();
     if(running){

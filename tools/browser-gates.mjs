@@ -164,7 +164,12 @@ export async function run(name,form=process.argv[2]||'desktop'){
   for(const sc of scenes){
    await show(page,sc.i,'light');
    for(const mode of ['data','heat','light']){
-    await page.locator(`[data-mode="${mode}"]`).click();
+    if(sc.id==='atmosphere'){
+     if(await page.locator('[data-mode]:visible').count())fail.push('Atmosphere exposes removed layer switches');
+     // Keep legacy shared-layer card/pin coverage without inventing a removed
+     // user control. The ordinary hardware levels still use real buttons.
+     await page.evaluate(value=>grx.setMode(value),mode);
+    }else await page.locator(`[data-mode="${mode}"]`).click();
     // Layer-specific playback controls can resize the phone canvas. Sample
     // after ResizeObserver and rendering, with the same unchanged pin bounds.
     await settleLayout(page);
@@ -259,7 +264,8 @@ export async function run(name,form=process.argv[2]||'desktop'){
   const referenceStart=await page.evaluate(()=>({state:{...grx.state},camera:grx.camera.position.toArray(),scenario:{...grx.store.scenario}}));
   for(const file of ['evidence.html','method.html','glossary.html','parts.html']){
    const link=page.locator(`#topnav a[href^="${file}"]`);
-   if(!await link.isVisible())await page.locator('#menu-btn').click();
+   const menu=page.locator('#menu-btn');
+   if(await menu.isVisible()&&await menu.getAttribute('aria-expanded')!=='true')await menu.click();
    await link.click();await page.locator('#page-sheet').waitFor({state:'visible'});
    const embedded=page.frameLocator('#ps-frame');await embedded.locator('h1').waitFor();
    await audit(`${file}/reference sheet`,'#page-sheet button,#page-sheet a');
@@ -268,6 +274,8 @@ export async function run(name,form=process.argv[2]||'desktop'){
    for(const [key,value]of Object.entries(referenceStart.scenario))if(external.searchParams.get(key)!==value)fail.push(`${file}: reference sheet lost ${key}`);
    if(await embedded.locator('.topbar').isVisible())fail.push(`${file}: embedded page repeats the site header`);
    if(file==='evidence.html'||file==='parts.html'){
+    const summary=embedded.locator(file==='evidence.html'?'[data-claim-group]>summary':'[data-part-entry]>summary').first();
+    await summary.click();
     const chip=embedded.locator('button[data-src]:visible').first();await chip.click();
     await embedded.locator('#src-pop').waitFor({state:'visible'});await page.keyboard.press('Escape');
     await embedded.locator('#src-pop').waitFor({state:'hidden'});

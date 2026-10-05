@@ -68,6 +68,7 @@ async function checkRetainedScenario(page, failures) {
       const row = page.locator(`[data-claim-key="${key}"]`);
       const value = (await row.locator('.claim-value').textContent()).trim();
       if (value !== expected) failures.push(`${sample.summary}: ${key} expected ${expected}, displayed ${value}`);
+      await page.evaluate(id=>{location.hash=id;}, await row.getAttribute('id'));
       await row.locator('button[data-src]').click();
       const pop = page.locator('#src-pop'); await pop.waitFor({ state: 'visible' });
       const popupValue = (await pop.locator('.sp-claim b').textContent()).trim();
@@ -146,7 +147,7 @@ try {
           await search.fill('no-such-guardian-claim');
           if (!await page.locator('#claim-empty').isVisible() || await page.locator('[data-claim-key]:visible').count()) failures.push('Claim empty state failed');
           await search.fill('');
-          if (await page.locator('[data-claim-key]:visible').count() !== total) failures.push('Clearing search did not restore every claim');
+          if (await page.locator('[data-claim-key]').count() !== total || await page.locator('[data-claim-group][open]').count()) failures.push('Clearing search must retain every claim and collapse the groups');
           const sourceSearch = page.locator('#source-search');
           await sourceSearch.fill('nist-codata-2022');
           if (await page.locator('[data-source-key]:visible').count() !== 1) failures.push('Source search did not isolate NIST constants');
@@ -158,6 +159,7 @@ try {
           chips = claimChips.length;
           for (const chip of claimChips) {
             const key = await chip.getAttribute('data-src');
+            await page.evaluate(id=>{location.hash=id;},await chip.evaluate(el=>el.closest('[data-claim-key]').id));
             await chip.scrollIntoViewIfNeeded();
             await chip.click();
             const pop = page.locator('#src-pop');
@@ -188,6 +190,7 @@ try {
           }
           // Follow the actual formula and assumption links exposed by model dialogs.
           for (const [key, hash] of [['model:lightTimeSeconds', '#calc-vacuum-light-time'], ['model:apertureDiameterM', '#assume-model-lab-aperture']]) {
+            await page.evaluate(id=>{location.hash=id;}, `claim-${key}`);
             await page.locator(`button[data-src="${key}"]`).click();
             const destination = page.locator(`#src-pop a[href*="${hash}"]`).first();
             await destination.click();

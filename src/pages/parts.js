@@ -12,10 +12,18 @@ const input=document.getElementById('parts-search'),count=document.getElementByI
 input.value=query.get('q')||'';
 function filter(update=false) {
   const terms=input.value.toLowerCase().trim().split(/\s+/).filter(Boolean);let matches=0;
-  for(const row of register.querySelectorAll('[data-part-entry]')) {row.hidden=!terms.every(term=>row.dataset.search.includes(term));if(!row.hidden)matches++;}
+  for(const row of register.querySelectorAll('[data-part-entry]')) {row.hidden=!terms.every(term=>row.dataset.search.includes(term));row.open=terms.length>0&&!row.hidden;if(!row.hidden)matches++;}
   for(const level of register.querySelectorAll('[data-parts-level]')) level.hidden=![...level.querySelectorAll('[data-part-entry]')].some(row=>!row.hidden);
   count.textContent=`${matches} assembly entries${terms.length?' found':''}`;empty.hidden=matches>0;
-  if(update){const params=new URLSearchParams(location.search);if(input.value.trim())params.set('q',input.value.trim());else params.delete('q');history.replaceState(null,'',`${location.pathname}${params.size?`?${params}`:''}${location.hash}`);}
+  if(update){
+    const params=new URLSearchParams(location.search);if(input.value.trim())params.set('q',input.value.trim());else params.delete('q');
+    let hash=location.hash;
+    try {
+      const target=document.getElementById(decodeURIComponent(hash.slice(1))),row=target?.closest('[data-part-entry]');
+      if(terms.length&&((row&&!terms.every(term=>row.dataset.search.includes(term)))||target?.closest('[hidden]')))hash='';
+    }catch{hash='';}
+    history.replaceState(null,'',`${location.pathname}${params.size?`?${params}`:''}${hash}`);
+  }
 }
 input.addEventListener('input',()=>filter(true));filter();
 // Native details keep long diagrams readable; deep links open their containing sections.
@@ -26,6 +34,7 @@ function revealHash(hash) {
   if(!node)return;
   // A persistent chapter or diagram link must reveal a search-hidden target.
   if(node.closest('[hidden]')) { input.value=''; filter(true); }
+  if(node instanceof HTMLDetailsElement)node.open=true;
   for(let parent=node.parentElement;parent;parent=parent.parentElement) if(parent instanceof HTMLDetailsElement)parent.open=true;
   node.scrollIntoView();
 }

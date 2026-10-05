@@ -326,7 +326,7 @@ PC, real GPU).
 | `perf.mjs desktop` / `phone` | inside budget |
 | `links.mjs` | every story-page link lands on its part |
 
-`npm run gates` runs 38 serialized browser commands. The activity runs cover all nine hardware scenes ×
+`npm run gates` runs 40 serialized browser commands. The activity runs cover all nine hardware scenes ×
 three layers for running, deliberately paused, and reduced-motion states; they also cross natural repeat
 boundaries in each atmosphere layer. `tools/gate-report.mjs` requires complete, current-build activity
 inventories alongside the other full-scope results. Performance budgets remain unchanged.
@@ -357,3 +357,7 @@ The 10/04/2026 audit adds audit-layout (stage height, title contrast, guide geom
 3. Show real constellation positions (public orbital elements) or a schematic constellation only.
    The plan assumes schematic.
 4. Whether to say which agencies' public documents the site leans on in the hero, or only in the footer.
+
+### Reference browsing acceptance (10/04/2026)
+
+`reference-audit` runs on desktop and phone: collapsed assemblies, search and deep-link disclosure, all claims retained, 12 claims per results page, exhaustive traversal of the spacecraft group, empty states, no horizontal overflow, and simplified Atmosphere controls. ABI and TIRS-2 remain separate named civil instruments.
