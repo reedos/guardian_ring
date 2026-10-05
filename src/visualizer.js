@@ -17,7 +17,7 @@ import { mountFocusDemo } from './app/focus-demo.js';
 import { mountSceneKey } from './app/scene-key.js';
 import { mountMissionTour } from './app/mission-tour.js';
 import { moreCue } from './app/more-cue.js';
-import { measureInspectorLimits, mountInspectorLayout } from './app/inspector-layout.js';
+import { measureInspectorLimits, mountInspectorLayout, inspectorDragExpanded } from './app/inspector-layout.js';
 
 window.grx = {
   store, setScenario, pin, state: store.ui, go: stage.go, select: stage.select, setMode: stage.setMode,
@@ -25,7 +25,7 @@ window.grx = {
   renderer: stage.getRenderer, renderScale: stage.renderScale, quality: stage.qualityInfo, forceTier: stage.forceTier, setTransitions: stage.setTransitions,
   show: stage.show, overview: stage.overview, THREE, clearance: stage.clearanceStats, occupancy: stage.occupancy, scenarioOptions: SCENARIO_OPTIONS,
   setQualityPreference: stage.setQualityPreference, isBusy: stage.isBusy, isCameraMoving: stage.isCameraMoving,
-  flightProgress: stage.getFlightProgress,
+  flightProgress: stage.getFlightProgress, stepTeaching:stage.stepTeaching, setSceneActivity:stage.setSceneActivity,
   setAssemblyView:stage.setAssemblyView,
   setOrbitFollow:stage.setOrbitFollow,orbitFollow:stage.orbitFollow,
 };
@@ -38,14 +38,14 @@ mountSceneKey();
 mountInspectorLayout();
 for (const event of ['scene', 'mode', 'scene-settings']) on(event, () => animationControls.sync());
 const tabs = [...document.querySelectorAll('[data-pane]')], scenario = document.getElementById('pane-scenario'), sheetButton = document.getElementById('sheet-toggle');
-function setSheet(open) { document.body.style.removeProperty('--inspector-size'); document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel'); }
+function setSheet(open) { document.body.style.removeProperty('--inspector-size'); document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open));if(matchMedia('(max-width:760px)').matches)document.getElementById('tab-parts').setAttribute('aria-expanded',String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel'); }
 function showPane(which, { reset = true } = {}) {
   tabs.forEach(button => { const selected = button.dataset.pane === which; button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1; });
   scenario.hidden = which !== 'scenario';
-  document.querySelectorAll('.panel-scroll > :not(#pane-scenario):not(.pane-note):not(#playback-dock)').forEach(element => element.classList.toggle('pane-off', which === 'scenario'));
+  document.querySelectorAll('.panel-scroll > :not(#pane-scenario):not(.pane-note):not(#playback-dock):not(.view-part)').forEach(element => element.classList.toggle('pane-off', which === 'scenario'));
   if (reset) document.querySelector('.panel-scroll').scrollTop = 0;
 }
-on('pane-request', ({ pane, reset = true }) => showPane(pane, { reset }));
+on('pane-request', ({ pane, reset = true, expand = false }) => {showPane(pane, { reset });if(expand&&matchMedia('(max-width:760px)').matches)setSheet(true);});
 on('experiment', experiment => {
   showPane('scenario'); setSheet(true);
   requestAnimationFrame(() => {
@@ -72,7 +72,7 @@ on('restore-pane', saved => {
   }
 });
 tabs.forEach((button, index) => {
-  button.addEventListener('click', () => { showPane(button.dataset.pane); if (button.dataset.pane === 'scenario') setSheet(true); });
+  button.addEventListener('click', () => { showPane(button.dataset.pane); if (button.dataset.pane === 'scenario') setSheet(true);else if(!dragged&&matchMedia('(max-width:760px)').matches)setSheet(!document.body.classList.contains('sheet-open'));dragged=false; });
   button.addEventListener('keydown', event => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
@@ -89,20 +89,25 @@ moreCue(scroller, { host: document.getElementById('inspector'), label: () => {
 }, press: () => { if (matchMedia('(max-width: 1100px)').matches && !document.body.classList.contains('sheet-open')) { setSheet(true); return true; } return false; } });
 document.getElementById('card-more').addEventListener('click', () => setSheet(true));
 let sheetDrag = null, dragged = false;
-sheetButton.addEventListener('pointerdown', event => {
+for(const handle of [sheetButton,document.getElementById('tab-parts')])handle.addEventListener('pointerdown', event => {
   if (!matchMedia('(max-width: 1100px)').matches) return;
-  sheetDrag = { y: event.clientY, height: document.getElementById('inspector').getBoundingClientRect().height }; dragged = false; sheetButton.setPointerCapture(event.pointerId);
+  sheetDrag = { y: event.clientY, height: document.getElementById('inspector').getBoundingClientRect().height }; dragged = false; event.currentTarget.setPointerCapture(event.pointerId);
 });
-sheetButton.addEventListener('pointermove', event => {
+for(const handle of [sheetButton,document.getElementById('tab-parts')])handle.addEventListener('pointermove', event => {
   if (!sheetDrag) return;
   const delta = sheetDrag.y - event.clientY; if (Math.abs(delta) > 5) dragged = true; if (!dragged) return;
   const limits = measureInspectorLimits();
-  const height = Math.max(limits.minimum, Math.min(limits.maximum, sheetDrag.height + delta));
+  const height = Math.max(Math.min(limits.minimum,48), Math.min(limits.maximum, sheetDrag.height + delta));
   document.body.style.setProperty('--inspector-size', `${height}px`);
-  const open = height > innerHeight * .35; document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel');
+  const open = inspectorDragExpanded(height); document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open));if(matchMedia('(max-width:760px)').matches)document.getElementById('tab-parts').setAttribute('aria-expanded',String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel');
 });
-sheetButton.addEventListener('pointerup', () => { sheetDrag = null; });
-sheetButton.addEventListener('pointercancel', () => { sheetDrag = null; dragged = false; });
+for(const handle of [sheetButton,document.getElementById('tab-parts')])handle.addEventListener('pointerup', () => { sheetDrag = null; });
+for(const handle of [sheetButton,document.getElementById('tab-parts')])handle.addEventListener('pointercancel', () => { sheetDrag = null; dragged = false; });
 sheetButton.addEventListener('click', () => { if (!dragged) setSheet(!document.body.classList.contains('sheet-open')); dragged = false; });
 if (new URLSearchParams(location.search).get('pane') === 'scenario') { showPane('scenario'); setSheet(true); }
+const motion=document.getElementById('activity-motion');
+motion.checked=!stage.reduced;
+motion.addEventListener('change',()=>{if(!motion.checked)window.grx.mission.pause();stage.setSceneActivity(motion.checked);});
+for(const name of ['scene','scene-settings'])on(name,()=>{motion.checked=!!(stage.getTeaching()?.state().playing||stage.built[stage.destination()]?.motion?.());});
+stage.onTick(()=>{const playing=!!(stage.getTeaching()?.state().playing||stage.built[stage.destination()]?.motion?.());if(motion.checked!==playing)motion.checked=playing;});
 stage.start();

@@ -1,3 +1,4 @@
+import {openParts} from './gate-actions.mjs';
 // Regressions from the whole-project UX review. Run serially against a built
 // preview; these checks use real controls and retain gate-common's GPU rule.
 import fs from 'node:fs';
@@ -147,13 +148,13 @@ if (gate) {
     await scene('orbits');
     for (const id of ['geo', 'heo', 'meo', 'leo']) {
       const toggle = page.locator(`#orbit-controls [data-family="${id}"]`), pin = page.locator(`#pins .pin[data-id="${id}"]`);
-      if (await toggle.getAttribute('aria-pressed') === 'true') await toggle.click();
+      await page.locator(`#orbit-controls [data-family="${id==='geo'?'heo':'geo'}"]`).click();await openParts(page);
       await frames(page);
       check(await pin.evaluate(node => node.hidden), `${id}: a hidden family retained a floating component pin`);
       await page.locator('#part-select').selectOption(id); await page.evaluate(() => grx.settle()); await frames(page);
       check(await page.evaluate(id => grx.state.selected === id && grx.built[0].families()[id], id)
         && await pin.isVisible() && await toggle.getAttribute('aria-pressed') === 'true', `${id}: selecting a hidden family did not reveal its spacecraft and pin`);
-      await toggle.click(); await page.evaluate(() => grx.settle()); await frames(page);
+      await page.locator(`#orbit-controls [data-family="${id==='geo'?'heo':'geo'}"]`).click(); await page.evaluate(() => grx.settle()); await frames(page);
       check(await page.evaluate(id => grx.state.selected === null && document.getElementById('part-select').value === ''
         && document.getElementById('card').hidden && !grx.built[0].families()[id], id)
         && await pin.evaluate(node => node.hidden), `${id}: hiding the selected family left a selected component without geometry`);
@@ -165,11 +166,9 @@ if (gate) {
       await frames(page);
       check(await page.evaluate(id => grx.state.selected === id && grx.built[0].families().geo, id), `${mode}/${id}: test did not select visible GEO equipment`);
       check(await page.locator(`#pins .pin[data-id="${id}"]`).isVisible(), `${mode}/${id}: selected equipment lost its marker when its physical path was absent`);
-      const unrelated=page.locator('#orbit-controls [data-family="heo"]');
-      if(await unrelated.getAttribute('aria-pressed')!=='true')await unrelated.click();
-      await unrelated.click();await frames(page);
-      check(await page.evaluate(id=>grx.state.selected===id,id), `${mode}/${id}: hiding another family cleared the GEO selection`);
-      await page.locator('#orbit-controls [data-family="geo"]').click(); await page.evaluate(() => grx.settle()); await frames(page);
+      await page.locator('#orbit-controls [data-family="all"]').click();await frames(page);
+      check(await page.evaluate(id=>grx.state.selected===id&&Object.values(grx.built[0].families()).every(Boolean),id), `${mode}/${id}: All cleared the selected GEO equipment`);
+      await page.locator('#orbit-controls [data-family="heo"]').click(); await page.evaluate(() => grx.settle()); await frames(page);
       check(await page.evaluate(() => grx.state.selected === null && document.getElementById('part-select').value === ''
         && document.getElementById('card').hidden && !grx.built[0].families().geo), `${mode}/${id}: hiding GEO left a selected dependent component`);
       check(await page.locator(`#pins .pin[data-id="${id}"]`).evaluate(node => node.hidden), `${mode}/${id}: hidden GEO retained a dependent pin`);

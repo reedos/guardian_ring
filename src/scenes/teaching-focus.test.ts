@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { compute } from '../model/engine';
 import { content } from '../data.js';
 import { teachingProgram } from './teaching-programs.js';
-import { teachingFocus } from './teaching-focus.js';
+import { teachingFocus, teachingPartPhase } from './teaching-focus.js';
 
 type SceneConfig = { teaching: string; points: Record<string, unknown>; dataPoints?: Record<string, unknown>; heatPoints?: Record<string, unknown> };
 // Capture the real, authored point inventories without loading assets or
@@ -28,6 +28,23 @@ const C = content(compute());
 const cards = { light: C.PARTS, data: C.PARTS_DATA, heat: C.PARTS_HEAT };
 
 describe('manual teaching-step focus', () => {
+  it('demonstrates scan motion, detector response and cooler heat lift on one-shot inspection', () => {
+    for(const [scene,mode,part,action] of [
+      ['abi','light','scan-system','slew'],['payload','heat','thermal','lift'],
+      ['abi','heat','thermal','lift'],['tirs2','heat','cooling','lift'],
+      ['focal-plane','light','array','absorb'],
+    ]){
+      const steps=teachingProgram(scene,mode);
+      expect(steps[teachingPartPhase(scene,mode,part,steps)].id).toBe(action);
+      expect(teachingFocus(scene,mode,action)).toBe(part);
+    }
+  });
+  it('keeps ordinary parts on their authored activity and leaves unanimated parts still', () => {
+    const steps=teachingProgram('payload','light');
+    expect(steps[teachingPartPhase('payload','light','optics',steps)].id).toBe('collect');
+    expect(teachingPartPhase('payload','light','unanimated',steps)).toBe(-1);
+    expect(()=>teachingPartPhase('abi','light','scan-system',[{id:'command'}])).toThrow(RangeError);
+  });
   it('maps every actual lesson step to a real card and hotspot in its current layer', () => {
     expect([...configs.keys()].sort()).toEqual([...scenes].sort());
     let focused = 0;

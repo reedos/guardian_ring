@@ -1,5 +1,5 @@
 // Shared explorer affordances from IF: a part picker, overview and a clear view.
-import { on, store } from './store.js';
+import { on, store, emit } from './store.js';
 import { partsFor, select, overview } from './stage.js';
 
 const $ = id => document.getElementById(id);
@@ -58,7 +58,7 @@ function setPresentation(enabled) {
 function revealCard() {
   if (document.body.classList.contains('presentation-view')) return;
   collapseInspector(false);
-  $('tab-parts').click();
+  emit('pane-request', {pane:'parts',reset:true,expand:true});
   const selected = store.ui.selected, scene = store.ui.scene, mode = store.ui.mode;
   requestAnimationFrame(() => {
     if (store.ui.scene !== scene || store.ui.mode !== mode || store.ui.selected !== selected) return;

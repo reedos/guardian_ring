@@ -67,3 +67,22 @@ export function teachingFocus(sceneId, mode, phaseId) {
   if (!phases || !Object.hasOwn(phases, phaseId)) throw new RangeError(`Missing teaching focus: ${sceneId}/${mode}/${phaseId}`);
   return phases[phaseId];
 }
+
+// One-shot part inspection uses the action that best demonstrates this
+// component, not whichever phase happens to appear first in the full story.
+// Absorption shows the array's detector response; collection describes optics.
+const partActions = {
+  abi: { light: { 'scan-system':'slew' }, heat: { thermal:'lift' } },
+  payload: { heat: { thermal:'lift' } },
+  'focal-plane': { light: { array:'absorb' } },
+  tirs2: { heat: { cooling:'lift' } },
+};
+export function teachingPartPhase(sceneId, mode, partId, steps) {
+  const action=partActions[sceneId]?.[mode]?.[partId];
+  if(action){
+    const index=steps.findIndex(step=>step.id===action);
+    if(index<0||teachingFocus(sceneId,mode,action)!==partId)throw new RangeError(`Invalid part activity: ${sceneId}/${mode}/${partId}/${action}`);
+    return index;
+  }
+  return steps.findIndex(step=>teachingFocus(sceneId,mode,step.id)===partId);
+}

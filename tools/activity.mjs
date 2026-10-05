@@ -1,3 +1,4 @@
+import {lessonAction,setMotion,openParts} from './gate-actions.mjs';
 // Immediate layer activity, retained motion intent, and orbital follow sharing.
 // One real-GPU browser owns the complete desktop or phone run; no timing mocks.
 import {openGate,finish,MODES,BASE} from './gate-common.mjs';
@@ -14,7 +15,7 @@ if(gate){
  const camera=()=>page.evaluate(()=>({position:grx.camera.position.toArray(),target:grx.controls.target.toArray(),selected:grx.state.selected}));
  const stableCamera=async(before,context)=>check(await page.evaluate(saved=>grx.state.selected===saved.selected&&grx.camera.position.distanceTo(new grx.THREE.Vector3(...saved.position))<1e-5&&grx.controls.target.distanceTo(new grx.THREE.Vector3(...saved.target))<1e-5,before),`${context}: compatible layer change replaced the selected part or camera`);
  const layer=async mode=>{await page.locator(`[data-mode="${mode}"]`).click();await frames(3);};
- const action=name=>page.locator(`#animation-controls [data-action="${name}"]`).click();
+ const action=name=>lessonAction(page,name);
  async function enter(scene){
   if(await page.locator('#level-pick').isVisible()){
    await page.locator('#level-pick').click();await page.locator(`#level-menu [data-level="${scene.i}"]`).click();
@@ -49,7 +50,7 @@ if(gate){
    return lists[0].find(part=>lists.every(list=>list.some(other=>other.id===part.id))&&maps.every(map=>map?.[part.id]?.view&&JSON.stringify(map[part.id].view)===JSON.stringify(maps[0][part.id].view)))?.id;
   },scene.id);
   check(!!part,`${scene.id}: no compatible authored part available for the layer-retention check`);
-  await page.locator('#part-select').selectOption(part);await ready();await frames(3);
+  await openParts(page);await page.locator('#part-select').selectOption(part);await ready();await frames(3);
  }
  async function matrix(kind){
   const running=kind==='running';
@@ -97,7 +98,7 @@ if(gate){
   const payload=scenes.find(scene=>scene.id==='payload')||scenes.find(scene=>scene.i!==0);
   await enter(payload);await layer('data');await layer('light');
   const details=page.locator('.animation-explanation');
-  if(!await details.evaluate(node=>node.open))await details.locator('summary').click();
+  await openParts(page);if(!await details.evaluate(node=>node.open))await details.locator('summary').click();
   // The payload's opening command has directly attached civil component facts.
   check(await page.locator('.animation-evidence [data-src]').count()>0,'Activity phase has no evidence control for the reading-hold check');
   await page.locator('.animation-evidence [data-src]').first().click();await page.locator('#src-pop').waitFor({state:'visible'});await frames(3);
@@ -145,17 +146,17 @@ if(gate){
   const ring=scenes.find(scene=>scene.i===0);
   if(ring){
    await enter(ring);
-   if(!await page.evaluate(()=>grx.built[0].motion()))await page.locator('#day-play').click();
-   await page.locator('#day-play').click();
+   if(!await page.evaluate(()=>grx.built[0].motion()))await setMotion(page,!(await page.evaluate(()=>grx.built[0].motion())));
+   await setMotion(page,!(await page.evaluate(()=>grx.built[0].motion())));
    const note=page.locator('.orbit-playback-note');if(!await note.evaluate(node=>node.open))await note.locator('summary').click();
    await page.locator('[data-follow="leo"]').click();await ready();await frames(4);
    check(await page.evaluate(()=>grx.orbitFollow()==='leo'&&!grx.built[0].motion()),'Pause the day → Follow LEO restarted motion');
    const pausedFollow=await camera();await frames(12);await stableCamera(pausedFollow,'Paused LEO follow');
-   await page.locator('#day-play').click();await page.locator('[data-follow="geo"]').click();await ready();await frames(4);
+   await setMotion(page,!(await page.evaluate(()=>grx.built[0].motion())));await page.locator('[data-follow="geo"]').click();await ready();await frames(4);
    check(await page.evaluate(()=>grx.orbitFollow()==='geo'&&grx.built[0].motion()),'Running day → Follow GEO did not resume prior motion');
    const movingFollow=await camera();await frames(12);
    check(await page.evaluate(before=>grx.camera.position.distanceTo(new grx.THREE.Vector3(...before.position))>1e-4,movingFollow),'Running follow camera is static');
-   await page.locator('#day-play').click();await page.locator('[data-follow="leo"]').click();await ready();await frames(3);
+   await setMotion(page,!(await page.evaluate(()=>grx.built[0].motion())));await page.locator('[data-follow="leo"]').click();await ready();await frames(3);
    // Capture the real Share handler's output without replacing the user's clipboard.
    await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async url=>{window.activitySharedUrl=url;}}}));
    await page.locator('#more-btn').click();await page.locator('#share-btn').click();

@@ -1,7 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { explanationHeightLimit, inspectorHeightLimits, missionInvitationFits } from './inspector-layout.js';
+import { explanationHeightLimit, inspectorHeightLimits, missionInvitationFits, inspectorDragExpanded } from './inspector-layout.js';
 
 describe('phone inspector height budget', () => {
+  it('keeps a dragged sheet open when its available height is below 35% of the viewport', () => {
+    for(const viewportHeight of [844,667]){
+      const allowedHeight=viewportHeight*.22;
+      expect(allowedHeight).toBeLessThan(viewportHeight*.35);
+      expect(inspectorDragExpanded(allowedHeight)).toBe(true);
+    }
+    expect(inspectorDragExpanded(48)).toBe(false);
+    expect(inspectorDragExpanded(53)).toBe(false);
+    expect(inspectorDragExpanded(54)).toBe(true);
+  });
   it('reserves the canvas and full side-level transport before sizing the pane', () => {
     expect(inspectorHeightLimits({ availableHeight: 737, controlsHeight: 214 })).toEqual({ minimum: 150, maximum: 383 });
   });

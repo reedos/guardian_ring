@@ -6,10 +6,9 @@ import { TIERS, qualityPressure } from './render-quality.js';
 import { poseAt, clearPath } from './camera-path.js';
 import { createCameraClearance, constrainCameraPose, CLEARANCE_BAND } from './camera-clearance.js';
 import { occupancyBuilder } from './occupancy.js';
-import { createPartCycle } from './part-cycle.js';
 import { layoutAnchoredPins, pinLabelBox } from './pin-layout.js';
 import { fitComponent } from './component-frame.js';
-import { teachingFocus } from '../scenes/teaching-focus.js';
+import { teachingFocus, teachingPartPhase } from '../scenes/teaching-focus.js';
 import { chip } from '../evidence.js';
 import { renderComponentDetails } from './component-details.js';
 import { createVisitHistory, retainedPart, capturePane, refreshScenarioContent } from './exploration-context.js';
@@ -52,6 +51,16 @@ export const activitySuspended = () => lifecycleFrozen || document.hidden || $('
 // Camera inspection can pause the current pose without changing this preference.
 let activityEnabled = !reduced;
 export function setActivityEnabled(playing) { activityEnabled=!!playing;if(orbitTracking?.entering)orbitTracking.resumeMotion=activityEnabled; }
+export function setSceneActivity(playing) {
+  setActivityEnabled(playing);
+  if(!playing)pendingPartAnimation=null;
+  const teaching=getTeaching();
+  if(playing){
+    if(teaching?.state().inspection)previewActivity();
+    else teaching?.play({repeat:teaching.state().repeating});
+  }else teaching?.pause();
+  built[ui.scene]?.setMotion?.(!!playing);emit('scene-settings');
+}
 function previewActivity() {
   getTeaching()?.preview?.({playing:activityEnabled});
   if(orbitTracking?.entering)orbitTracking.resumeMotion=activityEnabled;
@@ -108,7 +117,7 @@ export function setOrbitFollow(family) {
   }
   const current = built[ui.scene];
   if (ui.scene !== 0 || !['geo', 'leo'].includes(family) || !current?.followTarget) return;
-  partCycle.stop(); deselect(); current.setFamily(family, true); current.setFocusFamily(family);
+  deselect(); current.setFamily(family, true); current.setFocusFamily(family);
   const resumeMotion=orbitTracking?.entering?orbitTracking.resumeMotion:current.motion();
   current.setMotion(false);
   const previousMinimum=orbitTracking?.minDistance??orbitExitMinimum??controls.minDistance;
@@ -196,7 +205,7 @@ function updatePins() {
   camera.updateMatrixWorld();
   const width = view.clientWidth, height = view.clientHeight;
   const origin=view.getBoundingClientRect();
-  const hudBounds=[...view.querySelectorAll('.hud,.hud-row,#scene-note')].filter(el=>el.checkVisibility()).map(el=>{
+  const hudBounds=[...view.querySelectorAll('.hud,.hud-row,#scene-note,#hud-btns,#orbit-controls')].filter(el=>el.checkVisibility()).map(el=>{
     const r=el.getBoundingClientRect();return {left:r.left-origin.left,right:r.right-origin.left,top:r.top-origin.top,bottom:r.bottom-origin.top};
   });
   built[ui.scene]?.updateLabels?.(camera,{width,height,obstacles:hudBounds});
@@ -303,15 +312,13 @@ function buildPanel() {
 }
 function updateCycle() {
   const available = partCount(ui.scene) > 1;
-  for (const id of ['card-prev', 'card-next', 'part-play']) $(id).disabled = !available;
-  $('part-play').setAttribute('aria-pressed', String(partCycle.playing)); $('part-play').textContent = partCycle.playing ? 'Pause' : 'Auto-cycle';
-  $('part-play').title = available ? 'Cycle through the parts, holding each for 8 seconds after the camera arrives. Reading sources pauses the clock; choosing a part stops it.' : 'Available when this level has several parts';
+  for (const id of ['card-prev', 'card-next']) $(id).disabled = !available;
 }
 export function select(id, fly = true, { reveal = true } = {}) {
+  pendingPartAnimation = null;
   if (orbitTracking) setOrbitFollow(null);
   const part = partsFor(ui.scene).find(candidate => candidate.id === id); if (!part) return;
   framedOverview=false;
-  if (!partCycle.selecting) partCycle.stop();
   if (fly) { inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); }
   ui.selected = id; $('card').hidden = false; $('card-k').textContent = part.kicker; $('card-t').textContent = part.title; $('card-b').textContent = part.body;
   let assembly=$('card-assembly');
@@ -346,9 +353,10 @@ export function deselect() {
   emit('select', null);
 }
 export function overview() {
+  pendingPartAnimation = null;
   if (orbitTracking) setOrbitFollow(null);
   const preset = overviewFrame(); if (!preset) return;
-  partCycle.stop(); deselect(); framedOverview=true; flyTo(preset.pos, preset.target);
+  deselect(); framedOverview=true; flyTo(preset.pos, preset.target);
   emit('pane-request', { pane: 'parts', reset: true });
 }
 // Covers disappear only for the illustrative cutaway. Camera clearance always
@@ -372,16 +380,19 @@ export function stepTeaching(direction, { reset = false } = {}) {
   if(reset)teaching.seek(0,0);else teaching.step(direction);
   emit('scene-settings');
 }
+let pendingPartAnimation = null;
 export function cycle(direction) {
   const parts = partsFor(ui.scene); if (!parts.length) return;
   const index = parts.findIndex(part => part.id === ui.selected);
-  select(parts[index < 0 ? direction < 0 ? parts.length - 1 : 0 : (index + direction + parts.length) % parts.length].id);
+  const id=parts[index < 0 ? direction < 0 ? parts.length - 1 : 0 : (index + direction + parts.length) % parts.length].id;
+  select(id);
+  const teaching=getTeaching(),lesson=teaching?.state();
+  const phase=lesson?teachingPartPhase(store.C.SCENES[ui.scene].id,ui.mode,id,lesson.steps):-1;
+  pendingPartAnimation=direction>0&&phase>=0?{scene:ui.scene,mode:ui.mode,id,teaching,phase}:null;
 }
-const partCycle = createPartCycle({ parts: () => partsFor(ui.scene).map(part => part.id), selected: () => ui.selected, select,
-  ready: () => !document.hidden && !isCameraMoving() && $('src-pop')?.hidden !== false && $('page-sheet')?.hidden !== false, changed: updateCycle });
 export function setMode(mode, { activity = true } = {}) {
   if (!modes.includes(mode)) return;
-  partCycle.stop();
+
   const selected = ui.selected;
   const previous=hotspotsFor(ui.scene)[selected]?.view;
   ui.mode = mode; document.querySelectorAll('[data-mode]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.mode === mode)));
@@ -403,7 +414,7 @@ export async function go(index, { record = true, restore = null, owner = null, r
   const firstView = ui.scene < 0;
   if (record) visits.enter(captureView(), index, isSide(index));
   built[ui.scene]?.teaching?.pause();
-  const epoch = ++buildEpoch; busy = true; navigationOwner=owner;partCycle.stop(); $('veil').hidden = false; $('veil').classList.remove('off'); $('veil').textContent = 'Preparing the scene…';
+  const epoch = ++buildEpoch; busy = true; navigationOwner=owner;$('veil').hidden = false; $('veil').classList.remove('off'); $('veil').textContent = 'Preparing the scene…';
   try {
     if (!built[index]) {
       await BUILDERS[index].preload(); if (epoch !== buildEpoch) return;
@@ -447,7 +458,7 @@ export async function go(index, { record = true, restore = null, owner = null, r
 }
 // Preserve the test hook's default-first-part contract. Normal level navigation
 // uses go(), which opens an honest unselected overview.
-export async function show({ scene = ui.scene, mode = ui.mode, part = null }, { scroll = false } = {}) { if (modes.includes(mode)) ui.mode = mode; await go(scene, { record: false, activity:false }); setMode(mode,{activity:false}); select(part||partsFor(ui.scene)[0]?.id, true, { reveal: scroll }); }
+export async function show({ scene = ui.scene, mode = ui.mode, part = null }, { scroll = false } = {}) { if (modes.includes(mode)) ui.mode = mode; await go(scene, { record: false, activity:false }); setMode(mode,{activity:false}); select(part||partsFor(ui.scene)[0]?.id, true, { reveal: scroll });emit('pane-request',{pane:'parts',reset:!scroll,expand:true}); }
 export async function backOut() { const origin = visits.back(); await go(origin?.scene ?? 0, { record: false, restore: origin }); }
 on('scenario', () => {
   if (!started) return;
@@ -493,9 +504,9 @@ export function start() {
     else { const side = document.createElement('button'); side.className = 'btn'; side.type = 'button'; side.textContent = scene.title; side.dataset.level = String(index); side.addEventListener('click', () => void go(index)); $('side-levels').append(side); }
   });
   document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
-  $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('part-play').addEventListener('click', () => partCycle.toggle()); $('back-out').addEventListener('click', backOut);
+  $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('back-out').addEventListener('click', backOut);
   $('quality').addEventListener('change', event => setQualityPreference(event.target.value));
-  controls.addEventListener('start', () => { if(orbitTracking)setOrbitFollow(null);framedPart = null; framedOverview=false; tween = null; partCycle.stop(); inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); });
+  controls.addEventListener('start', () => { pendingPartAnimation=null;if(orbitTracking)setOrbitFollow(null);framedPart = null; framedOverview=false; tween = null; inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); });
   const suspendActivity = () => {
     const suspended = activitySuspended();
     getTeaching()?.setSuspended?.(suspended); built[ui.scene]?.setSuspended?.(suspended);
@@ -513,7 +524,6 @@ export function start() {
   new ResizeObserver(resize).observe(view);
   document.addEventListener('keydown', event => {
     if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
-    if (event.key === 'Escape' && partCycle.playing) partCycle.stop();
     const target = event.target instanceof Element ? event.target : null;
     if (!stageActive() || target?.closest('input, select, textarea, [contenteditable="true"], [role="tablist"], [role="dialog"], button, a[href], summary')) return;
     if (/^[1-6]$/.test(event.key)) void go(Number(event.key) - 1);
@@ -533,7 +543,15 @@ export function start() {
     // A reader can rotate the released close view around a spacecraft. Keep
     // that free camera outside Earth until an authored view restores its limit.
     if(ui.scene===0&&!orbitTracking&&!tween&&camera.position.length()<1.10){camera.position.setLength(1.10);camera.lookAt(controls.target);}
-    built[ui.scene].update(now / 1000); updateOrbitFollow(suspended); partCycle.tick(dt); tickers.forEach(fn => fn(now / 1000, dt)); updatePins();
+    if(pendingPartAnimation&&!suspended&&!isCameraMoving()){
+      const pending=pendingPartAnimation;pendingPartAnimation=null;
+      if(pending.scene===ui.scene&&pending.mode===ui.mode&&pending.id===ui.selected){
+        pending.teaching.seek(pending.phase,reduced?.72:0);
+        if(!reduced)pending.teaching.play({singleStep:true});
+        emit('scene-settings');
+      }
+    }
+    built[ui.scene].update(now / 1000); updateOrbitFollow(suspended); tickers.forEach(fn => fn(now / 1000, dt)); updatePins();
     sceneLook.activate(built[ui.scene]);renderer.render(built[ui.scene].scene, camera);
     const cpu = performance.now() - cpuStart; if (dt < .25) { frameSamples.push(dt * 1000); cpuSamples.push(cpu); }
     frameObservers.forEach(fn => fn({ frame: dt * 1000, cpu })); govern(now);

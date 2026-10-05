@@ -18,9 +18,10 @@ export function mountSceneKey(){
   // of the molecular diagrams and detector face.
   const view=document.getElementById('view'),note=document.getElementById('scene-note');
   const dock=document.createElement('div');dock.className='compact-scene-key';dock.hidden=true;view.after(dock);
-  const compact=matchMedia('(max-width:760px) and (max-height:640px) and (orientation:portrait), (max-width:640px) and (max-height:360px) and (orientation:landscape)');
-  const placeKey=()=>{dock.hidden=!compact.matches;(compact.matches?dock:view).append(note,legend);};
-  compact.addEventListener('change',placeKey);placeKey();
+  dock.hidden=false;dock.append(note,legend);
+  const phase=document.querySelector('.animation-step');if(phase)dock.prepend(phase);
+  const keySize=new ResizeObserver(()=>document.body.style.setProperty('--scene-key-height',`${dock.getBoundingClientRect().height}px`));
+  keySize.observe(dock);
   let previous='';
   const sync=()=>{
     const id=store.C.SCENES[store.ui.scene]?.id,mode=store.ui.mode;
@@ -31,5 +32,5 @@ export function mountSceneKey(){
   };
   on('scene',sync);on('mode',sync);on('scene-settings',sync);
   const untick=onTick(sync);sync();
-  return {dispose(){untick();compact.removeEventListener('change',placeKey);view.append(note);legend.remove();dock.remove();}};
+  return {dispose(){untick();keySize.disconnect();view.append(note);legend.remove();dock.remove();}};
 }

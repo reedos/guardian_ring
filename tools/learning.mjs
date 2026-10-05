@@ -4,6 +4,7 @@ import { openGate, show, finish, MODES, BASE } from './gate-common.mjs';
 import { checkView, fly } from './gate-geometry.mjs';
 import fs from 'node:fs';
 import {checkUI} from './gate-ui.mjs';
+import {lessonAction,setMotion,openParts} from './gate-actions.mjs';
 
 const form = process.argv[2] || 'desktop';
 const gate = await openGate('learning', form);
@@ -19,17 +20,7 @@ if (gate) {
     function tick() { if (--n <= 0) resolve(); else requestAnimationFrame(tick); }
     requestAnimationFrame(tick);
   }), count);
-  const action = async name => {
-    const button=page.locator(`#animation-controls [data-action="${name}"]`);
-    if(await button.isVisible())return button.click();
-    if(await page.evaluate(()=>grx.built[grx.state.scene].teaching.state().total)>=3)throw new Error(`Required ${name} lesson control is hidden`);
-    // Short lessons deliberately have no transport (audit A6). Retain clock
-    // coverage through the existing scene API; other lessons use real controls.
-    return page.evaluate(name=>{const t=grx.built[grx.state.scene].teaching;
-      if(name==='play'){if(t.state().playing)t.pause();else{grx.overview();grx.settle();t.play();}}
-      else if(name==='reset')t.seek(0,0);else t.step(name==='next'?1:-1);
-    },name);
-  };
+  const action = name => lessonAction(page,name);
   const assemblyAction = view => page.locator(`.assembly-controls [data-assembly-view="${view}"]`).click();
   const checkAssembly = async (wanted, context) => {
     const result = await page.evaluate(view => {
@@ -225,11 +216,11 @@ if (gate) {
 
     // Pause holds an orbiter at its current position; its pin follows that node.
     await show(page,'orbits','light');
-    if (!(await page.evaluate(() => grx.built[0].motion()))) await page.locator('#day-play').click();
+    if (!(await page.evaluate(() => grx.built[0].motion()))) await setMotion(page,!(await page.evaluate(()=>grx.built[0].motion())));
     await page.evaluate(() => { window.learningOrbitStart=grx.built[0].hotspots.heo.node.position.toArray(); });
     await frames(12);
     check(await page.evaluate(() => grx.built[0].hotspots.heo.node.position.distanceTo(new grx.THREE.Vector3(...window.learningOrbitStart))>1e-5), 'Schematic HEO did not advance');
-    await page.locator('#day-play').click();
+    await setMotion(page,!(await page.evaluate(()=>grx.built[0].motion())));
     await page.evaluate(() => { window.learningOrbitPause=grx.built[0].hotspots.heo.node.position.toArray(); });
     await frames(8);
     check(await page.evaluate(() => !grx.built[0].motion() && grx.built[0].hotspots.heo.node.position.distanceTo(new grx.THREE.Vector3(...window.learningOrbitPause))===0), 'Pausing the day did not hold the current orbital pose');
@@ -243,7 +234,7 @@ if (gate) {
     // Open in the same task as Play so even a slow test host cannot consume the
     // remaining step before the source-reading suspension is exercised.
     await page.evaluate(async () => {
-      document.querySelector('#animation-controls [data-action="play"]').click();
+      grx.settle();grx.setSceneActivity(true);
       await Promise.resolve();
       document.querySelector('.animation-evidence [data-src="learning:cooler-balance"]').click();
     });

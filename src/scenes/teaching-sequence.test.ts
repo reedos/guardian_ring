@@ -2,6 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { createTeachingSequence, polylineSampler } from './teaching-sequence.js';
 const steps = [{id:'first'}, {id:'second'}, {id:'third'}];
 describe('a presentation clock rather than a sensor clock', () => {
+  it('plays an inspected part once without advancing into another component',()=>{
+    const clock=createTeachingSequence(steps,{duration:.5});clock.seek(1);clock.play({singleStep:true});
+    for(const time of [0,.2,.4,.6,.8])clock.tick(time);
+    expect(clock.state()).toMatchObject({index:1,progress:1,playing:false,repeating:false});
+    clock.seek(0);clock.play();for(const time of [1,1.5,2,2.5])clock.tick(time);
+    expect(clock.state()).toMatchObject({index:2,progress:1,playing:false});
+  });
   it('repeats activity continuously while keeping the ordered lesson one-shot', () => {
     const c=createTeachingSequence(steps,{duration:.5});c.play({repeat:true});
     for(const t of [0,.5,1,1.5,2])c.tick(t);

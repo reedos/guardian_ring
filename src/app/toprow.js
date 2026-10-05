@@ -27,7 +27,13 @@ for (const p of pops) {
   p.menu.addEventListener('click', e => { const b = e.target.closest('button'); if (b && !b.closest('label')) closeChoice(); });
   p.menu.addEventListener('change', e => { if (e.target.id === 'link-view') closeChoice(); });
 }
-addEventListener('keydown', e => { if (e.key !== 'Escape') return; const p = pops.find(q => !q.menu.hidden); if (p) { e.stopPropagation(); close(p, { focus: true }); } }, true);
+addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  // A source dialog opened from this menu owns the first Escape.
+  if (['src-pop','page-sheet'].some(id=>$(id)?.hidden===false)) return;
+  const p = pops.find(q => !q.menu.hidden);
+  if (p) { e.stopPropagation(); close(p, { focus: true }); }
+}, true);
 document.addEventListener('pointerdown', e => { for (const p of pops) if (!p.menu.hidden && !p.menu.contains(e.target) && !p.btn.contains(e.target)) close(p); }, true);
 
 // phones: the layer switch moves from over the view into the top row

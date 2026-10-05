@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { copyModel, litScene, preloadModel } from './model-scene.js';
-import { DRAWN_ORBITS, drawnOrbitPosition } from './orbit-motion.js';
+import { DAY_PLAYBACK_SECONDS, DRAWN_ORBITS, drawnOrbitPosition } from './orbit-motion.js';
 import { earthClearSegment, nadirPoint, orbitalFollowPose } from './orbit-presentation.js';
 import { createNadirReference, createOrbitalStream } from './orbit-streams.js';
 import { replaceOrbitGuideTubes } from './orbit-guides.js';
@@ -98,7 +98,7 @@ export function build({ quality, model }) {
   shadeAtmosphericLimb(asset.getObjectByName('Atmosphere'));
   scene.add(createOrbitBackdrop());
   const family = Object.fromEntries(['geo','heo','meo','leo'].map(id => [id, asset.getObjectByName(id.toUpperCase() + 'Family')]));
-  family.heo.visible = true; family.meo.visible = false; family.leo.visible = false;
+  family.heo.visible = false; family.meo.visible = false; family.leo.visible = false;
   const satellites = []; asset.traverse(o => { if (o.userData.role === 'representative-satellite') satellites.push(o); });
   const patches=createGeoViewingPatches(satellites.filter(node=>node.parent===family.geo));spin.add(patches);
   const attachments = new Map(satellites.map(node => [node, authoredOrbitalPorts(node)]));
@@ -208,8 +208,8 @@ export function build({ quality, model }) {
     solids:[earth], satellites, look:{ exposure:1, bloom:0, threshold:1, ao:0, env:'night' },
     setMode(next) { mode=next;for (const [id,group] of Object.entries(layerGroups)) group.visible = id === mode; },
     setPart(id) {
-      if(family[id])family[id].visible=true;
-      else if(['processing','downlink','sunlight','power','radiator'].includes(id))family.geo.visible=true;
+      const selectedFamily=family[id]?id:['processing','downlink','sunlight','power','radiator'].includes(id)?'geo':null;
+      if(selectedFamily&&!Object.values(family).every(group=>group.visible))for(const [key,group] of Object.entries(family))group.visible=key===selectedFamily;
     },
     isPartVisible(id, {selected=false}={}) {
       if(family[id])return family[id].visible;
@@ -241,6 +241,17 @@ export function build({ quality, model }) {
     setSuspended(value) {const next=!!value;if(next!==suspended){suspended=next;last=null;}},
     setModel(next){this.model=next;},
     motion() { return moving.value; },
+    dayProgress() { return (elapsed % DAY_PLAYBACK_SECONDS) / DAY_PLAYBACK_SECONDS; },
+    seekDay(fraction) {
+      if(!Number.isFinite(fraction))return;
+      elapsed=Math.max(0,Math.min(1,fraction))*DAY_PLAYBACK_SECONDS;last=null;
+      spin.rotation.y=elapsed*.065;
+      for(const {spec,node,radial,attitude} of orbiters){
+        node.position.set(...drawnOrbitPosition(spec,elapsed));
+        node.quaternion.setFromUnitVectors(radial,node.position.clone().normalize()).multiply(attitude);
+      }
+      locate();
+    },
     setFamily(id,visible) { if (family[id]) { family[id].visible = visible; locate(); } },
     families() { return Object.fromEntries(Object.entries(family).map(([id,group])=>[id,group.visible])); },
     update(time) {

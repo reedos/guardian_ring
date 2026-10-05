@@ -1,3 +1,4 @@
+import {lessonAction,setMotion,openParts} from './gate-actions.mjs';
 // Same gate roles and geometric tests as IF, against the Guardian Ring scene contract.
 import { openGate,show,finish,BASE,MODES } from './gate-common.mjs';
 import { checkView,fly,checkCoplanar } from './gate-geometry.mjs';
@@ -128,13 +129,13 @@ export async function run(name,form=process.argv[2]||'desktop'){
    if(expandCard)await page.locator('#card-more').click();
    for(let i=0;i<await componentSummaries.count();i++)await componentSummaries.nth(i).click();
    if(await componentSummaries.count())await audit(`${sc.id}/${mode}/expanded component anatomy`);
-   if(expandCard)await page.locator('#sheet-toggle').click();
+   if(expandCard)await page.locator('#tab-parts').click();
    const exampleSummary=page.locator('.learning-example > summary');
    if(await exampleSummary.isVisible()){
     await exampleSummary.click();await audit(`${sc.id}/${mode}/civil application`);await exampleSummary.click();
    }
-   if(await page.locator('#animation-controls [data-action="next"]').isVisible()){
-    await page.locator('#animation-controls [data-action="next"]').click();
+   if(await page.locator('.animation-explanation').isVisible()){
+    await lessonAction(page,'next');
     const explanation=page.locator('.animation-explanation');
     if(!await explanation.evaluate(el=>el.open))await explanation.locator('summary').click();
     await audit(`${sc.id}/${mode}/expanded animation explanation`);
@@ -226,32 +227,19 @@ export async function run(name,form=process.argv[2]||'desktop'){
   states++;await page.keyboard.press('Escape');await page.locator('#sc-pin').click();
   if(await page.locator('#sc-comparison').isVisible())fail.push('unpin did not hide comparison');
   await page.locator('[data-pane="parts"]').click();await audit('parts after scenario');
-  // IF holds the playback clock while someone reads evidence. Use the actual
-  // dwell so a regression cannot replace the claim while its source is open.
-  await show(page,0,'light');
-  const beforeCycle=await page.evaluate(()=>grx.state.selected);
-  await page.locator('#part-play').click();
-  try{
-   await page.locator('#card-s [data-src]').first().click();await pop.waitFor({state:'visible'});
-   await page.waitForTimeout(8500);
-   if(await page.evaluate(()=>grx.state.selected)!==beforeCycle||!await pop.isVisible())fail.push('auto-cycle advanced while reading evidence');
-   if(await page.locator('#part-play').getAttribute('aria-pressed')!=='true')fail.push('source-reading hold stopped rather than paused playback');
-   await pop.getByRole('button',{name:'Close',exact:true}).click();
-   await page.waitForFunction(id=>grx.state.selected!==id,beforeCycle,{timeout:20000});
-   const selected=await page.evaluate(()=>grx.state.selected),result=await page.evaluate(checkPart,{scene:0,mode:'light',id:selected});
-   states++;audited.push('auto-cycle waits for source reading and resumes');
-   fail.push(...result.map(error=>`auto-cycle: ${error}`));
-  }finally{
-   await page.keyboard.press('Escape');
-   if(await page.locator('#part-play').getAttribute('aria-pressed')==='true')await page.locator('#part-play').click();
-  }
-  if(await page.locator('#part-play').getAttribute('aria-pressed')!=='false')fail.push('Escape did not stop auto-cycle');
-  await page.locator('#part-play').click();
-  await page.locator('#part-select').selectOption({index:1});
-  if(await page.locator('#part-play').getAttribute('aria-pressed')!=='false')fail.push('manual picker choice did not stop auto-cycle');
-  await page.locator('#part-play').click();await page.locator('[data-mode="data"]').click();
-  if(await page.locator('#part-play').getAttribute('aria-pressed')!=='false')fail.push('layer change did not stop auto-cycle');
-  states++;audited.push('manual choice and layer change stop auto-cycle');
+  // Next animates one selected component; evidence reading holds that clock.
+  await show(page,2,'light');await page.locator('#reset-view').click();await page.locator('#card-next').click();
+  await page.waitForFunction(()=>!grx.isCameraMoving()&&grx.built[2].teaching.state().playing);
+  await page.locator('#card-s [data-src]').first().click();await pop.waitFor({state:'visible'});
+  const before=await page.evaluate(()=>({selected:grx.state.selected,phase:grx.built[2].teaching.state().progress}));
+  await page.waitForTimeout(500);
+  if(!await page.evaluate(before=>grx.state.selected===before.selected&&grx.built[2].teaching.state().progress===before.phase,before))fail.push('part activity advanced while reading evidence');
+  await page.keyboard.press('Escape');
+  await page.waitForFunction(()=>!grx.built[2].teaching.state().playing);
+  if(!await page.evaluate(before=>grx.state.selected===before.selected&&grx.built[2].teaching.state().progress===1,before))fail.push('part activity did not finish once after evidence closed');
+  await page.locator('#part-select').selectOption({index:2});
+  if(await page.evaluate(()=>grx.built[2].teaching.state().playing))fail.push('direct part choice did not stop animation');
+  states++;audited.push('one-shot part activity holds for evidence and stops for manual selection');
   await page.locator('#part-select').focus();const focusedScene=await page.evaluate(()=>grx.state.scene);
   await page.keyboard.press('2');
   if(await page.evaluate(()=>grx.state.scene)!==focusedScene)fail.push('picker keyboard input triggered a level shortcut');
@@ -267,7 +255,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
   await moreChoice('#inspector-toggle');await audit('hide details');
   await moreChoice('#presentation-view');await page.keyboard.press('Escape');
   if(await page.locator('#inspector').isVisible())fail.push('Present forgot previously hidden details');
-  await page.locator('#part-select').selectOption({index:1});await audit('part choice restores details');
+  await page.locator('#card-next').click();await audit('part choice restores details');
   if(!await page.locator('#inspector').isVisible())fail.push('part picker did not reveal details');
   const transport=await page.locator('#reset-view').evaluate(el=>{const group=el.closest('.part-nav');return !!group?.contains(document.getElementById('card-prev'))&&group.contains(document.getElementById('card-next'))&&!el.closest('#more-menu')&&el.checkVisibility();});
   if(!transport)fail.push('Overview is not visible beside Previous and Next');
@@ -275,7 +263,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
   if(await page.locator('#part-select').inputValue()!==''||await page.evaluate(()=>grx.state.selected)!==null)fail.push('persistent Overview did not reset selection');
   states++;audited.push('persistent Overview');
   await page.locator('#more-btn').click();
-  if(!await page.locator('#mm-tools #share-btn').isVisible()||!await page.locator('#mm-tools .mm-select').isVisible())fail.push('More tools are not grouped with rendering controls');
+  if(!await page.locator('#mm-tools #share-btn').isVisible()||!await page.locator('#quality').isVisible())fail.push('More tools are not grouped with rendering controls');
   await page.keyboard.press('Escape');
   // Reference reading preserves the exact explorer state and camera. These
   // real navigation clicks must open the IF-style sheet, including the catalog.
@@ -322,9 +310,9 @@ export async function run(name,form=process.argv[2]||'desktop'){
   await page.waitForFunction(v=>!grx.isBusy()&&grx.state.scene===Number(v[0])&&grx.state.mode===v[1]&&grx.state.selected===(v[2]||null),partView);
   states++;audited.push('catalog component link returns to live viewer');
   if(form==='phone'){
-   if(await page.locator('#sheet-toggle').getAttribute('aria-expanded')==='true')await page.locator('#sheet-toggle').click();
-   await page.locator('#card-more').click();await audit('Details expands phone sheet');
-   if(await page.locator('#sheet-toggle').getAttribute('aria-expanded')!=='true')fail.push('Details did not expand the phone sheet');
+   if(await page.evaluate(()=>document.body.classList.contains('sheet-open')))await page.locator('#tab-parts').click();
+   await page.locator('#tab-parts').click();await audit('Parts handle expands phone sheet');
+   if(await page.locator('#tab-parts').getAttribute('aria-expanded')!=='true')fail.push('Parts handle did not expand the phone sheet');
   }
   if(await page.locator('#intro-more').isVisible()){
    await page.locator('#intro-more').click();await audit('expanded overview prose');
@@ -378,6 +366,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
     }
     await page.goto(new URL('visualizer.html?view=0.light',BASE).href);
     await page.waitForFunction(()=>window.grx?.built[0]&&!grx.isBusy()&&!grx.isCameraMoving());await settleLayout(page);
+    await openParts(page);
     if(!await page.locator('[data-mission="start"]').isVisible())fail.push(`${size.width}×${size.height}: initial mission invitation is hidden`);
     await page.locator('[data-mission="start"]').click();await page.waitForFunction(()=>!grx.mission.state().loading&&!grx.isCameraMoving());
     await page.locator('[data-mission="play"]').click();
@@ -390,16 +379,16 @@ export async function run(name,form=process.argv[2]||'desktop'){
       if(view.height<innerHeight*.45-.5||mission.bottom>innerHeight+.5)bad.push('mission exceeded the viewport or lost the canvas minimum');return bad;
      });fail.push(...missionProblems.map(problem=>`${size.width}×${size.height} mission ${chapter}: ${problem}`));
     }
-    await page.locator('[data-mission="stop"]').click();
+    await page.locator('#more-btn').click();await page.locator('[data-mission="stop"]').click();
    }
    for(const size of [{width:390,height:844},{width:320,height:844},{width:390,height:667},{width:320,height:667}]){
     await page.setViewportSize(size);await show(page,'abi','light');
-    await page.locator('#animation-controls [data-action="play"]').click();
+    await lessonAction(page,'play');
     await page.locator('.animation-explanation').evaluate(node=>{node.open=true;});
     await page.locator('#tab-scenario').click();
     const label=`${size.width}×${size.height} animation notes + Scenario`;
     await checkPhoneBudget(label);
-    const handle=await page.locator('#sheet-toggle').boundingBox();
+    const handle=await page.locator('#tab-parts').boundingBox();
     await page.mouse.move(handle.x+handle.width/2,handle.y+handle.height/2);await page.mouse.down();
     await page.mouse.move(handle.x+handle.width/2,20,{steps:8});await page.mouse.up();
     await checkPhoneBudget(`${label} + tall sheet drag`);
@@ -411,7 +400,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
     for(const lesson of ['abi','orbits']){
      await show(page,lesson,'light');
      if(lesson==='abi'){
-      await page.locator('#animation-controls [data-action="play"]').click();
+      await lessonAction(page,'play');
       await page.locator('.animation-explanation').evaluate(node=>{node.open=true;});
      }else await page.locator('.orbit-playback-note').evaluate(node=>{node.open=true;});
      await page.locator('#tab-scenario').click();
@@ -429,13 +418,13 @@ export async function run(name,form=process.argv[2]||'desktop'){
     }
    }
    await page.setViewportSize(viewport);await show(page,'abi','light');
-   await page.locator('#animation-controls [data-action="play"]').click();
-   await page.locator('#animation-controls [data-action="play"]').focus();
+   await lessonAction(page,'play');
+   await page.locator('#card-next').focus();
    await page.evaluate(()=>{window.rotationScene=grx.built[grx.state.scene];});
    for(const [size,playing] of [[{width:844,height:390},true],[viewport,false]]){
-    if(!playing)await page.locator('#animation-controls [data-action="play"]').click();
+    if(!playing){await lessonAction(page,'play');await page.locator('#card-next').focus();}
     await page.setViewportSize(size);await settleLayout(page);
-    const stable=await page.evaluate(expected=>grx.built[grx.state.scene]===window.rotationScene&&grx.state.selected===null&&window.rotationScene.teaching.state().playing===expected&&document.activeElement?.getAttribute('data-action')==='play',playing);
+    const stable=await page.evaluate(expected=>grx.built[grx.state.scene]===window.rotationScene&&grx.state.selected===null&&window.rotationScene.teaching.state().playing===expected&&document.activeElement?.id==='card-next',playing);
     states++;audited.push(`rotation preserves ${playing?'playing':'paused'} lesson and focus`);
     if(!stable)fail.push(`rotation lost ${playing?'playing':'paused'} lesson, Overview, scene identity or focus`);
    }
