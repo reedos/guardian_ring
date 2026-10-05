@@ -5,6 +5,7 @@ import { store, setScenario, on } from '../app/store.js';
 import { SCENARIO_KEYS } from '../app/scenario-links.js';
 import { allClaims } from '../claims.js';
 import { renderClaimRows, scenarioLabel } from './evidence-content.js';
+import { referencePager } from './reference-pager.js';
 
 const query = new URLSearchParams(location.search);
 const patch = Object.fromEntries(SCENARIO_KEYS.filter(key => query.has(key)).map(key => [key, query.get(key)]));
@@ -27,12 +28,19 @@ function connectFilter({ inputId, rowSelector, emptyId, countId, noun, queryKey 
   const count = document.getElementById(countId);
   if (!input || !empty || !count) return;
   if (queryKey) input.value = new URLSearchParams(location.search).get(queryKey) || '';
+  let pagers = [];
+  function setup() {
+    const hosts = queryKey ? [...document.querySelectorAll('[data-claim-group]')] : [document.getElementById('source-register')];
+    pagers = hosts.map(host => ({ host, pager: referencePager(host.querySelector('[data-reference-rows]') || host, rowSelector) }));
+  }
+  setup();
   function filter(updateAddress = false) {
     const query = input.value.trim().toLowerCase();
     let matches = 0;
-    for (const row of document.querySelectorAll(rowSelector)) {
-      row.hidden = !row.dataset.search.includes(query);
-      if (!row.hidden) matches++;
+    for (const { host, pager } of pagers) {
+      const found = pager.filter(query); matches += found;
+      host.hidden = !found;
+      if (host instanceof HTMLDetailsElement) { host.open = !!query; host.querySelector('summary span').textContent = `${found} claims`; }
     }
     empty.hidden = matches > 0;
     count.textContent = `${matches} ${noun}${matches === 1 ? '' : 's'}${query ? ' found' : ''}`;
@@ -46,27 +54,35 @@ function connectFilter({ inputId, rowSelector, emptyId, countId, noun, queryKey 
   filter();
   return {
     filter,
+    setup,
     reveal(node) {
       // Only clear the search that hides this destination. A source citation
       // must not also discard the reader's independent claim search.
       const row = node.closest(rowSelector);
-      if (!row?.hidden) return;
-      input.value = '';
-      filter(true);
+      if (!row) return;
+      const group = pagers.find(({ pager }) => pager.contains(row));
+      if (!group?.pager.reveal(row)) { input.value = ''; filter(true); group?.pager.reveal(row); }
+      if (group?.host instanceof HTMLDetailsElement) group.host.open = true;
     },
   };
 }
 const filterClaims = connectFilter({ inputId: 'claim-search', rowSelector: '[data-claim-key]', emptyId: 'claim-empty', countId: 'claim-count', noun: 'claim', queryKey: 'q' });
 const filterSources = connectFilter({ inputId: 'source-search', rowSelector: '[data-source-key]', emptyId: 'source-empty', countId: 'source-count', noun: 'source record' });
-on('scenario', () => { hydrateClaims(); filterClaims?.filter(); });
+on('scenario', () => { hydrateClaims(); filterClaims?.setup(); filterClaims?.filter(); });
 
 function revealHash(hash) {
   let id;
   try { id = decodeURIComponent(hash.replace(/^#/, '')); } catch { return; }
   const node = document.getElementById(id);
   if (!node) return;
+  if (node.matches('[data-claim-group]') && node.hidden) {
+    document.getElementById('claim-search').value = '';
+    filterClaims?.filter(true);
+  }
   filterClaims?.reveal(node);
   filterSources?.reveal(node);
+  if (node instanceof HTMLDetailsElement) node.open = true;
+  for (let parent = node.parentElement; parent; parent = parent.parentElement) if (parent instanceof HTMLDetailsElement) parent.open = true;
   node.scrollIntoView();
 }
 // A same-hash click does not dispatch hashchange, so handle it as well. Leave

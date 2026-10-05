@@ -14,7 +14,16 @@ function scopeOf(claim, current) {
     : `${claim.scene?.title || claim.scene?.name || 'Explorer'} · ${claim.mode ? `${claim.mode} layer · ` : ''}${claim.part?.title || ''}${claim.component ? ` · ${claim.component.title}` : ''}. Civil specifications apply only to the named instrument.`);
 }
 
-export function renderClaimRows(claims, { current = false } = {}) {
+export function renderClaimRows(claims, { current = false, grouped = true } = {}) {
+  if (grouped) {
+    const groups = new Map();
+    for (const claim of claims) {
+      const id = claim.scene?.id || claim.group || 'other';
+      if (!groups.has(id)) groups.set(id, { title: claim.scene?.title || ({ story: 'The story', model: 'Teaching calculations' }[id] || 'Reference claims'), claims: [] });
+      groups.get(id).claims.push(claim);
+    }
+    return `<nav class="parts-toc" aria-label="Evidence by level">${[...groups].map(([id, group]) => `<a href="#evidence-${esc(id)}">${esc(group.title)}</a>`).join('')}</nav>` + [...groups].map(([id, group]) => `<details class="reference-group" id="evidence-${esc(id)}" data-claim-group><summary>${esc(group.title)} <span>${group.claims.length} claims</span></summary><div data-reference-rows>${renderClaimRows(group.claims, { current, grouped: false })}</div></details>`).join('');
+  }
   return claims.map(claim => {
     const ev = claim.ev || {}, scope = scopeOf(claim, current);
     const refs = [...new Map((ev.refs || []).map(ref => [JSON.stringify(ref), ref])).values()];

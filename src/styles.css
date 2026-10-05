@@ -1636,3 +1636,18 @@ body.app #try-it #tab-scenario { display:list-item; }
 @media (max-width:760px) and (orientation:landscape) {
   body.app.stage-priority .panel { max-height:none; height:100%; }
 }
+
+/* Reference browsing: native disclosure remains usable without JavaScript. */
+.reference-group { border-top:1px solid var(--line, #29323b); padding:16px 0; scroll-margin-top:90px; }
+.reference-group>summary { cursor:pointer; font:600 22px 'Barlow Condensed',sans-serif; padding:10px 0; }
+.reference-group>summary span { color:var(--muted); font:12px 'IBM Plex Mono',monospace; margin-left:12px; }
+.reference-pager { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:20px 0; }
+.reference-pager span { font:12px 'IBM Plex Mono',monospace; }
+details.parts-assembly>summary { cursor:pointer; }
+details.parts-assembly:not([open]) { padding-bottom:16px; }
+body.atmosphere-view .mode, body.atmosphere-view #animation-controls { display:none !important; }
+
+.parts-assembly>summary::before { content:"+"; color:var(--accent); font-size:24px; }
+.parts-assembly[open]>summary::before { content:"−"; }
+.parts-assembly>summary>div { flex:1; }
+#claim-register>.parts-toc { display:flex;flex-wrap:wrap;gap:12px 22px;margin-bottom:20px;font:12px/1.5 var(--mono); }

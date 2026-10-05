@@ -291,6 +291,7 @@ function updatePins() {
 }
 function buildPanel() {
   const scene = store.C.SCENES[ui.scene], parts = partsFor(ui.scene);
+  document.body.classList.toggle('atmosphere-view', scene.id === 'atmosphere');
   $('hud-title').textContent = scene.title; $('hud-sub').textContent = scene.scale;
   if ($('scene-note')) $('scene-note').textContent = scene.id === 'orbits' ? 'Schematic · not to scale\nHistorical Earth imagery\nPatches are not sensor coverage' : scene.ready ? 'Representative geometry\nNot to scale · illustrative paths' : 'Reserved level\nViewer test object';
   $('intro').textContent = scene.intro; $('parts-n').textContent = ` ${parts.length}`;
@@ -388,7 +389,7 @@ export function cycle(direction) {
   select(id);
   const teaching=getTeaching(),lesson=teaching?.state();
   const phase=lesson?teachingPartPhase(store.C.SCENES[ui.scene].id,ui.mode,id,lesson.steps):-1;
-  pendingPartAnimation=direction>0&&phase>=0?{scene:ui.scene,mode:ui.mode,id,teaching,phase}:null;
+  pendingPartAnimation=store.C.SCENES[ui.scene].id!=='atmosphere'&&direction>0&&phase>=0?{scene:ui.scene,mode:ui.mode,id,teaching,phase}:null;
 }
 export function setMode(mode, { activity = true } = {}) {
   if (!modes.includes(mode)) return;

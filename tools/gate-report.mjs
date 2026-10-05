@@ -17,6 +17,7 @@ GEOMETRY_RUNS.push('controls-audit-desktop','controls-audit-phone');
 GEOMETRY_RUNS.push('story-audit-desktop','story-audit-phone');
 GEOMETRY_RUNS.push('visual-audit-desktop','visual-audit-phone');
 GEOMETRY_RUNS.push('cuts-audit-desktop','cuts-audit-phone');
+GEOMETRY_RUNS.push('reference-audit-desktop','reference-audit-phone');
 
 export function validateGeometryReport(report, { name, builtAt, sceneIds, base = PREVIEW }) {
   const reject = why => { throw new Error(`${name}: ${why}`); };
