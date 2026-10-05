@@ -1,4 +1,10 @@
-# Guardian Ring review build
+# Guardian Ring review build — historical 10/03/2026 record
+
+**Current acceptance:** see the [generated gate record](gate-results.md), recorded
+10/05/2026 with 264 unit tests and 42 browser commands. The build identities, counts,
+“current”/“latest” wording and deployment receipts below describe the 10/03/2026
+review, not the latest revision. They are preserved as historical evidence.
+Reed’s device review and separate launch decision remain open.
 
 10/03/2026. Reed expanded the scope to independent usability, physics, and visual-impact reviews plus immediate activity when changing layers. The accepted frozen production build on `codex/part-focus-navigation` is `visualizer-r94RjGs4.js` with `visualizer-D8YZzmoH.css`, built at 3:19:02 a.m. Pacific on 10/03/2026 from local branch commit `301e677`. Build SHA-256: `a4d59af6e272c58c895ed3a7ef0b5cf26cd480f16a3a7a9bf3dcf93e79025ca7`. All 28 full-scope browser commands pass, including 2,091 camera flights on each of desktop and phone. Cycle and Parts each pass 22,752 states across 96 scenarios; cycle textures stay at 57 through all 96 rebuilds. Earlier candidates and partial runs are preserved as history below. The review deployment is confirmed below. Reed's device review and the separate launch decision remain open; noindex stays enabled. See `independent-reviews.md` for the finding-by-finding disposition.
 

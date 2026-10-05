@@ -54,7 +54,13 @@ npm run dev
 
 Before committing, run `npm run typecheck`, `npm test`, and `npm run claims`. For browser acceptance, build the site, start `npm run preview`, then run `npm run gates` in another terminal. The suite requires Chrome and a real GPU and checks desktop and phone layouts. `npx tsx tools/gate-report.mjs` records full-build acceptance using the same JSON-aware loader as the claims audit.
 
-The latest completed CPU checks pass 232 tests across 39 files, typecheck, and a strict evidence audit with zero problems. The frozen build passes all 28 browser commands, including 323 phone UI states and 2,091 camera flights on each form. Cycle and Parts each pass 22,752 states across 96 scenarios. Learning passes 359 desktop and 367 phone states; Activity passes 861 on each form. Independent reviews drove verified usability, visual, and engineering corrections. Reed's device review and launch decision remain open; noindex stays enabled. The [build review](research/BUILD-REVIEW.md) records performance results, controlled test conditions, and preserved diagnostic failures.
+The [generated acceptance record](research/gate-results.md) is the source of truth for
+the latest completed checks, build identity, renderer and performance results. The
+10/05/2026 record reports 264 unit tests, 42 browser commands, typecheck and a strict
+evidence audit with zero problems. The [10/03/2026 build review](research/BUILD-REVIEW.md)
+is retained as historical context. These are recorded results for the identified build,
+not a claim that every later commit has repeated every browser gate. Reed’s device
+review and launch decision remain open; noindex stays enabled.
 
 Contributors should read [AGENTS.md](AGENTS.md) and [PLAN.md](PLAN.md). The verified research records supersede unchecked statements in the original source seed and initial plan.
 
