@@ -326,10 +326,12 @@ PC, real GPU).
 | `perf.mjs desktop` / `phone` | inside budget |
 | `links.mjs` | every story-page link lands on its part |
 
-`npm run gates` runs 28 serialized browser commands. The activity runs cover all nine hardware scenes ×
+`npm run gates` runs 34 serialized browser commands. The activity runs cover all nine hardware scenes ×
 three layers for running, deliberately paused, and reduced-motion states; they also cross natural repeat
 boundaries in each atmosphere layer. `tools/gate-report.mjs` requires complete, current-build activity
 inventories alongside the other full-scope results. Performance budgets remain unchanged.
+
+The 10/04/2026 audit adds audit-layout (stage height, title contrast, guide geometry, callouts and follow clearance); controls-audit (visible control counts, orbit controls, Next and phone sheet gestures); story-audit (generic launch/alert chapters, tour duration and phase selection). Desktop and phone runs are required. Stage height must remain at least 60% of the desktop viewport and 45% of the phone viewport, including open Parts and playback states. First load is limited to 20 visible controls on desktop and 12 on phone. Generate the final acceptance report with `npx tsx tools/gate-report.mjs`; set `GR_URL` to the matching built preview when using an isolated port.
 
 ## 10. Phases (stop for Reed at each ★)
 
