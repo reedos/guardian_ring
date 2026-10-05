@@ -1,8 +1,9 @@
 import { illustrated } from './illustrated.js';
 const scene=illustrated({
   teaching:'focal-plane',signal:'AnchorArray',signalRadius:.48,
+  layerMaterials:{data:['DetectorPackage','WarmReadout','FlexConnection','BiasTiming','ThermalFeedback'],heat:{DetectorPackage:'cold',ColdCarrier:'cold',ColdShield:'cold',CoolingAssembly:'warm',ColdFingerAndStrap:'cold',ColdHeadThermometer:'cold',WarmReadout:'warm',ThermalFeedback:'warm',BiasTiming:'warm'}},
   phaseHighlights:{absorb:'DetectorPackage',integrate:'DetectorPackage',digitize:'WarmReadout'},
-  url:'models/focal-plane.glb?v=5',
+  url:'models/focal-plane.glb?v=6',
   camera:{pos:[5.7,6.2,8.7],target:[.5,.1,-.35],min:2,max:25},distance:5.2,
   cameraPhone:{pos:[7,8.5,13]},
   points:{array:'AnchorArray',readout:'AnchorReadout','cold-stage':'AnchorColdStage',shield:'AnchorShield',flex:'AnchorFlex',carrier:'AnchorCarrier','bias-timing':'AnchorBiasTiming','thermal-feedback':'AnchorThermalFeedback'},

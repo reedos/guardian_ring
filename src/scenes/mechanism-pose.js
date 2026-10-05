@@ -3,6 +3,7 @@
 export function mechanismAngle(mechanism, state) {
   if (state.inspection) return 0;
   const phase = state.step.id, p = state.progress;
+  if (mechanism.motion === 'pointing') return phase === 'receive' ? Math.sin(p * Math.PI * 2) * mechanism.range : 0;
   if (mechanism.motion === 'scan') return phase === 'slew' ? Math.sin(p * Math.PI * 2) * mechanism.range : 0;
   if (mechanism.motion !== 'reference') return 0;
   const u = Math.min(1, p / .25), ease = u * u * (3 - 2 * u);

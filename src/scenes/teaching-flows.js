@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { polylineSampler } from './teaching-sequence.js';
+import { createFlowRibbon } from './flow-ribbon.js';
 
 export const FLOW_TYPES = {
   light:{label:'Light',color:'#e6ba82',trail:true},
@@ -56,12 +57,14 @@ export function createTeachingFlows(config, resolve) {
     // once and change draw ranges; no geometry/material churn while playing.
     const markGeometry=new THREE.BufferGeometry();markGeometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(Math.max(count,3)*(points.length+2)*6),3));markGeometry.setDrawRange(0,0);
     const mark=overlay(new THREE.LineSegments(markGeometry,new THREE.LineBasicMaterial({...options,opacity:1})));group.add(mark);
+    const ribbon=createFlowRibbon(style.color,Math.max(count,3)*(points.length+2),{staticRoute:!!style.static});group.add(ribbon.group);
+    const staticPositions=style.static?new Float32Array(points.slice(1).flatMap((p,i)=>[...points[i],...p])):null;
     mark.frustumCulled=false;
     const headGeometry=new THREE.BufferGeometry();headGeometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(count*3),3));headGeometry.setDrawRange(0,0);
     const heads=overlay(new THREE.Points(headGeometry,new THREE.PointsMaterial({...options,map:PACKET_KINDS.has(kind)?PACKET_HEAD:ROUND_HEAD,size:PACKET_KINDS.has(kind)?8:7,sizeAttenuation:false,opacity:1,toneMapped:false})));
     heads.name=`Illustrative ${kind} activity heads`;heads.frustumCulled=false;group.add(heads);
     const start=input.start??0;if(!Number.isFinite(start)||start<0||start>=1)throw new RangeError('Teaching-flow start must be in [0, 1)');
-    records.push({mode,kind,group,line,mark,heads,path,breaks,count,phases:input.phases||DEFAULT_PHASES[kind],start,exclusive:input.exclusive||false,style});
+    records.push({mode,kind,group,line,mark,heads,path,breaks,count,ribbon,staticPositions,phases:input.phases||DEFAULT_PHASES[kind],start,exclusive:input.exclusive||false,style});
   }
   const up=new THREE.Vector3(0,1,0), alternate=new THREE.Vector3(1,0,0),side=new THREE.Vector3(),tangent=new THREE.Vector3();
   let previous=null;
@@ -82,6 +85,8 @@ export function createTeachingFlows(config, resolve) {
         r.line.material.opacity=active?(r.style.static?.5+.35*Math.sin(Math.PI*state.progress):.85):state.inspection?.34:.12;
         r.mark.visible=!r.style.static&&(active||state.inspection&&r.mode===mode);
         r.heads.visible=!r.style.static&&active;
+        if(r.style.static)r.ribbon.update(r.staticPositions,r.staticPositions.length/6,r.group.visible,active?.8:.3);
+        else r.ribbon.group.visible=r.mark.visible;
         if(!r.mark.visible)continue;
         const values=r.mark.geometry.attributes.position.array,headValues=r.heads.geometry.attributes.position.array;let n=0,h=0;
         const write=p=>{values[n++]=p[0];values[n++]=p[1];values[n++]=p[2];};
@@ -115,6 +120,7 @@ export function createTeachingFlows(config, resolve) {
         r.mark.geometry.setDrawRange(0,n/3);r.heads.geometry.setDrawRange(0,h/3);
         r.mark.geometry.attributes.position.needsUpdate=true;
         r.heads.geometry.attributes.position.needsUpdate=true;
+        r.ribbon.update(values,n/6,r.mark.visible,state.inspection?.5:1);
       }
     },
   };

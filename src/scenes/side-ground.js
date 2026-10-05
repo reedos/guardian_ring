@@ -1,6 +1,7 @@
 import { illustrated } from './illustrated.js';
 const scene=illustrated({
   teaching:'ground',
+  mechanisms:[{node:'GroundAntennaElevation',axis:[1,0,0],range:.10,motion:'pointing'}],
   // Use the authored front faces, feed, and display glass as restrained route
   // destinations. Furniture and cabinet bodies retain their physical finish.
   // These responses are explanatory, not equipment health or telemetry.
@@ -12,8 +13,8 @@ const scene=illustrated({
     reject:[{role:'Process_—_Machined_aluminum',kind:'heat',intensity:.025},{role:'Archive_—_Machined_aluminum',kind:'heat',intensity:.025}],
   },
   activityDisplay:{role:'Operations',materialName:'Blank illustrative monitor glass'},
-  lessonNote:'Illustrative event. Abstract tiles and the final ALERT demonstrate received data, processing, and notification. They are not a real event, site, operational timeline, threshold, sensor format, or detection performance.',
-  url:'models/ground.glb?v=2',
+  lessonNote:'Illustrative event. The antenna demonstrates a pointing adjustment, not a real satellite track. Abstract tiles and the final ALERT demonstrate received data, processing, and notification. They are not a real event, site, operational timeline, threshold, sensor format, or detection performance.',
+  url:'models/ground.glb?v=3',
   camera:{pos:[9.5,8.5,13],target:[0,.9,1.15],min:3,max:34},
   cameraPhone:{pos:[10,9.38,14.63]},distance:7,
   points:{receive:'AnchorReceive',process:'AnchorProcess',operations:'AnchorOperations',receiver:'AnchorReceiver',archive:'AnchorArchive',power:'AnchorPower'},

@@ -4,6 +4,7 @@ const gates=[['project-audit','desktop'],['project-audit','phone'],['mission','d
 gates.unshift(['audit-layout','desktop'],['audit-layout','phone']);
 gates.unshift(['controls-audit','desktop'],['controls-audit','phone']);
 gates.unshift(['story-audit','desktop'],['story-audit','phone']);
+gates.unshift(['visual-audit','desktop'],['visual-audit','phone']);
 // Surface interaction regressions before the exhaustive scenario matrices.
 // All gates retain their full scope; performance remains at the end.
 const slow=new Set(['cycle','parts','flights','perf']);

@@ -11,6 +11,7 @@ import { createMirrorDemo } from './mirror-demo.js';
 import { createAssemblyPresentation } from './assembly-presentation.js';
 import { createActivityDisplay } from './activity-display.js';
 import { mechanismAngle } from './mechanism-pose.js';
+import { createLayerMaterials } from './layer-materials.js';
 
 export function illustrated(config) {
   return {
@@ -54,6 +55,7 @@ export function illustrated(config) {
       const indicator=config.signal?createSignalIndicator(resolve(config.signal),config.signalRadius||.36,config.absorptionSignal?['integrate']:['absorb','integrate']):null;if(indicator)scene.add(indicator.root);
       const absorption=config.absorptionSignal?createSignalIndicator(resolve(config.absorptionSignal),config.signalRadius||.36,['absorb']):null;if(absorption)scene.add(absorption.root);
       const highlights=createPhaseHighlights(asset,config.phaseHighlights);
+      const layerMaterials=config.layerMaterials?createLayerMaterials(asset,config.layerMaterials):null;
       const pivots=(config.mechanisms||[]).map(m=>{
         const node=asset.getObjectByName(m.node);if(!node)throw new Error(`Missing authored mechanism pivot: ${m.node}`);
         return {...m,node,rest:node.quaternion.clone()};
@@ -73,6 +75,7 @@ export function illustrated(config) {
         if(pivots.length)asset.updateMatrixWorld(true);
         paths.update(state,mode);activityDisplay?.update(state);indicator?.update(state);absorption?.update(state);highlights.update(state);for(const mirror of mirrors)mirror.update(state);
         illustration?.update(state,mode);
+        layerMaterials?.update(mode,state);
         if(presentation?.capture().view==='assembled'){
           if(indicator)indicator.root.visible=false;
           if(absorption)absorption.root.visible=false;

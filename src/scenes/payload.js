@@ -2,12 +2,13 @@ import { illustrated } from './illustrated.js';
 import { MIRROR_DEMONSTRATIONS, OPTICAL_CONNECTIONS, OPTICAL_CONNECTION_NOTE } from './optical-routing.js';
 const scene=illustrated({
   teaching:'payload',signal:'AnchorDetector',signalRadius:.20,
+  layerMaterials:{data:['Detector','Readout','Digitizer','Controller','DataInterface','ScanDrive','EncoderProcessing','Peripheral'],heat:{Detector:'cold',Thermal:'warm',CoolerControl:'warm',Readout:'warm',Digitizer:'warm',Controller:'warm',PowerSupply:'power'}},
   phaseHighlights:{command:'ScanDrive',feedback:'EncoderProcessing',absorb:'Detector',integrate:'Detector',digitize:'Digitizer'},
   lessonNote:OPTICAL_CONNECTION_NOTE,
   mechanisms:MIRROR_DEMONSTRATIONS.payload,
   url:'models/payload.glb?v=14',
   camera:{pos:[11.732,9.786,13.967],target:[1.4,-.3,.15],min:1.7,max:42},distance:4.3,
-  cameraPhone:{pos:[11.34,11.478,17.749]},
+  cameraPhone:{pos:[11.34,10.678,17.749],target:[1.4,-1.1,.15]},
   assemblies:[
     {id:'sensor-electronics',title:'Sensor unit electronics',coverRole:'SensorElectronicsCover',partIds:['readout','digitizer'],roles:['Readout','Digitizer','Peripheral'],anchor:'AnchorSensorElectronics'},
     {id:'instrument-electronics',title:'Instrument electronics unit',coverRole:'InstrumentElectronicsCover',partIds:['controller','data-interface','power','scan-system'],roles:['Controller','DataInterface','ScanDrive','EncoderProcessing','PowerSupply'],anchor:'AnchorInstrumentElectronics'},

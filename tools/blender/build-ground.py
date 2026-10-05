@@ -15,7 +15,7 @@ from mathutils import Vector
 
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'public'/'models'
-VERSION=2
+VERSION=3
 OUT.mkdir(parents=True,exist_ok=True)
 
 
@@ -77,6 +77,7 @@ def receive():
     cylinder('Representative antenna pedestal',(cx,cy,.77),.18,.95,m['white'],vertices=32,bevel=.025)
     box('Generic elevation mount',(cx,cy,1.30),(.44,.40,.38),m['dark'],.045)
     cylinder('Elevation pivot',(cx,cy,1.40),.19,.60,m['silver'],'x',vertices=32,bevel=.014)
+    fixed=set(bpy.context.scene.objects)
     center=Vector((cx,cy,1.70))
     rotation=Vector((0,-.70,.714)).to_track_quat('Z','Y')
     transform=lambda p:center+rotation@Vector(p)
@@ -100,7 +101,8 @@ def receive():
     for a in [math.pi/2,math.pi/2+math.tau/3,math.pi/2+2*math.tau/3]:
         rod('Feed support as drawn',transform((.72*math.cos(a),.72*math.sin(a),.17)),transform((0,0,.50)),.014,m['dark'])
     rod('Representative feed element',transform((0,0,.44)),transform((0,0,.62)),.055,m['goldedge'])
-    rod('Back support',Vector((cx,cy,1.26)),transform((0,0,-.07)),.065,m['silver'])
+    rod('Back support',Vector((cx,cy,1.40)),transform((0,0,-.07)),.065,m['silver'])
+    for item in set(bpy.context.scene.objects)-fixed:item['antennaElevation']=True
     for x in [-.27,.27]:
         for y in [-.27,.27]:cylinder('Footing fastener',(cx+x,cy+y,.32),.035,.026,m['bright'],vertices=16,bevel=.004)
 
@@ -204,15 +206,19 @@ root=group('GuardianGround',version=VERSION,level='ground',representative=True,
     description='Representative antenna, RF/baseband receiver, processing rack, archive, operations console and UPS; not an actual facility.',
     defaultCamera=[8.0,6.5,10.0],defaultTarget=[0.0,.8,0.0])
 roles={name:group(name,root,role=name,representative=True) for name in ['Floor','Receive','Process','Operations','Receiver','Archive','Power']}
+elevation=group('GroundAntennaElevation',roles['Receive'],role='Illustrative pointing joint',representative=True)
+elevation.location=(-2.65,.25,1.40)
 batches={}
 for obj in list(bpy.context.scene.objects):
-    if obj.type=='MESH':batches.setdefault((obj['assetRole'],tuple(m.name for m in obj.data.materials)),[]).append(obj)
-for (role,names),objects in batches.items():
+    if obj.type=='MESH':batches.setdefault((obj['assetRole'],tuple(m.name for m in obj.data.materials),bool(obj.get('antennaElevation'))),[]).append(obj)
+for (role,names,moving),objects in batches.items():
     bpy.ops.object.select_all(action='DESELECT')
     for obj in objects:obj.select_set(True)
     bpy.context.view_layer.objects.active=objects[0]
     if len(objects)>1:bpy.ops.object.join()
-    obj=bpy.context.object;obj.name=role+' — '+names[0];obj.parent=roles[role]
+    obj=bpy.context.object;obj.name=role+' — '+names[0]
+    transform=obj.matrix_world.copy();obj.parent=elevation if moving else roles[role]
+    obj.matrix_world=transform
     obj['representative']=True;obj['solidForCamera']=True;obj['assetRole']=role
 
 anchors=group('Anchors',root,role='Nonrendering interface anchors')
