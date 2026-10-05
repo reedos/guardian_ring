@@ -1645,7 +1645,7 @@ body.app #try-it #tab-scenario { display:list-item; }
 .reference-pager span { font:12px 'IBM Plex Mono',monospace; }
 details.parts-assembly>summary { cursor:pointer; }
 details.parts-assembly:not([open]) { padding-bottom:16px; }
-body.atmosphere-view .mode, body.atmosphere-view #animation-controls { display:none !important; }
+body.atmosphere-view .mode, body.atmosphere-view #animation-controls, body.atmosphere-view .animation-step { display:none !important; }
 
 .parts-assembly>summary::before { content:"+"; color:var(--accent); font-size:24px; }
 .parts-assembly[open]>summary::before { content:"−"; }

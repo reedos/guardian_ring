@@ -14,7 +14,15 @@ if(gate){
  const lesson=()=>page.evaluate(()=>{const s=grx.built[grx.state.scene].teaching.state();return {index:s.index,progress:s.progress,total:s.total,playing:s.playing,repeating:s.repeating,inspection:s.inspection,suspended:s.suspended};});
  const camera=()=>page.evaluate(()=>({position:grx.camera.position.toArray(),target:grx.controls.target.toArray(),selected:grx.state.selected}));
  const stableCamera=async(before,context)=>check(await page.evaluate(saved=>grx.state.selected===saved.selected&&grx.camera.position.distanceTo(new grx.THREE.Vector3(...saved.position))<1e-5&&grx.controls.target.distanceTo(new grx.THREE.Vector3(...saved.target))<1e-5,before),`${context}: compatible layer change replaced the selected part or camera`);
- const layer=async mode=>{await page.locator(`[data-mode="${mode}"]`).click();await frames(3);};
+ const layer=async mode=>{
+  // Atmosphere has one public view. Preserve exhaustive engine coverage for
+  // legacy shared Data/Heat links without pretending it has visible toggles.
+  if(await page.evaluate(()=>grx.store.C.SCENES[grx.state.scene].id==='atmosphere')){
+   check(!await page.locator('[data-mode]:visible').count(),'Atmosphere exposes removed layer toggles');
+   await page.evaluate(value=>grx.setMode(value),mode);
+  }else await page.locator(`[data-mode="${mode}"]`).click();
+  await frames(3);
+ };
  const action=name=>lessonAction(page,name);
  async function enter(scene){
   if(await page.locator('#level-pick').isVisible()){
