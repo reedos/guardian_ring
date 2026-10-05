@@ -92,12 +92,39 @@ Their concrete findings were addressed:
 - Secondary lessons are discoverable without changing layers.
 - The atmosphere legend identifies incoming, transmitted, emitted and total radiance.
 
+Implementation commit `d493deb` includes the ten lessons and reviewer corrections.
+Final visual correction `27c993a` enlarges the reaction-wheel mechanism and moves its
+label away from the spokes. It also keeps the GEO longitude marker in view during
+the follow-longitude explanation, with consistent Earth/marker transforms and
+far-side occlusion. A fresh complete acceptance run follows that correction.
+
+The reviewers found no remaining blocking issue in their rechecks. Minor future
+polish remains possible: the phone calibration comparison is small, and its space
+reference label can overlap the plotted line. The molecular-band motif is a
+qualitative reminder, not a spectroscopy lesson. These limits do not change the
+equations or the stated scope.
+
 Core equations have unit checks for charge/quantization limits, rest-to-rest momentum
 conservation, battery energy integration, slab limits and thermal equilibrium, affine
 calibration recovery and image-row bounds. The browser gate captures every beat at
 1440×900 and 390×844, checks deliberate playback and camera interactions, verifies
 evidence/pause/replay/focus, and exercises secondary entry points in Light.
 
-Current acceptance results belong in `research/gate-results.md` only after the complete
-current-build suite passes. Local storyboard galleries: `.local/cinematic-gates/desktop.html`
-and `.local/cinematic-gates/phone.html`. Historical `.local/cinematic/` shots are early drafts.
+## Final acceptance — 10/05/2026
+
+The complete built-preview suite passed after `27c993a`: **44/44 browser commands,
+270/270 unit tests, typecheck passed, and zero evidence problems** across 957 site
+claims, 91,776 scenario instances, 96 scenarios and 253 research facts. The independent
+desktop and phone cinematic gates each passed 252 checks and captured all five beats
+of all ten lessons. Cycle and direct-click Parts each passed 22,752 states; camera
+flights passed 2,179 states per form. Desktop and phone performance each passed 179
+conditions, both with worst p95 1.60 ms (budgets unchanged: 15 ms desktop, 7 ms phone).
+The renderer was the real NVIDIA RTX 5090 through ANGLE/D3D11.
+
+Production entry: `visualizer-TAfI1-kq.js`. Build SHA-256:
+`8e2fffcd71ae935ab1ffb94791b0b5fa83e28c0707c8cb52ef1ab2ee97192f39`.
+The [generated acceptance record](gate-results.md) contains the complete gate table.
+These are local results; this work has not been pushed or deployed.
+
+Local storyboard galleries: `.local/cinematic-gates/desktop.html` and
+`.local/cinematic-gates/phone.html`. Historical `.local/cinematic/` shots are early drafts.

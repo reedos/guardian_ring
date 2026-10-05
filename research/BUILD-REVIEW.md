@@ -1,7 +1,7 @@
 # Guardian Ring review build — historical 10/03/2026 record
 
 **Current acceptance:** see the [generated gate record](gate-results.md), recorded
-10/05/2026 with 264 unit tests and 42 browser commands. The build identities, counts,
+10/05/2026 with 270 unit tests and 44 browser commands. The build identities, counts,
 “current”/“latest” wording and deployment receipts below describe the 10/03/2026
 review, not the latest revision. They are preserved as historical evidence.
 Reed’s device review and separate launch decision remain open.

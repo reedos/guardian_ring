@@ -20,6 +20,8 @@ Entering a hardware level or changing Light, Data, or Heat starts repeating acti
 
 An optional guided mission follows GEO and LEO spacecraft above Earth's limb, then traces infrared collection, moving scan mirrors, onboard electronics, thermal support, downlink and ground processing. Pause to inspect evidence or take control at any point. The ordered explanation does not depict a real operational schedule; orbital speed examples are calculated independently of the compressed drawing and playback scales.
 
+Ten optional “See…” lessons extend the light-focus and scan-mirror demonstrations. Press Play to follow charge conversion, cooling, reaction-wheel pointing, pushbroom imaging, geostationary motion, eclipse power, downlink reconstruction, thermal emission, atmospheric transfer, or calibration. Each lesson advances its own captions and diagrams; rotating the view preserves playback. Evidence and equations are available beneath the animation. [Implementation and independent review](research/CINEMATIC-LESSONS-2026-10-05.md) records the sources, assumptions, and corrections.
+
 This edition is under review. The review link is shared directly and noindex remains enabled.
 
 ## Follow the evidence
@@ -56,7 +58,7 @@ Before committing, run `npm run typecheck`, `npm test`, and `npm run claims`. Fo
 
 The [generated acceptance record](research/gate-results.md) is the source of truth for
 the latest completed checks, build identity, renderer and performance results. The
-10/05/2026 record reports 264 unit tests, 42 browser commands, typecheck and a strict
+10/05/2026 record reports 270 unit tests, 44 browser commands, typecheck and a strict
 evidence audit with zero problems. The [10/03/2026 build review](research/BUILD-REVIEW.md)
 is retained as historical context. These are recorded results for the identified build,
 not a claim that every later commit has repeated every browser gate. Reed’s device
