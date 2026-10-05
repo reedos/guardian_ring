@@ -19,6 +19,11 @@ if(g){
   await page.evaluate(()=>{location.hash='parts-tirs2-arrays';});
   await page.locator('#parts-tirs2-arrays[open]').waitFor();
   check(await page.locator('#parts-search').inputValue()==='','Fragment did not clear conflicting Parts search');
+  await page.locator('#parts-search').fill('encoder');
+  await page.locator('#parts-payload-scan-system .part-evidence-link').first().click();
+  await page.locator('#claim-register[data-scenario-view="current"]').waitFor();
+  await page.goBack();await page.locator('#parts-register[data-scenario-view="current"]').waitFor();
+  check(await page.locator('#parts-search').inputValue()==='encoder','Back from evidence discarded the Parts search');
   await page.goto(new URL('evidence.html',BASE).href);
   await page.locator('#claim-register[data-scenario-view="current"]').waitFor();
   const total=await page.locator('[data-claim-key]').count();
@@ -44,6 +49,10 @@ if(g){
   check(await page.locator('#claim-search').inputValue()==='','Fragment did not clear conflicting evidence search');
   await page.locator('#claim-search').fill('one-way vacuum light time');
   check(await page.locator('[data-claim-key="model:lightTimeSeconds"]').isVisible(),'Search did not reveal matching group');
+  await page.locator('[data-src="model:lightTimeSeconds"]').click();
+  await page.locator('#src-pop a[href*="#calc-vacuum-light-time"]').first().click();
+  await page.goBack();await page.locator('#claim-register[data-scenario-view="current"]').waitFor();
+  check(await page.locator('#claim-search').inputValue()==='one-way vacuum light time','Back from a formula discarded the Evidence search');
   await page.screenshot({path:`${dir}/${form}-evidence-search.png`});
   check(await page.locator('[data-claim-key]').count()===total,'Search removed reference content');
   check(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Reference page overflows horizontally');
