@@ -128,9 +128,11 @@ if(g){const {page}=g,failures=[];let states=0;
    await page.evaluate(()=>{grx.setTransitions('instant');return grx.mission.start();});await ready();
    await press('next');await ready();await press('next');await requested;
    if(action==='scenario'){
+    // The mission now occupies the inspector. Explore releases its ownership
+    // before the reader opens Scenario, including while a chapter is loading.
+    await press('stop');
     await page.locator('#tab-scenario').click();release();await ready();await frames(3);
     check(!(await state()).playing&&await page.locator('#pane-scenario').isVisible(),'A completed pending chapter replaced the reader’s Scenario pane');
-    await press('stop');
    }else{
     await press('stop');const retained=await page.evaluate(()=>grx.state.scene);release();await page.waitForTimeout(500);
     check(!(await state()).active&&await page.evaluate(scene=>grx.state.scene===scene&&!grx.isBusy(),retained),'A canceled chapter replaced the retained scene after loading');

@@ -3,6 +3,7 @@ import { copyModel, litScene, preloadModel } from './model-scene.js';
 import { DRAWN_ORBITS, drawnOrbitPosition } from './orbit-motion.js';
 import { earthClearSegment, nadirPoint, orbitalFollowPose } from './orbit-presentation.js';
 import { createNadirReference, createOrbitalStream } from './orbit-streams.js';
+import { replaceOrbitGuideTubes } from './orbit-guides.js';
 import { createSurfacePathClear } from './surface-path.js';
 import { orbitalOverviewPose, createOrbitBackdrop, createGeoViewingPatches } from './orbit-overview.js';
 
@@ -15,7 +16,7 @@ const ILLUSTRATIVE_SUN = new THREE.Vector3(-5, 2, 1).normalize();
 export function createOrbitFollowEmphasis(asset, satellites) {
   const records = [];
   const remember = (object, owner, guide = false) => {
-    if (!object.isMesh) return;
+    if (!object.isMesh && !object.isLine) return;
     for (const material of Array.isArray(object.material) ? object.material : [object.material]) records.push({
       material, owner, guide,
       family: owner.userData.orbitFamily || owner.parent?.userData.orbitFamily,
@@ -86,6 +87,7 @@ function shadeAtmosphericLimb(atmosphere) {
 export const preload = () => preloadModel(URL);
 export function build({ quality, model }) {
   const scene = litScene(), asset = copyModel(URL); scene.add(asset);
+  replaceOrbitGuideTubes(asset);
   const spin = asset.getObjectByName('EarthSpin'), earth = asset.getObjectByName('earth');
   // Keep this darker fill local to the ring; hardware levels retain their product lighting.
   for (const light of scene.children.filter(object => object.isHemisphereLight)) light.intensity = .22;

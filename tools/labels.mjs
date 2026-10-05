@@ -18,9 +18,17 @@ if(g){
       const T=grx.THREE,b=grx.built[grx.state.scene],bad=[],visible=[],hidden=[];
       if(grx.state.selected){
        const label=document.querySelector('.pin.on .lbl'),view=document.getElementById('view').getBoundingClientRect();
-       if(!label?.checkVisibility())bad.push('selected component callout hidden');
+       // Audit A3 explicitly permits hiding a callout when it cannot remain
+       // local to its pin. The numbered, named pin and full inspector title
+       // must still identify the selected component; never accept a lost name.
+       if(!label?.checkVisibility()){
+        const pin=document.querySelector('.pin.on'),title=document.getElementById('card-t');
+        if(!pin?.checkVisibility()||!title?.checkVisibility()||!title.textContent.trim()||pin.getAttribute('aria-label')!==title.textContent||label?.textContent!==title.textContent)bad.push('hidden callout has no accessible component-name fallback');
+       }
        else {
         const r=label.getBoundingClientRect();
+        const p=label.closest('.pin').getBoundingClientRect(),x=p.left+p.width/2,y=p.top+p.height/2;
+        if(Math.hypot(Math.max(r.left,Math.min(r.right,x))-x,Math.max(r.top,Math.min(r.bottom,y))-y)>221)bad.push('selected callout is farther than 220 px from its pin');
         if(r.left<view.left||r.right>view.right||r.top<view.top||r.bottom>view.bottom)bad.push('selected component callout clipped');
         const title=document.getElementById('card-t').textContent;
         if(label.textContent!==title)bad.push('selected callout does not match component name');

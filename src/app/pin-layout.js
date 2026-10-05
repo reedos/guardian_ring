@@ -98,6 +98,7 @@ export function avoidPinObstacles(placements, { obstacles, width, height, select
 }
 
 export function pinLabelBox(x, y, width, canvasWidth, canvasHeight, reserved, selected = false, height = 18) {
+  const nearby = box => Math.hypot(Math.max(box.left, Math.min(box.right,x))-x, Math.max(box.top,Math.min(box.bottom,y))-y) <= 220;
   const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
   const candidates = [[x + 18, y - 9], [x - 29 - width, y - 9]];
   if (selected) {
@@ -108,7 +109,7 @@ export function pinLabelBox(x, y, width, canvasWidth, canvasHeight, reserved, se
     if (selected) { left = clamp(left, 6, canvasWidth - width - 6); top = clamp(top, 6, canvasHeight - height - 6); }
     const box = { left, top, right: left + width, bottom: top + height };
     if (box.left < 6 || box.right > canvasWidth - 6 || box.top < 6 || box.bottom > canvasHeight - 6) continue;
-    if (!reserved.some(r => overlapsRect(box, r, 4))) return box;
+    if (nearby(box) && !reserved.some(r => overlapsRect(box, r, 4))) return box;
   }
   if(selected){
     // A free rectangle can require both axes to move. Testing only above/below
@@ -118,7 +119,7 @@ export function pinLabelBox(x, y, width, canvasWidth, canvasHeight, reserved, se
     const corners=[];
     for(const left of new Set(xs.map(v=>clamp(v,6,canvasWidth-width-6))))for(const top of new Set(ys.map(v=>clamp(v,6,canvasHeight-height-6)))){
       const box={left,top,right:left+width,bottom:top+height};
-      if(box.right<=canvasWidth-6&&box.bottom<=canvasHeight-6&&!reserved.some(r=>overlapsRect(box,r,4)))corners.push(box);
+      if(nearby(box)&&box.right<=canvasWidth-6&&box.bottom<=canvasHeight-6&&!reserved.some(r=>overlapsRect(box,r,4)))corners.push(box);
     }
     corners.sort((a,b)=>Math.hypot(a.left+width/2-x,a.top+height/2-y)-Math.hypot(b.left+width/2-x,b.top+height/2-y));
     if(corners.length)return corners[0];

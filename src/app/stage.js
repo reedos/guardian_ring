@@ -349,6 +349,7 @@ export function overview() {
   if (orbitTracking) setOrbitFollow(null);
   const preset = overviewFrame(); if (!preset) return;
   partCycle.stop(); deselect(); framedOverview=true; flyTo(preset.pos, preset.target);
+  emit('pane-request', { pane: 'parts', reset: true });
 }
 // Covers disappear only for the illustrative cutaway. Camera clearance always
 // includes the complete enclosures, so closing cannot trap a detail camera.
@@ -446,7 +447,7 @@ export async function go(index, { record = true, restore = null, owner = null, r
 }
 // Preserve the test hook's default-first-part contract. Normal level navigation
 // uses go(), which opens an honest unselected overview.
-export async function show({ scene = ui.scene, mode = ui.mode, part = null }) { if (modes.includes(mode)) ui.mode = mode; await go(scene, { record: false, activity:false }); setMode(mode,{activity:false}); select(part||partsFor(ui.scene)[0]?.id); }
+export async function show({ scene = ui.scene, mode = ui.mode, part = null }, { scroll = false } = {}) { if (modes.includes(mode)) ui.mode = mode; await go(scene, { record: false, activity:false }); setMode(mode,{activity:false}); select(part||partsFor(ui.scene)[0]?.id, true, { reveal: scroll }); }
 export async function backOut() { const origin = visits.back(); await go(origin?.scene ?? 0, { record: false, restore: origin }); }
 on('scenario', () => {
   if (!started) return;

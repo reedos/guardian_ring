@@ -21,6 +21,8 @@ export function mountAnimationControls(host,{getTeaching,preparePlayback,stepTea
     const presentation=getAssemblyPresentation();assembly.hidden=!presentation;
     if(presentation){const view=presentation.capture().view;for(const button of assembly.querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.assemblyView===view));assembly.querySelector('.assembly-note').textContent=view==='inside'?'Covers hidden · as drawn':'Choose Inside to see boards';}
     const state=teaching.state();host.dataset.inspection=String(state.inspection);buttons.play.textContent=state.playing?(state.repeating?'Pause & inspect':'Pause sequence'):state.progress===1&&state.index===state.total-1?'Replay sequence':'Play sequence';
+    for (const button of Object.values(buttons)) button.hidden = state.total < 3;
+    counter.hidden = state.total < 3;
     focusButton.hidden=store.C.SCENES[store.ui.scene]?.id!=='payload'||state.mode!=='light';
     buttons.play.title=state.playing?'Pause motion and reveal the numbered components':'Play the complete sequence in overview';
     buttons.play.setAttribute('aria-pressed',String(state.playing));counter.textContent=`${state.index+1} / ${state.total}`;

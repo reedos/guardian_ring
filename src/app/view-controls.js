@@ -59,7 +59,9 @@ function revealCard() {
   if (document.body.classList.contains('presentation-view')) return;
   collapseInspector(false);
   $('tab-parts').click();
+  const selected = store.ui.selected, scene = store.ui.scene, mode = store.ui.mode;
   requestAnimationFrame(() => {
+    if (store.ui.scene !== scene || store.ui.mode !== mode || store.ui.selected !== selected) return;
     const card = $('card'), scroller = document.querySelector('.panel-scroll');
     if (!card.hidden) scroller.scrollTop += card.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 12;
   });

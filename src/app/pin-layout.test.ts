@@ -79,6 +79,9 @@ describe('anchored component markers', () => {
 });
 
 describe('pin labels respect visible UI reservations',()=>{
+  it('hides a label when the only free rectangle is detached from its marker',()=>{
+    expect(pinLabelBox(700,400,120,1000,800,[{left:200,right:1000,top:0,bottom:800}],true)).toBeNull();
+  });
   const hud={left:600,right:1050,top:20,bottom:140};
   it('rejects an unselected label underneath HUD instructions',()=>{
     expect(pinLabelBox(815,100,95,1100,750,[hud])).toBeNull();
