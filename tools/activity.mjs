@@ -70,7 +70,9 @@ if(gate){
     check(!s.inspection&&s.progress>0&&s.progress<1,`${kind}/${key}: layer did not immediately show a meaningful lesson pose`);
     check(s.playing===running&&(!running||s.repeating),`${kind}/${key}: wrong activity/pause intent`);
     check(first.marks>0||first.display,`${kind}/${key}: no visible explanatory marks or display activity`);
-    check(await page.locator('.animation-step').isVisible(),`${kind}/${key}: current activity has no visible explanation`);
+    if(scene.id==='atmosphere'){
+     check(!await page.locator('.animation-step').isVisible()&&await page.locator('#legend').isVisible()&&!!(await page.locator('#legend').innerText()).trim(),`${kind}/${key}: simplified view must replace sequence captions with its visible physical legend`);
+    }else check(await page.locator('.animation-step').isVisible(),`${kind}/${key}: current activity has no visible explanation`);
     await stableCamera(before,`${kind}/${key}`);
     await frames(12);const next=await lesson(),second=await geometry();
     if(running){
