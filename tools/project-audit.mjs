@@ -32,7 +32,11 @@ if (gate) {
   };
   const navLink = async file => {
     const link = page.locator(`#topnav a[href*="${file}"]`);
-    if (!await link.isVisible()) await page.locator('#menu-btn').click();
+    const menu = page.locator('#menu-btn');
+    // A closing transition can leave a link briefly visible after the menu's
+    // state has changed. Reopen from disclosure state before repeated clicks.
+    if (await menu.isVisible() && await menu.getAttribute('aria-expanded') !== 'true') await menu.click();
+    await link.waitFor({ state: 'visible' });
     return link;
   };
   const more = async () => {
@@ -131,9 +135,7 @@ if (gate) {
     for (const expected of [{ orbit: 'geo', band: 'mwir' }, { orbit: 'leo', band: 'lwir' }]) {
       await page.evaluate(async scenario => { await grx.setScenario(scenario); }, expected);
       const link = await navLink('evidence.html');
-      const opened = page.context().waitForEvent('page');
-      await link.click({ modifiers: ['Control'] });
-      const popup = await opened;
+      const [popup] = await Promise.all([page.context().waitForEvent('page'), link.click({ modifiers: ['Control'] })]);
       popup.on('pageerror', error => gate.errors.push(`New-tab Evidence: ${error.message}`));
       try {
         await popup.locator('#claim-register[data-scenario-view="current"]').waitFor();
