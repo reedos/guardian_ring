@@ -1,5 +1,7 @@
 # Final built-preview acceptance
 
+This is the complete pre-launch acceptance record. The [10/05/2026 public launch record](LAUNCH-2026-10-05.md) documents the indexing changes, fresh checks and verified application-asset identity with this build. Pre-launch publication statements below describe the build when this record was produced.
+
 Recorded 10/05/2026. Built preview: `http://127.0.0.1:47601/`. All browser results below postdate this production build and include all 10 implemented levels. Scoped development runs and reserved scenes are rejected.
 
 Build SHA-256 (sorted relative paths and bytes): `ba429eac3bfd9411fc7da05ba15abbc0ddb448365265f6f087b3897af18c287c`.

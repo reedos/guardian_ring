@@ -20,6 +20,7 @@ reference implementation: when unsure how something should be done, do it the wa
   main: the browser gates in PLAN.md §9 against a built preview, real GPU.
 
 ## Git and publishing
+- Reed authorized public launch on 10/05/2026. Keep public pages indexable and linked at `https://reedos.dev/guardian_ring/`.
 - Work on branches; main is what ships. No pushes, no new GitHub repo, no deploys until Reed says so.
 - Nothing goes public before Reed's launch call; noindex stays on until then.
 - If a permission check blocks an action, stop and report it. Do not retry it with another tool or shell.

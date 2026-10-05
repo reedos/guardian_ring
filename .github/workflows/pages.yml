@@ -1,4 +1,4 @@
-# Adapted from IF. Reed authorized this public review; noindex remains until launch.
+# Adapted from IF. Public launch authorized by Reed on 10/05/2026.
 name: pages
 on: workflow_dispatch
 permissions: { contents: read, pages: write, id-token: write }
