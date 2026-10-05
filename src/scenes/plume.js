@@ -1,11 +1,12 @@
 import { illustrated } from './illustrated.js';
 import { createPlumeIllustration, PLUME_FRAME, plumeOverviewPose } from './plume-illustration.js';
+import { preloadModel, copyModel } from './model-scene.js';
 const points={source:'AnchorSource',bands:'AnchorBands',timeline:'AnchorTimeline',co2:'AnchorCO2',h2o:'AnchorH2O'};
 const scene=illustrated({
   teaching:'plume',
   url:'models/plume.glb?v=3',
   camera:{...PLUME_FRAME,min:3,max:35},distance:7,
-  illustration:createPlumeIllustration,
+  illustration:options=>createPlumeIllustration({...options,earth:copyModel('models/earth-orbits.glb?v=4').getObjectByName('earth')}),
   lessonNote:'False-color rising emission; motion, glow, gas shape and atmosphere thickness are illustrative. No flight trajectory, altitude, absorption threshold or sensor visibility is calculated. Molecules are enlarged diagrams.',
   points,
   dataPoints:{...points,timeline:[2.9,3.15,1.9]},
@@ -23,5 +24,5 @@ const scene=illustrated({
     heat:[{kind:'radiation',phases:['emit'],points:[[0,4.78,0],[3.5,5.8,1.5]]}],
   },
 });
-export const preload=scene.preload;
+export const preload=()=>Promise.all([scene.preload(),preloadModel('models/earth-orbits.glb?v=4')]);
 export function build(options){return {...scene.build(options),overviewFrame:plumeOverviewPose};}

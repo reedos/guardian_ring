@@ -13,6 +13,13 @@ if(g){const {page}=g,failures=[],rows=[];const prefix=form==='phone'?'p':'d';
     return {index:grx.state.scene,height:document.querySelector('#gl').getBoundingClientRect().height/innerHeight,materials};
    });
    if(result.height<(form==='phone'?.45:.60)-.001)failures.push(`${id}/${mode}: stage below viewport floor`);
+   if(id==='plume'){
+    const earth=await page.evaluate(()=>{
+     const scene=grx.built[5].scene,earth=scene.getObjectByName('Earth context — historical NASA imagery, no event location');
+     return !!earth?.material.map?.image&&earth.material.emissiveIntensity===0&&!!earth.userData.sourceImages&&!!scene.getObjectByName('Molecular inset backing');
+    });
+    if(!earth)failures.push(`plume/${mode}: credited Earth texture or readable molecule inset missing`);
+   }
    if(['satellite','payload','focal-plane'].includes(id)&&mode!=='light'){
     const changed=result.materials.filter(m=>mode==='data'?m.color==='a6f35a':['84d8ff','ff786b','ffd06b','f6a1b8'].includes(m.color)).length;
     if(changed<5||!result.materials.some(m=>m.opacity===.3))failures.push(`${id}/${mode}: hardware did not visibly change`);
