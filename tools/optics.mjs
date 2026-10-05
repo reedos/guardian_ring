@@ -47,6 +47,13 @@ if(gate){
    check(after.playing&&after.progress!==before.progress&&after.yaw!==before.yaw,`${topic}: rotating diagram stopped motion`);
    await page.locator('#focus-demo [data-focus="play"]').click();const paused=await page.evaluate(()=>grx.focusDemo.state().progress);await gesture('rotate','#focus-demo canvas');
    check(await page.evaluate(p=>!grx.focusDemo.state().playing&&grx.focusDemo.state().progress===p,paused),`${topic}: rotating restarted paused diagram`);
+   const normals=await page.evaluate(()=>grx.focusDemo.state().normals);await page.locator('#focus-demo [data-focus="normals"]').click();
+   check(await page.evaluate(before=>grx.focusDemo.state().normals!==before,normals),`${topic}: surface-normal control did not toggle`);
+   await page.locator('#focus-demo [data-focus="normals"]').click();
+   await page.locator('#focus-demo [data-focus="side"]').click();await page.locator('#focus-demo canvas').focus();await page.keyboard.press('ArrowLeft');
+   check(await page.evaluate(topic=>Math.abs(grx.focusDemo.state().pitch-(topic==='focus'?0:1.45))<1e-9,topic),`${topic}: rotating the fixed view changed elevation unexpectedly`);
+   await page.keyboard.press('Home');
+   check(await page.evaluate(topic=>Math.abs(grx.focusDemo.state().yaw-(topic==='focus'?1.12:.4))<1e-9,topic),`${topic}: Home did not restore the lesson perspective`);
    await page.locator('#focus-demo [data-focus="perspective"]').click();check(await page.locator('#focus-demo').evaluate(el=>el.scrollWidth<=el.clientWidth+1),`${topic}: dialog overflows horizontally`);
    await page.screenshot({path:`.local/optics/${form}-${topic}.png`});await page.locator('#focus-demo [data-focus="play"]').click();
   }

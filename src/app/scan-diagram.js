@@ -17,7 +17,7 @@ export function drawScanDiagram({context:c,width,height,project,stroke,progress,
     const [px,py]=project(p);c.font=`${width<500?10:12}px "IBM Plex Mono", monospace`;
     const ceiling=lesson==='feedback'?height-80:height-18,w=c.measureText(text).width+14,x=Math.max(7,Math.min(width-w-7,px-w/2));let y=Math.max(24,Math.min(ceiling,py+dy));
     for(let i=0;i<12&&labels.some(b=>x<b.x+b.w+5&&x+w+5>b.x&&y-17<b.y+8&&y+8>b.y-17);i++)y=Math.max(24,Math.min(ceiling,py+dy+(i%2?1:-1)*22*(Math.floor(i/2)+1)));
-    labels.push({x,y,w});c.strokeStyle='#617482';c.beginPath();c.moveTo(px,py);c.lineTo(Math.max(x,Math.min(x+w,px)),y+5);c.stroke();c.fillStyle='#071118ee';c.fillRect(x,y-15,w,21);c.fillStyle='#f0f0fa';c.fillText(text,x+7,y);
+    labels.push({x,y,w,px,py,text});
   }
   // A direction screen is mathematical context, not a detector or a planet.
   const screen=twoAxes?[[.05,-1,2.4],[2.25,-1,2.4],[2.25,1,2.4],[.05,1,2.4],[.05,-1,2.4]]:[[2.8,-.65,-1.4],[2.8,.65,-1.4],[2.8,.65,1.4],[2.8,-.65,1.4],[2.8,-.65,-1.4]];
@@ -62,5 +62,8 @@ export function drawScanDiagram({context:c,width,height,project,stroke,progress,
     c.strokeStyle='#d5a5ef';c.beginPath();c.moveTo(20,y-6);c.lineTo(width-20,y-6);c.stroke();
     c.fillStyle='#d5a5ef';c.fillRect(width-20-(width-40)*((progress*3)%1),y-9,5,6);
   }
+  // Annotation layer comes last: moving light must never cover a component name.
+  c.font=`${width<500?10:12}px "IBM Plex Mono", monospace`;
+  for(const {x,y,w,px,py,text} of labels){c.strokeStyle='#617482';c.beginPath();c.moveTo(px,py);c.lineTo(Math.max(x,Math.min(x+w,px)),y+5);c.stroke();c.fillStyle='#071118';c.fillRect(x,y-15,w,21);c.fillStyle='#f0f0fa';c.fillText(text,x+7,y);}
   return lesson==='reflection'?'Equal angles about the surface normal.':lesson==='sweep'?'Calc. single-plane steering: direction change = 2 × mirror rotation.':lesson==='axes'?'Mirror A and Mirror B redirect the same calculated ray.':'Blue: command toward the drive. Purple: position feedback toward the controller.';
 }
