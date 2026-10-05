@@ -74,7 +74,7 @@ function wheel(d){
   ring([0,.08,0],.7,INK.charge);ring([0,.08,0],.61,INK.charge);
   for(let i=0;i<8;i++){const a=i*Math.PI/4+s.busAngle+s.wheelRelativeAngle;line([[0,.1,0],[.62*Math.cos(a),.1,.62*Math.sin(a)]],INK.charge,2,.7);}
   const point=rotate([0,.15,-2],s.busAngle);line([[0,.15,0],point],INK.light,2,1,7);d.dot(point,INK.light,5);
-  label([0,.2,0],'Reaction wheel',INK.charge);label(point,'Body pointing',INK.light);
+  label([0,.2,0],'Reaction wheel',INK.charge,[0,-d.main.h*.24]);label(point,'Body pointing',INK.light);
   const values=Array.from({length:101},(_,i)=>i/100>p?null:wheelSlew(i/100));
   // Momentum, not speed: equal magnitudes around zero.
   const bus=values.map(v=>v?12*v.busVelocity/40:null),rotor=bus.map(v=>v===null?null:-v);

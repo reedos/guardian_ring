@@ -31,11 +31,11 @@ export async function prepareLessonEarth(){
 }
 
 export function drawGeo(d,earth){
-  const {p,c,main,panel,text}=d,angle=p*Math.PI*2,blend=smooth(between(p,.36,.58)),viewAngle=angle*(1-blend)-d.yaw;
+  const {p,c,main,panel,text}=d,angle=p*Math.PI,blend=smooth(between(p,.36,.58)),viewAngle=angle*(1-blend)-d.yaw;
   // Orthographic globe, orbit and longitude marker share the same coordinate
   // transform. The texture's visible equator is y=.406*r*cos(longitude).
   function view(cx,cy,r,rotation,caption){
-    const a=rotation+.6,sx=cx+2.55*r*Math.sin(a),sy=cy+2.55*r*.406*Math.cos(a),gx=cx+r*Math.sin(a),gy=cy+r*.406*Math.cos(a),front=Math.cos(a)>=0;
+    const a=rotation-.4,sx=cx+2.55*r*Math.sin(a),sy=cy+2.55*r*.406*Math.cos(a),gx=cx+r*Math.sin(a),gy=cy+r*.406*Math.cos(a),front=Math.cos(a)>=0;
     c.strokeStyle='#e6ba8266';c.beginPath();c.ellipse(cx,cy,r*2.55,r*2.55*.406,0,0,Math.PI*2);c.stroke();
     const markers=()=>{d.path([[gx,gy],[sx,sy]],INK.light,1,.65);c.fillStyle=INK.light;c.beginPath();c.arc(sx,sy,4,0,Math.PI*2);c.fill();if(front){c.fillStyle=INK.heat;c.beginPath();c.arc(gx,gy,3,0,Math.PI*2);c.fill();}};
     if(!front)markers();

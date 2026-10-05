@@ -42,7 +42,7 @@ export function mountCinematicDemo({beforeOpen=()=>{}}={}){
     // Fixed stars are a visual reference, never moving with a reaction wheel.
     if(id!=='wheel')for(let i=0;i<75;i++){c.fillStyle=i%4?'#69869755':'#c7dee688';c.fillRect((i*173.21)%w,(i*89.47)%h,i%4?1:1.5,1);}
     const closeup=id==='pixel'?smooth(between(p,.1,.24))*(1-smooth(between(p,.55,.72))):0;
-    const d=diagramSurface(c,w,h,p,{yaw,pitch,reduced:reduced.matches||id==='wheel',distance:9-(reduced.matches?0:closeup*1.25),target:[-closeup*.15,closeup*.2,0]});
+    const d=diagramSurface(c,w,h,p,{yaw,pitch,reduced:reduced.matches||id==='wheel',distance:id==='wheel'?7.5:9-(reduced.matches?0:closeup*1.25),target:[-closeup*.15,closeup*.2,0]});
     if(id==='wheel'){c.save();c.beginPath();c.rect(d.main.x,d.main.y,d.main.w,d.main.h);c.clip();for(let i=0;i<50;i++)d.dot([Math.sin(i*2.4)*6,Math.cos(i*1.2)*5,-6-Math.sin(i)*2],'#78909c',.7);c.restore();}
     if(id==='geo')drawGeo(d,earth);else RENDERERS[id](d,earth);d.finish();
     const next=lesson.starts?lesson.starts.findLastIndex(start=>p>=start):Math.min(lesson.beats.length-1,Math.floor(p*lesson.beats.length));

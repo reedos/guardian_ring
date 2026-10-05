@@ -20,7 +20,7 @@ export function diagramSurface(c,w,h,p,{yaw=0,pitch=0,reduced=false,distance=9,t
   function dot(point,color=INK.light,r=3){const [x,y]=project(point);c.save();c.fillStyle=color;c.shadowColor=color;c.shadowBlur=12;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();c.restore();}
   function plane(points,color=INK.light,alpha=.25){path(points.map(project),color,1,1,0,true,`${color}${Math.round(alpha*255).toString(16).padStart(2,'0')}`);}
   function text(value,x,y,color=INK.muted,size=12,align='left'){c.save();c.font=`${size}px "IBM Plex Mono",monospace`;c.textAlign=align;c.fillStyle=color;c.fillText(value,x,y);c.restore();}
-  function label(point,value,color=INK.white){const [x,y]=project(point);labels.push({x,y,value,color});}
+  function label(point,value,color=INK.white,offset=[0,0]){const [px,py]=project(point);labels.push({x:px+offset[0],y:py+offset[1],px,py,value,color});}
   function flow(points,t,color=INK.light,count=7,strength=1){
     line(points,color,1,.22);const lengths=points.slice(1).map((pt,i)=>new Vector3(...pt).distanceTo(new Vector3(...points[i]))),total=lengths.reduce((a,b)=>a+b,0);
     for(let j=0;j<count;j++){
@@ -41,7 +41,7 @@ export function diagramSurface(c,w,h,p,{yaw=0,pitch=0,reduced=false,distance=9,t
     const placed=[];for(const item of labels){const size=phone?10:12;c.font=`${size}px "IBM Plex Mono",monospace`;const tw=c.measureText(item.value).width+14;
       const x=Math.max(7,Math.min(main.w-tw-7,item.x-tw/2));let y=Math.max(24,Math.min(main.h-9,item.y));
       for(let i=0;i<18&&placed.some(r=>x<r.x+r.w+4&&x+tw+4>r.x&&y-16<r.y+7&&y+7>r.y-16);i++)y=Math.max(24,Math.min(main.h-9,item.y+(i%2?1:-1)*23*(Math.floor(i/2)+1)));
-      path([[item.x,item.y],[x+tw/2,y]],INK.muted,.6,.5);c.fillStyle='#071018ed';c.fillRect(x,y-15,tw,22);text(item.value,x+7,y,item.color,size);placed.push({x,y,w:tw});
+      path([[item.px,item.py],[x+tw/2,y]],INK.muted,.6,.5);c.fillStyle='#071018ed';c.fillRect(x,y-15,tw,22);text(item.value,x+7,y,item.color,size);placed.push({x,y,w:tw});
     }
   }
   function image(rect,{rows=24,columns=24,reveal=24,raw=false,corrected=false,highlight=-1,sample=null}={}){
