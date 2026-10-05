@@ -1307,6 +1307,9 @@ body.app .panel-scroll > * { min-width: 0; }
 .focus-demo h2 { margin: 4px 0; font: 500 clamp(26px,5vw,40px)/1.1 var(--display); }
 .focus-demo p { color: var(--muted); font: 400 12px/1.6 var(--sans); }
 .focus-demo canvas { display:block; width:100%; height:clamp(210px,45vh,430px); border:1px solid var(--line); border-radius:8px; touch-action:none; }
+.optics-chooser { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; margin:12px 0; color:var(--muted); font:12px var(--mono); }
+.optics-chooser select { flex:1; min-width:0; max-width:100%; min-height:44px; color:var(--ink); background:var(--ground); border:1px solid var(--line); padding:8px; }
+.optics-launches { display:flex; flex-wrap:wrap; gap:8px; grid-column:1 / -1; }
 .focus-legend,.focus-transport { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin:12px 0; }
 .focus-legend span { display:flex; align-items:center; gap:6px; font:400 10px/1.4 var(--mono); color:var(--muted); }
 .focus-legend i { width:16px; height:2px; background:#f6a1b8; }

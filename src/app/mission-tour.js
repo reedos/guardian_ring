@@ -151,11 +151,16 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
       console.error(error);
     } finally {if(token===generation){loading=false;render();}}
   }
-  function stop({focus=false}={}) {
+  function stop({focus=false,preserveActivity=false}={}) {
     if(!active)return;
     stage.cancelNavigation(owner);
     generation++;active=false;playing=false;loading=false;cameraHold=false;establishing=false;
-    mutate(()=>{stage.getTeaching()?.pause();stage.setOrbitFollow(null);stage.built[stage.destination()]?.setMotion?.(false);});
+    mutate(()=>{
+      const teaching=stage.getTeaching();
+      if(preserveActivity){if(teaching?.state().playing)teaching.play({repeat:true});}
+      else{teaching?.pause();stage.built[stage.destination()]?.setMotion?.(false);}
+      stage.setOrbitFollow(null);
+    });
     render();if(focus){const picker=document.getElementById('part-select');(picker.checkVisibility()?picker:document.getElementById('card-next')).focus({preventScroll:true});}
   }
   async function start({establish=false}={}) {
@@ -206,7 +211,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     if(event.target.closest?.('input,select,textarea,button,a[href],summary,[role="tablist"],[contenteditable="true"]'))return;
     if(stage.stageActive()&&(/^[1-6ldh]$/i.test(event.key)||['ArrowLeft','ArrowRight'].includes(event.key)))stop();
   });
-  stage.controls.addEventListener('start',()=>stop());
+  stage.controls.addEventListener('start',()=>stop({preserveActivity:true}));
   on('navigation-request',request=>{if(active&&request.owner!==owner)stop();});
   on('part-inspect',()=>{if(active&&!mutating)stop();});
   on('mode',()=>{if(active&&!mutating)stop();});

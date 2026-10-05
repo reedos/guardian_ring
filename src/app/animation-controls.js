@@ -3,7 +3,7 @@ import { claimByKey } from '../claims.js';
 import { store } from './store.js';
 // Scene-local lesson controls. Stage owns camera/inspection safety and invokes
 // preparePlayback before this module requests any animated hardware state.
-export function mountAnimationControls(host,{getTeaching,getAssemblyPresentation=()=>null,setAssemblyView=()=>{},openFocusDemo=()=>{}}) {
+export function mountAnimationControls(host,{getTeaching,getAssemblyPresentation=()=>null,setAssemblyView=()=>{},openFocusDemo=()=>{},openScanDemo=()=>{}}) {
   let teaching=null,unsubscribe=null;
   host.classList.add('animation-controls');
   host.innerHTML='<span class="animation-step" aria-live="polite"></span><details class="animation-explanation"><summary>How this part works</summary><p class="animation-description"></p><div class="animation-legend" aria-label="Flow legend"></div><div class="animation-evidence"></div><p class="animation-note"></p></details>';
@@ -12,6 +12,8 @@ export function mountAnimationControls(host,{getTeaching,getAssemblyPresentation
   host.prepend(assembly);
   const focusButton=document.createElement('button');focusButton.type='button';focusButton.className='btn focus-demo-open';focusButton.textContent='See light focus';focusButton.hidden=true;focusButton.setAttribute('aria-haspopup','dialog');
   host.append(focusButton);focusButton.addEventListener('click',openFocusDemo);
+  const scanButton=document.createElement('button');scanButton.type='button';scanButton.className='btn scan-demo-open';scanButton.textContent='See scan mirrors';scanButton.hidden=true;scanButton.setAttribute('aria-haspopup','dialog');scanButton.addEventListener('click',openScanDemo);
+  const opticsLaunches=document.createElement('div');opticsLaunches.className='optics-launches';opticsLaunches.hidden=true;opticsLaunches.append(focusButton,scanButton);host.append(opticsLaunches);
   const title=host.querySelector('.animation-step'),description=host.querySelector('.animation-description'),legend=host.querySelector('.animation-legend'),note=host.querySelector('.animation-note');
   const evidence=host.querySelector('.animation-evidence');let legendKey='',evidenceKey='';
   function render(){
@@ -20,6 +22,8 @@ export function mountAnimationControls(host,{getTeaching,getAssemblyPresentation
     if(presentation){const view=presentation.capture().view;for(const button of assembly.querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.assemblyView===view));assembly.querySelector('.assembly-note').textContent=view==='inside'?'Covers hidden · as drawn':'Choose Inside to see boards';}
     const state=teaching.state();host.dataset.inspection=String(state.inspection);
     focusButton.hidden=store.C.SCENES[store.ui.scene]?.id!=='payload'||state.mode!=='light';
+    scanButton.hidden=!['payload','abi'].includes(store.C.SCENES[store.ui.scene]?.id)||state.mode!=='light';
+    opticsLaunches.hidden=focusButton.hidden&&scanButton.hidden;
     title.textContent=state.inspection?'Choose a part. Next shows its activity.':state.step.title;description.textContent=state.step.body;
     const keys=state.step.claimKeys||[],claimKey=keys.join(',');if(claimKey!==evidenceKey){evidenceKey=claimKey;evidence.innerHTML=keys.map(key=>{const claim=claimByKey(store.M,store.C,key);return claim?chip(claim.basis,key,claim.label):'';}).join('');}
     note.textContent=state.inspection?'Press Next to inspect a part and play its activity once. Animation timing is illustrative.':`${state.repeating?'Repeating activity illustration. ':''}${state.note||'Illustrative sequence; no real sensor timing, signal level, or throughput.'}`;

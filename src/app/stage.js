@@ -48,7 +48,7 @@ let navigationOwner = null;
 let lifecycleFrozen = false, resetFrameClock = false, frozenAt = null;
 export const activitySuspended = () => lifecycleFrozen || document.hidden || $('src-pop')?.hidden === false || $('page-sheet')?.hidden === false;
 // A deliberate Pause or manual step survives subsequent layer/level changes.
-// Camera inspection can pause the current pose without changing this preference.
+// Camera gestures release camera ownership without changing playback intent.
 let activityEnabled = !reduced;
 export function setActivityEnabled(playing) { activityEnabled=!!playing;if(orbitTracking?.entering)orbitTracking.resumeMotion=activityEnabled; }
 export function setSceneActivity(playing) {
@@ -506,7 +506,12 @@ export function start() {
   document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
   $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('back-out').addEventListener('click', backOut);
   $('quality').addEventListener('change', event => setQualityPreference(event.target.value));
-  controls.addEventListener('start', () => { pendingPartAnimation=null;if(orbitTracking)setOrbitFollow(null);framedPart = null; framedOverview=false; tween = null; inspect(true); built[ui.scene]?.setMotion?.(false); emit('scene-settings'); });
+  controls.addEventListener('start', () => {
+    // OrbitControls emits this for rotate, pan, pinch, and wheel zoom. None is
+    // a Pause command. A pending Next activity may start once its flight ends.
+    if(orbitTracking){const moving=orbitMotionRequested();setOrbitFollow(null);built[0]?.setMotion?.(moving);}
+    framedPart=null;framedOverview=false;tween=null;emit('scene-settings');
+  });
   const suspendActivity = () => {
     const suspended = activitySuspended();
     getTeaching()?.setSuspended?.(suspended); built[ui.scene]?.setSuspended?.(suspended);
