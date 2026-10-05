@@ -490,7 +490,7 @@ export function start() {
   setQualityPreference(preference);
   const mainLevels = document.createElement('div'), sideLevels = document.createElement('div');
   mainLevels.className = 'lm-group'; sideLevels.className = 'lm-group';
-  const sideHeading = document.createElement('p'); sideHeading.className = 'mm-h'; sideHeading.textContent = 'Related views'; sideLevels.append(sideHeading);
+  const sideHeading = document.createElement('p'); sideHeading.className = 'mm-h'; sideHeading.textContent = 'Side levels'; sideLevels.append(sideHeading);
   $('level-menu').append(mainLevels, sideLevels);
   store.C.SCENES.forEach((scene, index) => {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'step'; button.dataset.level = String(index); button.style.setProperty('--c', 'var(--accent)');
@@ -501,7 +501,6 @@ export function start() {
     item.querySelector('.t').textContent = scene.title; item.querySelector('.meta').textContent = scene.scale;
     item.addEventListener('click', () => void go(index)); (index < MAIN_LEVELS ? mainLevels : sideLevels).append(item);
     if (index < MAIN_LEVELS) { button.addEventListener('click', () => void go(index)); $('steps').append(button); }
-    else { const side = document.createElement('button'); side.className = 'btn'; side.type = 'button'; side.textContent = scene.title; side.dataset.level = String(index); side.addEventListener('click', () => void go(index)); $('side-levels').append(side); }
   });
   document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
   $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('back-out').addEventListener('click', backOut);

@@ -3,9 +3,9 @@ import { on, store, emit } from './store.js';
 import { partsFor, select, overview } from './stage.js';
 
 const $ = id => document.getElementById(id);
-const picker = $('part-select'), details = $('inspector-toggle'), present = $('presentation-view');
+const picker = $('part-select');
 const introduction = $('intro'), introductionMore = $('intro-more');
-let previousCollapsed = false;
+
 
 function syncParts() {
   const { scene, mode, selected } = store.ui, parts = scene < 0 ? [] : partsFor(scene);
@@ -35,29 +35,10 @@ function syncIntroduction(reset = false) {
 introductionMore.addEventListener('click', () => { introduction.classList.toggle('open'); syncIntroduction(); });
 new ResizeObserver(() => syncIntroduction()).observe(introduction);
 
-function collapseInspector(collapsed) {
-  document.body.classList.toggle('inspector-collapsed', collapsed);
-  details.setAttribute('aria-expanded', String(!collapsed));
-  details.textContent = collapsed ? 'Show details' : 'Hide details';
-}
-
-function setPresentation(enabled) {
-  if (enabled) previousCollapsed = document.body.classList.contains('inspector-collapsed');
-  document.body.classList.toggle('presentation-view', enabled);
-  present.setAttribute('aria-pressed', String(enabled));
-  present.textContent = enabled ? 'Exit presentation' : 'Present';
-  $('presentation-exit').hidden = !enabled;
-  collapseInspector(enabled || previousCollapsed);
-  // Enter on the visible exit, and use the same return target for the exit
-  // button, menu choice, and Escape. Never leave focus in a hidden control.
-  $(enabled ? 'presentation-exit' : 'more-btn').focus({ preventScroll: true });
-}
-
 // A direct part choice must reveal its description even when a long component
 // list has pushed the card below the fold. The picker remains in view throughout.
 function revealCard() {
-  if (document.body.classList.contains('presentation-view')) return;
-  collapseInspector(false);
+  document.body.classList.remove('inspector-collapsed');
   emit('pane-request', {pane:'parts',reset:true,expand:true});
   const selected = store.ui.selected, scene = store.ui.scene, mode = store.ui.mode;
   requestAnimationFrame(() => {
@@ -73,16 +54,6 @@ picker.addEventListener('change', () => {
 });
 on('part-inspect', revealCard);
 $('reset-view').addEventListener('click', overview);
-present.addEventListener('click', () => setPresentation(!document.body.classList.contains('presentation-view')));
-$('presentation-exit').addEventListener('click', () => setPresentation(false));
-details.addEventListener('click', () => {
-  const wasCollapsed = document.body.classList.contains('inspector-collapsed');
-  if (document.body.classList.contains('presentation-view')) setPresentation(false);
-  collapseInspector(!wasCollapsed);
-});
-addEventListener('keydown', event => {
-  if (event.key === 'Escape' && document.body.classList.contains('presentation-view')) setPresentation(false);
-});
 on('select', syncParts);
 for (const event of ['scene', 'mode', 'scenario']) on(event, () => { syncParts(); syncIntroduction(true); });
 syncParts();

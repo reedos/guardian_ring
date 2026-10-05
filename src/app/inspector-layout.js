@@ -37,8 +37,6 @@ export function mountInspectorLayout() {
   const phone=matchMedia('(max-width:760px)');
   function placeNavigation(){
     const focused=document.activeElement;
-    for(const tab of document.querySelectorAll('[data-pane]'))tab.setAttribute('role',phone.matches?'button':'tab');
-    document.querySelector('.pane-tabs').setAttribute('role',phone.matches?'group':'tablist');
     const parts=document.getElementById('tab-parts');
     if(phone.matches)parts.setAttribute('aria-expanded',String(document.body.classList.contains('sheet-open')));else parts.removeAttribute('aria-expanded');
     if(phone.matches){panel.querySelector('.panel-scroll').prepend(picker);view.append(transport);}

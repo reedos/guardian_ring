@@ -30,7 +30,7 @@ export function refreshScenarioContent({ built, model, parts, selected, refreshP
 
 export function capturePane() {
   const active = document.activeElement;
-  return { pane: document.querySelector('[data-pane][aria-selected="true"]')?.dataset.pane || 'parts',
+  return { pane: document.getElementById('try-it')?.open&&!document.getElementById('try-it').hidden?'scenario':'parts',
     scroll: document.querySelector('.panel-scroll')?.scrollTop || 0,
     expanded: document.body.classList.contains('sheet-open'),
     size: document.body.style.getPropertyValue('--inspector-size'),

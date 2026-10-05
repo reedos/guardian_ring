@@ -36,9 +36,7 @@ if(g){const {page}=g,failures=[];let states=0;
    await openParts(page);
    check(await page.locator('[data-mission="start"]').isVisible(),'Mission entry is hidden behind another menu');
   const scenario=await page.evaluate(()=>JSON.stringify(grx.store.scenario));
-  if(!await page.locator('[data-mission="start"]').isVisible()){
-   await page.locator('#more-btn').click();await page.locator('#mission-launch').focus();
-  }else await page.locator('[data-mission="start"]').focus();
+  await page.locator('[data-mission="start"]').focus();
   await page.keyboard.press('Enter');await ready();await frames(4);
   check(await page.evaluate(()=>document.activeElement===document.querySelector('[data-mission="play"]')),'Starting a mission lost keyboard focus');
   check(await page.evaluate(()=>grx.orbitFollow()==='geo'&&grx.mission.state().active),'Mission did not enter GEO follow');

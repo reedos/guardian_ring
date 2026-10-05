@@ -38,13 +38,17 @@ mountSceneKey();
 mountInspectorLayout();
 for (const event of ['scene', 'mode', 'scene-settings']) on(event, () => animationControls.sync());
 const tabs = [...document.querySelectorAll('[data-pane]')], scenario = document.getElementById('pane-scenario'), sheetButton = document.getElementById('sheet-toggle');
+const tryIt=document.getElementById('try-it');let requestedPane='parts';
+document.getElementById('learning-guide').after(tryIt);
+const hasExperiment=()=>['orbits','pixel','atmosphere'].includes(store.C.SCENES[store.ui.scene]?.id);
 function setSheet(open) { document.body.style.removeProperty('--inspector-size'); document.body.classList.toggle('sheet-open', open); sheetButton.setAttribute('aria-expanded', String(open));if(matchMedia('(max-width:760px)').matches)document.getElementById('tab-parts').setAttribute('aria-expanded',String(open)); sheetButton.setAttribute('aria-label', open ? 'Shrink the panel' : 'Expand the panel'); }
 function showPane(which, { reset = true } = {}) {
-  tabs.forEach(button => { const selected = button.dataset.pane === which; button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1; });
-  scenario.hidden = which !== 'scenario';
-  document.querySelectorAll('.panel-scroll > :not(#pane-scenario):not(.pane-note):not(#playback-dock):not(.view-part)').forEach(element => element.classList.toggle('pane-off', which === 'scenario'));
+  requestedPane=which;tryIt.hidden=!hasExperiment();tryIt.open=which==='scenario'&&!tryIt.hidden;
+  scenario.hidden=!tryIt.open;
   if (reset) document.querySelector('.panel-scroll').scrollTop = 0;
 }
+tryIt.addEventListener('toggle',()=>{scenario.hidden=!tryIt.open;requestedPane=tryIt.open?'scenario':'parts';});
+on('scene',()=>showPane(requestedPane,{reset:false}));
 on('pane-request', ({ pane, reset = true, expand = false }) => {showPane(pane, { reset });if(expand&&matchMedia('(max-width:760px)').matches)setSheet(true);});
 on('experiment', experiment => {
   showPane('scenario'); setSheet(true);
@@ -59,8 +63,6 @@ on('restore-pane', saved => {
   setSheet(saved.expanded);
   if (saved.size) document.body.style.setProperty('--inspector-size', saved.size);
   document.body.classList.toggle('inspector-collapsed', saved.collapsed);
-  document.getElementById('inspector-toggle').setAttribute('aria-expanded', String(!saved.collapsed));
-  document.getElementById('inspector-toggle').textContent = saved.collapsed ? 'Show details' : 'Hide details';
   for (const details of document.querySelectorAll('#card-components details')) details.open = saved.details.includes(details.dataset.component);
   document.querySelector('.panel-scroll').scrollTop = saved.scroll;
   if (saved.restoreFocus) {
@@ -71,14 +73,8 @@ on('restore-pane', saved => {
     (previous?.checkVisibility() ? previous : document.getElementById('part-select')).focus({ preventScroll: true });
   }
 });
-tabs.forEach((button, index) => {
+tabs.forEach(button => {
   button.addEventListener('click', () => { showPane(button.dataset.pane); if (button.dataset.pane === 'scenario') setSheet(true);else if(!dragged&&matchMedia('(max-width:760px)').matches)setSheet(!document.body.classList.contains('sheet-open'));dragged=false; });
-  button.addEventListener('keydown', event => {
-    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
-    event.preventDefault();
-    const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (index + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
-    tabs[next].click(); tabs[next].focus();
-  });
 });
 const scroller = document.querySelector('.panel-scroll');
 moreCue(scroller, { host: document.getElementById('inspector'), label: () => {

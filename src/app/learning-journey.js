@@ -13,6 +13,7 @@ export function syncLearning() {
   $('learning-question').textContent = lesson.question;
   $('learning-takeaway').textContent = lesson.takeaway;
   $('learning-try').textContent = lesson.try;
+  $('learning-try').hidden = !['orbits','pixel','atmosphere'].includes(scene.id);
   $('learning-try').onclick = () => emit('experiment', lesson.experiment);
   const nextIndex = store.C.SCENES.findIndex(item => item.id === lesson.next);
   next.hidden = nextIndex < 0 && !isSide(store.ui.scene);

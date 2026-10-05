@@ -41,9 +41,6 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     const lesson=stage.getTeaching()?.state();if(lesson)step(Number(button.dataset.missionPhase)-lesson.index);
   });
   const legend=find('.mission-legend'),evidence=find('.mission-evidence');let explanationKey='';
-  const menuStart=document.createElement('button');menuStart.type='button';menuStart.id='mission-launch';menuStart.className='mm-item';menuStart.textContent='Watch the mission';
-  document.getElementById('mm-tools-title').after(menuStart);
-  menuStart.addEventListener('click',()=>void start());
   const orbitFact=document.createElement('p');orbitFact.className='orbit-follow-fact';orbitFact.hidden=true;
   explanation.append(orbitFact);let factFamily=null;
   missionOptions=document.createElement('section');missionOptions.className='mission-options';missionOptions.hidden=true;
@@ -88,6 +85,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     find('[data-mission="play"]').setAttribute('aria-pressed',String(playing));
     const focused=document.activeElement;
     find('[data-mission="previous"]').disabled=loading||index===0;
+    find('[data-mission="previous"]').hidden=index===0;
     find('[data-mission="next"]').disabled=loading||index===MISSION_CHAPTERS.length-1;
     const lesson=!chapter.follow&&!loading&&!failed?stage.getTeaching()?.state():null;
     stepControls.hidden=true;
@@ -248,5 +246,5 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     if(!remembered){remembered=true;if(!entry.remember()&&entry.automatic)requested=false;}
     if(requested&&!blocked()){requested=false;void start({establish:entry.automatic});}
   });
-  return {state,start,stop,pause,play,step,next:()=>index<MISSION_CHAPTERS.length-1?enter(index+1):undefined,previous:()=>index>0?enter(index-1):undefined,dispose(){stop();untick();unready();document.removeEventListener('pointerdown',cancelEntry,{capture:true});document.removeEventListener('keydown',cancelEntry,{capture:true});host.remove();menuStart.remove();missionOptions.remove();}};
+  return {state,start,stop,pause,play,step,next:()=>index<MISSION_CHAPTERS.length-1?enter(index+1):undefined,previous:()=>index>0?enter(index-1):undefined,dispose(){stop();untick();unready();document.removeEventListener('pointerdown',cancelEntry,{capture:true});document.removeEventListener('keydown',cancelEntry,{capture:true});host.remove();missionOptions.remove();}};
 }
