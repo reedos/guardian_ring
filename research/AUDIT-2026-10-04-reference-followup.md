@@ -28,7 +28,8 @@ Typecheck, 260 unit tests, and strict claims passed before the implementation co
 
 ## Visual comparisons
 
-The local [before/after gallery](../.local/audit-1004/reference-review.html) pairs 1440 × 900 desktop and 390 × 844 phone-viewport captures with the matching audit screenshots:
+The before/after gallery is retained privately at `.local/audit-1004/reference-review.html`
+and is not included in this public repository. It pairs 1440 × 900 desktop and 390 × 844 phone-viewport captures with the matching audit screenshots:
 
 - `d-page-parts.png`, `p-page-parts.png`
 - `d-page-evidence.png`, `p-page-evidence.png`
