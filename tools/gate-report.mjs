@@ -19,6 +19,7 @@ GEOMETRY_RUNS.push('visual-audit-desktop','visual-audit-phone');
 GEOMETRY_RUNS.push('cuts-audit-desktop','cuts-audit-phone');
 GEOMETRY_RUNS.push('reference-audit-desktop','reference-audit-phone');
 GEOMETRY_RUNS.push('optics-desktop','optics-phone');
+GEOMETRY_RUNS.push('cinematics-desktop','cinematics-phone');
 
 export function validateGeometryReport(report, { name, builtAt, sceneIds, base = PREVIEW }) {
   const reject = why => { throw new Error(`${name}: ${why}`); };
@@ -30,6 +31,7 @@ export function validateGeometryReport(report, { name, builtAt, sceneIds, base =
   if (report.scenes.some(s => !s.ready)) reject('reserved scenes remain; final acceptance requires all levels');
   if (!report.gpu || /swiftshader|software|basic render|unknown|unavailable/i.test(report.gpu)) reject('real GPU was not recorded');
   if (!Number.isInteger(report.states) || report.states < 1) reject('no checked states');
+  if(name.startsWith('cinematics-')){const expected=['pixel','cooling','wheel','pushbroom','geo','eclipse','downlink','thermal','atmosphere','calibration'];if(report.lessonCases?.length!==expected.length||expected.some(id=>report.lessonCases.filter(v=>v===id).length!==1))reject('incomplete automatic lesson coverage');if(report.captures?.length!==expected.length*5)reject('missing lesson storyboard captures');}
   if (name.startsWith('flights-') && report.flightCoverage !== FLIGHT_COVERAGE) reject('missing all-pairs flight coverage');
   if (name.startsWith('activity-')) {
     if(report.activityCoverage!==ACTIVITY_COVERAGE)reject('missing immediate activity coverage');

@@ -1303,6 +1303,31 @@ body.app .panel-scroll > * { min-width: 0; }
 .presentation-exit[hidden] { display: none; }
 .focus-demo { width: min(960px,calc(100vw - 28px)); max-height: calc(100dvh - 28px); padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); overflow: auto; }
 .focus-demo::backdrop { background: #000d; backdrop-filter: blur(5px); }
+.cinematic-demo { width:min(1120px,calc(100vw - 28px)); }
+.cinematic-demo canvas { height:clamp(340px,48vh,520px); }
+.cinematic-demo .cinematic-intro { margin:8px 0 12px; }
+.cinematic-demo .cinematic-caption { min-height:90px; padding-top:12px; }
+.cinematic-demo .cinematic-caption h3 { margin:0; font:500 25px/1.15 var(--display); color:var(--ink); }
+.cinematic-demo .cinematic-caption p { max-width:88ch; margin:7px 0 0; color:var(--muted); }
+.cinematic-demo .focus-transport { margin:8px 0; }
+.cinematic-demo [data-cinematic='play'] { min-width:100px; border-color:var(--accent); color:var(--accent); }
+.cinematic-progress { height:2px; background:var(--line); }
+.cinematic-progress i { display:block; width:0; height:100%; background:var(--accent); }
+.cinematic-time { margin-left:auto; font:10px/1.5 var(--mono); color:var(--muted); }
+.cinematic-demo .cinematic-basis { font:10px/1.5 var(--mono); }
+.cinematic-evidence section { border-top:1px solid var(--line); padding:8px 0; }
+.cinematic-evidence h4 { color:var(--accent); font:500 12px/1.5 var(--mono); }
+.cinematic-open { grid-column:1 / -1; }
+.cinematic-more { grid-column:1 / -1; font:11px/1.5 var(--sans); color:var(--muted); }
+.cinematic-more summary { min-height:44px; display:list-item; padding:13px 0; cursor:pointer; }
+.cinematic-more > div { display:flex; flex-wrap:wrap; gap:8px; }
+@media(max-width:600px) {
+  .focus-demo.cinematic-demo { width:calc(100vw - 12px); max-height:calc(100dvh - 12px); padding:12px; }
+  .focus-demo.cinematic-demo canvas { height:390px; }
+  .cinematic-demo .cinematic-caption { min-height:126px; }
+  .cinematic-demo .cinematic-caption h3 { font-size:23px; }
+  .cinematic-time { flex-basis:100%; margin:0; }
+}
 .focus-demo header { display:flex; align-items:center; justify-content:space-between; gap:16px; }
 .focus-demo h2 { margin: 4px 0; font: 500 clamp(26px,5vw,40px)/1.1 var(--display); }
 .focus-demo p { color: var(--muted); font: 400 12px/1.6 var(--sans); }

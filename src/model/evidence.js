@@ -1,6 +1,8 @@
 // Merge these catalogs into the shared IF evidence registry. All dates are access/review dates unless noted.
 import { ENGINEERING_SOURCES, ENGINEERING_CALCS, ENGINEERING_ASSUMPTIONS } from '../engineering-evidence.js';
+import { CINEMATIC_SOURCES, CINEMATIC_CALCS, CINEMATIC_ASSUMPTIONS } from '../cinematic-evidence.js';
 export const MODEL_SOURCES = {
+  ...CINEMATIC_SOURCES,
   ...ENGINEERING_SOURCES,
   'nist-codata-2022': {
     title: 'Fundamental Physical Constants: complete listing, 2022 CODATA adjustment', publisher: 'NIST',
@@ -55,6 +57,7 @@ export const MODEL_SOURCES = {
 };
 
 export const MODEL_CALCS = {
+  ...CINEMATIC_CALCS,
   ...ENGINEERING_CALCS,
   'orbit-period': {
     title: 'Two-body orbital period', how: 'T = 2π√(a³/μ), where a is the ellipse’s semi-major axis (the center-to-center radius for a circular orbit). The satellite mass is neglected. GEO uses the public reference altitude; other choices use the stated teaching geometry. Earth is treated as spherical; perturbations are omitted.',
@@ -100,6 +103,7 @@ export const MODEL_CALCS = {
 };
 
 export const MODEL_ASSUMPTIONS = {
+  ...CINEMATIC_ASSUMPTIONS,
   ...ENGINEERING_ASSUMPTIONS,
   'model-orbits': {
     title: 'General orbit examples', value: 'A spherical Earth and negligible satellite mass',

@@ -321,13 +321,14 @@ PC, real GPU).
 | `mission.mjs desktop` / `phone` | guided chapters and orbital follow views stay clear and usable; pause, source-reading hold, reduced motion, interruption, and cancellation preserve the reader's choices |
 | `activity.mjs desktop` / `phone` | every hardware scene and layer responds immediately with a meaningful activity pose; motion, repeat, explicit pause, reduced motion, source/lifecycle suspension, selected-part framing, orbital follow and shared follow preserve the reader's intent |
 | `optics.mjs desktop` / `phone` | camera gestures preserve activity and explicit pauses across every hardware layer; mission interruption releases the camera without stopping activity; all five optical demonstrations rotate, pause, fit, and respect reduced motion |
+| `cinematics.mjs desktop` / `phone` | all ten automatic lessons open from visible controls without layer changes; Play advances rendered visuals, gestures preserve playback, captions match the storyboard, pause/evidence/replay/Escape/focus work, and every beat is captured on both forms |
 | `project-audit.mjs desktop` / `phone` | keyboard focus, repeated scenario links, hidden-family selections, and filtered or malformed reference fragments work in pages and embedded references |
 | `coplanar.mjs` | no flush surfaces that flicker |
 | `flights.mjs` | 0 camera moves through geometry, both forms |
 | `perf.mjs desktop` / `phone` | inside budget |
 | `links.mjs` | every story-page link lands on its part |
 
-`npm run gates` runs 42 serialized browser commands. The activity runs cover all nine hardware scenes ×
+`npm run gates` runs 44 serialized browser commands. The activity runs cover all nine hardware scenes ×
 three layers for running, deliberately paused, and reduced-motion states; they also cross natural repeat
 boundaries in each atmosphere layer. `tools/gate-report.mjs` requires complete, current-build activity
 inventories alongside the other full-scope results. Performance budgets remain unchanged.
