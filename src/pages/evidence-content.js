@@ -19,7 +19,7 @@ export function renderClaimRows(claims, { current = false, grouped = true } = {}
     const groups = new Map();
     for (const claim of claims) {
       const id = claim.scene?.id || claim.group || 'other';
-      if (!groups.has(id)) groups.set(id, { title: claim.scene?.title || ({ story: 'The story', model: 'Teaching calculations' }[id] || 'Reference claims'), claims: [] });
+      if (!groups.has(id)) groups.set(id, { title: claim.scene?.title || ({ story: 'The story', learning: 'Learning examples', 'orbit-example': 'Orbit examples', model: 'Teaching calculations' }[id] || 'Reference claims'), claims: [] });
       groups.get(id).claims.push(claim);
     }
     return `<nav class="parts-toc" aria-label="Evidence by level">${[...groups].map(([id, group]) => `<a href="#evidence-${esc(id)}">${esc(group.title)}</a>`).join('')}</nav>` + [...groups].map(([id, group]) => `<details class="reference-group" id="evidence-${esc(id)}" data-claim-group><summary>${esc(group.title)} <span>${group.claims.length} claims</span></summary><div data-reference-rows>${renderClaimRows(group.claims, { current, grouped: false })}</div></details>`).join('');
