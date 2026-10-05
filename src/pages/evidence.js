@@ -47,7 +47,14 @@ function connectFilter({ inputId, rowSelector, emptyId, countId, noun, queryKey 
     if (updateAddress && queryKey) {
       const params = new URLSearchParams(location.search);
       if (input.value.trim()) params.set(queryKey, input.value.trim()); else params.delete(queryKey);
-      history.replaceState(null, '', `${location.pathname}${params.size ? `?${params}` : ''}${location.hash}`);
+      let hash = location.hash;
+      try {
+        const target = document.getElementById(decodeURIComponent(hash.slice(1))), row = target?.closest(rowSelector);
+        // A new search supersedes a previously selected, now-filtered anchor.
+        // Otherwise Back would reveal that old claim and discard the search.
+        if (query && ((row && !row.dataset.search.includes(query)) || target?.matches('[data-claim-group][hidden]'))) hash = '';
+      } catch { hash = ''; }
+      history.replaceState(null, '', `${location.pathname}${params.size ? `?${params}` : ''}${hash}`);
     }
   }
   input.addEventListener('input', () => filter(true));

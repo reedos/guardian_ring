@@ -15,7 +15,15 @@ function filter(update=false) {
   for(const row of register.querySelectorAll('[data-part-entry]')) {row.hidden=!terms.every(term=>row.dataset.search.includes(term));row.open=terms.length>0&&!row.hidden;if(!row.hidden)matches++;}
   for(const level of register.querySelectorAll('[data-parts-level]')) level.hidden=![...level.querySelectorAll('[data-part-entry]')].some(row=>!row.hidden);
   count.textContent=`${matches} assembly entries${terms.length?' found':''}`;empty.hidden=matches>0;
-  if(update){const params=new URLSearchParams(location.search);if(input.value.trim())params.set('q',input.value.trim());else params.delete('q');history.replaceState(null,'',`${location.pathname}${params.size?`?${params}`:''}${location.hash}`);}
+  if(update){
+    const params=new URLSearchParams(location.search);if(input.value.trim())params.set('q',input.value.trim());else params.delete('q');
+    let hash=location.hash;
+    try {
+      const target=document.getElementById(decodeURIComponent(hash.slice(1))),row=target?.closest('[data-part-entry]');
+      if(terms.length&&((row&&!terms.every(term=>row.dataset.search.includes(term)))||target?.closest('[hidden]')))hash='';
+    }catch{hash='';}
+    history.replaceState(null,'',`${location.pathname}${params.size?`?${params}`:''}${hash}`);
+  }
 }
 input.addEventListener('input',()=>filter(true));filter();
 // Native details keep long diagrams readable; deep links open their containing sections.
