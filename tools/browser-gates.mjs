@@ -164,7 +164,12 @@ export async function run(name,form=process.argv[2]||'desktop'){
   for(const sc of scenes){
    await show(page,sc.i,'light');
    for(const mode of ['data','heat','light']){
-    await page.locator(`[data-mode="${mode}"]`).click();
+    if(sc.id==='atmosphere'){
+     if(await page.locator('[data-mode]:visible').count())fail.push('Atmosphere exposes removed layer switches');
+     // Keep legacy shared-layer card/pin coverage without inventing a removed
+     // user control. The ordinary hardware levels still use real buttons.
+     await page.evaluate(value=>grx.setMode(value),mode);
+    }else await page.locator(`[data-mode="${mode}"]`).click();
     // Layer-specific playback controls can resize the phone canvas. Sample
     // after ResizeObserver and rendering, with the same unchanged pin bounds.
     await settleLayout(page);
