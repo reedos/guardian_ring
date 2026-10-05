@@ -23,6 +23,14 @@ function paint(pixels,phase,progress) {
   const current=PHASES.indexOf(phase);
   for(let index=0;index<3;index++)rectangle(6+index*29,53,25,5,index===current?[211,232,246]:index<current?[96,153,108]:[29,60,73]);
   rectangle(6,60,Math.max(1,Math.round(83*progress)),1,[159,194,216]);
+  if(phase==='transfer'&&progress>=.65){
+    // A generic teaching payoff, never an operational event or threshold.
+    rectangle(4,9,88,40,[52,30,12]);
+    rectangle(4,9,88,2,[230,186,130]);
+    rectangle(4,47,88,2,[230,186,130]);
+    const glyphs={A:['01110','10001','10001','11111','10001','10001','10001'],L:['10000','10000','10000','10000','10000','10000','11111'],E:['11111','10000','10000','11110','10000','10000','11111'],R:['11110','10001','10001','11110','10100','10010','10001'],T:['11111','00100','00100','00100','00100','00100','00100']};
+    for(const [letter,char] of [...'ALERT'].entries())for(const [y,line] of glyphs[char].entries())for(let x=0;x<5;x++)if(line[x]==='1')rectangle(19+letter*12+x*2,21+y*2,2,2,[255,212,154]);
+  }
 }
 
 // Use an existing authored glass surface, with its existing UVs and transforms.
@@ -30,18 +38,18 @@ function paint(pixels,phase,progress) {
 export function createActivityDisplay(asset,{role,materialName,surfaceNormal=[0,0,1]}) {
   const owner=asset.getObjectByName(role);
   if(!owner)throw new Error(`Missing activity-display component: ${role}`);
-  const records=[],copies=new Map(),pixels=new Uint8Array(WIDTH*HEIGHT*4);let uvRect=null;
+  const records=[],copies=new Map(),pixels=new Uint8Array(WIDTH*HEIGHT*4);let uvRect=null,frontMap=null;
   const texture=new DataTexture(pixels,WIDTH,HEIGHT,RGBAFormat);
   texture.colorSpace=SRGBColorSpace;texture.magFilter=NearestFilter;texture.minFilter=NearestFilter;
   owner.traverse(mesh=>{
     if(!mesh.isMesh)return;
     const source=Array.isArray(mesh.material)?mesh.material:[mesh.material];
     if(!source.some(material=>material.name===materialName))return;
-    const uv=mesh.geometry.getAttribute('uv'),normal=mesh.geometry.getAttribute('normal');
+    const uv=mesh.geometry.getAttribute('uv'),normal=mesh.geometry.getAttribute('normal'),position=mesh.geometry.getAttribute('position');
     if(!uv||!normal)throw new Error(`Activity-display surface has no authored UVs or normals: ${mesh.name}`);
     // A Blender box uses an atlas: its front may occupy only a small UV island.
     // Fill that authored front island, keeping the existing geometry untouched.
-    const rect=[Infinity,Infinity,-Infinity,-Infinity],index=mesh.geometry.index;
+    const rect=[Infinity,Infinity,-Infinity,-Infinity],index=mesh.geometry.index,front=[];
     const groups=Array.isArray(mesh.material)?mesh.geometry.groups:[{start:0,count:index?.count??uv.count,materialIndex:0}];
     for(const group of groups){
       if(source[group.materialIndex??0]?.name!==materialName)continue;
@@ -49,12 +57,34 @@ export function createActivityDisplay(asset,{role,materialName,surfaceNormal=[0,
         const vertex=index?index.getX(offset):offset;
         if(normal.getX(vertex)*surfaceNormal[0]+normal.getY(vertex)*surfaceNormal[1]+normal.getZ(vertex)*surfaceNormal[2]<.999)continue;
         const u=uv.getX(vertex),v=uv.getY(vertex);
+        front.push([u,v,position.getX(vertex),position.getY(vertex)]);
         rect[0]=Math.min(rect[0],u);rect[1]=Math.min(rect[1],v);rect[2]=Math.max(rect[2],u);rect[3]=Math.max(rect[3],v);
       }
     }
     if(!rect.every(Number.isFinite)||rect[2]<=rect[0]||rect[3]<=rect[1])throw new Error(`Missing activity-display front UV island: ${mesh.name}`);
     if(uvRect&&rect.some((value,i)=>Math.abs(value-uvRect[i])>1e-5))throw new Error('Activity-display surfaces must share their authored front UV island');
     uvRect=rect;
+    if(!frontMap){
+      // glTF box atlases may rotate the front island. Resolve the texture axes
+      // from the authored face coordinates so screen text stays upright.
+      const a=front[0];
+      for(const b of front)for(const c of front){
+        if(frontMap)continue;
+        const du=b[0]-a[0],dv=b[1]-a[1],eu=c[0]-a[0],ev=c[1]-a[1],det=du*ev-dv*eu;
+        if(Math.abs(det)<1e-8)continue;
+        // Several authored monitors may be batched into this mesh and share
+        // one UV island. Normalize one face, never their combined world span.
+        const triangle=[a,b,c],xs=triangle.map(p=>p[2]),ys=triangle.map(p=>p[3]);
+        const xmin=Math.min(...xs),ymin=Math.min(...ys),w=Math.max(...xs)-xmin,h=Math.max(...ys)-ymin;
+        if(w<=0||h<=0)continue;
+        const solve=(axis,scale,offset,sign)=>{
+          const db=(b[axis]-a[axis])/scale*sign,dc=(c[axis]-a[axis])/scale*sign;
+          const x=(db*ev-dc*dv)/det,y=(du*dc-eu*db)/det;
+          return [x,y,offset+sign*(a[axis]-(axis===2?xmin:ymin))/scale-x*a[0]-y*a[1]];
+        };
+        frontMap=[...solve(2,w,0,1),...solve(3,h,1,-1),0,0,1];
+      }
+    }
     const active=source.map(material=>{
       if(material.name!==materialName)return material;
       if(!copies.has(material)){
@@ -71,14 +101,15 @@ export function createActivityDisplay(asset,{role,materialName,surfaceNormal=[0,
   if(!records.length){texture.dispose();throw new Error(`Missing activity-display glass: ${role}/${materialName}`);}
   texture.repeat.set(1/(uvRect[2]-uvRect[0]),1/(uvRect[3]-uvRect[1]));
   texture.offset.set(-uvRect[0]*texture.repeat.x,-uvRect[1]*texture.repeat.y);texture.updateMatrix();
-  let key='',snapshot={active:false,phase:null,frame:0};
+  if(frontMap){texture.matrix.set(...frontMap);texture.matrixAutoUpdate=false;}
+  let key='',snapshot={active:false,phase:null,frame:0,alert:false};
   return {
     state:()=>({...snapshot}),
     update(state){
       const active=!state.inspection&&PHASES.includes(state.step.id),phase=active?state.step.id:null;
       const frame=active?Math.floor(Math.max(0,Math.min(1,state.progress))*40):0,next=`${phase}:${frame}`;
       if(next===key)return false;
-      key=next;snapshot={active,phase,frame};
+      key=next;snapshot={active,phase,frame,alert:phase==='transfer'&&frame>=26};
       for(const record of records)record.mesh.material=active?record.active:record.original;
       if(active){paint(pixels,phase,frame/40);texture.needsUpdate=true;}
       return true;

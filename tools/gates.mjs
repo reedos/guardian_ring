@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 const gates=[['project-audit','desktop'],['project-audit','phone'],['mission','desktop'],['mission','phone'],['activity','desktop'],['activity','phone'],['navigation','desktop'],['navigation','phone'],['learning','desktop'],['learning','phone'],['cycle'],['parts'],['views','desktop'],['views','phone'],['labels','desktop'],['labels','phone'],['ui','desktop'],['ui','phone'],['coplanar'],['flights','desktop'],['flights','phone'],['govern','desktop'],['govern','phone'],['links'],['perf','desktop'],['perf','phone'],['look'],['pages']];
 gates.unshift(['audit-layout','desktop'],['audit-layout','phone']);
 gates.unshift(['controls-audit','desktop'],['controls-audit','phone']);
+gates.unshift(['story-audit','desktop'],['story-audit','phone']);
 // Surface interaction regressions before the exhaustive scenario matrices.
 // All gates retain their full scope; performance remains at the end.
 const slow=new Set(['cycle','parts','flights','perf']);

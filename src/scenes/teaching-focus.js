@@ -36,8 +36,8 @@ const focus = {
   ground: {
     // These final beats branch among processing, operations and archive
     // equipment, or show dissipation from several cabinets together.
-    light: { receive: 'receive', readout: 'receiver', transfer: null },
-    data: { receive: 'receive', readout: 'receiver', transfer: null },
+    light: { receive: 'receive', readout: 'receiver', transfer: 'operations' },
+    data: { receive: 'receive', readout: 'receiver', transfer: 'operations' },
     heat: { power: 'power', reject: null },
   },
   abi: {

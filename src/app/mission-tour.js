@@ -12,15 +12,15 @@ import { ENTRY_LOCATION } from './entry-location.js';
 export const MISSION_CHAPTERS = [
   { scene:'orbits',mode:'light',follow:'geo',title:'Ride with GEO',body:'Earth and the spacecraft turn together. The same region stays below a geostationary satellite.',duration:8 },
   { scene:'orbits',mode:'light',follow:'leo',title:'A faster view of Earth',body:'A low-orbit spacecraft moves across the rotating Earth. The point below it is a geometric reference, not a sensor footprint.',duration:8 },
-  { scene:'plume',mode:'light',title:'Begin with infrared light',body:'A source emits infrared radiation. These molecular examples explain emission, not a particular launch or its brightness.' },
+  { scene:'plume',mode:'light',event:'launch',title:'A launch gives off infrared light',body:'Hot exhaust rises. Carbon dioxide and water vapor emit infrared radiation.' },
   { scene:'satellite',mode:'light',title:'The spacecraft supports the observation',body:'The instrument collects light while the spacecraft supplies pointing, power, computing, and communication interfaces.' },
-  { scene:'payload',mode:'light',title:'Follow the instrument inside',body:'Trace collection, detection, readout, and digitization through an integrated representative instrument.' },
-  { scene:'pixel',mode:'light',title:'See the signal take shape',body:'Absorption and readout turn an optical observation into an electrical measurement. The highlights represent stages, not measured signal levels.' },
+  { scene:'payload',mode:'light',title:'Follow the instrument inside',body:'Optics collect light. A cold detector and its electronics turn it into a measurement.' },
+  { scene:'pixel',mode:'light',title:'See the signal take shape',body:'Absorption produces an electrical response. The readout accumulates and transfers that signal.' },
   { scene:'payload',mode:'data',title:'The instrument assembles its data',body:'Commands and measured feedback have their own directions. Image data passes through processing and the spacecraft interface.' },
   { scene:'payload',mode:'heat',title:'Keep the instrument operating',body:'Electrical power, temperature feedback, and heat rejection support observation. These tasks can continue alongside data collection.' },
-  { scene:'orbits',mode:'data',follow:'geo',title:'Send the observation to Earth',body:'A radio link carries information between spacecraft and ground. Traveling symbols show direction; their speed and spacing are illustrative.',duration:8 },
-  { scene:'ground',mode:'data',title:'Receive, process, and distribute',body:'The receiver recovers data for processing, operator displays, and storage. This layout supplies no operational warning timeline.' },
-];
+  { scene:'orbits',mode:'data',follow:'geo',title:'Send the observation to Earth',body:'A radio link carries the observation to a ground receiver.',duration:8 },
+  { scene:'ground',mode:'data',event:'alert',title:'An alert reaches the ground',body:'Received data passes through processing. An operator display brings the event to attention.' },
+].map(chapter=>({duration:8,...chapter}));
 
 export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   const entry=missionEntry(ENTRY_LOCATION,{getItem:key=>localStorage.getItem(key),setItem:(key,value)=>localStorage.setItem(key,value)});
@@ -34,6 +34,12 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   const focusDemoButton=document.createElement('button');focusDemoButton.type='button';focusDemoButton.className='btn';focusDemoButton.dataset.mission='focus';focusDemoButton.textContent='See light focus';focusDemoButton.setAttribute('aria-haspopup','dialog');focusDemoButton.hidden=true;find('.mission-copy').append(focusDemoButton);
   focusDemoButton.addEventListener('click',openFocusDemo);
   const explanation=find('.mission-explanation'),stepControls=find('.mission-step-controls');
+  const phasePicker=document.createElement('div');phasePicker.className='mission-phase-picker';phasePicker.setAttribute('role','group');phasePicker.setAttribute('aria-label','Choose an activity in this chapter');phasePicker.hidden=true;
+  explanation.querySelector('summary').after(phasePicker);let phasePickerKey='';
+  phasePicker.addEventListener('click',event=>{
+    const button=event.target.closest('[data-mission-phase]');if(!button)return;
+    const lesson=stage.getTeaching()?.state();if(lesson)step(Number(button.dataset.missionPhase)-lesson.index);
+  });
   const legend=find('.mission-legend'),evidence=find('.mission-evidence');let explanationKey='';
   const menuStart=document.createElement('button');menuStart.type='button';menuStart.id='mission-launch';menuStart.className='mm-item';menuStart.textContent='Watch the mission';
   document.getElementById('mm-tools-title').after(menuStart);
@@ -43,6 +49,10 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   missionOptions=document.createElement('section');missionOptions.className='mission-options';missionOptions.hidden=true;
   missionOptions.append(explanation,find('[data-mission="stop"]'),find('[data-mission="repeat"]').closest('label'));
   document.getElementById('more-menu').append(missionOptions);
+  explanation.append(find('.mission-note'));
+  find('.mission-explanation > summary').textContent='About this view';
+  const eventNote=document.createElement('span');eventNote.className='mission-event-note';eventNote.textContent='Illustrative event';eventNote.hidden=true;host.append(eventNote);
+  find('.mission-phase').hidden=true;
   let active=false,playing=false,loading=false,generation=0,index=0,elapsed=0,phase=-1,cameraHold=false,mutating=false,lastProgress=-1,completed=false,failed=false,establishing=false;
   const state=()=>({active,playing,loading,index,total:MISSION_CHAPTERS.length,phase,completed,failed,elapsed,establishing,chapter:MISSION_CHAPTERS[index]});
   const blocked=()=>stage.activitySuspended();
@@ -66,6 +76,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   }
   function render() {
     prompt.hidden=active;panel.hidden=!active;document.body.classList.toggle('mission-active',active);missionOptions.hidden=!active;
+    eventNote.hidden=!active||!MISSION_CHAPTERS[index].event;
     if(!active)return;
     const chapter=MISSION_CHAPTERS[index];
     focusDemoButton.hidden=chapter.scene!=='payload'||chapter.mode!=='light';
@@ -80,6 +91,15 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     find('[data-mission="next"]').disabled=loading||index===MISSION_CHAPTERS.length-1;
     const lesson=!chapter.follow&&!loading&&!failed?stage.getTeaching()?.state():null;
     stepControls.hidden=true;
+    phasePicker.hidden=!lesson;
+    if(lesson){
+      const key=`${chapter.scene}:${chapter.mode}:${lesson.steps.map(item=>item.id).join(',')}`;
+      if(key!==phasePickerKey){
+        phasePickerKey=key;phasePicker.replaceChildren();
+        lesson.steps.forEach((item,i)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.dataset.missionPhase=String(i);button.textContent=`${i+1}. ${item.title}`;phasePicker.append(button);});
+      }
+      for(const button of phasePicker.children)button.setAttribute('aria-pressed',String(Number(button.dataset.missionPhase)===lesson.index));
+    }
     find('[data-mission="step-previous"]').disabled=!lesson||lesson.index===0;
     find('[data-mission="step-next"]').disabled=!lesson||lesson.index===lesson.total-1;
     find('.mission-step-count').textContent=lesson?`Step ${lesson.index+1} / ${lesson.total}`:'';
@@ -87,17 +107,19 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     if(!explanation.hidden&&(chapter.follow||lesson))describeStep(chapter,lesson);
     if(host.contains(focused)&&focused.disabled)find('[data-mission="play"]').focus();
   }
-  function focusPhase({progress=playing?0:.72}={}) {
+  const playLesson=()=>{const teaching=stage.getTeaching();teaching?.play({duration:MISSION_CHAPTERS[index].duration/teaching.state().total});};
+  function focusPhase({progress=playing?stage.getTeaching()?.state().progress||0:.72}={}) {
     const teaching=stage.getTeaching();if(!teaching)return;
     const lesson=teaching.state(),chapter=MISSION_CHAPTERS[index];
-    phase=lesson.index;cameraHold=true;
+    phase=lesson.index;cameraHold=!playing;
     mutate(()=>{
       teaching.pause();
       const id=teachingFocus(chapter.scene,chapter.mode,lesson.step.id);
       if(id)stage.select(id,true,{reveal:false});else stage.overview();
-      // A paused chapter or manual step shows a useful stationary pose. During
-      // playback the phase starts at its beginning after the camera settles.
+      // Paused chapters show a useful pose. Autoplay keeps the clock running
+      // during a camera move so nine instrument phases still fit one chapter.
       teaching.seek(phase,progress);
+      if(playing)playLesson();
     });
     find('.mission-phase').textContent=lesson.step.title;
     render();
@@ -150,7 +172,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     if(failed){playing=true;void enter(index);return;}
     if(completed){playing=true;void enter(0);return;}
     playing=true;
-    if(!loading&&!cameraHold){stage.getTeaching()?.play();stage.built[stage.destination()]?.setMotion?.(true);}
+    if(!loading&&!cameraHold){playLesson();stage.built[stage.destination()]?.setMotion?.(true);}
     render();
   }
   function advance() {
@@ -195,7 +217,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     if(cameraHold){
       if(stage.isCameraMoving())return;
       cameraHold=false;
-      if(playing){stage.getTeaching()?.play();stage.built[stage.destination()]?.setMotion?.(true);}
+      if(playing){playLesson();stage.built[stage.destination()]?.setMotion?.(true);}
       else stage.built[stage.destination()]?.setMotion?.(false);
     }
     const chapter=MISSION_CHAPTERS[index],teaching=stage.getTeaching();

@@ -1403,6 +1403,10 @@ body.app .panel-scroll > * { min-width: 0; }
 .mission-step-controls .btn { min-height: 36px; padding-inline: 10px; font-size: 10px; }
 .mission-step-count { color: var(--muted); font: 10px var(--mono); }
 .mission-explanation { margin-top: 4px; min-width: 0; }
+.mission-phase-picker { display:flex; flex-wrap:wrap; gap:6px; margin-block:8px; }
+.mission-phase-picker[hidden] { display:none; }
+.mission-phase-picker .btn { min-height:44px; max-width:100%; white-space:normal; text-align:left; }
+.mission-phase-picker .btn[aria-pressed="true"] { border-color:var(--accent); color:var(--accent); }
 .mission-explanation > summary { min-height: 36px; padding-block: 10px; cursor: pointer; color: var(--accent); font: 500 11px/1.4 var(--sans); }
 .mission-explanation[open] { max-height: 190px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .mission-description { margin: 0 0 8px; max-width: 88ch; color: var(--muted); font: 400 11px/1.5 var(--sans); }
@@ -1610,6 +1614,8 @@ body.mission-active .compact-scene-key .animation-step { display:none; }
 
 .compact-scene-key .animation-step[hidden] { display:none; }
 .mm-select:has(input) { min-height:44px; cursor:pointer; }
+.mission-event-note { display:block; margin:8px 16px; color:var(--accent); font:10px var(--mono); text-transform:uppercase; }
+.mission-event-note[hidden],.mission-phase[hidden] { display:none; }
 
 /* In landscape the inspector is beside the stage, so it uses the full row. */
 @media (max-width:760px) and (orientation:landscape) {

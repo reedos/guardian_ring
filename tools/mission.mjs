@@ -12,7 +12,15 @@ if(g){const {page}=g,failures=[];let states=0;
  const ready=()=>page.waitForFunction(()=>!grx.mission.state().loading&&!grx.isCameraMoving());
  const press=async action=>{
    if(action==='stop'&&!await page.locator(`[data-mission="${action}"]`).isVisible())await page.locator('#more-btn').click();
-   if(action==='step-next'||action==='step-previous')return page.evaluate(action=>grx.mission.step(action==='step-next'?1:-1),action);
+   if(action==='step-next'||action==='step-previous'){
+     if(!await page.locator('#more-menu').isVisible())await page.locator('#more-btn').click();
+     const disclosure=page.locator('.mission-explanation');
+     if(!await disclosure.evaluate(el=>el.open))await disclosure.locator('summary').click();
+     const index=await page.evaluate(action=>{const s=grx.built[grx.state.scene].teaching.state();return Math.max(0,Math.min(s.total-1,s.index+(action==='step-next'?1:-1)));},action);
+     await page.locator(`[data-mission-phase="${index}"]`).click();
+     check(await page.locator(`[data-mission-phase="${index}"]`).getAttribute('aria-pressed')==='true','Selected mission activity has stale pressed semantics');
+     return;
+   }
    if(action!=='stop'&&await page.locator('#more-menu').isVisible())await page.locator('#more-btn').click();
    return page.locator(`[data-mission="${action}"]`).click();
  };
@@ -83,6 +91,9 @@ if(g){const {page}=g,failures=[];let states=0;
      check(await page.evaluate(before=>!grx.mission.state().playing&&grx.built[grx.state.scene].teaching.state().progress===before,heldStep),'Reading mission step evidence changed the paused phase');
      await page.keyboard.press('Escape');check((await state()).active,'Closing step evidence ended the mission');
      if(!await page.locator('#more-menu').isVisible())await page.locator('#more-btn').click();await page.locator('.mission-explanation > summary').click();
+     if(!await page.locator('#more-menu').isVisible())await page.locator('#more-btn').click();
+     if(!await page.locator('.mission-explanation').evaluate(el=>el.open))await page.locator('.mission-explanation > summary').click();
+     await page.locator('[data-mission-phase="0"]').click();await ready();await frames(3);
      await press('step-next');await ready();await frames(3);
      check(await page.evaluate(()=>{const s=grx.built[grx.state.scene].teaching.state();return grx.mission.state().phase===1&&!grx.mission.state().playing&&!s.playing&&s.progress===.72&&grx.state.selected==='scan-system';}),'Manual mission step did not retain a meaningful paused scan pose');
      await press('step-previous');await ready();await frames(3);
