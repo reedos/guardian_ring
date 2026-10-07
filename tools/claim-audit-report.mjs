@@ -6,6 +6,7 @@ import {allClaims} from '../src/claims.js';
 import {CALCS,ASSUMPTIONS,BASIS,problems} from '../src/evidence.js';
 import {SOURCES} from '../src/sources.js';
 import {CINEMATIC_LESSONS} from '../src/cinematic-lessons.js';
+import {classifyPageRow} from './claim-page-policy.mjs';
 const esc=x=>String(x??'').replaceAll('|','\\|').replace(/\s+/g,' ').trim();
 const scenarios=Object.entries(SCENARIO_OPTIONS).reduce((rows,[key,values])=>rows.flatMap(row=>values.map(v=>({...row,[key]:v.id}))),[{}]);
 const claims=new Map(),prose=new Map();
@@ -56,7 +57,11 @@ const testMap={
   'ideal-scan-reflection':'scan-optics.test.ts: plane intersections, reciprocity, angular doubling',
 };
 if(JSON.stringify(Object.keys(testMap).sort())!==JSON.stringify(Object.keys(CALCS).sort()))throw new Error('Update the independently reviewed calculation test map');
-const pageData=JSON.parse(fs.readFileSync('.local/claims-audit/pages.json','utf8'));
+const args=process.argv.slice(2);
+const argument=(name,fallback)=>args.includes(name)?args[args.indexOf(name)+1]:fallback;
+const pageData=JSON.parse(fs.readFileSync(argument('--pages','.local/claims-audit/pages.json'),'utf8'));
+const reviews=JSON.parse(fs.readFileSync('research/page-claim-reviews.json','utf8'));
+const unreviewed=pageData.rows.filter(row=>classifyPageRow(row,reviews).status==='unreviewed');
 let out=`# Guardian Ring claim audit — 10/07/2026
 
 ## Result and scope
@@ -70,6 +75,7 @@ The inventory covers ${claims.size} stable claim keys and every distinct display
 - Fixed: the Kepler solver subtracted nearly equal terms and stopped against an absolute angular epsilon. For eccentricity 0.999999999999 and true eccentric anomaly 1e-6, the prior solution erred by about 5.04e-5 relative. It now evaluates a small-angle residual and derivative without cancellation and stops on relative progress. A constructed inverse regression failed before the fix and passes afterward. Ordinary displayed orbit values are unchanged at their stated precision.
 - Fixed: ideal prime-focus and scan-reflection lessons were labeled Calc. in their dialogs but absent from the shared registry. Both now have calculation definitions and entries, backed by their geometric tests and the NASA reflection reference.
 - Fixed: the claims gate previously checked only the generated combined research ledger. It now checks all seven canonical ledgers and rejects stale, missing or duplicated combined facts.
+- Fixed after independent review: the DOM collector retains sentences containing inline evidence buttons. Every page row now needs an exact reviewed text, location, links and registry-key record in page-claim-reviews.json; missing or changed records are unreviewed and make this command fail. A synthetic unsupported numeric/because sentence verifies the actual command exits nonzero.
 - Confirmed: the 1.22 diffraction coefficient is a rounded Airy coefficient, not an exact constant; an independent Bessel root confirms its rounding error is below 0.03%. No extra precision is attributed to it.
 
 ## Source review
@@ -98,8 +104,9 @@ out+='\n## Narrative and component text\n\nNarration retains the scoped referenc
 for(const item of prose.values())out+=`| ${esc([...item.where].join('; '))} | ${esc(item.text)} | ${item.ev?'confirmed: '+esc(item.ev):'footnoted: scene/title illustration context; look-model'} |\n`;
 out+='\n## Teaching assumptions and limits\n\n| ID | Value | Footnote |\n|---|---|---|\n';
 for(const [id,a] of Object.entries(ASSUMPTIONS))out+=`| ${id} | ${esc(a.value)} | footnoted: ${esc(a.why)} |\n`;
-out+='\n## Built-page numeric and because inventory\n\nThe page inventory includes source locators and UI metadata, not just physics. Registered values are checked above; inline source citations and method formulas carry their own references. UI counters, dates, shortcuts and instrument names are confirmed as labels, not physical specifications. Repeated visible copies remain listed.\n\n| Page | Text | Attached registry keys | Status |\n|---|---|---|---|\n';
-for(const row of pageData.rows)out+=`| ${row.page} | ${esc(row.text)} | ${esc(row.keys.join('; '))} | confirmed: ${row.keys.length?'registry trail above':'inline reference, method, or UI label'} |\n`;
+out+='\n## Built-page numeric and because inventory\n\nThe page inventory includes source locators and UI metadata, not just physics. Registered values are checked above; inline source citations and method formulas carry their own references. The checked-in review manifest classifies exact bibliographic metadata, UI counters, dates, shortcuts and instrument names as ui-label, separately from confirmed physical claims and footnoted teaching assumptions. These records are deliberate review decisions, not generated approvals. Unknown or changed text, context, links or evidence keys fail the audit. Repeated visible copies remain listed. To update a record, inspect the changed sentence and supporting source/test first; never regenerate approvals from page text alone.\n\n| Page | Text | Attached registry keys | Status |\n|---|---|---|---|\n';
+for(const row of pageData.rows){const review=classifyPageRow(row,reviews);out+=`| ${row.page} | ${esc(row.text)} | ${esc(row.keys.join('; '))} | ${review.status}: ${esc(review.basis)} |\n`;}
 out+='\n## Verification and limitations\n\nRun: npx tsc --noEmit; npx vitest run; npx tsx tools/claims.mjs; npm run build; GR_URL=<isolated preview> node tools/claim-page-inventory.mjs; npx tsx tools/claim-audit-report.mjs. The inventory scans DOM text (including expandable text) and model data, not arbitrary pixels. Browser captures cover all six pages at 360 and 1440 px. Full rendering/performance certification belongs to the separate visual/performance briefs.\n';
-fs.writeFileSync('research/ASTRA-CLAIMS-AUDIT-2026-10-07.md',out);
+fs.writeFileSync(argument('--output','research/ASTRA-CLAIMS-AUDIT-2026-10-07.md'),out);
 console.log(`${claims.size} claim keys, ${prose.size} narrative records, ${pageData.rows.length} page text nodes, ${Object.keys(testMap).length} calculation checks`);
+if(unreviewed.length){console.error(`${unreviewed.length} page rows remain unreviewed; audit is not certified`);process.exitCode=1;}
