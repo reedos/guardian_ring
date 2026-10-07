@@ -100,11 +100,20 @@ export const MODEL_CALCS = {
     title: 'Ideal refrigerator coefficient of performance', how: 'COPCarnot = Tc/(Th − Tc), with absolute temperatures and Th > Tc > 0. This limit is not the efficiency or input power of a real cryocooler; the scenario does not assign such values.',
     inputs: ['cold and hot temperatures supplied to the pure function', 'NIST refrigeration review, Eq. 1'],
   },
+  'ideal-cooling-work': {
+    title:'Ideal refrigerator work and rejected heat',
+    how:'For the separate civil-temperature teaching example, COP = Tc/(Th−Tc), Wmin = Qcold/COP and Qhot = Qcold + Wmin. The cold temperature is the published TIRS-2 value; hot temperature and heat load are arbitrary teaching inputs. Reversible operation gives a lower work bound, not a real cooler power estimate or a military temperature.',
+    inputs:['nasa-tirs2-build: two-stage cryocooler paragraph','nist-refrigeration-2020: Eq. (1)','civil-cooling-example assumption'],
+  },
 };
 
 export const MODEL_ASSUMPTIONS = {
   ...CINEMATIC_ASSUMPTIONS,
   ...ENGINEERING_ASSUMPTIONS,
+  'civil-cooling-example': {
+    title:'Independent ideal cooling example',value:'300 K warm reservoir; 1 W cold load; reversible operation',
+    why:'These arbitrary inputs demonstrate the refrigeration limit with the separately cited 43 K TIRS-2 cold temperature. They do not describe TIRS-2 heat load, radiator temperature, efficiency, electrical input or any military instrument. No fraction of Carnot performance is assigned.',
+  },
   'model-orbits': {
     title: 'General orbit examples', value: 'A spherical Earth and negligible satellite mass',
     why: 'The sphere uses the published equatorial radius, 6,378.137 km. GEO uses a 35,786 km circular reference altitude. HEO is a teaching ellipse with period one half of the published sidereal day and eccentricity 0.722, evaluated at apogee. MEO and LEO are arbitrary circular examples at 20,000 km and 1,000 km. These are not program or spacecraft orbital parameters, and no constellation is computed.',

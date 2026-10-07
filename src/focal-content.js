@@ -10,7 +10,15 @@ const heat = () => role('ABI heat rejection','Cryocooler, loop heat pipes, radia
 const mount = () => role('GOES-R ABI mounting','Thermal isolation at titanium mounting feet','Printed p. 14-5 / PDF p. 159, Thermal Control Subsystem');
 const part = (id,title,kicker,body,rows=[],drill) => ({id,title,kicker,body,specs:[...rows,draw],...(drill===undefined?{}:{drill})});
 
-export function focalContent() {
+export function focalContent(model) {
+  const example=model.examples.civilCooling;
+  const coolingRows=[
+    ['Civil reference: TIRS-2 cold temperature',`${example.coldTemperatureK} K`,'spec',{refs:[['nasa-tirs2-build','Two-stage cryocooler paragraph']]}],
+    ['Ideal-example warm reservoir / cold load',`${example.hotTemperatureK} K / ${example.heatRemovedW} W`,'assumed',{assume:'civil-cooling-example'}],
+    ['Ideal-example Carnot COP',example.idealCOP.toFixed(4),'derived',{calc:'carnot-cop',refs:[['nist-refrigeration-2020','PDF pp. 2–3, equation (1)']]}],
+    ['Ideal-example minimum work',`${example.minimumWorkW.toFixed(3)} W`,'derived',{calc:'ideal-cooling-work'}],
+    ['Ideal-example rejected heat',`${example.rejectedHeatW.toFixed(3)} W`,'derived',{calc:'ideal-cooling-work'}],
+  ];
   return {
     intro:'A detector package is an optical surface, an electronic assembly, and a thermal load at once. This open teaching assembly separates its cold detector and readout from the warm video electronics. ABI provides the cited civil example; geometry and packaging remain representative.',
     scale:'Detector package · open teaching assembly',
@@ -32,7 +40,7 @@ export function focalContent() {
     ],
     heat:[
       part('array','Detector temperature is a design choice','The cold electronic assembly','Cooling can reduce thermal noise. The detector and nearby ROIC are parts of an electronic assembly with a thermal design; a material name alone does not specify its operating temperature. TIRS-2 supplies a separately named civil temperature example.',[fpm(),['Cryogenic cooling','Can reduce thermal noise','reported',{refs:[['nist-cryocooler-2009','PDF p. 2, Table 1']]}]],8),
-      part('cold-stage','Heat link to the cooler','A deliberate path','The cold plate connects the package to the illustrated strap and cold finger. In ABI, the cryocooler transfers focal-plane heat toward loop heat pipes and the radiator. The flexible link here represents a thermal connection without assigning its conductance or load.',[heat()]),
+      part('cold-stage','Heat link to the cooler','A deliberate path','A cooler rejects the heat it removes plus the work supplied to it. The separate ideal example below uses TIRS-2’s published cold temperature with an assumed warm reservoir and heat load. It shows the reversible lower bound; it is not TIRS-2 cooler power. ABI’s cold-finger, loop-heat-pipe and radiator roles explain the drawn connection.',[heat(),...coolingRows]),
       part('shield','Cold optical surroundings','A separate thermal region','ABI’s windows and cold stops belong to its controlled cryogenic optical environment. Keeping that region distinct from warm surrounding equipment is part of the instrument design. Blue in this cutaway identifies a role, not a temperature measurement.',[environment()]),
       part('carrier','Mounting is a thermal interface','Support and isolation','GOES-R’s thermal design isolates ABI at its mounting feet and gives the instrument dedicated heat-rejection hardware. Structural support and intended heat-removal paths therefore need separate treatment. The carrier and standoffs here make those interfaces visible.',[mount(),heat()]),
       part('flex','A physical bridge','Drawn interconnect','The representative ribbon bridges the cold package and warm board. Its physical route is drawn alongside the separate thermal strap to distinguish electrical connection from the intended heat-removal path. No thermal conductance is assigned to the ribbon.'),

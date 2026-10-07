@@ -6,6 +6,8 @@ export const LEARNING_EXAMPLES = {
     title: 'Real-world application: wildfire monitoring',
     body: 'NOAA combines ABI’s visible and infrared observations into fire products that help forecasters follow changing wildfires. Instrument measurements become useful products through processing and validation.',
     href: 'https://www.star.nesdis.noaa.gov/goesr/product_land_fire.php',
+    image: 'https://www.star.nesdis.noaa.gov/goesr/images/internal/Kenneth_2025009231117_w_big_legend.png',
+    imageCaption: 'NOAA STAR: Kenneth Fire, January 2025. Fire products, not a raw single-band image. GOES-19 imagery is labeled pre-operational by NOAA.',
     specs: [ENGINEERING_ROWS.abiFire], claimKeys: ['learning:abi-fire'],
   },
   tirs2: {

@@ -23,6 +23,13 @@ html{scroll-behavior:smooth;scroll-padding-top:96px}[hidden]{display:none!import
 .journey-nav a[aria-current='true'] { background: var(--surface); color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }
 .hero-cap { display: flex; align-items: center; gap: 12px; max-width: calc(100% - 2 * var(--gutter)); white-space: normal; }
 .hero-cap .chip { flex: none; }
+.hero-img video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:68% 50%; }
+.hero-actions { flex-wrap:wrap; }
+.civil-fire { margin:32px 0; border:1px solid var(--line); padding:16px; }
+.civil-fire img { display:block; width:100%; height:auto; }
+.civil-fire figcaption { font:400 12px/1.6 var(--sans); color:var(--muted); margin-top:12px; }
+.civil-fire a { color:var(--accent); }
+@media(max-width:760px){.hero-img video{object-position:50% 50%;}}
 @media (max-width: 760px) { .hero-cap { font-size: 9px; line-height: 1.5; } .hero { padding-bottom: 100px; } }
 /* Entry points share the same type, surfaces and accent as the story. */
 .learning-entry { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 36px; padding-block: 42px; border-bottom: 1px solid var(--line); }

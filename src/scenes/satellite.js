@@ -1,4 +1,5 @@
 import { illustrated } from './illustrated.js';
+import {configureSatelliteShadows} from './satellite-shadows.js';
 const scene = illustrated({
   teaching:'satellite',
   layerMaterials:{data:['Payload','Computer','Links','Attitude','Wheels'],heat:{Power:'power',Battery:'warm',Computer:'warm',Radiator:'radiator',SolarArrayLeft:'power',SolarArrayRight:'power'}},
@@ -14,7 +15,7 @@ const scene = illustrated({
     reject:{role:'Radiator',kind:'heat',intensity:.18},
     radiate:{role:'Radiator',kind:'radiation',intensity:.16},
   },
-  url:'models/satellite.glb?v=7',
+  url:'models/satellite.glb?v=8',
   camera:{pos:[8,6.5,13.5],target:[0,1.35,.25],min:1.8,max:32},distance:4.2,
   cameraPhone:{pos:[7.885,6.87,16.643]},
   points:{instrument:'AnchorPayload',structure:'AnchorBus','solar-array':'AnchorSolarArray','array-drive':'AnchorArrayDrive',power:'AnchorPower',battery:'AnchorBattery',attitude:'AnchorAttitude',wheels:'AnchorWheels',propulsion:'AnchorPropulsion',computer:'AnchorComputer',links:'AnchorAntenna',radiator:'AnchorRadiator'},
@@ -32,15 +33,9 @@ const scene = illustrated({
     links:{pos:[-3.2,4.8,1.8],target:[-.52,3.05,-.95]},
     radiator:{pos:[3.9,2.8,4.6],target:[1.93,1.28,1.53]},
   },
-  labels:[
-    {text:'BATTERY ASSEMBLY',p:[-.85,.55,.98],size:[.89,.15],face:'front',mount:{prefix:'Battery_',reach:.3},partIds:['battery']},
-    {text:'POWER UNIT',p:[.80,.64,1.05],size:[.86,.16],face:'front',mount:{prefix:'Power_',reach:.3},partIds:['power']},
-    {text:'FLIGHT COMPUTER',p:[-.69,1.76,.72],size:[.97,.17],face:'front',mount:{prefix:'Computer_',reach:.3},partIds:['computer']},
-    {text:'PAYLOAD PROCESSOR',p:[.67,1.43,.51],size:[.88,.16],face:'front',mount:{prefix:'Computer_',reach:.3},partIds:['computer']},
-    {text:'REACTION WHEELS',p:[-.06,.26,1.56],size:[.66,.15],face:'front',mount:{prefix:'Wheels_',reach:.25},partIds:['wheels']},
-    {text:'RADIATOR',p:[1.93,1.90,1.54],size:[.53,.12],face:'front',mount:{prefix:'Radiator_',reach:.2},partIds:['radiator']},
-    {text:'MLI BLANKET',p:[-1.92,1.43,1.75],size:[.65,.16],face:'front',mount:{prefix:'Structure_',reach:.25},partIds:['structure']},
-  ],
+  // Names belong to the numbered callouts and component cards. Large invented
+  // black nameplates on every enclosure made the spacecraft read as a toy kit.
+  labels:[],
   paths:{
     light:[[[0,2.78,4.2],'AnchorPayload'],[[-1.06,2.44,2.3],'AnchorAttitude']],
     data:[{kind:'image-data',phases:['readout'],points:['AnchorPayload',[.3,2.08,.5],'AnchorComputer']},{kind:'image-data',points:['AnchorComputer',[.8,2.05,-.4],'AnchorAntenna']},{kind:'feedback',points:['AnchorAttitude',[-1.1,1.94,.3],'AnchorComputer']},{kind:'command',points:['AnchorComputer',[0,1.20,1.25],'AnchorWheels']}],
@@ -48,4 +43,4 @@ const scene = illustrated({
   },
 });
 export const preload=scene.preload;
-export const build=scene.build;
+export function build(options){const built=scene.build(options);configureSatelliteShadows(built);return built;}

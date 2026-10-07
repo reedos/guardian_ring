@@ -27,6 +27,12 @@ export function syncLearning() {
     const summary = document.createElement('summary'); summary.textContent = example.title;
     const body = document.createElement('p'); body.textContent = example.body;
     box.append(summary, body);
+    if(example.image){
+      const figure=document.createElement('figure'),image=document.createElement('img'),caption=document.createElement('figcaption');
+      image.src=example.image;image.alt=example.imageCaption;image.loading='lazy';image.referrerPolicy='no-referrer';
+      caption.textContent=example.imageCaption;figure.append(image,caption);box.append(figure);
+      image.addEventListener('error',()=>{image.hidden=true;caption.textContent+=' Image unavailable; use the public source link below.';},{once:true});
+    }
     example.specs.forEach((row, index) => box.insertAdjacentHTML('beforeend', chip(row[2], example.claimKeys[index], row[0])));
     const source = document.createElement('a'); source.href = example.href; source.target = '_blank'; source.rel = 'noopener noreferrer'; source.className = 'learning-source'; source.textContent = 'Read the public example ↗';
     box.append(source);
