@@ -4,7 +4,7 @@
 
 ## Review
 
-[Private mobile preview](/guardian_ring/). Tailscale must be connected. The running preview serves the current built page through the existing private HTTP proxy.
+Private mobile preview address omitted. Tailscale must be connected. The running preview serves the current built page through the existing private HTTP proxy.
 
 The story page now has the IF typography, black surfaces and amber signature; an Earth-and-ring hero; six Blender studies with separate desktop and portrait compositions; Light/Data/Heat cues; named civil instruments; and source popovers. The six studies are the ring, satellite, telescope, focal plane, pixel and molecular emission. The explorer remains the tested placeholder scaffold. The Earth is a still at this review stage.
 

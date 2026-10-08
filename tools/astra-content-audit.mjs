@@ -15,6 +15,10 @@ for(const form of ['desktop','phone']){
     await page.locator('.learning-example summary').click();
     await page.locator('.learning-example img').scrollIntoViewIfNeeded();
     await page.waitForFunction(()=>document.querySelector('.learning-example img')?.naturalWidth>0);
+    // The image changes height after lazy loading; frame it again after decode.
+    await page.locator('.learning-example img').evaluate(image=>image.decode());
+    await page.locator('.learning-example img').scrollIntoViewIfNeeded();
+    await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
     await page.screenshot({path:`shots/astra-gr1/after/${form}-civil-fire.png`});
     if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1))throw Error('Civil example overflows');
   }catch(error){failures.push(error.stack||String(error));}
