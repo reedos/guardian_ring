@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createPartCycle } from './part-cycle.js';
+import { createPartCycle } from '../explainer-kit/src/part-cycle.js';
 
 function setup(initial: string | null = null) {
   let selection = initial, available = ['first', 'door', 'last'], ready = true;

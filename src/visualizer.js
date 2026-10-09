@@ -17,10 +17,11 @@ import { mountFocusDemo } from './app/focus-demo.js';
 import { mountCinematicDemo } from './app/cinematic-demo.js';
 import { mountSceneKey } from './app/scene-key.js';
 import { mountMissionTour } from './app/mission-tour.js';
-import { moreCue } from './app/more-cue.js';
+import { moreCue } from './explainer-kit/src/more-cue.js';
+import { exposeHooks } from './explainer-kit/src/hooks.js';
 import { measureInspectorLimits, mountInspectorLayout, inspectorDragExpanded } from './app/inspector-layout.js';
 
-window.grx = {
+exposeHooks('grx', {
   store, setScenario, pin, state: store.ui, go: stage.go, select: stage.select, setMode: stage.setMode,
   camera: stage.camera, controls: stage.controls, composers: stage.composers, built: stage.built, settle: stage.settle,
   renderer: stage.getRenderer, renderScale: stage.renderScale, quality: stage.qualityInfo, forceTier: stage.forceTier, setTransitions: stage.setTransitions,
@@ -29,7 +30,7 @@ window.grx = {
   flightProgress: stage.getFlightProgress, stepTeaching:stage.stepTeaching, setSceneActivity:stage.setSceneActivity,
   setAssemblyView:stage.setAssemblyView,
   setOrbitFollow:stage.setOrbitFollow,orbitFollow:stage.orbitFollow,
-};
+}, { require: ['state', 'settle', 'built'] });
 let focusDemo;
 window.grx.mission = mountMissionTour({openFocusDemo:()=>focusDemo.open()});
 focusDemo=mountFocusDemo({beforeOpen(){window.grx.mission.pause();stage.setActivityEnabled(false);stage.getTeaching()?.pause();}});
