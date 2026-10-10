@@ -23,6 +23,15 @@ function harness() {
 }
 
 describe('cached scene lighting', () => {
+  it('disables spacecraft shadows on the next scene and restores the renderer on disposal',()=>{
+    const renderer={toneMappingExposure:1,shadowMap:{enabled:false,type:0}};
+    const finish=createSceneLook(renderer,{environmentFactory:()=>({texture:new Texture(),dispose(){}})});
+    const spacecraft=fixture().built,ground=fixture().built;
+    Object.assign(spacecraft.look,{shadows:true});
+    finish.activate(spacecraft);expect(renderer.shadowMap.enabled).toBe(true);
+    finish.activate(ground);expect(renderer.shadowMap.enabled).toBe(false);
+    finish.activate(spacecraft);finish.dispose();expect(renderer.shadowMap).toEqual({enabled:false,type:0});
+  });
   it('shares captures across scenes and tiers without adding hardware or changing the black background', () => {
     const { finish, environmentFactory } = harness(), first = fixture(), second = fixture();
     const background = first.scene.background, children = [...first.scene.children];

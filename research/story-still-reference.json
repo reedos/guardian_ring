@@ -1,0 +1,55 @@
+{
+  "note": "Mean luma and lit-pixel fraction (luma above 20) of the six story stills as committed on main 3496fc4, before the GR-1 rerender. A still must keep at least minRatio of both. Measured by tools/story-still-metrics.py.",
+  "source": "main 3496fc4",
+  "minRatio": 0.8,
+  "stills": {
+    "public/look/focal-plane-phone.webp": {
+      "mean": 19.2,
+      "lit": 0.1652
+    },
+    "public/look/focal-plane.webp": {
+      "mean": 37.69,
+      "lit": 0.3272
+    },
+    "public/look/payload-phone.webp": {
+      "mean": 11.75,
+      "lit": 0.1285
+    },
+    "public/look/payload.webp": {
+      "mean": 23.37,
+      "lit": 0.2565
+    },
+    "public/look/pixel-phone.webp": {
+      "mean": 27.16,
+      "lit": 0.2253
+    },
+    "public/look/pixel.webp": {
+      "mean": 23.11,
+      "lit": 0.1923
+    },
+    "public/look/plume-phone.webp": {
+      "mean": 14.56,
+      "lit": 0.1467
+    },
+    "public/look/plume.webp": {
+      "mean": 8.67,
+      "lit": 0.0883
+    },
+    "public/look/ring-phone.webp": {
+      "mean": 4.99,
+      "lit": 0.0602
+    },
+    "public/look/ring.webp": {
+      "mean": 4.94,
+      "lit": 0.0601
+    },
+    "public/look/satellite-phone.webp": {
+      "mean": 23.51,
+      "lit": 0.2177
+    },
+    "public/look/satellite.webp": {
+      "mean": 37.65,
+      "lit": 0.3559
+    }
+  }
+}

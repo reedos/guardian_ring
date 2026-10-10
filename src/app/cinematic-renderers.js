@@ -179,6 +179,18 @@ function atmosphere(d){
 
 function calibration(d){
   const {p,line,label,dot,panel,text}=d;
+  // Once the references are measured, devote the phone canvas to the result.
+  // A small image underneath the already-explained mirror hid the correction.
+  if(d.phone&&p>=.6){
+    const size=Math.min(d.w-40,d.h*.72),rect={x:(d.w-size)/2,y:(d.h-size)/2,w:size,h:size};
+    text('Before  |  corrected affine error',rect.x,rect.y-24,INK.white,10);
+    d.image(rect,{raw:true});
+    const reveal=smooth(between(p,.6,.79)),split=rect.x+rect.w*(1-reveal*.5);
+    d.c.save();d.c.beginPath();d.c.rect(split,rect.y,rect.w*reveal*.5,rect.h);d.c.clip();d.image(rect,{corrected:true});d.c.restore();
+    d.path([[split,rect.y],[split,rect.y+size]],INK.data,1.5);
+    text('Same synthetic samples · only gain and offset change',rect.x,rect.y+size+24,INK.muted,8);
+    return;
+  }
   const targets=[[-1.8,.2,-1.3],[.2,.2,-2],[2,.2,-1]],from=p<.2?0:p<.4?0:p<.8?1:2,to=p<.2?0:p<.4?1:p<.8?2:0;
   const start=p<.2?0:p<.4?.2:p<.8?.4:.8,transition=smooth(between(p,start,start+.045));
   const target=new Vector3(...targets[from]).lerp(new Vector3(...targets[to]),transition).toArray();
@@ -190,7 +202,15 @@ function calibration(d){
   if(p>=.2&&p<.6){
     const fitted=p>=.45,values=Array.from({length:41},(_,i)=>fitted?.15+1.15*i/40:null),r=d.chart([{values,color:INK.data}],{title:fitted?'Two references define the response':'Measure the reference signals',yLabel:'Reading · normalized',xLabel:'Known reference signal',max:1.4});
     const points=[{x:r.x,y:r.y+r.h*(1-.15/1.4),label:'Space reference'},{x:r.x+r.w,y:r.y+r.h*(1-1.3/1.4),label:'Blackbody reference'}];
-    points.forEach((pt,i)=>{if(!i&&!fitted)return;d.c.fillStyle=INK.light;d.c.beginPath();d.c.arc(pt.x,pt.y,4,0,Math.PI*2);d.c.fill();text(pt.label,i?pt.x-8:pt.x+8,pt.y-10,INK.light,10,i?'right':'left');});
+    points.forEach((pt,i)=>{
+      if(!i&&!fitted)return;
+      d.c.fillStyle=INK.light;d.c.beginPath();d.c.arc(pt.x,pt.y,4,0,Math.PI*2);d.c.fill();
+      // Put each label in the opposite empty corner, with an edge leader back
+      // to its point, rather than letting the fitted line cross the letters.
+      const x=i?pt.x-8:pt.x+8,y=i?r.y+r.h-10:r.y+12;
+      d.path([[pt.x,pt.y],[pt.x,y+3],[x,y+3]],INK.muted,.6,.6);
+      text(pt.label,x,y,INK.light,10,i?'right':'left');
+    });
     text('Calc. reading = gain × signal + offset',panel.x,panel.y+panel.h+9,INK.white,d.phone?9:11);return;
   }
   const size=Math.min(panel.w,panel.h-28),rect={x:panel.x+(panel.w-size)/2,y:panel.y+25,w:size,h:size};

@@ -1,10 +1,13 @@
 // IF's scene look contract, with cached lighting only. Reflection panels exist
 // in the environment capture, never in the teaching scene or camera geometry.
-// No live capture, shadows, bloom, AO, or other full-screen pass is added here.
+// No live capture, bloom, AO, or full-screen pass. Only the spacecraft opts into
+// one bounded Sun shadow map; other scenes retain their original lighting path.
 import * as THREE from 'three';
 
 const PROFILES = {
-  satellite: { envIntensity: .55, hemisphere: .62, directional: [2.85, 1.0] },
+  // One dominant Sun direction; a restrained ambient term keeps the cutaway
+  // readable without flattening every face into a studio-lit gray box.
+  satellite: { envIntensity: .22, hemisphere: .12, directional: [3.4, 0] },
   ground: { envIntensity: .58, hemisphere: .90, directional: [2.45, 1.05] },
   pixel: { envIntensity: .65, hemisphere: .75, directional: [2.25, 1.0] },
   'focal-plane': { envIntensity: .65, hemisphere: .75, directional: [2.35, 1.0] },
@@ -76,6 +79,7 @@ export function createSceneLook(renderer, { environmentFactory = null } = {}) {
   const cache = new Map(), originals = new Map();
   let pmrem = null, disposed = false;
   const initialExposure = renderer.toneMappingExposure;
+  const initialShadows=renderer.shadowMap?{enabled:renderer.shadowMap.enabled,type:renderer.shadowMap.type}:null;
   function environment(kind, size) {
     const key = `${kind}:${size}`;
     if (!cache.has(key)) {
@@ -114,6 +118,7 @@ export function createSceneLook(renderer, { environmentFactory = null } = {}) {
     activate(built) {
       if (disposed) throw new Error('Scene look has been disposed');
       renderer.toneMappingExposure = built.scene.userData.sceneLook?.exposure ?? built.look?.exposure ?? 1;
+      if(renderer.shadowMap){renderer.shadowMap.enabled=!!built.look?.shadows;renderer.shadowMap.type=THREE.PCFShadowMap;}
     },
     dispose() {
       if (disposed) return;
@@ -126,6 +131,7 @@ export function createSceneLook(renderer, { environmentFactory = null } = {}) {
       for (const target of cache.values()) target.dispose();
       cache.clear(); originals.clear(); pmrem?.dispose();
       renderer.toneMappingExposure = initialExposure;
+      if(initialShadows)Object.assign(renderer.shadowMap,initialShadows);
     },
   };
 }

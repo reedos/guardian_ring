@@ -2,6 +2,7 @@
 import { EARTH_EQUATORIAL_RADIUS_M, SIDEREAL_DAY_SECONDS, orbitalPeriodSeconds,
   orbitalRadiusMeters, orbitalSpeedMetersPerSecond, semiMajorAxisMeters, slantRangeMeters } from './orbits';
 import { diffractionRadians, integratePlanckBand, lightTimeSeconds, photonEnergyJ } from './radiometry';
+import {civilCoolingExample} from './civil-cooling';
 
 export const SCENARIO_OPTIONS = {
   orbit: [{ id: 'geo', label: 'GEO' }, { id: 'heo', label: 'HEO' }, { id: 'meo', label: 'MEO' }, { id: 'leo', label: 'LEO' }],
@@ -102,6 +103,7 @@ export function compute(input: Partial<Scenario> = {}) {
     scope: 'Independent mathematical examples of orbit geometry, vacuum light travel, ideal diffraction, and ideal blackbody radiation. No real sensor performance is calculated.',
     orbitPosition: heo ? 'Apogee of the teaching ellipse' : 'Circular teaching orbit',
     outputs, claims, specs: Object.values(claims) as SpecRow[],
+    examples:{civilCooling:civilCoolingExample()},
     assumptions: ['model-orbits', 'model-nadir', 'model-band-examples', 'model-blackbody',
       ...(diameterM === null ? [] : ['model-lab-aperture'])],
     unavailable: {

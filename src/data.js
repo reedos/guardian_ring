@@ -13,7 +13,7 @@ export const SCENES = [
   ['ground', 'Ground segment'], ['abi', 'Civil twin: ABI'], ['tirs2', 'Civil twin: TIRS-2'], ['atmosphere', 'The atmosphere'],
 ].map(([id, title], i) => ({ id, title, name: title, short: title.replace('The ', ''), unit: 1, side: i >= 6 }));
 export function content(model) {
-  const levels = attachInstrumentIntegration(attachComponents(nameComponents(expandContent({orbits:orbitsContent(model),...remainingContent(model),'focal-plane':focalContent()}))));
+  const levels = attachInstrumentIntegration(attachComponents(nameComponents(expandContent({orbits:orbitsContent(model),...remainingContent(model),'focal-plane':focalContent(model)}))));
   const layer = name => Object.fromEntries(SCENES.map(({id})=>[id,levels[id][name]]));
   return { SCENES: SCENES.map(scene => ({...scene,intro:levels[scene.id].intro,scale:levels[scene.id].scale,ready:true})),
     PARTS:layer('light'),PARTS_DATA:layer('data'),PARTS_HEAT:layer('heat') };

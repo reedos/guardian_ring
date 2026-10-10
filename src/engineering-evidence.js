@@ -4,8 +4,8 @@ export const ENGINEERING_SOURCES = {
   'noaa-abi-fire-product': {
     title: 'Fire and Hot Spot Characterization', publisher: 'NOAA NESDIS / STAR',
     url: 'https://www.star.nesdis.noaa.gov/goesr/product_land_fire.php',
-    kind: 'primary', marketing: false, dated: 'Undated product description', accessed: '10/01/2026', status: 'verified',
-    section: 'Improvements and Benefits; Calibration and Validation',
+    kind: 'primary', marketing: false, dated: 'Undated product description', accessed: '10/07/2026', status: 'verified',
+    section: 'Improvements and Benefits; Calibration and Validation; Kenneth Fire image and pre-operational notice',
   },
   'nasa-tirs2-water-application': {
     title: 'New Landsat Infrared Instrument Ships from NASA', publisher: 'NASA Goddard Space Flight Center',
