@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { qualityPressure, particleBudget } from './render-quality.js';
+import { qualityPressure, particleBudget } from '../explainer-kit/src/render-quality.js';
 
 describe('adaptive rendering pressure', () => {
   it('responds before 40 fps and sheds faster under severe load', () => {

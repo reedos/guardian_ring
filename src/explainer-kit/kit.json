@@ -1,0 +1,17 @@
+{
+  "name": "explainer-kit",
+  "commit": "b857f4d2e982ab3cca4e8533eac38c29e356dfe7",
+  "files": {
+    "css/core.css": "27e002fecc347b20aa1326ef54180f43e0333fb7202554b8b29478e25992da8d",
+    "css/tokens.css": "4bc8719ea91d19a695d7a28d0d48dead654e1a0da0ef28aa48b1a263c2aa2016",
+    "src/claims-walk.js": "cf2c6c9d2b1f5a489fbc69f3c25eeff057a9e6bc1ba6749d2eb61783cd220347",
+    "src/evidence.js": "1c4118ecb85da7f0d57107f7ae14adacda5fb15d7d00bf2d1d40c68d5ab32c95",
+    "src/hooks.js": "e862d43fcf60e64a37b89f22cc7519b26a84ddf2fc75a25f21c85046e76e3de7",
+    "src/more-cue.js": "b07e2306507b5a253ddee91f839e1445d0e24dc68bb83ce575bc256e4642e60c",
+    "src/part-cycle.js": "391b1f9d1f0ed45460166e5d805da5d0f3d84251321289228df4970fcb3457b6",
+    "src/render-quality.js": "50e5dbbf7adbb1c9a0fd81d716b44a998f4cb5587aa8ea53e7c937e016d30a94",
+    "src/scenario-links.js": "1015d33829f97651fa16d5e8f3b70502963f4c56962abbc5457618949a340ab3",
+    "tools/vendor.mjs": "50ee975cebb6c86804eb63387b87a5b774aea70c80d97a4d8cc5163ea4d33c4e",
+    "tools/gate-sequence.mjs": "4a152838402736eb9910b77c72c0a0c507200efa9c7c9801abeb5a37f1c7ac00"
+  }
+}

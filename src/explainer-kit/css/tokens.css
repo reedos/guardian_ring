@@ -1,0 +1,29 @@
+/* explainer-kit tokens.css
+   Structure, accent, evidence-basis colors and type stack shared by The Intelligence Factory, Photon to Photo and The
+   Guardian Ring (identical values in all three on 10/08/2026). One signature style: --accent is amber #e6ba82 and no
+   site adds an accent of its own. Channel and material colors stay in each site. */
+:root {
+  color-scheme: dark;
+  --ground: #000;
+  --surface: #0b1015;
+  --raise: #121920;
+  --line: rgba(240, 240, 250, 0.14);
+  --line-2: rgba(240, 240, 250, 0.3);
+  --ink: #f0f0fa;
+  --muted: #aab2b9;
+  --faint: #6b747c;
+  --accent: #e6ba82;
+  --gutter: clamp(16px, 4.4vw, 72px);
+  --nvl: #ff5fd2;
+  --mv: #ffb14e;
+  --warm: #ff5a6e;
+  --spec: #7ee0a1;
+  --vendor: #f2a66b;
+  --reported: #e6c86e;
+  --derived: #8fc3f0;
+  --assumed: #b7b0cf;
+  --bar: 60px;
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --sans: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}

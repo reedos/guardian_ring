@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { store, on, emit } from './store.js';
-import { TIERS, qualityPressure } from './render-quality.js';
+import { TIERS, qualityPressure } from '../explainer-kit/src/render-quality.js';
 import { poseAt, clearPath } from './camera-path.js';
 import { createCameraClearance, constrainCameraPose, CLEARANCE_BAND } from './camera-clearance.js';
 import { occupancyBuilder } from './occupancy.js';

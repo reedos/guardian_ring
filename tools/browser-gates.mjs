@@ -3,7 +3,7 @@ import {lessonAction,setMotion,openParts} from './gate-actions.mjs';
 import { openGate,show,finish,BASE,MODES } from './gate-common.mjs';
 import { checkView,fly,checkCoplanar } from './gate-geometry.mjs';
 import { checkUI } from './gate-ui.mjs';
-import { TIERS } from '../src/app/render-quality.js';
+import { TIERS } from '../src/explainer-kit/src/render-quality.js';
 import fs from 'node:fs';
 import { checkOrbitFollow } from './gate-orbit-follow.mjs';
 

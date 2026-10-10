@@ -4,10 +4,15 @@ import { content } from '../src/data.js';
 import { allClaims } from '../src/claims.js';
 import { problems } from '../src/evidence.js';
 import { SOURCES } from '../src/sources.js';
+import { cartesian, walkClaims } from '../src/explainer-kit/src/claims-walk.js';
 import fs from 'node:fs';
-const scenarios = Object.entries(SCENARIO_OPTIONS).reduce((rows,[key,values]) => rows.flatMap(row=>values.map(v=>({...row,[key]:v.id}))),[{}]);
-const seen=new Set(),siteKeys=new Set(); let count=0;
-for(const scenario of scenarios){const M=compute(scenario),C=content(M);for(const c of allClaims(M,C)){count++;siteKeys.add(c.key);for(const p of problems(c,SOURCES,true))seen.add(`${c.key}: ${p}`);}}
+const scenarios = cartesian(SCENARIO_OPTIONS);
+const { problems: found, keys: siteKeys, instances: count } = walkClaims({
+  scenarios,
+  claimsFor: scenario => { const M = compute(scenario), C = content(M); return allClaims(M, C); },
+  problemsOf: claim => problems(claim, SOURCES, true),
+});
+const seen = new Set(found.values());
 // Check canonical ledgers too: the generated combined table can lag behind them.
 const researchDir=new URL('../research/',import.meta.url);
 let researchCount=0;

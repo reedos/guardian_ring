@@ -12,7 +12,9 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "claims": "tsx tools/claims.mjs",
-    "gates": "node tools/gates.mjs"
+    "gates": "node tools/gates.mjs",
+    "kit:sync": "node tools/kit.mjs sync",
+    "kit:check": "node tools/kit.mjs check"
   },
   "dependencies": {
     "three": "^0.183.2"
