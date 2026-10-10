@@ -33,12 +33,18 @@ export function eccentricAnomalyRadians(meanAnomaly: number, eccentricity: numbe
   if (eccentricity === 0 || mean === 0 || Math.abs(mean) === Math.PI) return mean;
   let low = -Math.PI, high = Math.PI, eccentric = mean;
   for (let iteration = 0; iteration < 80; iteration++) {
-    const residual = eccentric - eccentricity * Math.sin(eccentric) - mean;
+    // Near pericenter, E and e*sin(E) nearly cancel. Evaluate E-sin(E)
+    // through its series and retain the separate (1-e)*E term instead.
+    const square = eccentric * eccentric;
+    const eMinusSin = Math.abs(eccentric) < .1
+      ? eccentric * square * (1/6 + square * (-1/120 + square * (1/5040 + square * (-1/362880 + square/39916800))))
+      : eccentric - Math.sin(eccentric);
+    const residual = (1-eccentricity)*eccentric + eccentricity*eMinusSin - mean;
     if (residual === 0) return eccentric;
     if (residual > 0) high = eccentric; else low = eccentric;
-    const newton = eccentric - residual / (1 - eccentricity * Math.cos(eccentric));
+    const newton = eccentric - residual / ((1-eccentricity) + 2*eccentricity*Math.sin(eccentric/2)**2);
     const next = newton > low && newton < high ? newton : (low + high) / 2;
-    if (Math.abs(next - eccentric) <= Number.EPSILON * Math.max(1, Math.abs(next))) return next;
+    if (next === eccentric || Math.abs(next - eccentric) <= Number.EPSILON * Math.abs(next)) return next;
     eccentric = next;
   }
   return eccentric;

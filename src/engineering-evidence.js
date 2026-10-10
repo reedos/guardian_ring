@@ -1,6 +1,13 @@
 // Primary sources opened for the learning journey on 10/01/2026.
 // Civil applications remain attached to their named instruments; failed opens cannot support claims.
 export const ENGINEERING_SOURCES = {
+  'nasa-reflection-prime-focus': {
+    title: 'Basics of Space Flight: Chapter 6, Electromagnetics', publisher: 'NASA Science',
+    url: 'https://science.nasa.gov/learn/basics-of-space-flight/chapter6-5/',
+    kind: 'primary', status: 'verified', published: '01/16/2025', accessed: '10/07/2026',
+    section: 'Reflection: equal angles and on-axis paraboloid / prime focus paragraphs',
+    quote: 'The reflectance angle of RF waves equals their incidence angle.',
+  },
   'noaa-abi-fire-product': {
     title: 'Fire and Hot Spot Characterization', publisher: 'NOAA NESDIS / STAR',
     url: 'https://www.star.nesdis.noaa.gov/goesr/product_land_fire.php',
@@ -52,6 +59,16 @@ export const ENGINEERING_SOURCES = {
 };
 
 export const ENGINEERING_CALCS = {
+  'ideal-prime-focus': {
+    title: 'Ideal parabolic mirror focus',
+    how: 'The surface z = (x² + y²)/(4f) reflects an on-axis plane wave to (0, 0, f). Each path from a common entry plane to the focus has length entry + f. The independent tests compare the reflected direction to the focus direction and verify equal path lengths. This is geometric optics; no diffraction spot or real optical prescription is computed.',
+    inputs: ['positive illustrative focal length', 'on-axis incoming direction', 'look-model assumption'],
+  },
+  'ideal-scan-reflection': {
+    title: 'Ideal scan mirror reflection',
+    how: 'Each ray intersects a mirror plane and reflects with d′ = d − 2(d·n)n. In a single plane a mirror rotation changes the outgoing direction by twice that angle. Two successive reflections are solved as vectors, not added scalar angles. Tests check plane intersections, equal incidence/reflection angles, reciprocity, and angular doubling. Drawing dimensions and timing are illustrative; no servo response or real scan schedule is modeled.',
+    inputs: ['illustrative mirror planes and angles', 'look-model assumption'],
+  },
   'kepler-illustration-motion': {
     title: 'Position on an illustrative ellipse',
     how: 'Advance mean anomaly M uniformly in the illustration clock, solve M = E − e sin E, then use x = a(cos E − e), y = a√(1 − e²)sin E. The focus is the origin and positive x points to pericenter. Angles are radians. Drawing parameters and playback time are not measured spacecraft states; they do not replace the separate orbit examples.',
@@ -76,6 +93,8 @@ export const ENGINEERING_ASSUMPTIONS = {
 };
 
 export const ENGINEERING_ROWS = {
+  primeFocus: ['Ideal parabolic focus', 'Equal optical path lengths to a common geometric focus', 'derived', {calc:'ideal-prime-focus', assume:'look-model', refs:[['nasa-reflection-prime-focus','Reflection: on-axis paraboloid and prime focus']]}],
+  scanReflection: ['Ideal planar mirror steering', 'Single-plane direction change = 2 × mirror rotation', 'derived', {calc:'ideal-scan-reflection', assume:'look-model', refs:[['nasa-reflection-prime-focus','Reflection: equal incidence and reflection angles']]}],
   abiFire: ['ABI civil application', 'Visible and infrared fire products help forecasters monitor wildfire changes', 'reported', { refs: [['noaa-abi-fire-product', 'Improvements and Benefits']] }],
   tirsWater: ['Landsat civil application', 'Thermal and optical observations support modeled evapotranspiration and water planning', 'reported', { refs: [['nasa-tirs2-water-application', 'Taking Earth’s temperatures from orbit: transpiration and evaporation paragraphs'], ['nasa-landsat-water-planning', 'Idaho water-planning paragraph and OpenET figure caption']] }],
   thermalTransfer: ['Spacecraft heat transfer', 'Conduction within hardware and thermal radiation to the surroundings', 'reported', { refs: [['nasa-spacecraft-thermal-control-2026', 'Section 7.2.1, opening paragraph']] }],
@@ -84,6 +103,8 @@ export const ENGINEERING_ROWS = {
 };
 
 export const ENGINEERING_CLAIMS = [
+  ['prime-focus', 'primeFocus', 'Independent mathematical diagram, not a payload prescription.'],
+  ['scan-reflection', 'scanReflection', 'Ideal reciprocal rays; no footprint or observing schedule.'],
   ['abi-fire', 'abiFire', 'GOES-R ABI civil application; no thresholds or military performance are inferred.'],
   ['tirs-water', 'tirsWater', 'Landsat civil application. Water-use estimates require models and additional information; the instrument measures radiation.'],
   ['thermal-transfer', 'thermalTransfer', 'General spacecraft engineering principle. A particular thermal design requires its own boundary conditions.'],
