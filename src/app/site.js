@@ -34,7 +34,14 @@ function setMenu(open) {
   nav?.classList.toggle('open', open);
   menu?.setAttribute('aria-expanded', String(open));
 }
-menu?.addEventListener('click', () => { const open = !nav.classList.contains('open'); setMenu(open); if (open) nav.querySelector('a')?.focus({ preventScroll: true }); });
+// The sheet fades in, and a link inside it cannot take focus until its visibility has switched on, so retry
+// once the transition has started. Without this a keyboard user opened the menu and tabbed past it.
+function focusFirstNavLink(tries = 6) {
+  const link = nav.querySelector('a');
+  link?.focus({ preventScroll: true });
+  if (link && document.activeElement !== link && tries > 0 && nav.classList.contains('open')) requestAnimationFrame(() => focusFirstNavLink(tries - 1));
+}
+menu?.addEventListener('click', () => { const open = !nav.classList.contains('open'); setMenu(open); if (open) focusFirstNavLink(); });
 nav?.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
 addEventListener('keydown', e => { if (e.key === 'Escape' && nav?.classList.contains('open')) { setMenu(false); menu.focus(); } });
 document.addEventListener('click', e => { if (nav?.classList.contains('open') && !e.target.closest('#topnav, #menu-btn')) setMenu(false); });

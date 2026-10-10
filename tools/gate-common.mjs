@@ -16,6 +16,10 @@ export async function openGate(name,form='desktop',{returning=true}={}) {
   if(lifecycle){gate.closeBrowser=lifecycle.close;gate.restoreLifecycleVisibility=lifecycle.restoreVisibility;}
   const page=lifecycle?.page||await browser.newPage(pageOptions);
   gate.page=page;page.setDefaultTimeout(15000);
+  // Measurement mode only: GR_CPU_THROTTLE=4 slows the main thread to approximate a phone.
+  // Default runs are unchanged and no budget is touched.
+  const throttle=Number(process.env.GR_CPU_THROTTLE)||1;
+  if(throttle>1){const cdp=await page.context().newCDPSession(page);await cdp.send('Emulation.setCPUThrottlingRate',{rate:throttle});gate.throttle=throttle;}
   // General scene gates begin as a returning explorer. Mission's gate separately
   // removes this key and exercises fresh visitors, explicit links and reduced motion.
   if(returning)await page.addInitScript(()=>localStorage.setItem('grx-mission-visited-v1','1'));
@@ -51,8 +55,8 @@ export async function show(page,scene,mode,part=null){await page.evaluate(async 
 export async function finish(gate,failures=[],details={}){
   if(gate.checkEnvironment)try{await gate.checkEnvironment('finish');}catch(error){failures.push(error.stack||String(error));}
   failures.push(...gate.errors);fs.mkdirSync('.local/gates',{recursive:true});
-  const report={gate:gate.name,form:gate.form,status:failures.length?'FAIL':'PASS',date:new Date().toISOString(),url:BASE,gpu:gate.gpu,scope:process.env.GR_LEVELS||'all implemented and reserved levels',scenes:gate.scenes,...(gate.environment?{environment:gate.environment}:{}),...(gate.environmentChecks?{environmentChecks:gate.environmentChecks}:{}),...details,failures};
-  fs.writeFileSync(`.local/gates/${gate.name}-${gate.form}.json`,JSON.stringify(report,null,2));
+  const report={gate:gate.name,...(gate.throttle?{cpuThrottle:gate.throttle}:{}),form:gate.form,status:failures.length?'FAIL':'PASS',date:new Date().toISOString(),url:BASE,gpu:gate.gpu,scope:process.env.GR_LEVELS||'all implemented and reserved levels',scenes:gate.scenes,...(gate.environment?{environment:gate.environment}:{}),...(gate.environmentChecks?{environmentChecks:gate.environmentChecks}:{}),...details,failures};
+  fs.writeFileSync(`.local/gates/${gate.name}${gate.throttle?`-throttle${gate.throttle}`:''}-${gate.form}.json`,JSON.stringify(report,null,2));
   if(process.env.GR_LEVELS){
     const archive=`.local/gates/levels/${process.env.GR_LEVELS.replace(/[^a-z0-9,-]/gi,'_')}`;
     fs.mkdirSync(archive,{recursive:true});

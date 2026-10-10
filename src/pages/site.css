@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 @import '../styles.css';
 @import './source-popovers.css';
+@import '../touch.css';
 
 .skip { position: fixed; top: -80px; left: 12px; z-index: 100; padding: 12px 16px; color: var(--ground); background: var(--accent); }
 .skip:focus { top: 10px; }

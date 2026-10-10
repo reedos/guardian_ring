@@ -1,0 +1,34 @@
+/* Touch and keyboard polish for every page (brief GR-3).
+   Coarse pointers and phone widths get 44 px targets; no look change on desktop.
+   Kept in its own file, loaded after styles.css, so it does not rewrite shared rules. */
+
+/* Keyboard focus: these controls use `all: unset`, which erased the global focus ring. */
+.menu-btn:focus-visible { outline: 1px solid var(--accent); outline-offset: -3px; }
+body.app .level-pick:focus-visible, .more-btn:focus-visible, .step:focus-visible, .parts button:focus-visible, .src-pop .sp-x:focus-visible { outline: 1px solid var(--accent); outline-offset: -2px; }
+
+@media (pointer: coarse), (max-width: 600px) {
+  /* Top bar */
+  .menu-btn { height: 44px; }
+  .brand { min-width: 44px; min-height: 44px; }
+
+  /* A finger-sized area around the numbered part pins in the 3D view (the label pins already have one). */
+  .pin .num { position: relative; }
+  .pin .num::after { content: ""; position: absolute; inset: -11px; border-radius: 50%; }
+
+  /* Source chips that lack the data-src hit area get the same finger-sized one. */
+  button.chip:not([data-src]) { position: relative; }
+  button.chip:not([data-src])::before { content: ""; position: absolute; inset: -13px -8px; }
+
+  /* Rows of links that were 17 to 21 px tall */
+  .parts-toc { gap: 0 22px; }
+  .parts-toc a, .footer-links a, .service-branch a, .text-link, .claim-refs a, .part-open, .part-evidence-link {
+    display: inline-flex; align-items: center; min-height: 44px;
+  }
+  .footer-links { gap: 0 30px; }
+  .claim-refs a { display: flex; }
+  .system-diagram .sd-node-name { padding-block: 8px; }
+  .system-diagram .sd-interface-details summary { box-sizing: border-box; min-height: 44px; padding-block: 10px; }
+  /* Inline jump links between separators: extend the hit area without moving any line. */
+  .page-wrap p > a, .source > a { padding-block: 13px; }
+  .claim-refs a, .parts-toc a { padding-block: 0; }
+}

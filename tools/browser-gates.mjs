@@ -515,6 +515,7 @@ export async function run(name,form=process.argv[2]||'desktop'){
     if(r.progressCoverage&&(!r.progressCoverage.completePasses||r.progressCoverage.bins.some(n=>!n)))fail.push(`${scene}/${mode}/${phase}: incomplete phase progress coverage`);
     if(r.followCoverage&&(r.followCoverage.movingSamples!==r.samples||r.followCoverage.cameraTravel<=1e-4||r.followCoverage.targetTravel<=1e-4))fail.push(`${scene}/${mode}/${phase}: camera/target did not travel throughout active follow sampling`);
     if(r.tier!==0)fail.push(`${scene}/${mode}/${phase}: measured tier ${r.tier}, expected 0`);
+    if(g.throttle)return; // throttled runs are measurements, not budget gates
     if(r.p95>(form==='phone'?7:15))fail.push(`${scene}/${mode}/${phase}: p95 ${r.p95.toFixed(2)} ms exceeds budget`);
   };
   for(const sc of scenes)for(const mode of MODES){
