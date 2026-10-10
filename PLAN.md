@@ -7,6 +7,8 @@ https://reedos.dev/intelligence_factory/), and published at `https://reedos.dev/
 
 Plan written 10/01/2026 for Codex to build from. Owner: Reed. Read `AGENTS.md` before any work.
 
+Launch authorized by Reed on 10/05/2026: publish the site, enable public indexing, and add GitHub and Reedos.dev portfolio links. Earlier phase notes below retain the original pre-launch plan.
+
 ---
 
 ## 1. Premise

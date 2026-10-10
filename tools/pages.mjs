@@ -121,7 +121,7 @@ try {
         if (!response?.ok()) failures.push(`${name}: HTTP ${response?.status()}`);
         await page.evaluate(() => document.fonts.ready);
         if (await page.locator('h1').count() !== 1) failures.push('Expected one h1');
-        if (!/noindex/.test(await page.locator('meta[name="robots"]').getAttribute('content') || '')) failures.push('Missing noindex');
+        if (await page.locator('meta[name="robots"]').getAttribute('content') !== 'index, follow') failures.push('Public page must allow indexing and following');
         if (await page.locator('nav[aria-label="Site"] a[aria-current="page"]').count() !== 1) failures.push('Missing active navigation item');
         const metadata = await page.evaluate(() => {
           const ids = [...document.querySelectorAll('[id]')].map(el => el.id);

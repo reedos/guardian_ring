@@ -1,0 +1,393 @@
+{
+  "baseline_commit": "aa39577d8f2b7da3299bb82b14ad4f23581adcc2",
+  "baseline_recorded_build_sha256": "ba429eac3bfd9411fc7da05ba15abbc0ddb448365265f6f087b3897af18c287c",
+  "baseline_rebuilt_sha256": "ba429eac3bfd9411fc7da05ba15abbc0ddb448365265f6f087b3897af18c287c",
+  "launch_build_sha256": "a94c09f4f349174d14cb0daa43b1318802b89473bc82730368d50941542353ca",
+  "baseline_files": 40,
+  "identical_files": 32,
+  "changed": [
+    "evidence.html",
+    "glossary.html",
+    "index.html",
+    "llms.txt",
+    "method.html",
+    "parts.html",
+    "robots.txt",
+    "visualizer.html"
+  ],
+  "added": [
+    "sitemap.xml"
+  ],
+  "removed": [],
+  "application_assets_identical": true,
+  "fresh_browser_commands": 36,
+  "fresh_geometry_checks": [
+    {
+      "gate": "activity",
+      "form": "desktop",
+      "states": 885,
+      "status": "PASS",
+      "date": "2026-10-05T21:39:07.298Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "activity",
+      "form": "phone",
+      "states": 885,
+      "status": "PASS",
+      "date": "2026-10-05T21:39:54.419Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "audit-layout",
+      "form": "desktop",
+      "states": 238,
+      "status": "PASS",
+      "date": "2026-10-05T21:37:04.062Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "audit-layout",
+      "form": "phone",
+      "states": 238,
+      "status": "PASS",
+      "date": "2026-10-05T21:37:29.197Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "controls-audit",
+      "form": "desktop",
+      "states": 9,
+      "status": "PASS",
+      "date": "2026-10-05T21:36:31.274Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "controls-audit",
+      "form": "phone",
+      "states": 13,
+      "status": "PASS",
+      "date": "2026-10-05T21:36:40.227Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "coplanar",
+      "form": "desktop",
+      "states": 30,
+      "status": "PASS",
+      "date": "2026-10-05T21:52:03.570Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "cuts-audit",
+      "form": "desktop",
+      "states": 10,
+      "status": "PASS",
+      "date": "2026-10-05T21:33:12.160Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "cuts-audit",
+      "form": "phone",
+      "states": 10,
+      "status": "PASS",
+      "date": "2026-10-05T21:33:16.616Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "govern",
+      "form": "desktop",
+      "states": 11,
+      "status": "PASS",
+      "date": "2026-10-05T21:52:05.847Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "govern",
+      "form": "phone",
+      "states": 11,
+      "status": "PASS",
+      "date": "2026-10-05T21:52:08.085Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "labels",
+      "form": "desktop",
+      "states": 267,
+      "status": "PASS",
+      "date": "2026-10-05T21:45:55.964Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "labels",
+      "form": "phone",
+      "states": 267,
+      "status": "PASS",
+      "date": "2026-10-05T21:46:48.440Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "learning",
+      "form": "desktop",
+      "states": 359,
+      "status": "PASS",
+      "date": "2026-10-05T21:42:33.970Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "learning",
+      "form": "phone",
+      "states": 367,
+      "status": "PASS",
+      "date": "2026-10-05T21:43:32.544Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "links",
+      "form": "desktop",
+      "states": 15,
+      "status": "PASS",
+      "date": "2026-10-05T21:53:16.280Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "mission",
+      "form": "desktop",
+      "states": 193,
+      "status": "PASS",
+      "date": "2026-10-05T21:38:05.463Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "mission",
+      "form": "phone",
+      "states": 196,
+      "status": "PASS",
+      "date": "2026-10-05T21:38:23.274Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "navigation",
+      "form": "desktop",
+      "states": 937,
+      "status": "PASS",
+      "date": "2026-10-05T21:40:48.193Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "navigation",
+      "form": "phone",
+      "states": 941,
+      "status": "PASS",
+      "date": "2026-10-05T21:41:39.704Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "optics",
+      "form": "desktop",
+      "states": 305,
+      "status": "PASS",
+      "date": "2026-10-05T21:32:38.599Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "optics",
+      "form": "phone",
+      "states": 224,
+      "status": "PASS",
+      "date": "2026-10-05T21:33:02.946Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "project-audit",
+      "form": "desktop",
+      "states": 160,
+      "status": "PASS",
+      "date": "2026-10-05T21:37:36.989Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "project-audit",
+      "form": "phone",
+      "states": 165,
+      "status": "PASS",
+      "date": "2026-10-05T21:37:46.056Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "reference-audit",
+      "form": "desktop",
+      "states": 32,
+      "status": "PASS",
+      "date": "2026-10-05T21:33:05.720Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "reference-audit",
+      "form": "phone",
+      "states": 32,
+      "status": "PASS",
+      "date": "2026-10-05T21:33:08.523Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "story-audit",
+      "form": "desktop",
+      "states": 397,
+      "status": "PASS",
+      "date": "2026-10-05T21:34:56.644Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "story-audit",
+      "form": "phone",
+      "states": 397,
+      "status": "PASS",
+      "date": "2026-10-05T21:36:24.539Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "ui",
+      "form": "desktop",
+      "states": 234,
+      "status": "PASS",
+      "date": "2026-10-05T21:47:47.878Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "ui",
+      "form": "phone",
+      "states": 278,
+      "status": "PASS",
+      "date": "2026-10-05T21:51:52.680Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "views",
+      "form": "desktop",
+      "states": 237,
+      "status": "PASS",
+      "date": "2026-10-05T21:44:12.495Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "views",
+      "form": "phone",
+      "states": 237,
+      "status": "PASS",
+      "date": "2026-10-05T21:44:51.148Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "visual-audit",
+      "form": "desktop",
+      "states": 20,
+      "status": "PASS",
+      "date": "2026-10-05T21:33:22.074Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    {
+      "gate": "visual-audit",
+      "form": "phone",
+      "states": 20,
+      "status": "PASS",
+      "date": "2026-10-05T21:33:28.281Z",
+      "gpu": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5090 (0x00002B85) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  ],
+  "fresh_page_checks": {
+    "look": [
+      {
+        "form": "desktop",
+        "url": "http://127.0.0.1:47810/",
+        "status": "PASS",
+        "stills": 6,
+        "chips": 30,
+        "failures": []
+      },
+      {
+        "form": "phone",
+        "url": "http://127.0.0.1:47810/",
+        "status": "PASS",
+        "stills": 6,
+        "chips": 30,
+        "failures": []
+      }
+    ],
+    "pages": [
+      {
+        "page": "evidence",
+        "form": "desktop",
+        "url": "http://127.0.0.1:47810/evidence.html",
+        "status": "PASS",
+        "chips": 941,
+        "failures": []
+      },
+      {
+        "page": "method",
+        "form": "desktop",
+        "url": "http://127.0.0.1:47810/method.html",
+        "status": "PASS",
+        "chips": 0,
+        "failures": []
+      },
+      {
+        "page": "glossary",
+        "form": "desktop",
+        "url": "http://127.0.0.1:47810/glossary.html",
+        "status": "PASS",
+        "chips": 0,
+        "failures": []
+      },
+      {
+        "page": "parts",
+        "form": "desktop",
+        "url": "http://127.0.0.1:47810/parts.html",
+        "status": "PASS",
+        "chips": 127,
+        "failures": []
+      },
+      {
+        "page": "evidence",
+        "form": "phone",
+        "url": "http://127.0.0.1:47810/evidence.html",
+        "status": "PASS",
+        "chips": 941,
+        "failures": []
+      },
+      {
+        "page": "method",
+        "form": "phone",
+        "url": "http://127.0.0.1:47810/method.html",
+        "status": "PASS",
+        "chips": 0,
+        "failures": []
+      },
+      {
+        "page": "glossary",
+        "form": "phone",
+        "url": "http://127.0.0.1:47810/glossary.html",
+        "status": "PASS",
+        "chips": 0,
+        "failures": []
+      },
+      {
+        "page": "parts",
+        "form": "phone",
+        "url": "http://127.0.0.1:47810/parts.html",
+        "status": "PASS",
+        "chips": 127,
+        "failures": []
+      }
+    ]
+  },
+  "carried_forward_gates": [
+    "cycle-desktop",
+    "parts-desktop",
+    "flights-desktop",
+    "flights-phone",
+    "perf-desktop",
+    "perf-phone"
+  ],
+  "scope": "The application assets are byte-identical to the complete accepted baseline. Fresh launch checks cover public metadata and 36 browser commands. The exhaustive cycle rerun was stopped after successful completed scenarios; it is not counted as a new full pass. Remaining identical scene sweeps and performance use the existing baseline acceptance."
+}

@@ -1,12 +1,12 @@
 # The Guardian Ring
 
-> An educational review build about infrared satellite architecture, from orbit to a detector element. Public sources explain the physics; named civil instruments supply detailed engineering examples.
+> An educational 3D explainer about infrared satellite architecture, from orbit to a detector element. Public sources explain the physics; named civil instruments supply detailed engineering examples.
 
-This is a review build, not a launch announcement. Pages retain noindex and nofollow, and robots.txt disallows crawling. Current validation and publication status are recorded in research/BUILD-REVIEW.md and the generated research/gate-results.md. Reed's device review and separate launch decision remain open.
+Public launch authorized by Reed on 10/05/2026. Pages allow indexing and following. The generated research/gate-results.md records acceptance for its identified build; research/BUILD-REVIEW.md is a historical review. Browser emulation is not physical-device validation.
 
 ## Pages
 
-Canonical addresses identify the pages; they do not announce publication or launch.
+The public site is https://reedos.dev/guardian_ring/.
 
 - [Story](https://reedos.dev/guardian_ring/): The narrated journey, schematic illustrations, engineering paths, and evidence labels.
 - [Explorer](https://reedos.dev/guardian_ring/visualizer.html): Light, Data, and Heat views with selectable assemblies, component anatomy, saved comparisons, and independent mathematical examples.

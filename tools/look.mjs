@@ -17,7 +17,7 @@ try {
     if (!response.ok()) failures.push(`Story HTTP ${response.status()}`);
     await page.evaluate(() => document.fonts.ready);
     if (await page.locator('h1').count() !== 1) failures.push('Story needs one h1');
-    if (!/noindex/.test(await page.locator('meta[name=robots]').getAttribute('content'))) failures.push('Missing noindex');
+    if (await page.locator('meta[name=robots]').getAttribute('content') !== 'index, follow') failures.push('Public page must allow indexing and following');
     const pictures = page.locator('picture img');
     if (await pictures.count() !== 6) failures.push('Expected six main-level stills');
     for (const img of await pictures.all()) {

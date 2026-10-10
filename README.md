@@ -22,7 +22,9 @@ An optional guided mission follows GEO and LEO spacecraft above Earth's limb, th
 
 Ten optional “See…” lessons extend the light-focus and scan-mirror demonstrations. Press Play to follow charge conversion, cooling, reaction-wheel pointing, pushbroom imaging, geostationary motion, eclipse power, downlink reconstruction, thermal emission, atmospheric transfer, or calibration. Each lesson advances its own captions and diagrams; rotating the view preserves playback. Evidence and equations are available beneath the animation. [Implementation and independent review](research/CINEMATIC-LESSONS-2026-10-05.md) records the sources, assumptions, and corrections.
 
-This edition is under review. The review link is shared directly and noindex remains enabled.
+**Live site: [The Guardian Ring](https://reedos.dev/guardian_ring/)** · [Open the 3D explorer](https://reedos.dev/guardian_ring/visualizer.html)
+
+Reed authorized public launch on 10/05/2026. Public pages allow search indexing and are linked from [Reedos.dev](https://reedos.dev/#project-gr).
 
 ## Follow the evidence
 
@@ -61,8 +63,10 @@ the latest completed checks, build identity, renderer and performance results. T
 10/05/2026 record reports 270 unit tests, 44 browser commands, typecheck and a strict
 evidence audit with zero problems. The [10/03/2026 build review](research/BUILD-REVIEW.md)
 is retained as historical context. These are recorded results for the identified build,
-not a claim that every later commit has repeated every browser gate. Reed’s device
-review and launch decision remain open; noindex stays enabled.
+not a claim that every later commit has repeated every browser gate. The
+[10/05/2026 launch record](research/LAUNCH-2026-10-05.md) documents 36 fresh browser
+commands and exact application-asset identity with that complete accepted build.
+Browser emulation does not establish physical-device coverage. Launch was authorized separately on 10/05/2026.
 
 Contributors should read [AGENTS.md](AGENTS.md) and [PLAN.md](PLAN.md). The verified research records supersede unchecked statements in the original source seed and initial plan.
 
