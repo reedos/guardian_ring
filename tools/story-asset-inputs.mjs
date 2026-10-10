@@ -7,7 +7,7 @@ export const hash=file=>createHash('sha256').update(/\.(js|mjs|py)$/.test(file)?
 // camera, lighting and cinematic renderer code (ring, plume), and the Blender
 // lighting, camera fit and render recipe (satellite, payload, focal plane, pixel).
 export const RENDER_INPUTS=[
-  'src/app/scene-look.js','src/app/stage.js','src/app/camera-path.js','src/app/camera-clearance.js','src/app/render-quality.js','src/app/view-controls.js',
+  'src/app/scene-look.js','src/app/stage.js','src/app/camera-path.js','src/app/camera-clearance.js','src/explainer-kit/src/render-quality.js','src/app/view-controls.js',
   'src/app/cinematic-renderers.js','src/app/cinematic-drawing.js','src/app/cinematic-earth.js','src/app/cinematic-demo.js','src/visualizer.js',
   'tools/render-story-stills.mjs','tools/blender/render-authored.py','tools/blender/build-hardware-look.py',
 ];
