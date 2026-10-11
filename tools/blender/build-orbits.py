@@ -1,4 +1,4 @@
-"""Level 1 authored GLB, version 4. No operational constellation is represented.
+"""Level 1 authored GLB, version 5 (HEO planes at the generic Molniya tilt). No operational constellation is represented.
 
 Run: Blender 5.2 --background --python tools/blender/build-orbits.py
 
@@ -27,7 +27,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
 TEXTURES = ROOT / 'research' / 'look' / 'textures'
-VERSION = 4
+VERSION = 5
 OUT.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 SCENE = bpy.context.scene
@@ -45,6 +45,7 @@ def group(name, parent=None, **metadata):
 ROOT_NODE = group('GuardianRingAsset', version=VERSION, level='orbits',
     representative=True, physicalScale=False, earthDrawingRadius=1.0,
     geoDrawingRadius=2.5, maximumDrawingRadius=3.5,
+    distanceCompression='GEO radius is about 42,164 km (6.61 Earth radii) but drawn at 2.5; LEO near 1.2 is close to true scale. Ordering LEO < MEO < GEO < HEO apogee is preserved.',
     assumption='look-model',
     description='Schematic orbit architecture; distances compressed, proxies enlarged; count and slots are as drawn.',
     credits='NASA Earth Observatory; Blue Marble: Reto Stockli. Black Marble: Joshua Stevens, using Suomi NPP VIIRS data from Miguel Roman, NASA GSFC.')
@@ -55,7 +56,9 @@ GEO = group('GEOFamily', EARTH_SPIN, orbitFamily='geo', representative=True,
     relationship='All GEO proxies share EarthSpin, keeping drawn ground longitudes fixed.',
     countIsIllustrative=True, radiusIsCompressed=True)
 HEO = group('HEOFamily', ROOT_NODE, orbitFamily='heo', representative=True,
-    countIsIllustrative=True, curveIsCompressed=True)
+    countIsIllustrative=True, curveIsCompressed=True, inclinationDegrees=63.4,
+    apogee='Northernmost point of each plane (argument of perigee 270 degrees); apogee latitude equals inclination.',
+    inclinationSource='nasa-orbit-catalog: generic Molniya inclination 63.4 degrees; not real constellation elements.')
 MEO = group('MEOFamily', ROOT_NODE, orbitFamily='meo', representative=True,
     countIsIllustrative=True, radiusIsCompressed=True)
 LEO = group('LEOFamily', ROOT_NODE, orbitFamily='leo', representative=True,
@@ -347,16 +350,24 @@ for i, degrees in enumerate([16, 88, 160, 232, 304]):
 
 
 heo_mat = material('HEO guide slate blue', (.15, .31, .43), 0, 1, .55)
+# v5: the plane carries the generic Molniya inclination (63.4 degrees, NASA
+# Earth Observatory orbit catalog) with apogee at the northernmost point
+# (argument of perigee 270 degrees), so the apogee sits over about 63.4 N,
+# not over the pole. Orientation is scale-free and therefore physical; the
+# ellipse size and eccentricity stay compressed (a true e=0.722 ellipse would
+# put perigee inside the drawn Earth once GEO is compressed to 2.5 radii).
+HEO_INCLINATION = math.radians(63.4)
 for i, angle in enumerate([-.52, .90]):
     points = []
-    # Compressed ellipse with Earth at one focus. Perigee stays outside Earth.
-    # These arbitrary drawing units do not encode Molniya parameters.
     a, eccentricity = 2.2, .5
     b, focal_offset = a*math.sqrt(1-eccentricity**2), a*eccentricity
+    node = Vector((math.cos(angle), math.sin(angle), 0))
+    apogee_axis = Vector((-math.sin(angle)*math.cos(HEO_INCLINATION),
+        math.cos(angle)*math.cos(HEO_INCLINATION), math.sin(HEO_INCLINATION)))
     for j in range(240):
         phase = j*math.tau/240
         lateral, height = b*math.cos(phase), a*math.sin(phase)+focal_offset
-        points.append((lateral*math.cos(angle), lateral*math.sin(angle), height))
+        points.append(tuple(node*lateral + apogee_axis*height))
     curve(f'heo-orbit-{i+1:02d}', points, heo_mat, HEO)
     satellite(f'HEO_Satellite_{i+1:02d}', points[51+i*7], HEO, scale=.65)
 

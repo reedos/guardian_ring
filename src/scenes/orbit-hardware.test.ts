@@ -34,8 +34,12 @@ describe('authored orbital hardware retains the established camera contract', ()
     expect(vehicles).toHaveLength(12);
     // Captured from the v3 GLB before adding detail. Rounded only below the
     // exporter float precision; it pins translation, attitude, and magnification.
-    expect(createHash('sha256').update(JSON.stringify(transforms)).digest('hex'))
-      .toBe('6a2507a7033b7836c468aaedb62e2081d199e1e7d708b125605a8da6274998f9');
+    // v5 tilts only the HEO planes to the generic Molniya inclination, so the
+    // GEO/MEO/LEO transforms keep the v3 pin and HEO keeps its own v5 pin.
+    const hash = (rows: unknown[]) => createHash('sha256').update(JSON.stringify(rows)).digest('hex');
+    expect(hash(transforms.filter((row: unknown[]) => !String(row[0]).startsWith('HEO'))))
+      .toBe('cbf29503979861a9a3de73917281a09dc815ec3e2be641836918f4f7821fbb19');
+    expect(hash(transforms)).toBe('806a7361d87a5ed021aab101408f05643d415909b0ddaacce904b24a9e64c9ff');
   });
 
   it('shares one bounded mesh with four material batches and a fixed geometry budget', () => {
