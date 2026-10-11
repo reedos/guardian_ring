@@ -1,7 +1,12 @@
-"""Representative spacecraft engineering cutaway, v11.
+"""Representative spacecraft engineering cutaway, v12.
 Blender --background --python tools/blender/build-satellite.py.
 Open decks, separated covers, equipment counts and arrangement are teaching
 choices, not a military satellite reconstruction or bill of materials.
+v12 closes the -X face with a blanketed closeout panel (cut around the array
+drive and its harness), leaves only the viewer-facing +Z closeout cut back to
+a narrow flange with marked section edges, removes the detached blanket that
+hung on brackets beside the array yoke, and gives the antenna and terminal
+their own white finish name instead of the radiator coating. As drawn.
 """
 import bpy, math, importlib.util
 from pathlib import Path
@@ -9,7 +14,7 @@ ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
 bpy.ops.wm.read_factory_settings(use_empty=True)
-m=h.palette();VERSION=11
+m=h.palette();VERSION=12
 # Thin metallic foil catches the single Sun in irregular creases, not a flat
 # yellow label panel. These finishes are drawing choices, not flight materials.
 m['gold'].node_tree.nodes.get('Principled BSDF').inputs['Metallic'].default_value=.88
@@ -46,14 +51,30 @@ for y in [.22,2.12]:
 for x in [-1.3,1.3]:h.rod('Rear structural diagonal',(x,.24,-1.00),(-x,2.08,-1.00),.027,m['dark'])
 h.box('Rear blanket substrate',(0,1.15,-1.06),(2.86,1.84,.027),m['foilback'],.004)
 h.foil('Rear MLI facets',(0,1.15,-1.092),(2.84,0,0),(0,1.82,0),(0,0,-1),m['gold'],27)
-h.box('Removed front MLI panel',(-1.92,.93,1.68),(.78,1.55,.055),m['foilback'],.015)
-h.foil('Removed outer thermal blanket',(-1.92,.93,1.724),(.74,0,0),(0,1.51,0),(0,0,1),m['gold'],13)
-for x in [-2.28,-1.56]:h.box('Blanket edge binding',(x,.93,1.738),(.023,1.49,.018),m['goldedge'],.003)
-for y in [.20,1.66]:h.box('Blanket edge binding',(-1.92,y,1.738),(.74,.023,.018),m['goldedge'],.003)
-for y in [.3,1.55]:h.line('Detached-panel teaching bracket',[(-1.52,y,1.01),(-1.62,y,1.40),(-1.70,y,1.66)],.014,m['silver'])
-for y in [.45,1.37]:
-    h.box('Representative blanket bonding tab',(-1.61,y,1.752),(.14,.085,.016),m['silver'],.004)
-    for dx in [-.014,0,.014]:h.line('Blanket bond strap strand',[(-1.61+dx,y,1.76),(-1.54+dx,y+.05,1.40),(-1.48+dx,y,1.06)],.005,m['copper'])
+# v12: -X closeout panel, blanketed outside, cut around the array drive and the
+# harness that passes into the bus. Opening size and panel split are as drawn.
+OPEN_Y,OPEN_Z=(.80,1.60),(-.45,.40)
+for name,(y0,y1),(z0,z1) in [('lower',(.18,OPEN_Y[0]),(-1.06,1.06)),('upper',(OPEN_Y[1],2.16),(-1.06,1.06)),
+                             ('aft',OPEN_Y,(-1.06,OPEN_Z[0])),('forward',OPEN_Y,(OPEN_Z[1],1.06))]:
+    h.box('Side closeout panel ('+name+')',(-1.543,(y0+y1)/2,(z0+z1)/2),(.027,y1-y0,z1-z0),m['foilback'],.004)
+    h.foil('Side closeout MLI ('+name+')',(-1.575,(y0+y1)/2,(z0+z1)/2),(0,0,z1-z0-.03),(0,y1-y0-.03,0),(-1,0,0),m['gold'],31+len(name))
+for y in OPEN_Y:h.box('Drive cutout edge binding',(-1.578,y,sum(OPEN_Z)/2),(.018,.023,OPEN_Z[1]-OPEN_Z[0]+.02),m['goldedge'],.003)
+for z in OPEN_Z:h.box('Drive cutout edge binding',(-1.578,sum(OPEN_Y)/2,z),(.018,OPEN_Y[1]-OPEN_Y[0]+.02,.023),m['goldedge'],.003)
+# Viewer-facing +Z closeout cut back to a flange; the section color marks every
+# cut edge, the drawing convention for removed material. The bottom flange is
+# interrupted where the reaction-wheel shelf projects through the face.
+CUT=h.material('Cutaway section edge',(.62,.17,.07),.1,.5)
+FZ=1.084
+for x in [-1.47,1.47]:
+    h.box('Front closeout flange',(x,1.17,FZ),(.12,1.98,.012),m['foilback'],0)
+    h.box('Front closeout section edge',(x-math.copysign(.064,x),1.17,FZ+.002),(.012,1.86,.014),CUT,0)
+h.box('Front closeout flange',(0,2.10,FZ),(2.82,.12,.012),m['foilback'],0)
+h.box('Front closeout section edge',(0,2.036,FZ+.002),(2.70,.012,.014),CUT,0)
+for x0,x1 in [(-1.41,-.52),(.40,1.41)]:
+    h.box('Front closeout flange',((x0+x1)/2,.24,FZ),(x1-x0,.12,.012),m['foilback'],0)
+    h.box('Front closeout section edge',((x0+x1)/2,.304,FZ+.002),(x1-x0,.012,.014),CUT,0)
+    for x in [x0,x1]:
+        if abs(x)<1:h.box('Front closeout section edge',(x,.24,FZ+.002),(.012,.12,.014),CUT,0)
 
 h.role('Battery')
 h.enclosure('Battery module tray',(-.85,.39,.52),(1.04,.43,.75),m,True)
@@ -103,10 +124,23 @@ for at,axis,cradle in [((-.22,.32,1.12),'y',None),((.17,.425,1.12),'x',(.11,.06,
 h.line('Wheel drive harness',[(.25,.42,1.12),(.37,.37,1.0),(.52,.42,.99),(.61,.42,.99)],.018,m['loom'])
 
 h.role('Propulsion')
-h.sphere('Representative propellant tank',(.88,1.38,-.74),(.43,.50,.36),m['silver'])
-for y in [1.08,1.68]:h.ring('Tank restraint band',(.88,y,-.74),.34,.31,.045,m['dark'],'y',32)
-h.cyl('Tank service fitting',(.88,1.93,-.74),.064,.14,m['goldedge'],segments=16)
-h.line('Propellant feed line',[(.88,.94,-.74),(1.23,.84,-.74),(1.35,.55,-.70),(1.35,.19,-.70)],.021,m['silver'])
+# v12: tank depth and center keep it clear of the rear blanket (v11 passed
+# through it) and of the payload processor chassis; bands follow its ellipse.
+TANK,TANK_R=(.88,1.38,-.72),(.43,.50,.32)
+h.sphere('Representative propellant tank',TANK,TANK_R,m['silver'])
+def tank_band(y):
+    f=math.sqrt(1-((y-TANK[1])/TANK_R[1])**2);rx,rz=TANK_R[0]*f+.002,TANK_R[2]*f+.002;verts=[];faces=[];n=40
+    for dy in [-.0225,.0225]:
+        for t in [0,.03]:
+            for i in range(n):
+                a=i*math.tau/n;verts.append(h.p((TANK[0]+(rx+t)*math.cos(a),y+dy,TANK[2]+(rz+t)*math.sin(a))))
+    for i in range(n):
+        j=(i+1)%n;faces+=[(i,j,j+n,i+n),(i+2*n,i+3*n,j+3*n,j+2*n),(i,i+2*n,j+2*n,j),(i+n,j+n,j+3*n,i+3*n)]
+    d=bpy.data.meshes.new('Tank restraint band');d.from_pydata(verts,[],faces);d.update()
+    o=bpy.data.objects.new('Tank restraint band',d);bpy.context.collection.objects.link(o);h.finish(o,'Tank restraint band',m['dark'],.003)
+for y in [1.08,1.68]:tank_band(y)
+h.cyl('Tank service fitting',(.88,1.93,-.72),.064,.14,m['goldedge'],segments=16)
+h.line('Propellant feed line',[(.88,.90,-.72),(1.23,.84,-.74),(1.35,.55,-.70),(1.35,.19,-.70)],.021,m['silver'])
 for x in [-1.35,1.35]:
     for z in [-.86,.86]:
         h.line('Feed manifold branch',[(1.35,.19,-.70),(x,.19,-.70),(x,.19,z)],.014,m['silver'])
@@ -140,11 +174,12 @@ h.line('Payload readout harness',[(.40,2.48,-.22),(.67,2.20,-.18),(.75,1.93,.02)
 
 h.role('Links')
 h.rod('TT&C antenna support',(-.72,2.16,-.90),(-.52,3.02,-1.12),.026,m['silver'])
-dish('Representative TT&C reflector',(-.52,3.05,-1.12),.34,.085,m['white'])
+ANTENNA_WHITE=h.material('White antenna and terminal finish',(.67,.72,.74),.12,.52)
+dish('Representative TT&C reflector',(-.52,3.05,-1.12),.34,.085,ANTENNA_WHITE)
 h.ring('TT&C reflector rim',(-.52,3.05,-1.035),.352,.335,.016,m['silver'],'z',40)
 h.rod('TT&C feed support',(-.77,2.91,-1.01),(-.52,3.05,-.80),.014,m['silver'])
 h.cyl('Representative feed',(-.52,3.05,-.78),.036,.08,m['goldedge'],'z',16)
-h.box('Mission-link terminal',(1.04,2.44,-.64),(.50,.31,.22),m['white'],.031)
+h.box('Mission-link terminal',(1.04,2.44,-.64),(.50,.31,.22),ANTENNA_WHITE,.031)
 h.box('Mission antenna aperture',(1.04,2.44,-.516),(.41,.22,.024),m['dark'],.010)
 h.connector('Radio interface',(1.23,1.78,-.36),.23,m)
 h.line('RF cable',[(1.04,2.29,-.64),(1.29,2.09,-.61),(1.28,1.82,-.44)],.017,m['loom'])
@@ -196,8 +231,8 @@ anchors={
  'AnchorSolarArray':[3.01,1.10,-.09],'AnchorArrayDrive':[-1.88,1.16,.07],
  'AnchorPower':[.80,.82,.62],'AnchorBattery':[-.85,.72,.55],
  'AnchorAttitude':[-1.06,2.665,-.838],'AnchorWheels':[-.05,.45,1.53],
- 'AnchorPropulsion':[.88,1.59,-.38],'AnchorComputer':[-1.06,1.922,-.24],
+ 'AnchorPropulsion':[.88,1.59,-.36],'AnchorComputer':[-1.06,1.922,-.24],
  'AnchorAntenna':[-.52,3.05,-.72],'AnchorRadiator':[1.80,1.28,.62],
 }
 h.export(ROOT/'public/models/satellite.glb','GuardianSatellite',VERSION,'satellite',anchors,
- 'Representative spacecraft anatomy: open bus, displaced MLI/radiator, solar cells and strings, drive, batteries/PDU, avionics, attitude equipment, reaction wheels, propulsion, links and payload. Layout and counts are as drawn, not a military system.')
+ 'Representative spacecraft anatomy: cutaway bus with blanketed closeouts, separated radiator, solar cells and strings, drive, batteries/PDU, avionics, attitude equipment, reaction wheels, propulsion, links and payload. Layout and counts are as drawn, not a military system.')
