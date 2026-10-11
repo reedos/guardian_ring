@@ -86,3 +86,25 @@ Verdicts: correct · wrong · unsupported · overstated · wrong locator · stal
 `npm run build` ok · links gate PASS (0 problems, 15 states) · pages gate PASS (8 of 8) · `test-claim-page-policy.mjs`
 PASS · `claim-audit-report.mjs` certified (0 unreviewed; 46 new page rows reviewed, including civil-cooling rows that
 were unreviewed before this branch). Preview on port 47631.
+
+## Round 2 ledger (re-audit of round 1 fixes plus a fresh sample)
+
+| Claim | Location | Verdict | Evidence |
+|---|---|---|---|
+| Round 1 label “ABI detector material, 1.378–13.3 μm channels” | remaining-content.js, physics-facts.json, verified-facts | correct | Table 3-5 re-read; regenerated ledgers match canonical rows (claims.mjs 0 problems) |
+| Same label in the generator and review notes | research/physics/build-notes.py, physics-review.md | stale | The generator would have restored the old label on its next run. **Fixed** in both |
+| HEO glossary text and Molniya locator | glossary.html, method.html, evidence.html | correct | Catalog: Molniya under Medium Earth Orbit, “highly eccentric,” 0.722, 12 h |
+| Sidereal-day glossary text | glossary.html | correct | Mean sidereal day 86,164.09054 s vs 86,400 s solar day: about 3 min 56 s shorter |
+| ABI SUE releases OPC and SCC launch locks; P&TC drives SCC and focus motor | expanded-content.js | correct | Data Book PDF p. 44 |
+| Expanded ABI scan, calibration, aft-optics, data-interface, power, cryocooler-feedback cards (22 bodies) | expanded-content.js | correct | Data Book pp. 35–45, 157 |
+| System-diagram and instrument-integration prose (25 strings) | src/pages/system-diagrams.js, instrument-integration.js | correct | Data Book; NTRS 20180005348 |
+| Component glossary (15 definitions) | src/pages/component-glossary.js | correct | Data Book pp. 42–45, 126–131, 137, 164; TIRS-2 architecture paper |
+| Scenario, scan-diagram and focus-demo control text | src/app/*.js | correct | Angular doubling and reciprocity match the scan-optics tests |
+| Polar orbit equation locator “Opening discussion” | engine.ts, method | correct | Formula first appears before any heading: “The equation of the orbit is” |
+| Lockheed Martin 2014 release (Vendor) | index, payload | correct | Names prime and payload provider; payload delivered 09/30 for GEO-4 bus integration; the site repeats no performance wording |
+| Landsat 8 pushbroom description | TIRS-2 lesson | correct | NASA SVS: linear arrays “collect data across the entire image swath at once” |
+| GAO-26 “about 90 minutes … at an altitude of 1,000 kilometers” | research/sources-seed.md (not on the site) | wrong in source | A circular 1,000 km orbit takes about 105 min (site LEO example 1.752 h). The sentence is attributed to unnamed contractors, not GAO analysis. **Fixed** the seed notes so the figure is not adopted |
+| Seed note “civil twins’ CMOS/HgCdTe/QWIP” | research/sources-seed.md | unsupported | The Data Book says silicon, not CMOS. **Fixed** |
+
+Round 2 verification: `npx tsc --noEmit` clean · `npx vitest run` 52 files, 293 tests passed · `npx tsx tools/claims.mjs` 0 problems. No rendered prose changed in round 2, so the
+build, links and pages gates from round 1 still apply.
