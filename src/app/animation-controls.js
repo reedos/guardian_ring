@@ -36,7 +36,7 @@ export function mountAnimationControls(host,{getTeaching,getAssemblyPresentation
     focusButton.hidden=store.C.SCENES[store.ui.scene]?.id!=='payload'||state.mode!=='light';
     scanButton.hidden=!['payload','abi'].includes(store.C.SCENES[store.ui.scene]?.id)||state.mode!=='light';
     opticsLaunches.hidden=focusButton.hidden&&scanButton.hidden;
-    title.textContent=state.inspection?'Choose a part. Next shows its activity.':state.step.title;description.textContent=state.step.body;
+    title.textContent=state.inspection?(store.ui.selected?'Next shows the next part at work.':'Choose a part. Next shows its activity.'):state.step.title;description.textContent=state.step.body;
     const keys=state.step.claimKeys||[],claimKey=keys.join(',');if(claimKey!==evidenceKey){evidenceKey=claimKey;evidence.innerHTML=keys.map(key=>{const claim=claimByKey(store.M,store.C,key);return claim?chip(claim.basis,key,claim.label):'';}).join('');}
     note.textContent=state.inspection?'Press Next to inspect a part and play its activity once. Animation timing is illustrative.':`${state.repeating?'Repeating activity illustration. ':''}${state.note||'Illustrative sequence; no real sensor timing, signal level, or throughput.'}`;
     const key=(state.legend||[]).map(v=>v.kind).join(',');if(key!==legendKey){legendKey=key;legend.replaceChildren();for(const item of state.legend||[]){const entry=document.createElement('span'),swatch=document.createElement('i');entry.dataset.kind=item.kind;swatch.style.background=item.color;entry.append(swatch,document.createTextNode(item.label));legend.append(entry);}}

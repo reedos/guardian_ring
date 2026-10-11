@@ -102,7 +102,7 @@ export function main() {
   const tests = read('.local/gates/unit-tests.json');
   if (tests.success !== true || tests.numFailedTests || !tests.numTotalTests) throw new Error('Unit-test report is incomplete or failed.');
   const claimsText = cpuCheck('Strict evidence audit', ['node_modules/tsx/dist/cli.mjs', 'tools/claims.mjs']).trim();
-  const counts = claimsText.match(/(\d+) problems across (\d+) site claims \((\d+) scenario instances\), (\d+) scenarios, and (\d+) research facts\./);
+  const counts = claimsText.match(/(\d+) problems across (\d+) site claims \((\d+) scenario instances\), (\d+) scenarios, and (\d+) research (?:facts|rows \(canonical and combined\))\./);
   if (!counts || Number(counts[1]) !== 0) throw new Error(`Unrecognized or failed claim audit: ${claimsText}`);
 
   const date = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });

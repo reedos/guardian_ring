@@ -1551,3 +1551,34 @@ body.atmosphere-view .mode, body.atmosphere-view #animation-controls, body.atmos
 .parts-assembly[open]>summary::before { content:"−"; }
 .parts-assembly>summary>div { flex:1; }
 #claim-register>.parts-toc { display:flex;flex-wrap:wrap;gap:12px 22px;margin-bottom:20px;font:12px/1.5 var(--mono); }
+
+/* Viewer UX review 10/10/2026 */
+/* Scene note lines: stacked where the note has room, joined by separators in the compact key. */
+.scaffold-badge .note-line { display:block; }
+.compact-scene-key .scaffold-badge .note-line { display:inline; }
+.compact-scene-key .scaffold-badge .note-line + .note-line::before { content:' \00B7  '; }
+/* Loading and error messages wrap inside the stage gutter, centered. */
+.veil { padding:0 24px; text-align:center; line-height:1.6; }
+@media (max-width:760px) {
+  /* The Parts handle is a flex row; center its label and count as the rule intends. */
+  body.app.stage-priority #tab-parts { justify-content:center; }
+  /* Fit the part bar to its buttons instead of the desktop minimum height. */
+  body.app.stage-priority #hud-btns { min-height:0; align-items:stretch; }
+  body.app.stage-priority #hud-btns .part-transport { flex:1 1 auto; min-width:0; }
+  /* Wrap the legend instead of hiding its tail behind a sideways scroll. */
+  body.app .compact-scene-key #legend { flex-wrap:wrap; overflow-x:visible; }
+  /* Keep the enclosure toggle's words whole; the note takes what room remains. */
+  .assembly-controls > span:first-child, .assembly-controls > div, .assembly-controls .btn { flex:none; white-space:nowrap; }
+  .assembly-controls .assembly-note { flex:1 1 0; min-width:0; max-width:none; }
+  /* Docked in the open sheet (orbit-controls.js): a block in the sheet, not an overlay on the stage. */
+  /* Side-level Back on the stage's top-left corner (visualizer.js placeBackOut). */
+  body.app #back-out.stage-back { position:absolute; top:12px; left:12px; z-index:8; min-height:44px; max-width:calc(100% - 24px); white-space:nowrap; }
+  body.app #back-out.stage-back[hidden], body.app.mission-active #back-out.stage-back, body.app.presentation-view #back-out.stage-back { display:none; }
+  body.app #orbit-controls .btn { min-width:44px; }
+  body.app #orbit-controls.docked { position:static; transform:none; width:auto; max-width:none; margin:0 0 12px; justify-content:flex-start; }
+}
+@media (max-width:380px) {
+  /* Keep the orbit controls to two rows at 375 px so they cover less of the Earth. */
+  body.app #orbit-controls .btn { padding-inline:6px; }
+  body.app #orbit-time { width:64px; }
+}
