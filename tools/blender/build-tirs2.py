@@ -6,15 +6,23 @@ stray-light baffles added near lenses 2 and 3 (PDF pp. 17, 20); two Main
 Electronics Boxes and two cooler-control electronics units joined to one
 thermomechanical unit through the redundancy switch (PDF p. 14). Parts now rest
 on the bench. The presentation gives no package dimensions; sizes as drawn.
+v8 draws the bench as a cutaway of a closed instrument: a sectioned housing
+(far walls full height, near walls cut, cover removed), a lens barrel cut open
+on the viewer side, a smooth Earth-shield blanket, and a broader mirror
+highlight. Housing and barrel form and size are as drawn.
 """
-import bpy,importlib.util
+import bpy,importlib.util,math
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('civil',Path(__file__).with_name('civil-detail.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c);h=c.load_h()
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=7
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=8
+c.readable_mirror(m)
 m['lens']=h.material('Refractive element teaching blue',(.16,.38,.47),.25,.22)
 c.bench(h,m,(.40,-.27,.10),(10.4,8.25))
+# The far wall stays lower than the side wall so the authored over-the-back
+# cooling view still reaches its role plate.
+c.cutaway_enclosure(h,m,(.40,0,-.27),(10.4,8.25),2.25,back_height=.95)
 h.role('Telescope')
 for i,z in enumerate([1.30,.64,-.03,-.70],1):
     h.sphere('Refractive element '+str(i),(-2.35,1.10,z),(.79,.79,.055),m['lens'],segments=32,rings=16)
@@ -27,6 +35,14 @@ for n,z in enumerate([.45,.16],1):
     h.ring('Stray-light baffle '+str(n),(-2.35,1.10,z),.84,.52,.035,m['black'],'z',48)
     c.riser(h,m,'Stray-light baffle foot '+str(n),-2.35,z,(.30,.07),.275)
 for x in [-3.26,-1.44]:c.riser(h,m,'Optical bench rail',x,.31,(.07,2.77),.25,'goldedge')
+# v8: lens barrel around the four cells and both baffles, cut away on the top
+# and viewer side so the lenses stay visible. Kept clear of the cell feet.
+c.barrel_cut(h,m,'Lens barrel (cutaway)',(-2.35,1.10),.985,-.98,1.58,100,238)
+CUT=c.section_material(h)
+for a in [100,238]:
+    r=1.0025;xx=-2.35+r*math.cos(math.radians(a));yy=1.10+r*math.sin(math.radians(a))
+    h.line('Lens barrel section edge',[(xx,yy,-.98),(xx,yy,1.58)],.022,CUT)
+for z in [-.98,1.58]:h.ring('Lens barrel end flange',(-2.35,1.10,z),1.06,.985,.05,m['silver'],'z',48)
 c.plaque(h,m,'Refractive telescope',(-2.36,-.055,1.98),2.42)
 h.role('SceneSelect')
 h.ring('Scene-select bearing housing',(-2.35,1.10,2.89),.70,.47,.23,m['silver'],'z',48)

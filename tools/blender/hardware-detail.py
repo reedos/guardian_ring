@@ -82,15 +82,23 @@ def ring(name,at,outer,inner,depth,mat,axis='z',segments=48):
 def screw(at,mat,axis='y',r=.027):
     cyl('Captive fastener as drawn',at,r,r*.55,mat,axis,12,.003)
 def foil(name,center,u,v,normal,mat,seed=19):
-    rng=random.Random(seed);n=16;verts=[];faces=[]
+    # Soft blanket crinkle: a few broad random-phase ripples, tapered to the
+    # bound edges and smooth-shaded. Earlier builds displaced each vertex at
+    # random and flat-shaded the triangles, which read as blocky pixel squares.
+    rng=random.Random(seed);n=40;verts=[];faces=[]
+    waves=[(rng.uniform(0,math.tau),rng.uniform(1.5,4.5),rng.uniform(1.5,4.5),rng.uniform(0,math.tau),rng.uniform(.5,1)) for _ in range(5)]
     for j in range(n+1):
         for i in range(n+1):
-            a,b=i/n-.5,j/n-.5;wave=.015*math.sin(math.pi*i/n)*math.sin(math.pi*j/n)*rng.uniform(-1,1)
-            q=Vector(center)+Vector(u)*a+Vector(v)*b+Vector(normal)*wave;verts.append(p(q))
+            a,b=i/n-.5,j/n-.5;taper=(math.sin(math.pi*i/n)*math.sin(math.pi*j/n))**.5
+            ripple=sum(w*math.sin(math.tau*(fu*a*math.cos(ang)+fv*b*math.sin(ang))+ph) for ang,fu,fv,ph,w in waves)/3.5
+            q=Vector(center)+Vector(u)*a+Vector(v)*b+Vector(normal)*(.008*taper*ripple);verts.append(p(q))
     for j in range(n):
         for i in range(n):
-            k=j*(n+1)+i;faces.extend([(k,k+1,k+n+2),(k,k+n+2,k+n+1)])
-    d=bpy.data.meshes.new(name);d.from_pydata(verts,[],faces);d.update();o=bpy.data.objects.new(name,d);bpy.context.collection.objects.link(o);return finish(o,name,mat,smooth=False)
+            k=j*(n+1)+i;faces.append((k,k+1,k+n+2,k+n+1))
+    d=bpy.data.meshes.new(name);d.from_pydata(verts,[],faces);d.update();o=bpy.data.objects.new(name,d);bpy.context.collection.objects.link(o)
+    o=finish(o,name,mat,smooth=False)
+    for f in o.data.polygons:f.use_smooth=True
+    return o
 def enclosure(name,at,size,m,open_top=False):
     x,y,z=at;w,h,d=size;t=.035
     box(name+' base',(x,y-h/2+t/2,z),(w,t,d),m['silver'])

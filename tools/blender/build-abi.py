@@ -9,14 +9,20 @@ unit is an integral cooler, transfer line and remote cold head. Parts now rest o
 the bench. The Data Book publishes no ABI dimensions, so sizes remain as drawn.
 v8 adds the Optical Port Sunshield Assembly (baffled port, deployed cover,
 released pin puller) and the scan shroud with its heat pipes (pp. 3-7, 3-14).
+v9 draws the bench as a cutaway of a closed instrument: a sectioned housing
+(far walls full height, near walls cut, cover removed) and a cut stray-light
+housing around the four telescope mirrors. Mirrors get a broader highlight so
+they read as mirrors in the explorer. Housing form and size are as drawn.
 """
 import bpy, importlib.util
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('civil',Path(__file__).with_name('civil-detail.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c);h=c.load_h()
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=8
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=9
+c.readable_mirror(m)
 c.bench(h,m,(.35,-.26,.10),(10.8,8.2))
+c.cutaway_enclosure(h,m,(.35,0,-.26),(10.8,8.2),1.95)
 h.role('Telescope')
 mirrors=[(-3.40,1.05,.55,.59),(-2.40,.97,-.65,.37),(-1.43,1.08,.47,.44),(-.48,.94,-.65,.30)]
 for i,(x,y,z,r) in enumerate(mirrors,1):
@@ -31,6 +37,21 @@ fx,fy,fz,fr=mirrors[2]
 h.box('Telescope focus motor bracket',(fx+.16,fy-.30,fz-.20),(.20,.10,.12),m['dark'])
 h.cyl('Telescope focus motor',(fx+.30,fy-.30,fz-.20),.085,.20,m['edge'],'z',24)
 h.rod('Telescope focus drive link',(fx+.30,fy-.30,fz-.10),(fx+.22,fy-.22,fz-.065),.022,m['silver'])
+# v9: stray-light housing around the telescope, cut open on the +Z side where
+# the beam from the scan mirrors enters and stepped down toward +X so the exit
+# beam and the cooling hardware stay in view. Form and height as drawn.
+# The far wall is split where the scan-shroud heat pipe passes through it.
+c.cut_wall(h,m,'Telescope housing far wall (cutaway)','x',-1.12,.04,[(-4.15,1.85),(-1.60,1.85),(-1.35,.30),(-.255,.30)])
+c.cut_wall(h,m,'Telescope housing far wall (cut to curb)','x',-1.12,.04,[(-.145,.30),(.09,.30)])
+h.box('Telescope housing far wall lintel',(-.20,.225,-1.10),(.11,.15,.04),m['dark'],0)
+h.ring('Heat-pipe wall feedthrough grommet',(-.20,.06,-1.10),.05,.03,.07,m['edge'],'z',20)
+c.cut_wall(h,m,'Telescope housing end wall (cutaway)','z',-4.15,.04,[(-1.08,1.85),(-.10,1.85),(.55,.30),(1.0,.30)])
+c.cut_wall(h,m,'Telescope housing exit wall (cut to curb)','z',.05,.04,[(-1.08,.30),(1.0,.30)])
+CUT=c.section_material(h)
+h.line('Telescope housing section edge',[(-4.13,1.858,-.10),(-4.13,.308,.55),(-4.13,.308,1.0)],.025,CUT)
+h.line('Telescope housing section edge',[(-1.60,1.858,-1.10),(-1.35,.308,-1.10),(.09,.308,-1.10)],.025,CUT)
+h.line('Telescope housing section edge',[(.07,.308,-1.08),(.07,.308,1.0)],.025,CUT)
+h.box('Telescope housing stray-light lining',(-2.87,.98,-1.076),(2.50,1.70,.012),m['black'],0)
 c.plaque(h,m,'Telescope',(-2.4,-.08,1.43),2.5)
 h.role('ScanSystem')
 c.scan(h,m,'North south scan',(-3.20,.87,3.0),(.64,.25,.72),scale=.85,motion='ABIScanNorthSouth')

@@ -36,6 +36,78 @@ def bench(h,m,at,size):
             h.box('Instrument mounting shoe',(xx,bottom-.08+.004,zz),(.55,.16,.42),m['silver'])
             h.screw((xx,top+.008,zz),m['edge'],r=.043)
 
+def section_material(h):
+    """Conventional cutaway color for cut wall edges; a drawing convention, not a finish."""
+    return h.material('Cutaway section edge',(.62,.17,.07),.1,.5)
+
+def cut_wall(h,m,name,along,fixed,t,profile,material='dark'):
+    """Extruded enclosure wall standing on the bench top.
+    along='x': wall runs in x at z=fixed (inner face toward +z); along='z': runs in z at x=fixed.
+    profile: [(s,height),...] top outline from one end to the other; bottom is the bench top."""
+    bottom=BENCH_TOP-SINK
+    outline=[(profile[0][0],bottom),(profile[-1][0],bottom)]+[(s,y) for s,y in reversed(profile)]
+    def at(s,y,k):
+        return h.p((s,y,fixed+k) if along=='x' else (fixed+k,y,s))
+    verts=[at(s,y,k) for k in [0,t] for s,y in outline];n=len(outline)
+    faces=[tuple(range(n)),tuple(range(2*n-1,n-1,-1))]
+    for i in range(n):
+        j=(i+1)%n;faces.append((i,n+i,n+j,j))
+    d=bpy.data.meshes.new(name);d.from_pydata(verts,[],faces);d.update()
+    import bmesh
+    bm=bmesh.new();bm.from_mesh(d);bmesh.ops.recalc_face_normals(bm,faces=bm.faces);bm.to_mesh(d);bm.free()
+    o=bpy.data.objects.new(name,d);bpy.context.collection.objects.link(o);h.finish(o,name,m[material],smooth=False)
+    return o
+
+def barrel_cut(h,m,name,center,radius,z0,z1,a0,a1,t=.035,material='dark',segments=40):
+    """Lens-barrel shell about a Three.js Z axis through (x,y), kept only from
+    angle a0 to a1 (degrees, 0 = +X, 90 = +Y): a cutaway of a closed tube."""
+    x,y=center;verts=[];faces=[]
+    for i in range(segments+1):
+        a=math.radians(a0+(a1-a0)*i/segments)
+        for r in [radius,radius+t]:
+            for z in [z0,z1]:verts.append(h.p((x+r*math.cos(a),y+r*math.sin(a),z)))
+    for i in range(segments):
+        b=4*i;n=b+4
+        faces+=[(b,b+1,n+1,n),(b+2,n+2,n+3,b+3),(b+1,b+3,n+3,n+1),(b,n,n+2,b+2)]
+    faces+=[(0,2,3,1),(4*segments,4*segments+1,4*segments+3,4*segments+2)]
+    d=bpy.data.meshes.new(name);d.from_pydata(verts,[],faces);d.update()
+    import bmesh
+    bm=bmesh.new();bm.from_mesh(d);bmesh.ops.recalc_face_normals(bm,faces=bm.faces);bm.to_mesh(d);bm.free()
+    o=bpy.data.objects.new(name,d);bpy.context.collection.objects.link(o);return h.finish(o,name,m[material],.004)
+
+def readable_mirror(m):
+    """Broaden the mirror highlight so coated optics read as mirrors under the
+    explorer's studio reflections instead of mirroring flat black space."""
+    bs=m['mirror'].node_tree.nodes.get('Principled BSDF')
+    bs.inputs['Base Color'].default_value=(.72,.80,.88,1);m['mirror'].diffuse_color=(.72,.80,.88,1)
+    bs.inputs['Metallic'].default_value=.86;bs.inputs['Roughness'].default_value=.27
+
+def cutaway_enclosure(h,m,at,size,height,curb=.32,t=.05,back_height=None):
+    """v9 (ABI) / v8 (TIRS-2): sectioned instrument housing around the open bench.
+    The far walls (-X, -Z) stand to full height and step down along a cut line;
+    the near +X wall is cut to a curb and the near +Z wall and the cover are
+    removed, so the bench reads as a cutaway of a closed, light-tight instrument.
+    Wall height, thickness and cut line are as drawn."""
+    h.role('Structure');x,y,z=at;w,d=size
+    x0,x1,z0,z1=x-w/2,x+w/2,z-d/2,z+d/2
+    cut=section_material(h)
+    bh=back_height or height
+    back=[(x0,bh),(x1-w*.42,bh),(x1-w*.22,curb),(x1,curb)]
+    side=[(z0,height),(z0+d*.52,height),(z0+d*.74,curb),(z1,curb)]
+    near=[(z0,curb),(z1,curb)]
+    cut_wall(h,m,'Instrument housing far wall (cutaway)','x',z0,t,back)
+    cut_wall(h,m,'Instrument housing side wall (cutaway)','z',x0,t,side)
+    cut_wall(h,m,'Instrument housing near wall (cut to curb)','z',x1-t,t,near)
+    # Section caps trace every cut edge so the removed material is explicit.
+    for name,pts in [('back',[(s,yy+.008,z0+t/2) for s,yy in back[1:]]),('side',[(x0+t/2,yy+.008,s) for s,yy in side[1:]]),
+                     ('near',[(x1-t/2,curb+.008,z0),(x1-t/2,curb+.008,z1)])]:
+        h.line('Cutaway section edge ('+name+')',pts,t*.62,cut)
+    # Vertical section edges where each cut wall ends at the open +Z face.
+    for xx in [x0+t/2,x1-t/2]:h.line('Cutaway section edge (end)',[(xx,BENCH_TOP,z1-.004),(xx,curb+.008,z1-.004)],t*.62,cut)
+    # Black stray-light lining on the inside of the full-height walls.
+    h.box('Housing stray-light lining (far wall)',((x0+x1-w*.42)/2,(bh+BENCH_TOP)/2,z0+t+.004),(x1-w*.42-x0-t,bh-BENCH_TOP-.06,.012),m['black'],0)
+    h.box('Housing stray-light lining (side wall)',(x0+t+.004,(height+BENCH_TOP)/2,(z0+z0+d*.52)/2+t/2),(.012,height-BENCH_TOP-.06,d*.52-t),m['black'],0)
+
 def riser(h,m,name,x,z,size,top,material='dark'):
     """Solid mounting block from just below the bench top up to `top`."""
     bottom=BENCH_TOP-SINK

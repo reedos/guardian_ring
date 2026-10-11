@@ -5,7 +5,7 @@ const scene=illustrated({
   phaseHighlights:{readout:'Readout',digitize:'Readout'},
   lessonNote:'Dashed amber lines connect the selected reference, scene selector, and optical components by function; they are not traced rays. Earth and space endpoints mark reference directions, not installed targets. Mirror angles, packaging, and playback time are illustrative.',
   mechanisms:[{node:'TIRSSceneSelect',axis:[0,0,1],range:.52,motion:'reference'}],
-  url:'models/tirs2.glb?v=7',
+  url:'models/tirs2.glb?v=8',
   camera:{pos:[12,12,16],target:[.3,.5,.1],min:3,max:38},cameraPhone:{pos:[11.5,13,18.5]},distance:6,
   points:{telescope:'AnchorTelescope',arrays:'AnchorArrays',cooling:'AnchorCooling','scene-select':'AnchorSceneSelect',blackbody:'AnchorBlackbody',readout:'AnchorReadout',electronics:'AnchorElectronics',radiator:'AnchorRadiator',filters:'AnchorFilters'},
   views:{
