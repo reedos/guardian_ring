@@ -1,0 +1,102 @@
+{
+  "reviewed": "10/11/2026",
+  "scope": "Accuracy review round 4 (research/review-accuracy-2026-10-10.md). Rocket-plume molecular bands, the public MEO and LEO missile warning/tracking layers, and the SBIRS scanning/staring sensor description. No sensitivity, threshold, resolution, focal-plane format, payload mass or false-alarm figure is admitted.",
+  "sources": [
+    {
+      "id": "nasa-rocket-plume-transmittance-2003",
+      "title": "Transmittance and Radiance Computations for Rocket Engine Plume Environments (HT2003-47406)",
+      "publisher": "NASA NTRS / Gopal D. Tejwani, Lockheed Martin Space Operations at NASA John C. Stennis Space Center; 2003 ASME Heat Transfer Conference",
+      "url": "https://ntrs.nasa.gov/api/citations/20040013438/downloads/20040013438.pdf",
+      "dated": "07/2003 (conference dates 07/21–07/23/2003)",
+      "accessed": "10/11/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "verified",
+      "section": "PDF p. 1, Abstract; PDF p. 4, molecular absorption bands (Figs. 1a–1b discussion)",
+      "quote": "The most important combustion-product molecules giving rise to emission in the IR are water vapor, carbon dioxide, and carbon monoxide."
+    },
+    {
+      "id": "lm-sbirs-geo2-payload-2009",
+      "title": "Critical Missile Warning Payload for Second SBIRS GEO Satellite Delivered to Lockheed Martin",
+      "publisher": "Lockheed Martin",
+      "url": "https://news.lockheedmartin.com/2009-04-20-Critical-Missile-Warning-Payload-for-Second-SBIRS-GEO-Satellite-Delivered-to-Lockheed-Martin",
+      "published": "04/20/2009",
+      "accessed": "10/11/2026",
+      "kind": "primary",
+      "marketing": true,
+      "status": "verified",
+      "section": "Payload description paragraph: scanning sensor and staring sensor",
+      "quote": "The staring sensor is designed to detect very low signature, short-burn-duration theater missiles."
+    },
+    {
+      "id": "lm-sbirs-product-card-2016",
+      "title": "SBIRS product card (SBIRS_Fact_Sheet_(Final).pdf)",
+      "publisher": "Lockheed Martin",
+      "url": "https://www.lockheedmartin.com/content/dam/lockheed-martin/space/photo/sbirs/SBIRS_Fact_Sheet_(Final).pdf",
+      "dated": "File 16-04247_SBIRS_Product_Card_2016_R18, layout dated 01/05/2017",
+      "accessed": "10/11/2026",
+      "kind": "primary",
+      "marketing": true,
+      "status": "verified",
+      "section": "PDF p. 2, overview paragraph",
+      "quote": "Using scanning sensors for wide-area surveillance and staring sensors to focus on smaller regions of interest"
+    },
+    {
+      "id": "ssc-la-sbirs-factsheet",
+      "title": "Space Based Infrared System (SBIRS) fact sheet",
+      "publisher": "U.S. Space Force / Los Angeles Air Force Base",
+      "url": "https://www.losangeles.spaceforce.mil/About-Us/Fact-Sheets/Display/Article/734550/space-based-infrared-system-sbirs/",
+      "dated": "Publication date not confirmed",
+      "attempted": "10/11/2026",
+      "kind": "primary",
+      "marketing": false,
+      "status": "unchecked",
+      "unchecked": "Direct web open returned HTTP 403 Forbidden. Search-result paraphrase not admitted; not cited."
+    }
+  ],
+  "facts": [
+    {
+      "id": "rocket-plume-ir-emitters",
+      "levels": ["plume"],
+      "row": ["Rocket-engine plume IR emitters", "Water vapor, carbon dioxide and carbon monoxide", "reported",
+        {"refs": [["nasa-rocket-plume-transmittance-2003", "PDF p. 1, Abstract"]]}],
+      "scope": "Named molecules in a NASA Stennis rocket-engine test-plume study. No intensity, temperature, vehicle or detectability is implied."
+    },
+    {
+      "id": "rocket-plume-co2-band",
+      "levels": ["plume", "atmosphere"],
+      "row": ["CO2 ν3 band center (rocket-plume study)", "4.26 μm", "reported",
+        {"refs": [["nasa-rocket-plume-transmittance-2003", "PDF p. 4, CO2 ν3 fundamental at 4.26 μm; PDF p. 1, emission and absorption lines of the same species coincide"]]}],
+      "scope": "Molecular band location only. The paper states it as an absorption band and notes that emission and absorption share line positions; no band strength is assigned."
+    },
+    {
+      "id": "rocket-plume-h2o-band",
+      "levels": ["plume", "atmosphere"],
+      "row": ["H2O ν3 and ν1 band centers (rocket-plume study)", "2.66 μm and 2.74 μm", "reported",
+        {"refs": [["nasa-rocket-plume-transmittance-2003", "PDF p. 4, H2O ν3 fundamental at 2.66 μm and ν1 at 2.74 μm; PDF p. 1, emission and absorption lines of the same species coincide"]]}],
+      "scope": "Molecular band locations only; no band strength, plume temperature or sensor passband is assigned."
+    },
+    {
+      "id": "meo-mwmt-layer",
+      "levels": ["orbits"],
+      "row": ["Resilient Missile Warning/Missile Tracking – MEO", "Planned missile warning and tracking satellites in medium Earth orbit", "reported",
+        {"refs": [["gao-26-107085", "Table 1, Resilient Missile Warning/Missile Tracking – Medium Earth Orbit row; sentence beginning “DOD is prioritizing development of missile warning and tracking capabilities in LEO and medium Earth orbit (MEO)”"]]}],
+      "scope": "GAO description of a planned layer as of its 01/28/2026 report. No count, launch status, orbit parameters or performance is stated here."
+    },
+    {
+      "id": "leo-tracking-layer",
+      "levels": ["orbits"],
+      "row": ["SDA Tranche 1 Tracking Layer", "Missile warning and tracking from low Earth orbit with wide-field-of-view infrared sensors", "reported",
+        {"refs": [["sda-tranche1-award", "Award paragraph and director quotation (07/18/2022)"], ["gao-26-107085", "Table 1, Proliferated Warfighter Space Architecture Tracking and Transport Layers row (low Earth orbit)"]]}],
+      "scope": "Dated award description and GAO architecture table. No numerical field of view, resolution, count or operational status is implied."
+    },
+    {
+      "id": "sbirs-scanning-staring",
+      "levels": ["satellite", "payload"],
+      "row": ["SBIRS GEO payload sensor types", "A scanning sensor and a staring sensor", "vendor",
+        {"refs": [["lm-sbirs-geo2-payload-2009", "Payload description paragraph"], ["lm-sbirs-product-card-2016", "PDF p. 2, overview paragraph and GEO payload line"]],
+         "vs": "Attributed design description from the prime contractor, not a performance comparison; government fact sheets returned HTTP 403"}],
+      "scope": "Sensor types only. Payload mass, focal-plane colors, detector counts, sensitivity and revisit wording in these releases are deliberately not adopted."
+    }
+  ]
+}

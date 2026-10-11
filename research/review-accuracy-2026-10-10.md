@@ -136,3 +136,23 @@ terminology error, 1 glossary imprecision, 1 stale generator label, 2 research-n
 3. 46 page rows were newly recorded as reviewed in `research/page-claim-reviews.json` so the claim audit certifies. Some of
    them (the civil-cooling rows and the Kenneth Fire caption) were already unreviewed before this branch. I checked each,
    but a second reviewer may want to confirm them.
+
+## Round 4 (coordinator request, 10/11/2026): sourcing gaps found by the story reviewer
+
+| Item | Verdict | Evidence and action |
+|---|---|---|
+| CO₂ 4.3 μm / H₂O 2.7 μm cited only to a 1971 gas-turbine combustor study | gap closed | Opened NASA NTRS 20040013438, Tejwani, “Transmittance and Radiance Computations for Rocket Engine Plume Environments” (ASME HT2003-47406, NASA Stennis). PDF p. 1 names water vapor, carbon dioxide and carbon monoxide as the main IR emitters in rocket-engine plumes and says emission and absorption share line positions; PDF p. 4 gives CO₂ ν3 at 4.26 μm and H₂O ν3/ν1 at 2.66/2.74 μm. The paper states the band centers in its absorption discussion, so the new rows say “band center” rather than claiming a measured plume emission spectrum. Added as source `nasa-rocket-plume-transmittance-2003`; existing CO₂/H₂O rows now cite both studies. `plume-ir-emission-aggregate` stays unchecked |
+| MEO missile warning/tracking source unchecked | gap closed with a different source | The SSC CDR release PDF still returns HTTP 403 (stays unchecked). The verified GAO-26-107085 Table 1 lists “Resilient Missile Warning/Missile Tracking – Medium Earth Orbit” (planned) and says DOD is prioritizing missile warning and tracking in LEO and MEO. No count or launch year adopted |
+| LEO Tracking Layer verified but unused | row added | SDA 07/18/2022 award (re-opened): 28 satellites in four planes for missile warning and tracking from LEO; director: “wide-field-of-view infrared sensors.” Corroborated by GAO-26 Table 1 PWSA row |
+| SBIRS scanning and staring sensors | Vendor only | Space Force (spaceforce.mil and losangeles.spaceforce.mil) fact sheets and the media.defense.gov PDF all return HTTP 403; recorded unchecked. Two opened Lockheed Martin documents say it: 04/20/2009 GEO-2 payload release and the 2016 SBIRS product card (“scanning sensors for wide-area surveillance and staring sensors to focus on smaller regions of interest”). Labeled Vendor. Payload masses, sensor-chip-assembly colors, detector counts and “sensitivity/revisit” wording in those documents were deliberately not adopted |
+
+New claim keys (in `src/story-claims.js`, mirrored in `research/accuracy-2026-10-10-facts.json`):
+`story:rocket-plume-emitters`, `story:rocket-plume-co2-band`, `story:rocket-plume-h2o-band`, `story:meo-mwmt-layer`,
+`story:leo-tracking-layer`, `story:sbirs-scanning-staring`.
+
+Not changed (story lane owns it): the index sentence “A civil combustion study supplies the band examples here” should
+now mention the rocket-engine plume study if the story uses the new keys.
+
+Round 4 verification: `npx tsc --noEmit` clean · `npx vitest run` 52 files, 293 tests passed · `npx tsx tools/claims.mjs`
+0 problems (970 claims, 518 research rows) · build ok · links PASS (0 problems) · pages PASS (8 of 8) ·
+test-claim-page-policy PASS · claim-audit-report certified (48 new page rows reviewed).

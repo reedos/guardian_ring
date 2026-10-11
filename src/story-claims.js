@@ -39,14 +39,14 @@ export const STORY_CLAIMS = [
   {
     key: 'story:co2-band', group: 'story',
     label: 'CO2 molecular emission band', value: 'Near 4.3 μm', basis: 'reported',
-    ev: { refs: [['nasa-combustion-bands', 'Printed p. 5 / PDF p. 7']] },
-    scope: 'General molecular spectroscopy in a civil combustion study; no system performance implication.',
+    ev: { refs: [['nasa-combustion-bands', 'Printed p. 5 / PDF p. 7'], ['nasa-rocket-plume-transmittance-2003', 'PDF p. 4, CO2 4.26 μm and H2O 2.66/2.74 μm band centers; PDF p. 1, rocket-plume IR emitters']] },
+    scope: 'General molecular spectroscopy in a civil combustion study, corroborated by a NASA rocket-engine plume study; no system performance implication.',
   },
   {
     key: 'story:h2o-band', group: 'story',
     label: 'H2O molecular emission band', value: 'Near 2.7 μm', basis: 'reported',
-    ev: { refs: [['nasa-combustion-bands', 'Printed p. 5 / PDF p. 7']] },
-    scope: 'General molecular spectroscopy in a civil combustion study; no system performance implication.',
+    ev: { refs: [['nasa-combustion-bands', 'Printed p. 5 / PDF p. 7'], ['nasa-rocket-plume-transmittance-2003', 'PDF p. 4, CO2 4.26 μm and H2O 2.66/2.74 μm band centers; PDF p. 1, rocket-plume IR emitters']] },
+    scope: 'General molecular spectroscopy in a civil combustion study, corroborated by a NASA rocket-engine plume study; no system performance implication.',
   },
   {
     key: 'story:abi-image-role', group: 'story',
@@ -101,6 +101,45 @@ export const STORY_CLAIMS = [
     label: 'FORGE role', value: 'Spacecraft operations and mission-data processing', basis: 'reported',
     ev: { refs: [['gao-21-105249', 'Printed p. 1 (PDF p. 5), opening paragraph; printed p. 8 (PDF p. 12), acquisition-strategy paragraph.']] },
     scope: 'GAO description of the planned system; no present operational status or software internals.',
+  },
+  // Round 4 accuracy review (10/11/2026): evidence keys for the story lane. Rows mirror
+  // research/accuracy-2026-10-10-facts.json; no story prose is changed here.
+  {
+    key: 'story:rocket-plume-emitters', group: 'story',
+    label: 'Rocket-engine plume IR emitters', value: 'Water vapor, carbon dioxide and carbon monoxide', basis: 'reported',
+    ev: { refs: [['nasa-rocket-plume-transmittance-2003', 'PDF p. 1, Abstract']] },
+    scope: 'Named molecules in a NASA Stennis rocket-engine test-plume study. No intensity, temperature, vehicle or detectability is implied.',
+  },
+  {
+    key: 'story:rocket-plume-co2-band', group: 'story',
+    label: 'CO2 ν3 band center (rocket-plume study)', value: '4.26 μm', basis: 'reported',
+    ev: { refs: [['nasa-rocket-plume-transmittance-2003', 'PDF p. 4, CO2 ν3 fundamental at 4.26 μm; PDF p. 1, emission and absorption lines of the same species coincide']] },
+    scope: 'Molecular band location only; no band strength is assigned.',
+  },
+  {
+    key: 'story:rocket-plume-h2o-band', group: 'story',
+    label: 'H2O ν3 and ν1 band centers (rocket-plume study)', value: '2.66 μm and 2.74 μm', basis: 'reported',
+    ev: { refs: [['nasa-rocket-plume-transmittance-2003', 'PDF p. 4, H2O ν3 fundamental at 2.66 μm and ν1 at 2.74 μm; PDF p. 1, emission and absorption lines of the same species coincide']] },
+    scope: 'Molecular band locations only; no band strength, plume temperature or sensor passband is assigned.',
+  },
+  {
+    key: 'story:meo-mwmt-layer', group: 'story',
+    label: 'Resilient Missile Warning/Missile Tracking – MEO', value: 'Planned missile warning and tracking satellites in medium Earth orbit', basis: 'reported',
+    ev: { refs: [['gao-26-107085', 'Table 1, Resilient Missile Warning/Missile Tracking – Medium Earth Orbit row; sentence beginning “DOD is prioritizing development of missile warning and tracking capabilities in LEO and medium Earth orbit (MEO)”']] },
+    scope: 'GAO description of a planned layer as of its 01/28/2026 report. No count, launch status, orbit parameters or performance.',
+  },
+  {
+    key: 'story:leo-tracking-layer', group: 'story',
+    label: 'SDA Tranche 1 Tracking Layer', value: 'Missile warning and tracking from low Earth orbit with wide-field-of-view infrared sensors', basis: 'reported',
+    ev: { refs: [['sda-tranche1-award', 'Award paragraph and director quotation (07/18/2022)'], ['gao-26-107085', 'Table 1, Proliferated Warfighter Space Architecture Tracking and Transport Layers row (low Earth orbit)']] },
+    scope: 'Dated award description and GAO architecture table. No numerical field of view, resolution, count or operational status.',
+  },
+  {
+    key: 'story:sbirs-scanning-staring', group: 'story',
+    label: 'SBIRS GEO payload sensor types', value: 'A scanning sensor and a staring sensor', basis: 'vendor',
+    ev: { refs: [['lm-sbirs-geo2-payload-2009', 'Payload description paragraph'], ['lm-sbirs-product-card-2016', 'PDF p. 2, overview paragraph and GEO payload line']],
+      vs: 'Attributed design description from the prime contractor, not a performance comparison; government fact sheets returned HTTP 403' },
+    scope: 'Sensor types only. Payload mass, focal-plane colors, detector counts, sensitivity and revisit wording are not adopted.',
   },
   {
     key: 'story:schematic', group: 'story',

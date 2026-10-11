@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import { BASIS,problems } from '../src/evidence.js';
 const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
-const clusters=['systems-facts','physics-facts','spacecraft-facts','comprehensive-systems-facts','tirs2-architecture-facts','design-practices-facts','instrument-integration-facts'].map(name=>read(`research/${name}.json`));
+const clusters=['systems-facts','physics-facts','spacecraft-facts','comprehensive-systems-facts','tirs2-architecture-facts','design-practices-facts','instrument-integration-facts','accuracy-2026-10-10-facts'].map(name=>read(`research/${name}.json`));
 const sources={};const facts=[];
 for(const cluster of clusters){
  for(const s of Array.isArray(cluster.sources)?cluster.sources:Object.values(cluster.sources)){

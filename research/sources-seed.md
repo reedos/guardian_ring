@@ -17,6 +17,7 @@ All items accessed 10/01/2026 unless a fetch failed (noted). Organized A–E per
   - (also, elsewhere) "The FY2027 DOD budget request included $6.9 billion in discretionary funding for missile warning and tracking" — from search-engine summary of a companion CRS/budget source, NOT independently opened/verified as an exact quote; flag as unverified.
 
 ### `ssc-sbirs-factsheet` — Space Based Infrared System
+- Accuracy review round 4 (10/11/2026): this page and the Los Angeles AFB fact sheet both returned HTTP 403. Scanning and staring sensor types are cited as Vendor to two opened Lockheed Martin documents (`sbirs-scanning-staring`).
 - Publisher: U.S. Space Force / Space Systems Command, official fact sheet
 - URL: https://www.spaceforce.mil/about-us/fact-sheets/article/2197746/space-based-infrared-system/
 - Date: unknown (not retrieved) | Accessed attempt 10/01/2026 — **FETCH FAILED (HTTP 403 Forbidden)**
@@ -109,6 +110,7 @@ All items accessed 10/01/2026 unless a fetch failed (noted). Organized A–E per
 - Notes: Consistent framing across multiple secondary outlets: "Once fully operational, the SDA Tracking Layer will consist of a proliferated heterogeneous constellation of Wide Field of View (WFOV) space vehicles (SVs) that provide persistent global coverage and custody capability combined with the Missile Defense Agency (MDA) Hypersonic and Ballistic Tracking Space Sensor (HBTSS) Medium Field of View (MFOV) SVs that provide precision global access capability." This sentence appears to be lifted near-verbatim across outlets from an SDA/MDA release; the underlying primary document was not located/opened in this session.
 
 ### `resilient-meo-mwt-ssc` — The first Medium Earth Orbit Resilient Missile Warning Missile Tracking Program successfully completes its critical design review and goes into production
+- Accuracy review round 4 (10/11/2026): this SSC PDF returned HTTP 403 again and stays unchecked. The MEO layer is cited to the verified GAO-26-107085 Table 1 row instead (`meo-mwmt-layer`).
 - Publisher: Space Systems Command (ssc.spaceforce.mil), official press release
 - URL: https://www.ssc.spaceforce.mil/Portals/3/Documents/PRESS%20RELEASES/The%20first%20Medium%20Earth%20Orbit%20Resilient%20Missile%20Warning%20Missile%20Tracking%20Program%20successfully%20completes%20its%20critical%20design%20review%20and%20goes%20into%20production.pdf
 - Date: not independently opened — **NOT FETCHED, found via search index only**
@@ -180,6 +182,7 @@ All items accessed 10/01/2026 unless a fetch failed (noted). Organized A–E per
 - Notes (unverified paraphrase from search): "InSb and HgCdTe detectors typically operate at liquid nitrogen temperature (~77 K) to minimize thermal noise... InSb detectors cannot operate effectively above about 145 K, and are seldom used above 100 K. HgCdTe operation at 180 K is possible using thermoelectric coolers, as well as mechanical coolers at 120 K." QWIP arrays demonstrated NETD figures "as low as 27 mK at 30°C BB when operating at 65 K." T2SL detectors "comparable to HgCdTe in the 77–195 K temperature range," with long-wave plasmonic variants operating "as high as 230 K." **These are search-engine-synthesized paraphrases across several unopened sources — treat as indicative, not citation-ready; re-derive from the individual papers before publishing exact figures.**
 
 ### `plume-ir-emission-aggregate` — Rocket/missile plume infrared emission bands
+- Accuracy review round 4 (10/11/2026): still not opened as a page set. Replaced for citation by the opened NASA NTRS rocket-engine plume study `nasa-rocket-plume-transmittance-2003` (Tejwani, HT2003-47406), recorded in `accuracy-2026-10-10-facts.json`.
 - Publisher: aggregated from search snippets (ScienceDirect "IR radiation characteristics of rocket exhaust plumes," academic plume-signature papers, EMSOPEDIA) — not individually opened
 - Date: various
 - Kind: Secondary (peer-reviewed aggregated via search, not independently opened)
