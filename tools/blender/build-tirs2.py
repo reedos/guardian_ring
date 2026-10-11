@@ -1,4 +1,4 @@
-"""TIRS-2 civil assembly v6; nine groups. Public NASA architecture vocabulary.
+"""TIRS-2 civil assembly v7; nine groups. Public NASA architecture vocabulary.
 Lens/array counts retained; packaging and dimensions as drawn. Fixed filters
 and ground-set alignment shims, not an added on-orbit focus actuator.
 v6 follows NASA's 2018 TIRS-2 design presentation (NTRS 20180005348): the two
@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('civil',Path(__file__).with_name('civil-detail.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c);h=c.load_h()
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=6
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=7
 m['lens']=h.material('Refractive element teaching blue',(.16,.38,.47),.25,.22)
 c.bench(h,m,(.40,-.27,.10),(10.4,8.25))
 h.role('Telescope')
@@ -83,6 +83,12 @@ h.cyl('Cryocooler thermomechanical body',(-.05,.52,-3.28),.28,1.48,m['silver'],'
 for x in [-.63,.53]:
     h.ring('Cryocooler support clamp',(x,.52,-3.28),.31,.28,.12,m['dark'],'x',32)
     c.riser(h,m,'Cryocooler clamp saddle',x,-3.28,(.16,.42),.23)
+# v7: the 2018 deck names a cryocooler launch lock (PDF p. 19 block diagram,
+# p. 21 sensor-unit overview; heritage design per p. 20). Its form is not
+# published: a representative bracket and released clamp, as drawn.
+c.riser(h,m,'Cryocooler launch lock post',.20,-2.92,(.16,.14),.80,'silver')
+h.box('Cryocooler launch lock arm',(.20,.80,-3.10),(.12,.06,.40),m['silver'])
+h.cyl('Cryocooler launch lock release device',(.20,.86,-2.95),.05,.08,m['edge'],'y',16)
 h.cyl('Cryocooler cold-head interface',(-.92,.52,-3.28),.15,.26,m['cyan'],'x',24)
 h.line('Cold thermal link',[(-1.10,.51,-3.28),(-1.50,.44,-3.12),(-1.68,.43,-2.88)],.045,m['silver'])
 # PDF p. 14: two CCEs, and the RSE connects either CCE to the single TMU.

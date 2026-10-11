@@ -41,6 +41,22 @@ def riser(h,m,name,x,z,size,top,material='dark'):
     bottom=BENCH_TOP-SINK
     return h.box(name,(x,(top+bottom)/2,z),(size[0],top-bottom,size[1]),m[material],.006)
 
+def arc_shield(h,m,name,center,radius,y0,y1,a0=210,a1=330,t=.03,material='silver',segments=24):
+    """Curved sheet-metal shield: a vertical arc around (x,z) from angle a0 to a1 (degrees)."""
+    x,z=center;verts=[];faces=[]
+    for i in range(segments+1):
+        a=math.radians(a0+(a1-a0)*i/segments)
+        for r in [radius,radius+t]:
+            for y in [y0,y1]:verts.append(h.p((x+r*math.cos(a),y,z+r*math.sin(a))))
+    for i in range(segments):
+        b=4*i;n=b+4
+        faces+= [(b,b+1,n+1,n),(b+2,n+2,n+3,b+3),(b+1,b+3,n+3,n+1),(b,n,n+2,b+2)]
+    faces+=[(0,2,3,1),(4*segments,4*segments+1,4*segments+3,4*segments+2)]
+    d=bpy.data.meshes.new(name);d.from_pydata(verts,[],faces);d.update()
+    import bmesh
+    bm=bmesh.new();bm.from_mesh(d);bmesh.ops.recalc_face_normals(bm,faces=bm.faces);bm.to_mesh(d);bm.free()
+    o=bpy.data.objects.new(name,d);bpy.context.collection.objects.link(o);return h.finish(o,name,m[material],.004)
+
 def standoffs(h,m,name,x,z,size,floor,ceiling,r=.035):
     """Four posts carrying a tray or chassis whose underside is at `ceiling`."""
     if ceiling-floor<.008:return

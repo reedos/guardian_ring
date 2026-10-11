@@ -5,7 +5,7 @@ const scene=illustrated({
   phaseHighlights:{readout:'Readout',digitize:'Readout'},
   lessonNote:OPTICAL_CONNECTION_NOTE,
   mechanisms:MIRROR_DEMONSTRATIONS.abi,
-  url:'models/abi.glb?v=7',
+  url:'models/abi.glb?v=8',
   camera:{pos:[12,12,16],target:[.4,.35,.1],min:3,max:38},cameraPhone:{pos:[11.5,13,18.5]},distance:6,
   points:{telescope:'AnchorTelescope',bands:'AnchorBands','focal-planes':'AnchorFocalPlanes','scan-system':'AnchorScanSystem',calibration:'AnchorCalibration',readout:'AnchorReadout',controller:'AnchorController',thermal:'AnchorThermal',power:'AnchorPower'},
   views:{
@@ -32,7 +32,7 @@ const scene=illustrated({
   ],
   paths:{
     light:OPTICAL_CONNECTIONS.abi,
-    data:[{kind:'analog',points:['AnchorFocalPlanes',[3.39,.72,1.39],'AnchorReadout']},{kind:'image-data',points:['AnchorReadout',[3.68,.71,1.73],'AnchorController',[5.75,.95,.64]]},{kind:'command',points:['AnchorController',[3.56,.84,2.07],[-3.98,1.0,3.0],'AnchorScanSystem']},{kind:'feedback',points:['AnchorScanSystem',[-4.20,1.0,3.0],[-4.5,1.0,1.9],[3.0,.85,1.9],'AnchorController']}],
+    data:[{kind:'analog',points:['AnchorFocalPlanes',[3.39,.72,1.39],'AnchorReadout']},{kind:'image-data',points:['AnchorReadout',[3.68,.71,1.73],'AnchorController',[5.75,.95,.64]]},{kind:'command',points:['AnchorController',[3.56,.84,2.07],[-3.98,1.5,3.0],'AnchorScanSystem']},{kind:'feedback',points:['AnchorScanSystem',[-4.20,1.5,3.0],[-4.5,1.5,1.9],[3.0,.85,1.9],'AnchorController']}],
     heat:[{kind:'heat',phases:['lift'],points:['AnchorFocalPlanes',[2.13,.48,-1.33],'AnchorThermal']},{kind:'heat',phases:['reject'],points:['AnchorThermal','AnchorRadiator']},{kind:'radiation',points:['AnchorRadiator',[4.0,2.2,-4.2]]},{kind:'electrical',points:['AnchorPower',[-2.60,.42,-2.63],'AnchorThermal']},{kind:'feedback',phases:['sense'],points:['AnchorCooler',[-1.10,.65,-2.9],[-2.60,.42,-2.63]]},{kind:'heat',phases:['reject'],points:['AnchorReadout',[2.77,.12,2.74],[4.10,.12,1.77],'AnchorRadiator']}],
   },
 });

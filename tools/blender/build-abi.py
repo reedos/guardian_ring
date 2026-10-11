@@ -7,13 +7,15 @@ processor and the Peripheral and Thermal Control card; one telescope mirror has
 a focus motor; each of the two cryocoolers has its own CCE; each thermal dynamic
 unit is an integral cooler, transfer line and remote cold head. Parts now rest on
 the bench. The Data Book publishes no ABI dimensions, so sizes remain as drawn.
+v8 adds the Optical Port Sunshield Assembly (baffled port, deployed cover,
+released pin puller) and the scan shroud with its heat pipes (pp. 3-7, 3-14).
 """
 import bpy, importlib.util
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('civil',Path(__file__).with_name('civil-detail.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c);h=c.load_h()
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=7
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=8
 c.bench(h,m,(.35,-.26,.10),(10.8,8.2))
 h.role('Telescope')
 mirrors=[(-3.40,1.05,.55,.59),(-2.40,.97,-.65,.37),(-1.43,1.08,.47,.44),(-.48,.94,-.65,.30)]
@@ -34,6 +36,24 @@ h.role('ScanSystem')
 c.scan(h,m,'North south scan',(-3.20,.87,3.0),(.64,.25,.72),scale=.85,motion='ABIScanNorthSouth')
 c.scan(h,m,'East west scan',(-1.28,.86,2.78),(-.64,.45,.63),scale=.69,axis='y',motion='ABIScanEastWest')
 c.plaque(h,m,'Scan mirrors',(-2.48,-.06,3.78),2.48)
+# v8, Data Book pp. 3-7 and 3-14. Scan shroud: shields that keep direct sunlight
+# entering the optical port off the internal structure; the collected heat goes
+# to the radiator/loop-heat-pipe assembly through constant-conductance heat pipes.
+# Shield shape, number and the pipe route are as drawn; arcs stay south of the
+# mirrors so the scanner views and plates are unobstructed.
+c.arc_shield(h,m,'Scan shroud shield (north-south scanner)',(-3.20,3.0),.66,-.02,1.15)
+c.arc_shield(h,m,'Scan shroud shield (east-west scanner)',(-1.28,2.78),.56,-.02,1.05)
+h.line('Scan shroud heat pipe link',[(-3.20,.45,2.32),(-2.24,.45,2.26),(-1.28,.45,2.20)],.026,m['silver'])
+h.line('Scan shroud constant-conductance heat pipe',[(-.80,.40,2.48),(-.55,.06,2.12),(-.20,.06,2.02),(-.20,.06,-1.30),(1.70,.06,-1.30),(1.70,.60,-1.86),(2.15,.74,-1.95)],.026,m['silver'])
+# Optical Port Sunshield Assembly: baffled port tube and its one-time deployable
+# Optical Port Cover, drawn open on its spring hinge against a stop. The SMA
+# pin-puller launch lock is shown released. Tube size and vane count as drawn.
+h.ring('Optical port sunshield tube',(-4.62,.87,3.0),.40,.365,.80,m['dark'],'x',48)
+for n,xx in enumerate([-4.98,-4.80,-4.62,-4.44,-4.28],1):h.ring('Optical port stray-light baffle vane '+str(n),(xx,.87,3.0),.37,.25-.01*n,.02,m['black'],'x',48)
+for xx in [-4.90,-4.34]:c.riser(h,m,'Optical port sunshield saddle',xx,3.0,(.12,.46),.49)
+h.cyl('Optical port cover hinge',(-5.02,.87,3.42),.03,.80,m['edge'],'y',16)
+c.plate(h,m,'Optical port cover (deployed)',(-4.62,.87,3.44),(.78,.80),(0,0,1),'dark',.03)
+h.box('Optical port cover launch-lock pin puller (released)',(-4.98,1.30,3.0),(.10,.06,.12),m['edge'])
 h.role('Calibration')
 c.blackbody(h,m,'Internal calibration target',(.20,.63,2.62),.34)
 c.plate(h,m,'Solar calibration diffuser',(1.08,.74,2.75),(.57,.60),(0,.45,1),'white')
