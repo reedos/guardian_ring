@@ -1,4 +1,4 @@
-"""Representative spacecraft engineering cutaway, v9.
+"""Representative spacecraft engineering cutaway, v10.
 Blender --background --python tools/blender/build-satellite.py.
 Open decks, separated covers, equipment counts and arrangement are teaching
 choices, not a military satellite reconstruction or bill of materials.
@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
 bpy.ops.wm.read_factory_settings(use_empty=True)
-m=h.palette();VERSION=9
+m=h.palette();VERSION=10
 # Thin metallic foil catches the single Sun in irregular creases, not a flat
 # yellow label panel. These finishes are drawing choices, not flight materials.
 m['gold'].node_tree.nodes.get('Principled BSDF').inputs['Metallic'].default_value=.88
@@ -91,12 +91,16 @@ h.box('Representative reset supervisor package',(-1.05,1.873,.005),(.16,.057,.12
 for dx in [-.012,0,.012]:h.line('Computer housing bond strap',[(-1.26+dx,1.22,-.41),(-1.34+dx,1.13,-.49),(-1.34+dx,1.11,-.66)],.005,m['copper'])
 
 h.role('Wheels')
-h.box('Reaction-wheel mounting shelf',(-.06,.24,1.21),(.77,.085,.60),m['silver'],.014)
-for at,axis in [((-.18,.48,1.19),'y'),((.18,.51,1.23),'x'),((-.13,.64,1.40),'z')]:
+# Shelf rests on the lower deck and is braced where it overhangs. Three
+# orthogonal wheels stand on it without touching one another (as drawn).
+h.box('Reaction-wheel mounting shelf',(-.06,.2025,1.21),(.77,.085,.60),m['silver'],.014)
+for x in [-.40,.28]:h.rod('Wheel shelf brace',(x,.17,1.48),(x,.02,1.12),.016,m['silver'])
+for at,axis,cradle in [((-.22,.32,1.12),'y',None),((.17,.425,1.12),'x',(.15,.06,.16)),((-.05,.425,1.40),'z',(.16,.06,.13))]:
     h.cyl('Representative reaction-wheel housing',at,.18,.15,m['dark'],axis,32,.016)
     q=list(at);q[{'x':0,'y':1,'z':2}[axis]]+=.084
     h.cyl('Wheel housing service face',q,.143,.018,m['silver'],axis,32,.004)
-h.line('Wheel drive harness',[(.28,.45,1.22),(.37,.37,1.0),(.42,.42,.97)],.018,m['loom'])
+    if cradle:h.box('Wheel mounting cradle',(at[0],.275,at[2]),cradle,m['silver'],.006)
+h.line('Wheel drive harness',[(.25,.42,1.12),(.37,.37,1.0),(.52,.42,.99),(.61,.42,.99)],.018,m['loom'])
 
 h.role('Propulsion')
 h.sphere('Representative propellant tank',(.88,1.38,-.74),(.43,.50,.36),m['silver'])
@@ -146,12 +150,15 @@ h.connector('Radio interface',(1.23,1.78,-.36),.23,m)
 h.line('RF cable',[(1.04,2.29,-.64),(1.29,2.09,-.61),(1.28,1.82,-.44)],.017,m['loom'])
 
 h.role('Radiator')
-h.box('Separated radiator support panel',(1.93,1.28,1.48),(.76,1.48,.07),m['dark'],.023)
-h.box('Representative radiator face',(1.93,1.28,1.527),(.70,1.42,.019),m['white'],.011)
-for y in [.74,.94,1.14,1.34,1.54,1.74]:h.box('Radiator segment seam',(1.93,y,1.541),(.66,.006,.005),m['silver'],0)
+# Radiator stands off the +X (north/south, array-axis) face, the side a
+# geostationary bus keeps out of direct sunlight and pointed away from Earth,
+# rather than the Earth-facing +Z side. Separated for the cutaway, as drawn.
+h.box('Separated radiator support panel',(1.72,1.28,.62),(.07,1.48,.76),m['dark'],.023)
+h.box('Representative radiator face',(1.767,1.28,.62),(.019,1.42,.70),m['white'],.011)
+for y in [.74,.94,1.14,1.34,1.54,1.74]:h.box('Radiator segment seam',(1.781,y,.62),(.005,.006,.66),m['silver'],0)
 for y in [.65,1.88]:
-    for x in [1.66,2.20]:h.screw((x,y,1.55),m['edge'],'z',.024)
-for y in [.93,1.63]:h.line('Heat-pipe connection',[(.75,y,.35),(1.33,y,.42),(1.60,y,.98),(1.82,y,1.43)],.035,m['silver'])
+    for z in [.35,.89]:h.screw((1.79,y,z),m['edge'],'x',.024)
+for y in [.93,1.63]:h.line('Heat-pipe connection',[(.75,y,.35),(1.20,y,.45),(1.50,y,.55),(1.69,y,.60)],.035,m['silver'])
 
 for side in [-1,1]:
     h.role('ArrayDriveLeft' if side<0 else 'ArrayDriveRight')
@@ -188,9 +195,9 @@ anchors={
  'AnchorPayload':[0,2.78,1.36],'AnchorBus':[-1.43,1.90,1.10],
  'AnchorSolarArray':[3.01,1.10,-.09],'AnchorArrayDrive':[-1.88,1.16,.07],
  'AnchorPower':[.80,.82,.62],'AnchorBattery':[-.85,.72,.55],
- 'AnchorAttitude':[-1.06,2.665,-.838],'AnchorWheels':[-.08,.64,1.53],
+ 'AnchorAttitude':[-1.06,2.665,-.838],'AnchorWheels':[-.05,.45,1.53],
  'AnchorPropulsion':[.88,1.59,-.38],'AnchorComputer':[-1.06,1.922,-.24],
- 'AnchorAntenna':[-.52,3.05,-.72],'AnchorRadiator':[1.93,1.28,1.56],
+ 'AnchorAntenna':[-.52,3.05,-.72],'AnchorRadiator':[1.80,1.28,.62],
 }
 h.export(ROOT/'public/models/satellite.glb','GuardianSatellite',VERSION,'satellite',anchors,
  'Representative spacecraft anatomy: open bus, displaced MLI/radiator, solar cells and strings, drive, batteries/PDU, avionics, attitude equipment, reaction wheels, propulsion, links and payload. Layout and counts are as drawn, not a military system.')

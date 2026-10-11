@@ -1,4 +1,4 @@
-"""Detailed representative infrared payload and electronics, version 15.
+"""Detailed representative infrared payload and electronics, version 16.
 Blender --background --python tools/blender/build-payload.py.
 The opened telescope and integrated electronics units show subsystem
 relationships with authored removable covers. No military optical prescription, electronics schematic,
@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=15
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=16
 
 # Keep the approved reflective cutaway, then expose the rest of its signal chain.
 source=Path(__file__).with_name('build-hardware-look.py');tree=ast.parse(source.read_text(encoding='utf-8'))
@@ -56,13 +56,22 @@ for side in [-1,1]:
         h.line('Detector perimeter bond',[(-1.1+side*.315,-.405,z),(-1.1+side*.37,-.36,z),(-1.1+side*.43,-.53,z)],.004,m['goldedge'])
 for x in [-1.53,-.67]:
     for z in [-2.33,-1.61]:h.screw((x,-.534,z),m['edge'],r=.023)
-h.ring('Cold shield optical interface',(-1.10,-.47,-1.42),.38,.29,.055,m['silver'],'z',40)
+# The detector faces up, so its cold-stop aperture sits on top of the shield;
+# a fold mirror (below) turns the horizontal aft-optics beam down into it.
+h.ring('Cold shield optical interface',(-1.10,-.315,-1.97),.38,.29,.055,m['silver'],'y',40)
 # The cold module is displaced behind the stationary aft-optics deck for the
 # cutaway. This separation is diagram spacing rather than a dimensional claim.
 for obj in bpy.context.scene.objects:
     if obj.get('assetRole')=='Detector':obj.location.y+=1.50;obj.location.z+=.12
 for x in [-1.70,-.50]:
     for z in [-4.00,-2.95]:h.box('Cold assembly bench leg',(x,-1.405,z),(.09,.21,.09),m['dark'],.008)
+spec=importlib.util.spec_from_file_location('payload_expansion_optic',Path(__file__).with_name('payload-expansion.py'))
+_optic=importlib.util.module_from_spec(spec);spec.loader.exec_module(_optic)
+_optic.optic(h,'Detector fold mirror reflective face',(-1.10,.05,-3.47),(.50,.46),(0,-.71,.71),m['mirror'],.03)
+_optic.optic(h,'Detector fold mirror backing',(-1.10,.072,-3.492),(.54,.50),(0,-.71,.71),m['dark'],.02)
+for z in [-3.83,-3.11]:h.box('Cold-stop support bar',(-1.10,-.195,z),(1.18,.05,.06),m['black'],.006)
+h.box('Fold mirror support post',(-1.10,-.03,-3.80),(.07,.40,.07),m['dark'],.006)
+h.rod('Fold mirror support arm',(-1.10,.17,-3.80),(-1.10,.10,-3.55),.022,m['dark'])
 
 h.role('Thermal')
 h.cyl('Representative cooler compressor',(4.70,-.86,-2.24),.23,1.13,m['silver'],'x',32,.015)
