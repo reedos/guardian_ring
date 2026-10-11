@@ -15,7 +15,7 @@ const scene = illustrated({
     reject:{role:'Radiator',kind:'heat',intensity:.18},
     radiate:{role:'Radiator',kind:'radiation',intensity:.16},
   },
-  url:'models/satellite.glb?v=10',
+  url:'models/satellite.glb?v=11',
   camera:{pos:[8,6.5,13.5],target:[0,1.35,.25],min:1.8,max:32},distance:4.2,
   cameraPhone:{pos:[7.885,6.87,16.643]},
   points:{instrument:'AnchorPayload',structure:'AnchorBus','solar-array':'AnchorSolarArray','array-drive':'AnchorArrayDrive',power:'AnchorPower',battery:'AnchorBattery',attitude:'AnchorAttitude',wheels:'AnchorWheels',propulsion:'AnchorPropulsion',computer:'AnchorComputer',links:'AnchorAntenna',radiator:'AnchorRadiator'},

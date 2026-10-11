@@ -1,4 +1,4 @@
-"""Representative spacecraft engineering cutaway, v10.
+"""Representative spacecraft engineering cutaway, v11.
 Blender --background --python tools/blender/build-satellite.py.
 Open decks, separated covers, equipment counts and arrangement are teaching
 choices, not a military satellite reconstruction or bill of materials.
@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
 bpy.ops.wm.read_factory_settings(use_empty=True)
-m=h.palette();VERSION=10
+m=h.palette();VERSION=11
 # Thin metallic foil catches the single Sun in irregular creases, not a flat
 # yellow label panel. These finishes are drawing choices, not flight materials.
 m['gold'].node_tree.nodes.get('Principled BSDF').inputs['Metallic'].default_value=.88
@@ -95,7 +95,7 @@ h.role('Wheels')
 # orthogonal wheels stand on it without touching one another (as drawn).
 h.box('Reaction-wheel mounting shelf',(-.06,.2025,1.21),(.77,.085,.60),m['silver'],.014)
 for x in [-.40,.28]:h.rod('Wheel shelf brace',(x,.17,1.48),(x,.02,1.12),.016,m['silver'])
-for at,axis,cradle in [((-.22,.32,1.12),'y',None),((.17,.425,1.12),'x',(.15,.06,.16)),((-.05,.425,1.40),'z',(.16,.06,.13))]:
+for at,axis,cradle in [((-.22,.32,1.12),'y',None),((.17,.425,1.12),'x',(.11,.06,.16)),((-.05,.425,1.40),'z',(.16,.06,.13))]:
     h.cyl('Representative reaction-wheel housing',at,.18,.15,m['dark'],axis,32,.016)
     q=list(at);q[{'x':0,'y':1,'z':2}[axis]]+=.084
     h.cyl('Wheel housing service face',q,.143,.018,m['silver'],axis,32,.004)
