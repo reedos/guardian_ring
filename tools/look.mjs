@@ -2,6 +2,7 @@
 import { chromium } from 'playwright';
 import fs from 'node:fs';
 import { STORY_CLAIMS } from '../src/story-claims.js';
+import { STORY_PAGE_CLAIMS, STORY_EVIDENCE_ONLY_KEYS } from '../src/story-evidence-only.js';
 
 const base = process.env.GR_URL || 'http://127.0.0.1:47601/';
 const reports = [];
@@ -40,8 +41,23 @@ try {
     }
     const chips = page.locator('button[data-src]');
     const keys = new Set(await chips.evaluateAll(els => els.map(el => el.dataset.src)));
-    for (const claim of STORY_CLAIMS) if (!keys.has(claim.key)) failures.push(`Missing story claim ${claim.key}`);
+    for (const claim of STORY_PAGE_CLAIMS) if (!keys.has(claim.key)) failures.push(`Missing story claim ${claim.key}`);
+    // Evidence-only story rows must exist in the registry, stay listed on the Evidence page and not yet be cited here.
+    const registry = new Set(STORY_CLAIMS.map(c => c.key));
+    const evidence = form === 'desktop' ? await (await page.request.get(new URL('evidence.html', base).href)).text() : '';
+    for (const key of STORY_EVIDENCE_ONLY_KEYS) {
+      if (!registry.has(key)) failures.push(`Evidence-only key ${key} is not in the story registry`);
+      if (keys.has(key)) failures.push(`Story page now cites ${key}; remove it from STORY_EVIDENCE_ONLY_KEYS`);
+      if (form === 'desktop' && !evidence.includes(`id="claim-${key}"`)) failures.push(`Evidence page does not list ${key}`);
+    }
     for (const chip of await chips.all()) {
+      // Some chips sit inside collapsed "Go deeper" disclosures; open them the way a reader would, by their summary.
+      for (let guard = 0; guard < 5; guard++) {
+        const closed = chip.locator('xpath=ancestor::details[not(@open)][last()]/summary');
+        if (!await closed.count()) break;
+        await closed.first().scrollIntoViewIfNeeded();
+        await closed.first().click();
+      }
       await chip.scrollIntoViewIfNeeded();
       await chip.click();
       const pop = page.locator('#src-pop');
