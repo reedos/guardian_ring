@@ -109,7 +109,7 @@ fact("abi-full-disk", ["abi"], "ABI full-disk cadence", "10 min", ["noaa-abi-pag
 fact("abi-conus", ["abi"], "ABI mainland U.S. cadence", "5 min", ["noaa-abi-page"], "Instrument description", CIVIL_ABI)
 fact("abi-meso", ["abi"], "ABI mesoscale cadence", "30-60 s", ["noaa-abi-page"], "One or two smaller areas, instrument description", CIVIL_ABI)
 fact("abi-optics", ["payload", "abi"], "ABI telescope", "Four mirrors; three focal-plane modules", ["goes-r-databook"], "Printed p. 3-8 / PDF p. 36", CIVIL_ABI)
-fact("abi-detector-material", ["focal-plane", "pixel", "abi"], "ABI infrared channels", "HgCdTe", ["goes-r-databook"], "Table 3-5, printed p. 3-11 / PDF p. 39", CIVIL_ABI)
+fact("abi-detector-material", ["focal-plane", "pixel", "abi"], "ABI detector material, 1.378–13.3 μm channels", "HgCdTe", ["goes-r-databook"], "Table 3-5, printed p. 3-11 / PDF p. 39", CIVIL_ABI)
 fact("abi-ir-temp", ["focal-plane", "abi"], "ABI MWIR/LWIR optics and focal planes", "Approximately 60 K", ["goes-r-databook"], "Printed p. 3-8 / PDF p. 36", CIVIL_ABI)
 fact("abi-vnir-temp", ["focal-plane", "abi"], "ABI VNIR optics and focal plane", "Approximately 170 K; GOES-R FPM 180 K", ["goes-r-databook"], "Printed p. 3-8 / PDF p. 36", CIVIL_ABI)
 fact("abi-cooling", ["focal-plane", "abi"], "ABI cryocooler design", "Two redundant two-stage pulse-tube coolers", ["goes-r-databook"], "Printed p. 3-14 / PDF p. 42", CIVIL_ABI)

@@ -129,8 +129,8 @@ sunshade, the payload, antennas.
 - Light: where the payload looks, the sunshade, stray-light baffles.
 - Data: onboard processor, downlink antennas, crosslink terminal (optical or RF, labeled representative).
 - Heat: solar array power in, the heat budget, radiators on the anti-sun faces.
-- Sourced: SBIRS scanning and staring sensors (from the Space Force fact sheet once it is opened; it is
-  not verified yet, see §6); otherwise Assumed with reasons.
+- Sourced: SBIRS scanner and step-starer sensors (Space Force fact sheet `ssc-sbirs-factsheet`, verified
+  10/11/2026, see §6); otherwise Assumed with reasons.
 
 **3. The payload (telescope), about 2 m.** Telescope, scan mirror, filters, the cold region.
 - Light: the optical path (draw a short Schmidt-type telescope only if the SBIRS fact sheet confirms it;
@@ -226,7 +226,8 @@ Its status is mixed, and the build must respect that:
 
 **Found but NOT verified (403, TLS errors, size limits, or search-snippet only). Open each directly
 (curl or a browser) before citing; until then nothing from them goes on the site:**
-- Space Force SBIRS fact sheet, DoD SBIRS fact sheet PDF (payload descriptions, masses, telescope type).
+- DoD SBIRS fact sheet PDF (payload descriptions, masses, telescope type). The Space Force SBIRS fact sheet
+  was verified on 10/11/2026 (`ssc-sbirs-factsheet`); see research/review-accuracy-2026-10-10.md.
 - MDA HBTSS fact sheet.
 - **GOES-R Series Data Book** (`https://www.ospo.noaa.gov/resources/documents/GOES-RSeriesDataBook.pdf`,
   over 10 MB; download it). It is the best single source for the civil twin's aperture, detectors,
@@ -238,7 +239,9 @@ Its status is mixed, and the build must respect that:
 
 **Not public (must be omitted or clearly Assumed and illustrative):** military sensor sensitivity,
 thresholds, focal-plane formats and detector materials, operational satellite status, ground-software
-internals, masses of newer satellites. Launch dates where sources conflict (Next-Gen OPIR GEO-1) are
+internals, masses of newer satellites. Official published SBIRS GEO dimensions and weights (Space Force fact
+  sheet, current as of March 2023) may be cited as Spec, approved by Reed 10/11/2026; no mass is ever assigned to the
+  site's drawn hardware. Launch dates where sources conflict (Next-Gen OPIR GEO-1) are
 attributed ranges, not fixed dates.
 
 Rules carried from IF:

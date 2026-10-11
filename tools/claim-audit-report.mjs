@@ -1,4 +1,5 @@
 // Reproducible evidence inventory; run after claims, tests, build and page inventory.
+// It imports .ts modules, so run it through tsx: `npm run claims:audit` (or `npx tsx tools/claim-audit-report.mjs`).
 import fs from 'node:fs';
 import {compute,SCENARIO_OPTIONS} from '../src/model/engine.ts';
 import {content} from '../src/data.js';
@@ -45,6 +46,8 @@ const testMap={
   'planck-band-radiance':'claims-audit.test.ts: frequency midpoint integration, all 96 scenarios',
   'planck-band-photons':'claims-audit.test.ts: independent photon mode occupancy integral, all 96 scenarios',
   'carnot-cop':'claims-audit.test.ts: reversible entropy and energy ledger',
+  'us-customary-to-si':'units.test.ts: exact factors, inverse round trip via inches and grams, displayed SBIRS GEO metric strings',
+  'ideal-cooling-work':'civil-cooling.test.ts: Qhot − W = Qcold and reversible entropy balance Qhot/Th = Qcold/Tc; engine.test.ts independent COP 43/257',
   'cooler-energy-balance':'claims-audit.test.ts: entropy-derived rejected heat at three scales',
   'kepler-illustration-motion':'claims-audit.test.ts: small-angle inverse fixtures; orbits.test.ts: equal swept areas',
   'cinematic-spectrum':'claims-audit.test.ts: frequency spectral kernel and density Jacobian',

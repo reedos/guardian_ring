@@ -189,7 +189,7 @@ Rows in `physics-facts.json` use IF's `[label, value, basis, {refs: [[sourceId, 
 
 | Fact | Value | Basis | Source and locator |
 |---|---|---|---|
-| ABI infrared channels | HgCdTe | Spec | goes-r-databook: Table 3-5, printed p. 3-11 / PDF p. 39 |
+| ABI detector material, 1.378–13.3 μm channels | HgCdTe | Spec | goes-r-databook: Table 3-5, printed p. 3-11 / PDF p. 39 |
 | ABI MWIR/LWIR optics and focal planes | Approximately 60 K | Spec | goes-r-databook: Printed p. 3-8 / PDF p. 36 |
 | ABI VNIR optics and focal plane | Approximately 170 K; GOES-R FPM 180 K | Spec | goes-r-databook: Printed p. 3-8 / PDF p. 36 |
 | ABI cryocooler design | Two redundant two-stage pulse-tube coolers | Spec | goes-r-databook: Printed p. 3-14 / PDF p. 42 |
@@ -205,7 +205,7 @@ Rows in `physics-facts.json` use IF's `[label, value, basis, {refs: [[sourceId, 
 
 | Fact | Value | Basis | Source and locator |
 |---|---|---|---|
-| ABI infrared channels | HgCdTe | Spec | goes-r-databook: Table 3-5, printed p. 3-11 / PDF p. 39 |
+| ABI detector material, 1.378–13.3 μm channels | HgCdTe | Spec | goes-r-databook: Table 3-5, printed p. 3-11 / PDF p. 39 |
 | TIRS-2 detector assemblies | Three QWIP arrays; 640 × 512 physical pixels each | Spec | nasa-tirs2-spectral: PDF p. 1, Introduction |
 
 ### plume
@@ -225,7 +225,7 @@ Rows in `physics-facts.json` use IF's `[label, value, basis, {refs: [[sourceId, 
 | ABI mainland U.S. cadence | 5 min | Spec | noaa-abi-page: Instrument description |
 | ABI mesoscale cadence | 30-60 s | Spec | noaa-abi-page: One or two smaller areas, instrument description |
 | ABI telescope | Four mirrors; three focal-plane modules | Spec | goes-r-databook: Printed p. 3-8 / PDF p. 36 |
-| ABI infrared channels | HgCdTe | Spec | goes-r-databook: Table 3-5, printed p. 3-11 / PDF p. 39 |
+| ABI detector material, 1.378–13.3 μm channels | HgCdTe | Spec | goes-r-databook: Table 3-5, printed p. 3-11 / PDF p. 39 |
 | ABI MWIR/LWIR optics and focal planes | Approximately 60 K | Spec | goes-r-databook: Printed p. 3-8 / PDF p. 36 |
 | ABI VNIR optics and focal plane | Approximately 170 K; GOES-R FPM 180 K | Spec | goes-r-databook: Printed p. 3-8 / PDF p. 36 |
 | ABI cryocooler design | Two redundant two-stage pulse-tube coolers | Spec | goes-r-databook: Printed p. 3-14 / PDF p. 42 |

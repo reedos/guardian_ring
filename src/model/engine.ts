@@ -26,7 +26,7 @@ const ORBIT_REFS: [string, string][] = [
   ['nasa-earth-facts', 'Bulk parameters: equatorial radius'],
   ['nasa-kepler-derivation', 'Equation 4, Kepler’s Third Law; negligible secondary mass approximation'],
   ['noaa-geo-definition', 'Geostationary orbit definition: 35,786 km reference altitude'],
-  ['nasa-orbit-catalog', 'Highly Elliptical Orbits: generic Molniya eccentricity 0.722; this model chooses a half-sidereal-day example'],
+  ['nasa-orbit-catalog', 'Medium Earth Orbit: Molniya orbit paragraphs, eccentricity 0.722 and 12-hour period; this model chooses a half-sidereal-day example'],
 ];
 const CONSTANT_REFS: [string, string][] = [['nist-codata-2022', 'Rows for speed of light, Planck constant and Boltzmann constant']];
 

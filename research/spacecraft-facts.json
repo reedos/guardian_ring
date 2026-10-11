@@ -596,7 +596,7 @@
       ],
       "row": [
         "GOES-R electronics mounting",
-        "Equipment panels conduct and radiate heat toward spacecraft radiators",
+        "Boxes conduct (wet or dry mounts) and radiate heat to the equipment-panel radiators",
         "spec",
         {
           "refs": [
@@ -806,7 +806,7 @@
       ],
       "row": [
         "ABI aft optics",
-        "Beamsplitters, channel filters, windows and cold stops",
+        "MW/LW beamsplitter, windows and cold stops; channel filters integrated into the FPMs",
         "spec",
         {
           "refs": [

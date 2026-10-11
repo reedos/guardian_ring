@@ -18,10 +18,11 @@ export const SOURCES = { ...{
     "url": "https://www.spaceforce.mil/about-us/fact-sheets/article/2197746/space-based-infrared-system/",
     "kind": "primary",
     "marketing": false,
-    "dated": "Publication date not confirmed",
-    "attempted": "10/01/2026",
-    "unchecked": "Direct web open returned HTTP 403 Forbidden. Stopped; no alternate retrieval.",
-    "status": "unchecked"
+    "dated": "Page footer: Current as of March 2023",
+    "accessed": "10/11/2026",
+    "status": "verified",
+    "evidence": "research/review-accuracy-2026-10-10.md#round-5",
+    "section": "Fact sheet body: payload, program composition, data and launch paragraphs"
   },
   "af-sbirs-factsheet-pdf": {
     "title": "Factsheet: Space Based Infrared System (SBIRS)",
@@ -31,7 +32,7 @@ export const SOURCES = { ...{
     "marketing": false,
     "dated": "Publication date not confirmed",
     "attempted": "10/01/2026",
-    "unchecked": "Direct web open returned HTTP 403 Forbidden. URL date is not verified document publication date. Stopped; no alternate retrieval.",
+    "unchecked": "Served as a file download (10/11/2026 check by the review coordinator); not downloaded, so not opened. Earlier direct open returned HTTP 403.",
     "status": "unchecked"
   },
   "af-sbirs-article": {
@@ -141,7 +142,7 @@ export const SOURCES = { ...{
     "marketing": false,
     "dated": "Publication date not confirmed",
     "attempted": "10/01/2026",
-    "unchecked": "Direct web open returned Internal Error with no diagnostic detail. No alternate retrieval.",
+    "unchecked": "Served as a file download (10/11/2026 check by the review coordinator); not downloaded, so not opened. Earlier opens returned Internal Error and HTTP 403. The MEO layer is cited to GAO-26-107085 instead.",
     "status": "unchecked"
   },
   "nga-rmmwt-pe": {
@@ -702,6 +703,50 @@ export const SOURCES = { ...{
     "dated": "Publication date not confirmed",
     "attempted": "10/02/2026",
     "unchecked": "Direct open redirected to a general NESDIS page, not the PDF. The previously verified OSPO download and its local record retain separate provenance; this alternate URL is not cited.",
+    "status": "unchecked"
+  },
+  "nasa-rocket-plume-transmittance-2003": {
+    "title": "Transmittance and Radiance Computations for Rocket Engine Plume Environments (HT2003-47406)",
+    "publisher": "NASA NTRS / Gopal D. Tejwani, Lockheed Martin Space Operations at NASA John C. Stennis Space Center; 2003 ASME Heat Transfer Conference",
+    "url": "https://ntrs.nasa.gov/api/citations/20040013438/downloads/20040013438.pdf",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "07/2003 (conference dates 07/21–07/23/2003)",
+    "accessed": "10/11/2026",
+    "status": "verified",
+    "section": "PDF p. 1, Abstract; PDF p. 4, molecular absorption bands (Figs. 1a–1b discussion)"
+  },
+  "lm-sbirs-geo2-payload-2009": {
+    "title": "Critical Missile Warning Payload for Second SBIRS GEO Satellite Delivered to Lockheed Martin",
+    "publisher": "Lockheed Martin",
+    "url": "https://news.lockheedmartin.com/2009-04-20-Critical-Missile-Warning-Payload-for-Second-SBIRS-GEO-Satellite-Delivered-to-Lockheed-Martin",
+    "kind": "primary",
+    "marketing": true,
+    "published": "04/20/2009",
+    "accessed": "10/11/2026",
+    "status": "verified",
+    "section": "Payload description paragraph: scanning sensor and staring sensor"
+  },
+  "lm-sbirs-product-card-2016": {
+    "title": "SBIRS product card (SBIRS_Fact_Sheet_(Final).pdf)",
+    "publisher": "Lockheed Martin",
+    "url": "https://www.lockheedmartin.com/content/dam/lockheed-martin/space/photo/sbirs/SBIRS_Fact_Sheet_(Final).pdf",
+    "kind": "primary",
+    "marketing": true,
+    "dated": "File 16-04247_SBIRS_Product_Card_2016_R18, layout dated 01/05/2017",
+    "accessed": "10/11/2026",
+    "status": "verified",
+    "section": "PDF p. 2, overview paragraph"
+  },
+  "ssc-la-sbirs-factsheet": {
+    "title": "Space Based Infrared System (SBIRS) fact sheet",
+    "publisher": "U.S. Space Force / Los Angeles Air Force Base",
+    "url": "https://www.losangeles.spaceforce.mil/About-Us/Fact-Sheets/Display/Article/734550/space-based-infrared-system-sbirs/",
+    "kind": "primary",
+    "marketing": false,
+    "dated": "Publication date not confirmed",
+    "attempted": "10/11/2026",
+    "unchecked": "Dead link: on 10/11/2026 the URL redirects to the Los Angeles AFB newcomers page (review coordinator check); earlier direct open returned HTTP 403. Cite nowhere.",
     "status": "unchecked"
   },
   "sda-tracking-layer-leo-altitude": {

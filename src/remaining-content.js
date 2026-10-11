@@ -11,7 +11,7 @@ const FACTS = {
   'abi-conus': ['ABI mainland U.S. cadence', '5 min', 'spec', { refs: [['noaa-abi-page', 'Instrument description']] }],
   'abi-meso': ['ABI mesoscale cadence', '30-60 s', 'spec', { refs: [['noaa-abi-page', 'One or two smaller areas, instrument description']] }],
   'abi-optics': ['ABI telescope', 'Four mirrors; three focal-plane modules', 'spec', { refs: [['goes-r-databook', 'Printed p. 3-8 / PDF p. 36']] }],
-  'abi-detector-material': ['ABI infrared channels', 'HgCdTe', 'spec', { refs: [['goes-r-databook', 'Table 3-5, printed p. 3-11 / PDF p. 39']] }],
+  'abi-detector-material': ['ABI detector material, 1.378–13.3 μm channels', 'HgCdTe', 'spec', { refs: [['goes-r-databook', 'Table 3-5, printed p. 3-11 / PDF p. 39']] }],
   'abi-ir-temp': ['ABI MWIR/LWIR optics and focal planes', 'Approximately 60 K', 'spec', { refs: [['goes-r-databook', 'Printed p. 3-8 / PDF p. 36']] }],
   'abi-vnir-temp': ['ABI VNIR optics and focal plane', 'Approximately 170 K; GOES-R FPM 180 K', 'spec', { refs: [['goes-r-databook', 'Printed p. 3-8 / PDF p. 36']] }],
   'abi-cooling': ['ABI cryocooler design', 'Two redundant two-stage pulse-tube coolers', 'spec', { refs: [['goes-r-databook', 'Printed p. 3-14 / PDF p. 42']] }],
@@ -31,8 +31,8 @@ const FACTS = {
   'tirs2-cold': ['TIRS-2 focal-plane design temperature', '43 K', 'spec', { refs: [['nasa-tirs2-build', 'Two-stage cryocooler paragraph']] }],
   'tirs2-telescope-temp': ['TIRS-2 telescope design temperature', '185 K', 'spec', { refs: [['nasa-tirs2-build', 'Radiators paragraph']] }],
   'tirs-bands': ['TIRS thermal bands', '10.6-11.2 μm; 11.5-12.5 μm', 'spec', { refs: [['landsat9-tirs2-nasa', 'Spectral Bands table, bands 10 and 11']] }],
-  'co2-band': ['CO2 molecular emission band', 'Near 4.3 μm', 'reported', { refs: [['nasa-combustion-bands', 'Printed p. 5 / PDF p. 7']] }],
-  'h2o-band': ['H2O molecular emission band', 'Near 2.7 μm', 'reported', { refs: [['nasa-combustion-bands', 'Printed p. 5 / PDF p. 7']] }],
+  'co2-band': ['CO2 molecular emission band', 'Near 4.3 μm', 'reported', { refs: [['nasa-combustion-bands', 'Printed p. 5 / PDF p. 7'], ['nasa-rocket-plume-transmittance-2003', 'PDF p. 4, CO2 4.26 μm and H2O 2.66/2.74 μm band centers; PDF p. 1, rocket-plume IR emitters']] }],
+  'h2o-band': ['H2O molecular emission band', 'Near 2.7 μm', 'reported', { refs: [['nasa-combustion-bands', 'Printed p. 5 / PDF p. 7'], ['nasa-rocket-plume-transmittance-2003', 'PDF p. 4, CO2 4.26 μm and H2O 2.66/2.74 μm band centers; PDF p. 1, rocket-plume IR emitters']] }],
   'atmospheric-absorption': ['Atmospheric absorption', 'Gases absorb some wavelengths while transmitting others', 'reported', { refs: [['nasa-atmospheric-windows', 'Absorption Bands and Atmospheric Windows, first two paragraphs']] }],
 };
 
@@ -75,7 +75,7 @@ export function remainingContent(_model) {
       scale: 'Hot-gas source · illustrative geometry',
       light: [
         card('source', 'Start with emitting gas', 'An illustrative source', 'Hot gases can emit infrared radiation. The rising glow and trailing gas introduce emission as the start of a light path. Shape, motion, atmospheric thickness, and false color are drawing choices. No altitude, temperature, radiant intensity, or real vehicle identity is assigned.'),
-        card('bands', 'Keep the molecular bands named', 'Civil combustion spectroscopy', 'A civil combustion study identifies emission bands associated with carbon dioxide and water. These approximate band locations explain molecular spectroscopy; they do not define a military sensor’s passbands.', ['co2-band', 'h2o-band'], 9),
+        card('bands', 'Keep the molecular bands named', 'Civil combustion spectroscopy', 'A civil combustion study identifies emission bands associated with carbon dioxide and water, and a NASA rocket-engine plume study places the same molecules’ bands near 4.26 μm and 2.7 μm. These approximate band locations explain molecular spectroscopy; they do not define a military sensor’s passbands.', ['co2-band', 'h2o-band'], 9),
         card('timeline', 'Read the light paths as symbols', 'Schematic rays', 'The drawn rays connect the emitting region to the rest of the explanation. Their count, direction, brightness, and spacing are visual choices, not simulated photons or a sensor measurement.'),
       ],
       data: [
@@ -114,7 +114,7 @@ export function remainingContent(_model) {
       light: [
         card('telescope', 'Follow ABI’s reflective telescope', 'Published component counts', 'The GOES-R Data Book describes a four-mirror telescope forming images on three focal-plane modules. The mirror count applies to the telescope, not every mirror in ABI. Shapes, spacing, and ray paths in the drawing remain representative.', ['abi-optics', 'abi-image-role']),
         card('bands', 'Separate the spectral channels', 'The named ABI instrument', 'ABI observes Earth using visible and infrared channels. Its published channel count belongs to ABI, and the display’s band colors are illustrative.', ['abi-bands']),
-        card('focal-planes', 'Identify ABI’s infrared detector material', 'Published civil hardware', 'The Data Book identifies the material used for ABI’s infrared channels. That civil-instrument specification stays with ABI; it does not identify any military detector material.', ['abi-detector-material']),
+        card('focal-planes', 'Identify ABI’s infrared detector material', 'Published civil hardware', 'The Data Book lists HgCdTe detectors for ABI’s channels from 1.378 μm through 13.3 μm; its three shortest-wavelength channels, including the 0.86 μm near-infrared channel, use silicon. That civil-instrument specification stays with ABI; it does not identify any military detector material.', ['abi-detector-material']),
       ],
       data: [
         card('telescope', 'Coordinate the scan with the instrument clock', 'Controller, motor drivers and encoders', 'ABI’s instrument controller operates the instrument, while its Telemetry and Timing card supplies system clocks. Motor-driver circuitry moves the scan mirrors and encoder processors determine their position. The published full-disk and regional image cadences describe completed observations; they are different from the electronics’ detector-readout timing.', ['abi-controller', 'abi-timing', 'abi-scanners', 'abi-full-disk', 'abi-conus']),

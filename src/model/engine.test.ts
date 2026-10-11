@@ -110,3 +110,41 @@ describe('the educational scenario contract', () => {
     expect(fresh.claims.orbitPeriodSeconds![3].refs![0][0]).toBe('nasa-jpl-parameters');
   });
 });
+
+// Independent re-derivation (accuracy review 10/10/2026): values computed outside the engine with
+// μ = 398600.435507 km³ s⁻², R = 6378.137 km, exact SI h, c, k and a 200,000-step trapezoid Planck integral.
+describe('displayed teaching values match an independent re-derivation', () => {
+  const expected: Record<string, [string, string, string, string]> = {
+    geo: ['23.934 h', '3.075 km/s', '35786 km', '0.1194 s'],
+    heo: ['11.967 h', '1.556 km/s', '39361 km', '0.1313 s'],
+    meo: ['11.843 h', '3.887 km/s', '20000 km', '0.0667 s'],
+    leo: ['1.752 h', '7.350 km/s', '1000 km', '0.0033 s'],
+  };
+  it.each(Object.entries(expected))('%s orbit strings', (orbit, [period, speed, altitude, light]) => {
+    const { claims } = compute({ orbit });
+    expect([claims.orbitPeriodSeconds![1], claims.orbitSpeedKmS![1], claims.altitudeKm![1], claims.lightTimeSeconds![1]])
+      .toEqual([period, speed, altitude, light]);
+  });
+  it('places the teaching Molniya perigee near 1,006 km', () => {
+    expect(compute({ orbit: 'heo' }).claims.perigeeAltitudeKm![1]).toBe('1006 km');
+  });
+  const bands: Record<string, [string, string, string, string]> = {
+    swir: ['9.932e-20 J', '0.0003730 W m⁻² sr⁻¹', '4.449e+15 photons s⁻¹ m⁻² sr⁻¹', '8.13 μrad'],
+    mwir: ['4.620e-20 J', '0.7708 W m⁻² sr⁻¹', '1.715e+19 photons s⁻¹ m⁻² sr⁻¹', '17.49 μrad'],
+    lwir: ['1.986e-20 J', '31.39 W m⁻² sr⁻¹', '1.583e+21 photons s⁻¹ m⁻² sr⁻¹', '40.67 μrad'],
+  };
+  it.each(Object.entries(bands))('%s radiation strings', (band, [photon, radiance, photons, diffraction]) => {
+    const { claims } = compute({ band });
+    expect([claims.photonEnergyJ![1], claims.bandRadianceWm2Sr![1], claims.bandPhotonRadiancePerSm2Sr![1], claims.diffractionRadians![1]])
+      .toEqual([photon, radiance, photons, diffraction]);
+  });
+});
+describe('ideal civil-temperature cooling example matches an independent re-derivation', () => {
+  it('uses COP = 43/(300 − 43), W = 257/43 W and Qhot = 1 + W', () => {
+    const e = compute().examples.civilCooling;
+    expect(e.idealCOP).toBeCloseTo(43 / 257, 14);
+    expect(e.idealCOP.toFixed(4)).toBe('0.1673');
+    expect(e.minimumWorkW.toFixed(3)).toBe('5.977');
+    expect(e.rejectedHeatW.toFixed(3)).toBe('6.977');
+  });
+});
