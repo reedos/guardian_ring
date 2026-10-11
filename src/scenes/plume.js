@@ -4,7 +4,7 @@ import { preloadModel, copyModel } from './model-scene.js';
 const points={source:'AnchorSource',bands:'AnchorBands',timeline:'AnchorTimeline',co2:'AnchorCO2',h2o:'AnchorH2O'};
 const scene=illustrated({
   teaching:'plume',
-  url:'models/plume.glb?v=3',
+  url:'models/plume.glb?v=4',
   camera:{...PLUME_FRAME,min:3,max:35},distance:7,
   illustration:options=>createPlumeIllustration({...options,earth:copyModel('models/earth-orbits.glb?v=5').getObjectByName('earth')}),
   lessonNote:'False-color rising emission; motion, glow, gas shape and atmosphere thickness are illustrative. No flight trajectory, altitude, absorption threshold or sensor visibility is calculated. Molecules are enlarged diagrams.',

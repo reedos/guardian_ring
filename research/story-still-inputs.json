@@ -1,14 +1,14 @@
 {
-  "renderedAt": "2026-10-11T07:03:10.269Z",
+  "renderedAt": "2026-10-11T08:01:24.322Z",
   "inputs": {
     "public/models/abi.glb": "e2cdad23ef2af6a4406ade2e4a6d5b09db50d1f2bd8d0fdf7daf7a77b18471cd",
-    "public/models/atmosphere.glb": "31b894285d64e89dbc0dd757f797e06f667fe89382e5a7f8cb776088aa4cd476",
+    "public/models/atmosphere.glb": "72968218fd10c6a010f50779d27136808eb312a14b50ff0f71f04881f2082c4e",
     "public/models/earth-orbits.glb": "d0089a570eb4577559b2d4951b064a8e9b13986864b0efe958f6f8b01e816251",
     "public/models/focal-plane.glb": "218fd2d1d225d04331e7eb12d3b24ccff8e97d7354b66e4c7c4f72b2d8739e2a",
-    "public/models/ground.glb": "cc258810150b58ade3a1340d348010a6ebfed6a2b6076ee5ae6e8fa8d320a4f0",
+    "public/models/ground.glb": "ca1a125c86fadcd64f460bfb328ef43d1206393b159d066769bed4ac709f6ba6",
     "public/models/payload.glb": "3d9b0e3021b54be17029467afc5d74dd4d5d7c78f98a536fd94b64a49fd02a9e",
     "public/models/pixel.glb": "fd84f8aab2402c3eeb0b8eee2e258233cbfc122a513b9a87f074d5e34135834b",
-    "public/models/plume.glb": "7753be893471d616279abdbb00bf3fd2d34f3f31f1f19adc583489b5ebf6ce94",
+    "public/models/plume.glb": "aad50ab346a8ee3e1a66adbf81fa22492f7725d38d83f4958428f3ee46f52838",
     "public/models/satellite.glb": "c0e2d5cd8146e6c325c2373c085e4a74a6ab0cde86669b11a934eae08fedf9e0",
     "public/models/tirs2.glb": "d0329551c0c73a2f1b28a5c307deabb5512cd14a24f0b6338312b694e4dad8ef",
     "src/app/camera-clearance.js": "6ef2fdd092d0c1fead447cd74e797eca54866e6d16d8a6335ab45266b515438a",
@@ -42,13 +42,13 @@
     "src/scenes/pixel.js": "e92ca56eba7520801a4cc0b48c31f9a1328333b2e5a53a09ff668dc6bc4fb93b",
     "src/scenes/placeholder.js": "0aaebb7022b4fd66411590a06eaf7b3d554c3d2e505512ad4547c617ba0deca4",
     "src/scenes/plume-illustration.js": "2eebb7ab2f2a36bd3612660da1dd6ddebe9e4e20c05b1531beb9336b997b96ba",
-    "src/scenes/plume.js": "37c7b5c0987a60eb3c6302a616b79eeaf5b6ea7f6119c73cfda0dff0016b0c63",
+    "src/scenes/plume.js": "bf13a3153ddc228e04911389528d1f1966a94932eed47326f8ab0fc1403ce234",
     "src/scenes/print-kit.js": "c49cf747d4ac647291e2f2381d261d7483b4de9085726291a0184c70d1d6f7f0",
     "src/scenes/satellite-shadows.js": "fa520d53f1ba10e92a26047969ebbfe6ee6f74c6e29dbe55d6ce850274bd7522",
     "src/scenes/satellite.js": "d6526e8f71f927aec0417b45a5db44c3cd3644f12fb83ad7ae87bb6099bba0f0",
     "src/scenes/side-abi.js": "efee2403a5b5d431c43fdfe3ceb5884d26f26c3d827ad686317db65d683c4719",
-    "src/scenes/side-atmosphere.js": "70abdad38fc91f20734398f5c37bd27ca471a9de381e09aa14c2450c41a963d5",
-    "src/scenes/side-ground.js": "c53174afb363516d07b1113cf838712de97cd842f235162d435fb09d2fe6f0ac",
+    "src/scenes/side-atmosphere.js": "263db36ffad43a994c1d917020d3b609ba68d93920c8e1ebc10f169b7f85911f",
+    "src/scenes/side-ground.js": "e6cc077fce4762ff6fb3d7e39fc7893f13ef091b5c8e0f7907f9eb0f050eb9b7",
     "src/scenes/side-tirs2.js": "111e9aa279bd8f8572978002e594e742470ea22da8fa7c60a217d265a4180814",
     "src/scenes/surface-path.js": "55dd0f257af71dd7ccbbc1dbd0089aac096a1d15ff729df72eab189bc35dddb7",
     "src/scenes/teaching-flows.js": "4a9bc3c2e2d4c694119946c3950d2a998ac3f292a8fd9fb2d94052975f612c38",
@@ -70,8 +70,8 @@
     "public/look/pixel.webp": "bd28341dde9ce1cad257fc1be33562ac5d5a4e96f0ed008cee50d32946fd884d",
     "public/look/pixel-phone.webp": "821884b100c689262285ef9bd878eb89f71e6c8ed8a3ee3945ddf6021a478263",
     "public/look/ring.webp": "3a7e9eb9364f02b85551d6c1aff836b91865dc70b134db7d67e32b294d8d1c56",
-    "public/look/plume.webp": "a9d865093b8de7c03013f6f6e5bcdd2a7ea984f9bbd34b56b2f4f8ea94ddee1e",
+    "public/look/plume.webp": "af8b938ccca92d9020a2537ce1665f3ae2d3cd089efa9d2d891595f283ac61c3",
     "public/look/ring-phone.webp": "e5741d289ebe4be6790bfa7bd7696406c01315fef37bbe11ca757f6b9bfb7d4d",
-    "public/look/plume-phone.webp": "dd8b0daaeea5d0c2d010dc88d7a73c611e16ca55328c1f5d39183335bfce9338"
+    "public/look/plume-phone.webp": "600e3b49530a9c096713f6dded2ca2c7613f145d674bc25071838442e7992f4a"
   }
 }

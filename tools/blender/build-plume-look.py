@@ -21,7 +21,9 @@ def plume_mesh(name, length, width, material, offset=(0,0,0)):
     vertices=[];faces=[];nr=84;ns=56
     for j in range(nr+1):
         t=j/nr
-        r=(.035+.72*math.sin(math.pi*t)+.32*t)*math.sin(math.pi*t)**.3+.015
+        # Hold the widest section downstream (no re-convergence), as in build-plume.py v4.
+        tp=min(t,.533)
+        r=(.035+.72*math.sin(math.pi*tp)+.32*tp)*math.sin(math.pi*tp)**.3+.015
         for i in range(ns):
             a=i*math.tau/ns
             ripple=1+.10*math.sin(a*3+t*29)+.07*math.sin(a*7-t*42)
