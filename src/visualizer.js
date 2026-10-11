@@ -109,4 +109,14 @@ motion.checked=!stage.reduced;
 motion.addEventListener('change',()=>{if(!motion.checked)window.grx.mission.pause();stage.setSceneActivity(motion.checked);});
 for(const name of ['scene','scene-settings'])on(name,()=>{motion.checked=!!(stage.getTeaching()?.state().playing||stage.built[stage.destination()]?.motion?.());});
 stage.onTick(()=>{const playing=!!(stage.getTeaching()?.state().playing||stage.built[stage.destination()]?.motion?.());if(motion.checked!==playing)motion.checked=playing;});
+// Phone: the side-level Back button rides at the stage's free top-left corner instead of
+// adding a second row to the part bar, which would cover the scene above it.
+const backOut=document.getElementById('back-out'),hudBtns=document.getElementById('hud-btns'),phoneStage=matchMedia('(max-width:760px)');
+function placeBackOut(){
+  const onStage=phoneStage.matches,view=document.getElementById('view');
+  if(onStage&&backOut.parentElement!==view)view.append(backOut);
+  else if(!onStage&&backOut.parentElement!==hudBtns)hudBtns.prepend(backOut);
+  backOut.classList.toggle('stage-back',onStage);
+}
+phoneStage.addEventListener('change',placeBackOut);placeBackOut();
 stage.start();

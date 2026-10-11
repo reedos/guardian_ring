@@ -34,7 +34,7 @@ if(g){
         if(r.left<view.left||r.right>view.right||r.top<view.top||r.bottom>view.bottom)bad.push('selected component callout clipped');
         const title=document.getElementById('card-t').textContent;
         if(label.textContent!==title)bad.push('selected callout does not match component name');
-        for(const element of document.querySelectorAll('#view .hud,#view .hud-row,#scene-note'))if(element.checkVisibility()){
+        for(const element of document.querySelectorAll('#view .hud,#view .hud-row,#scene-note,#view > #back-out'))if(element.checkVisibility()){
          const p=painted(element);
          if(r.left<p.right&&r.right>p.left&&r.top<p.bottom&&r.bottom>p.top)bad.push('selected callout covers scene controls or note');
         }
@@ -69,7 +69,7 @@ if(g){
       for(const label of b.labels||[]){
        if(!label.visible){hidden.push({name:label.name,reason:label.userData.readability?.reason});continue;}
        const bounds=label.userData.readability?.bounds,canvas=document.getElementById('view').getBoundingClientRect();
-       if(bounds)for(const element of document.querySelectorAll('#view .hud,#view .hud-row,#scene-note'))if(element.checkVisibility()){
+       if(bounds)for(const element of document.querySelectorAll('#view .hud,#view .hud-row,#scene-note,#view > #back-out'))if(element.checkVisibility()){
         const p=painted(element);
         if(p.left-canvas.left<bounds.right&&p.right-canvas.left>bounds.left&&p.top-canvas.top<bounds.bottom&&p.bottom-canvas.top>bounds.top)bad.push(`${label.name}: covered by scene controls or note`);
        }

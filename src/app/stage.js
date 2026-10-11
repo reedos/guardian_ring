@@ -219,7 +219,7 @@ function updatePins() {
   const origin=view.getBoundingClientRect();
   // Use the painted area, not the box: the title's contrast scrim (::before)
   // extends past its box and sits above the pin layer.
-  const hudBounds=[...view.querySelectorAll('.hud,.hud-row,#scene-note,#hud-btns,#orbit-controls')].filter(el=>el.checkVisibility()).map(el=>{
+  const hudBounds=[...view.querySelectorAll('.hud,.hud-row,#scene-note,#hud-btns,#orbit-controls,#back-out')].filter(el=>el.checkVisibility()).map(el=>{
     const r=paintedRect(el);return {left:r.left-origin.left,right:r.right-origin.left,top:r.top-origin.top,bottom:r.bottom-origin.top};
   });
   built[ui.scene]?.updateLabels?.(camera,{width,height,obstacles:hudBounds});
