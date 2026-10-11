@@ -32011,5 +32011,146 @@
     "keys": [],
     "status": "confirmed",
     "basis": "Exact calculation definition us-customary-to-si: 0.3048 m/ft and 0.45359237 kg/lb are the exact international definitions; displayed values re-derived by hand (7/4/3 ft → 2.1336/1.2192/0.9144 m; 49/22/20 ft → 14.935/6.706/6.096 m; 530/5,525/1,100/430 lb → 240.40/2,506.10/498.95/195.04 kg); matches src/model/units.ts. Confirmed by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md)."
+  },
+  {
+    "page": "index",
+    "text": "02 / The photon",
+    "contextId": "photon",
+    "links": [],
+    "keys": [
+      "story:schematic",
+      "story:co2-band",
+      "story:h2o-band",
+      "story:atmospheric-absorption"
+    ],
+    "status": "ui-label",
+    "basis": "Story chapter number: the story page orders the six primary levels ring, photon, satellite, payload, focal plane, pixel. Navigation label, not a measured hardware quantity."
+  },
+  {
+    "page": "index",
+    "text": "03 / The satellite",
+    "contextId": "satellite",
+    "links": [],
+    "keys": [
+      "story:schematic",
+      "story:abi-radiator-role",
+      "story:spacecraft-power",
+      "story:spacecraft-pointing",
+      "story:spacecraft-thermal"
+    ],
+    "status": "ui-label",
+    "basis": "Story chapter number: the story page orders the six primary levels ring, photon, satellite, payload, focal plane, pixel. Navigation label, not a measured hardware quantity."
+  },
+  {
+    "page": "index",
+    "text": "04 / The payload",
+    "contextId": "payload",
+    "links": [],
+    "keys": [
+      "story:schematic",
+      "story:abi-image-role",
+      "component:abi:scan-system:comp-abi-scan-mirrors:0",
+      "integration:abi-units",
+      "integration:supplier-delivery",
+      "integration:interface-management",
+      "story:payload-electronics"
+    ],
+    "status": "ui-label",
+    "basis": "Story chapter number: the story page orders the six primary levels ring, photon, satellite, payload, focal plane, pixel. Navigation label, not a measured hardware quantity."
+  },
+  {
+    "page": "index",
+    "text": "05 / The focal plane",
+    "contextId": "focal-plane",
+    "links": [],
+    "keys": [
+      "story:cryogenic-noise-role",
+      "story:schematic",
+      "story:abi-cooler-role",
+      "story:tirs2-temperature"
+    ],
+    "status": "ui-label",
+    "basis": "Story chapter number: the story page orders the six primary levels ring, photon, satellite, payload, focal plane, pixel. Navigation label, not a measured hardware quantity."
+  },
+  {
+    "page": "index",
+    "text": "06 / The pixel",
+    "contextId": "pixel",
+    "links": [],
+    "keys": [
+      "story:schematic",
+      "story:abi-detector-role",
+      "story:abi-readout-role"
+    ],
+    "status": "ui-label",
+    "basis": "Story chapter number: the story page orders the six primary levels ring, photon, satellite, payload, focal plane, pixel. Navigation label, not a measured hardware quantity."
+  },
+  {
+    "page": "index",
+    "text": "Missile-warning satellites watch the whole Earth for the infrared heat of a rocket launch. Some sit in geostationary orbit, 35,786 km above Earth, keeping pace with the planet’s turn. Follow that heat from a rising plume, across space, through a telescope and a cold detector, and down to the ground.",
+    "contextId": "top",
+    "links": [],
+    "keys": [
+      "story:geo-altitude",
+      "card:light:orbits:orbit-families:0"
+    ],
+    "status": "confirmed",
+    "basis": "noaa-geo-definition definition paragraph supports 35,786 km for the circular equatorial example; gao-21-105249 printed p. 4 (PDF p. 8) describes SBIRS satellites in geosynchronous and highly elliptical orbits and is titled Missile Warning Satellites. No payload performance stated."
+  },
+  {
+    "page": "index",
+    "text": "An infrared detector senses heat, so warmth inside the instrument competes with the light it is trying to measure. The detector has to run far colder than the spacecraft around it. A cooler pulls heat out of the detector, and that heat, plus the power the cooler uses, must still leave the spacecraft through radiators. Landsat 9’s civil TIRS-2 instrument gives a published example of how cold.",
+    "contextId": "focal-plane",
+    "links": [],
+    "keys": [
+      "story:cryogenic-noise-role",
+      "story:schematic",
+      "story:abi-cooler-role",
+      "story:tirs2-temperature"
+    ],
+    "status": "ui-label",
+    "basis": "The only numeral is part of the mission name Landsat 9; the sentence introduces the separately cited TIRS-2 temperature fact (nasa-tirs2-build) without stating a value."
+  },
+  {
+    "page": "index",
+    "text": "Now explore itin 3D.",
+    "contextId": "",
+    "links": [],
+    "keys": [],
+    "status": "ui-label",
+    "basis": "Heading: 3D names the interactive explorer format, not a physical quantity."
+  },
+  {
+    "page": "glossary",
+    "text": "Determination of primary-zone smoke concentrations from spectral radiance measurements in gas turbine combustorsPrinted p. 5 / PDF p. 7",
+    "contextId": "term-plume",
+    "links": [
+      "https://ntrs.nasa.gov/api/citations/19710021767/downloads/19710021767.pdf"
+    ],
+    "keys": [],
+    "status": "ui-label",
+    "basis": "Bibliographic title and locator, nasa-combustion-bands; not an additional physical specification."
+  },
+  {
+    "page": "glossary",
+    "text": "Missile Warning Satellites: Comprehensive Cost and Schedule Information Would Enhance Congressional OversightBackground, printed pp. 3–4",
+    "contextId": "term-missile-warning",
+    "links": [
+      "https://www.gao.gov/assets/gao-21-105249.pdf"
+    ],
+    "keys": [],
+    "status": "ui-label",
+    "basis": "Bibliographic title and locator, gao-21-105249; not an additional physical specification."
+  },
+  {
+    "page": "glossary",
+    "text": "GOES-R Series Data Book, Revision APrinted p. 3-7 / PDF p. 35, Optical System and Figure 3-4",
+    "contextId": "term-scanning-staring",
+    "links": [
+      "https://www.ospo.noaa.gov/resources/documents/GOES-RSeriesDataBook.pdf"
+    ],
+    "keys": [],
+    "status": "ui-label",
+    "basis": "Bibliographic title and locator, goes-r-databook; not an additional physical specification."
   }
 ]
