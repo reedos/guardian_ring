@@ -43,7 +43,9 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
   const ground=overlay(earth,
     'Earth context — historical NASA imagery, no event location');
   ground.removeFromParent();ground.position.set(0,-4,-4);ground.scale.setScalar(5);
-  ground.rotation.set(0,.8,0);
+  // Turned so the plume rises over open northern ocean (the Norwegian Sea), never
+  // a coastline or launch region; 0.8 had put it over the Gulf of Alaska coast.
+  ground.rotation.set(0,-1.8,0);
   // Daylight geography provides context; city-light emission is not appropriate
   // under this scene's illustrative daylight lighting.
   ground.material.emissiveIntensity=0;scene.add(ground);
