@@ -1,4 +1,4 @@
-"""Representative spacecraft engineering cutaway, v8.
+"""Representative spacecraft engineering cutaway, v9.
 Blender --background --python tools/blender/build-satellite.py.
 Open decks, separated covers, equipment counts and arrangement are teaching
 choices, not a military satellite reconstruction or bill of materials.
@@ -9,11 +9,29 @@ ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
 bpy.ops.wm.read_factory_settings(use_empty=True)
-m=h.palette();VERSION=8
+m=h.palette();VERSION=9
 # Thin metallic foil catches the single Sun in irregular creases, not a flat
 # yellow label panel. These finishes are drawing choices, not flight materials.
 m['gold'].node_tree.nodes.get('Principled BSDF').inputs['Metallic'].default_value=.88
 m['gold'].node_tree.nodes.get('Principled BSDF').inputs['Roughness'].default_value=.25
+from mathutils import Vector
+def aim(o,center,direction,source=(0,0,1)):
+    # Orient a part built about its own origin along a Three.js direction.
+    o.rotation_mode='QUATERNION';o.rotation_quaternion=Vector(source).rotation_difference(Vector(h.p(direction)).normalized());o.location=h.p(center);return o
+def dish(name,center,radius,depth,mat,rings=10,segments=40):
+    # Concave paraboloid shell opening toward +Z; vertex at center. Shape only.
+    verts=[(0,0,0)];faces=[]
+    for r in range(1,rings+1):
+        rr=radius*r/rings
+        for a in range(segments):
+            t=a*math.tau/segments;verts.append(h.p((rr*math.cos(t),rr*math.sin(t),depth*(rr/radius)**2)))
+    for a in range(segments):faces.append((0,1+(a+1)%segments,1+a))
+    for r in range(rings-1):
+        for a in range(segments):
+            i=1+r*segments;b=(a+1)%segments;faces.append((i+a,i+b,i+segments+b,i+segments+a))
+    d=bpy.data.meshes.new(name);d.from_pydata(verts,[],faces);d.update();o=bpy.data.objects.new(name,d);bpy.context.collection.objects.link(o)
+    o.location=h.p(center);s=o.modifiers.new('Shell thickness','SOLIDIFY');s.thickness=.014;s.offset=-1
+    return h.finish(o,name,mat)
 
 h.role('Structure')
 h.box('Lower structural sandwich deck',(0,.08,0),(3.10,.16,2.25),m['silver'],.035)
@@ -27,15 +45,15 @@ for y in [.22,2.12]:
     for x in [-1.48,1.48]:h.box('Side perimeter beam',(x,y,0),(.085,.085,2.06),m['silver'],.012)
 for x in [-1.3,1.3]:h.rod('Rear structural diagonal',(x,.24,-1.00),(-x,2.08,-1.00),.027,m['dark'])
 h.box('Rear blanket substrate',(0,1.15,-1.06),(2.86,1.84,.027),m['foilback'],.004)
-h.foil('Rear MLI facets',(0,1.15,-1.082),(2.84,0,0),(0,1.82,0),(0,0,-1),m['gold'],27)
+h.foil('Rear MLI facets',(0,1.15,-1.092),(2.84,0,0),(0,1.82,0),(0,0,-1),m['gold'],27)
 h.box('Removed front MLI panel',(-1.92,.93,1.68),(.78,1.55,.055),m['foilback'],.015)
-h.foil('Removed outer thermal blanket',(-1.92,.93,1.714),(.74,0,0),(0,1.51,0),(0,0,1),m['gold'],13)
-for x in [-2.28,-1.56]:h.box('Blanket edge binding',(x,.93,1.728),(.023,1.49,.018),m['goldedge'],.003)
-for y in [.20,1.66]:h.box('Blanket edge binding',(-1.92,y,1.728),(.74,.023,.018),m['goldedge'],.003)
+h.foil('Removed outer thermal blanket',(-1.92,.93,1.724),(.74,0,0),(0,1.51,0),(0,0,1),m['gold'],13)
+for x in [-2.28,-1.56]:h.box('Blanket edge binding',(x,.93,1.738),(.023,1.49,.018),m['goldedge'],.003)
+for y in [.20,1.66]:h.box('Blanket edge binding',(-1.92,y,1.738),(.74,.023,.018),m['goldedge'],.003)
 for y in [.3,1.55]:h.line('Detached-panel teaching bracket',[(-1.52,y,1.01),(-1.62,y,1.40),(-1.70,y,1.66)],.014,m['silver'])
 for y in [.45,1.37]:
-    h.box('Representative blanket bonding tab',(-1.61,y,1.742),(.14,.085,.016),m['silver'],.004)
-    for dx in [-.014,0,.014]:h.line('Blanket bond strap strand',[(-1.61+dx,y,1.75),(-1.54+dx,y+.05,1.40),(-1.48+dx,y,1.06)],.005,m['copper'])
+    h.box('Representative blanket bonding tab',(-1.61,y,1.752),(.14,.085,.016),m['silver'],.004)
+    for dx in [-.014,0,.014]:h.line('Blanket bond strap strand',[(-1.61+dx,y,1.76),(-1.54+dx,y+.05,1.40),(-1.48+dx,y,1.06)],.005,m['copper'])
 
 h.role('Battery')
 h.enclosure('Battery module tray',(-.85,.39,.52),(1.04,.43,.75),m,True)
@@ -63,7 +81,7 @@ for i in range(3):
     h.connector('Card edge interface',(-.70,y+.055,.434+i*.10),.43,m)
 h.enclosure('Payload processor chassis',(.67,1.44,.05),(1.05,.53,.87),m,True)
 h.board('Representative payload processing board',(.67,1.70,.05),(.92,.72),m)
-for x in [.29,1.04]:h.box('Processor chassis stiffener',(x,1.83,.05),(.055,.055,.68),m['silver'],.009)
+for x in [.29,1.04]:h.box('Processor chassis stiffener',(x,1.746,.05),(.055,.055,.68),m['silver'],.009)
 h.line('Avionics signal harness',[(-.2,1.65,.5),(.02,1.86,.5),(.45,1.9,.42),(.74,1.88,.2)],.019,m['loom'])
 # Recovery-function packages are representative physical vocabulary, not a
 # named computer design or a reconstructed reset/boot circuit.
@@ -93,9 +111,13 @@ for x in [-1.35,1.35]:
 
 h.role('Attitude')
 h.enclosure('Attitude sensor mount',(-1.06,2.18,-.56),(.65,.20,.65),m)
-h.cyl('Star-tracker housing',(-1.06,2.44,-.42),.20,.46,m['dark'],'z',32,.013)
-h.ring('Star-tracker baffle',(-1.06,2.44,-.14),.24,.17,.16,m['black'],'z',32)
-h.cyl('Star-tracker optical entrance',(-1.06,2.44,-.208),.157,.015,m['solar'],'z',32,.002)
+# Boresight turned 30 degrees above anti-nadir, away from the Earth-facing
+# telescope aperture (+Z). Direction is a drawing choice, not a flight layout.
+ST=(-1.06,2.47,-.50);SD=(0,.5,-math.sqrt(3)/2)
+def along(t):return tuple(ST[i]+SD[i]*t for i in range(3))
+aim(h.cyl('Star-tracker housing',(0,0,0),.20,.46,m['dark'],'z',32,.013),ST,SD)
+aim(h.ring('Star-tracker baffle',(0,0,0),.24,.17,.16,m['black'],'z',32),along(.31),SD,(0,-1,0))
+aim(h.cyl('Star-tracker optical entrance',(0,0,0),.157,.015,m['solar'],'z',32,.002),along(.212),SD)
 h.box('Representative Sun-sensor base',(1.21,2.24,.65),(.29,.10,.25),m['silver'],.017)
 h.box('Sun-sensor dark active face',(1.21,2.302,.65),(.20,.018,.16),m['solar'],.004)
 h.line('Attitude sensor harness',[(-1.04,2.2,-.49),(-.96,1.98,-.35),(-.79,1.87,-.23)],.019,m['loom'])
@@ -104,14 +126,18 @@ h.role('Payload')
 for x in [-.40,.40]:h.box('Instrument support foot',(x,2.21,.12),(.15,.20,.82),m['silver'],.018)
 h.cyl('Representative telescope housing',(0,2.78,.13),.52,1.45,m['silver'],'z',48,.025)
 h.cyl('Recessed optical entrance',(0,2.78,.873),.39,.016,m['solar'],'z',48,.002)
-for z in [.89,1.03,1.17]:h.ring('Stray-light baffle',(0,2.78,z),.59,.44,.072,m['black'],'z',48)
-h.ring('Instrument sunshade lip',(0,2.78,1.31),.62,.47,.055,m['silver'],'z',48)
+# A continuous sunshade extends the barrel; stray-light vanes sit inside it.
+h.ring('Instrument sunshade tube',(0,2.78,1.095),.535,.505,.48,m['silver'],'z',48)
+h.ring('Sunshade black interior',(0,2.78,1.095),.506,.494,.47,m['black'],'z',48)
+for z in [.96,1.10,1.24]:h.ring('Stray-light baffle vane',(0,2.78,z),.495,.43,.018,m['black'],'z',48)
+h.ring('Instrument sunshade lip',(0,2.78,1.315),.565,.505,.05,m['silver'],'z',48)
 for z in [-.38,.37]:h.ring('Payload structural band',(0,2.78,z),.545,.515,.060,m['dark'],'z',48)
 h.line('Payload readout harness',[(.40,2.48,-.22),(.67,2.20,-.18),(.75,1.93,.02)],.027,m['loom'])
 
 h.role('Links')
 h.rod('TT&C antenna support',(-.72,2.16,-.90),(-.52,3.02,-1.12),.026,m['silver'])
-h.sphere('Representative TT&C reflector',(-.52,3.05,-1.07),(.37,.30,.072),m['white'])
+dish('Representative TT&C reflector',(-.52,3.05,-1.12),.34,.085,m['white'])
+h.ring('TT&C reflector rim',(-.52,3.05,-1.035),.352,.335,.016,m['silver'],'z',40)
 h.rod('TT&C feed support',(-.77,2.91,-1.01),(-.52,3.05,-.80),.014,m['silver'])
 h.cyl('Representative feed',(-.52,3.05,-.78),.036,.08,m['goldedge'],'z',16)
 h.box('Mission-link terminal',(1.04,2.44,-.64),(.50,.31,.22),m['white'],.031)
@@ -130,6 +156,8 @@ for y in [.93,1.63]:h.line('Heat-pipe connection',[(.75,y,.35),(1.33,y,.42),(1.6
 for side in [-1,1]:
     h.role('ArrayDriveLeft' if side<0 else 'ArrayDriveRight')
     for x,r,d,mat in [(1.66,.20,.21,'silver'),(1.87,.15,.17,'dark'),(2.04,.115,.16,'goldedge')]:h.cyl('Solar-array rotary drive',(side*x,1.10,-.13),r,d,m[mat],'x',32,.012)
+    for y in [.38,1.82]:h.rod('Array yoke arm',(side*2.10,1.10,-.13),(side*2.15,y,-.15),.022,m['silver'])
+    for y in [.38,1.82]:h.box('Yoke root fitting',(side*2.135,y,-.15),(.07,.10,.07),m['edge'],.006)
     h.line('Array power harness',[(side*2.09,1.10,-.08),(side*1.98,1.33,-.02),(side*1.67,1.39,.01),(side*1.42,1.27,.28)],.019,m['loom'])
     h.box('Representative deployment-position sensor',(side*1.74,1.38,-.05),(.17,.10,.15),m['dark'],.010)
     h.box('Position-sensor actuating tab',(side*1.90,1.39,-.05),(.15,.033,.065),m['goldedge'],.004)
@@ -145,14 +173,14 @@ for side in [-1,1]:
         for row in range(8):
             for col in range(5):
                 x=cx+(col-2)*.302;y=1.10+(row-3.5)*.316
-                h.box('Photovoltaic cell coverglass',(x,y,-.120),(.279,.290,.009),m['solar2'] if (row+col)%7==0 else m['solar'],.003)
-                for dx in [-.066,.066]:h.box('Cell collection busbar',(x+dx,y,-.112),(.005,.268,.003),m['silver'],0)
-                for j in range(6):h.box('Fine cell finger',(x,y+(j-2.5)*.044,-.109),(.256,.0019,.002),m['silver'],0)
+                h.box('Photovoltaic cell coverglass',(x,y,-.1355),(.279,.290,.009),m['solar2'] if (row+col)%7==0 else m['solar'],.003)
+                for dx in [-.066,.066]:h.box('Cell collection busbar',(x+dx,y,-.1305),(.005,.268,.003),m['silver'],0)
+                for j in range(6):h.box('Fine cell finger',(x,y+(j-2.5)*.044,-.1305),(.256,.0019,.002),m['silver'],0)
                 if row<7:
-                    for dx in [-.066,.066]:h.box('Intercell series tab',(x+dx,y+.155,-.109),(.018,.038,.004),m['goldedge'],0)
+                    for dx in [-.066,.066]:h.box('Intercell series tab',(x+dx,y+.155,-.1295),(.018,.038,.004),m['goldedge'],0)
         for y in [-.16,2.36]:
-            h.box('String collection strip',(cx,y,-.105),(1.41,.027,.008),m['goldedge'],.002)
-            for dx in [-.74,.74]:h.screw((cx+dx,y,-.045),m['edge'],'z',.020)
+            h.box('String collection strip',(cx,y,-.136),(1.41,.027,.008),m['goldedge'],.002)
+            for dx in [-.74,.74]:h.screw((cx+dx,y,-.1265),m['edge'],'z',.020)
         if panel==0:
             for y in [.2,1.1,2.0]:h.cyl('Panel deployment hinge',(side*3.82,y,-.12),.054,.22,m['silver'],'y',20,.005)
 
@@ -160,7 +188,7 @@ anchors={
  'AnchorPayload':[0,2.78,1.36],'AnchorBus':[-1.43,1.90,1.10],
  'AnchorSolarArray':[3.01,1.10,-.09],'AnchorArrayDrive':[-1.88,1.16,.07],
  'AnchorPower':[.80,.82,.62],'AnchorBattery':[-.85,.72,.55],
- 'AnchorAttitude':[-1.06,2.44,-.045],'AnchorWheels':[-.08,.64,1.53],
+ 'AnchorAttitude':[-1.06,2.665,-.838],'AnchorWheels':[-.08,.64,1.53],
  'AnchorPropulsion':[.88,1.59,-.38],'AnchorComputer':[-1.06,1.922,-.24],
  'AnchorAntenna':[-.52,3.05,-.72],'AnchorRadiator':[1.93,1.28,1.56],
 }

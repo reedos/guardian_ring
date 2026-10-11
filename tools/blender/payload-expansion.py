@@ -83,8 +83,8 @@ def expand(h,m):
     optic(h,'Representative tertiary relay mirror',(-1.46,.05,-1.07),(.47,.50),(.7,0,.7),m['mirror'])
     optic(h,'Representative quaternary relay mirror',(-.42,.05,-1.43),(.40,.44),(-.7,0,.7),m['mirror'])
     for x,z in [(-1.46,-1.07),(-.42,-1.43)]:
-        h.box('Relay mirror support',(x,-.63,z),(.18,1.1,.18),m['dark'],.012)
-        h.box('Relay mirror pedestal',(x,-1.40,z),(.47,.10,.41),m['silver'],.014)
+        h.box('Relay mirror support',(x,-.78,z),(.18,1.26,.18),m['dark'],.012)
+        h.box('Relay mirror pedestal',(x,-1.46,z),(.47,.10,.41),m['silver'],.014)
 
     h.role('ScanSystem')
     h.box('Scanning subsystem mounting deck',(-1.81,-1.24,3.38),(3.75,.12,2.26),m['silver'],.023)
@@ -131,6 +131,8 @@ def expand(h,m):
 
     h.role('AftOptics')
     h.box('Aft-optics mounting deck',(-.20,-1.02,-2.27),(2.40,.12,1.47),m['silver'],.026)
+    for x in [-1.25,.85]:
+        for z in [-2.80,-1.64]:h.box('Aft-optics deck leg',(x,-1.295,z),(.10,.43,.10),m['dark'],.008)
     for name,at,normal,mat in [
         ('Visible infrared beamsplitter',(-.47,-.03,-2.04),(.71,0,.71),'cyanedge'),
         ('Midwave longwave beamsplitter',(.44,-.03,-2.31),(-.71,0,.71),'goldedge'),
@@ -140,8 +142,10 @@ def expand(h,m):
     for x,z in [(-.77,-3.04),(.36,-2.85),(.78,-1.84)]:
         h.ring('Stationary channel filter retainer',(x,-.06,z),.22,.172,.053,m['silver'],'z',32)
         h.cyl('Stationary channel filter optical surface',(x,-.06,z-.012),.17,.012,m['solar'],'z',32,.002)
+        h.ring('Stationary cold stop spacer',(x,-.06,z-.062),.215,.19,.075,m['dark'],'z',32)
         h.ring('Stationary cold stop',(x,-.06,z-.11),.21,.125,.025,m['black'],'z',32)
-        h.box('Filter cassette foot',(x,-.64,z),(.28,.09,.23),m['dark'],.009)
+        h.box('Filter cassette post',(x,-.615,z),(.07,.70,.07),m['dark'],.006)
+        h.box('Filter cassette foot',(x,-.935,z),(.28,.05,.23),m['dark'],.009)
 
     h.role('Thermal')
     h.box('Cold-head thermometer',(-.42,-.40,-3.51),(.12,.08,.12),m['edge'],.006)

@@ -1,4 +1,4 @@
-"""Detailed representative infrared payload and electronics, version 14.
+"""Detailed representative infrared payload and electronics, version 15.
 Blender --background --python tools/blender/build-payload.py.
 The opened telescope and integrated electronics units show subsystem
 relationships with authored removable covers. No military optical prescription, electronics schematic,
@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=14
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=15
 
 # Keep the approved reflective cutaway, then expose the rest of its signal chain.
 source=Path(__file__).with_name('build-hardware-look.py');tree=ast.parse(source.read_text(encoding='utf-8'))
@@ -37,7 +37,7 @@ for x in [-2.70,-.5,1.6,3.45,6.3]:
         h.cyl('Bench isolator mount',(x,-1.78,z),.12,.18,m['silver'],segments=20)
         h.screw((x,-1.435,z),m['edge'],r=.033)
 for x in [-2.17,-.73]:
-    for z in [-.67,1.90]:h.box('Telescope bench interface',(x,-1.455,z),(.43,.08,.34),m['silver'],.012)
+    for z in [-.67,1.90]:h.box('Telescope bench interface',(x,-1.4525,z),(.43,.115,.34),m['silver'],.012)
 h.box('Telescope identification bracket',(-.29,-.84,-.40),(.075,1.26,.18),m['silver'],.008)
 h.box('Telescope identification stock',(-.24,-.20,-.40),(.032,.25,1.04),m['dark'],.005)
 
@@ -61,18 +61,25 @@ h.ring('Cold shield optical interface',(-1.10,-.47,-1.42),.38,.29,.055,m['silver
 # cutaway. This separation is diagram spacing rather than a dimensional claim.
 for obj in bpy.context.scene.objects:
     if obj.get('assetRole')=='Detector':obj.location.y+=1.50;obj.location.z+=.12
+for x in [-1.70,-.50]:
+    for z in [-4.00,-2.95]:h.box('Cold assembly bench leg',(x,-1.405,z),(.09,.21,.09),m['dark'],.008)
 
 h.role('Thermal')
 h.cyl('Representative cooler compressor',(4.70,-.86,-2.24),.23,1.13,m['silver'],'x',32,.015)
-for x in [4.25,4.42,4.59,4.76,4.93,5.10]:h.ring('Compressor housing fin',(x,-.86,-2.24),.26,.232,.026,m['dark'],'x',32)
+# Space cryocooler compressors reject heat by conduction through their mounts,
+# not by air fins. Two opposed piston housings meet at a central flange.
+for x in [4.135,5.265]:h.sphere('Compressor piston-housing end dome',(x,-.86,-2.24),(.09,.225,.225),m['silver'],32,16)
+h.ring('Compressor central joint flange',(4.70,-.86,-2.24),.265,.225,.05,m['dark'],'x',40)
+for x in [4.42,4.98]:h.ring('Compressor housing girth band',(x,-.86,-2.24),.238,.226,.022,m['edge'],'x',40)
 for x in [4.31,5.06]:
     h.box('Compressor conductive saddle',(x,-1.20,-2.24),(.20,.30,.55),m['silver'],.016)
-    h.box('Compressor mounting foot',(x,-1.41,-2.24),(.39,.10,.72),m['silver'],.012)
+    h.box('Compressor mounting foot',(x,-1.43,-2.24),(.39,.16,.72),m['silver'],.012)
 h.cyl('Compressor transfer interface',(3.96,-.86,-2.24),.125,.29,m['silver'],'x',24,.012)
 h.box('Heat rejection radiator support',(6.55,-.49,-2.13),(.09,1.63,1.72),m['dark'],.030)
 h.box('Representative radiator face',(6.615,-.49,-2.13),(.028,1.55,1.62),m['white'],.012)
 for y in [-1.11,-.87,-.63,-.39,-.15,.09]:h.box('Radiator coating segment',(6.634,y,-2.13),(.008,.012,1.50),m['silver'],.002)
 for z in [-2.72,-1.55]:h.line('Warm-side heat pipe',[(5.06,-1.20,-2.24),(5.56,-1.40,z),(6.49,-.75,z)],.028,m['silver'])
+h.box('Cooling role-plate mounting rail',(4.70,-.6225,-2.24),(.86,.075,.20),m['silver'],.008)
 h.box('Cooling role plate',(4.70,-.57,-2.24),(.94,.03,.24),m['dark'],.006)
 # Continuous structural/thermal interfaces to the bench and radiator. These
 # routes identify conductance paths, not temperature, conductance or capacity.

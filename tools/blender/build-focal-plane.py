@@ -1,4 +1,4 @@
-"""Level 4 focal-plane carrier GLB, version 6.
+"""Level 4 focal-plane carrier GLB, version 7.
 
 Run: Blender 5.2 --background --python tools/blender/build-focal-plane.py
 
@@ -15,7 +15,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 6
+VERSION = 7
 OUT.mkdir(parents=True, exist_ok=True)
 
 
@@ -73,7 +73,7 @@ for x in [-1.58,.28]:
     for y in [-.82,.82]:
         cylinder('Carrier isolation standoff',(x,y,-.28),.065,.25,m['ceramic'],vertices=16)
         cylinder('Carrier mounting washer',(x,y,-.405),.115,.035,m['silver'],vertices=24)
-box('Carrier structural base',(-.65,0,-.50),(2.48,2.25,.12),m['silver'],.025)
+box('Carrier structural base',(-.65,0,-.4825),(2.48,2.25,.12),m['silver'],.025)
 # Connector shells, strain relief and decoupling/passive packages make the
 # external board legible as electronics, without a real circuit schematic.
 for x in [1.47,2.66]:
@@ -113,21 +113,24 @@ h.role('BiasTiming')
 h.enclosure('Warm bias and timing tray',(2.04,.03,1.78),(1.80,.29,1.16),hm,True)
 expansion.card(h,hm,'Readout bias and timing',(2.04,.195,1.78),(1.62,.94),'clock')
 for x in [1.47,1.72,1.97,2.22]:
-    h.box('Representative bias regulator',(x,.28,1.45),(.14,.070,.12),hm['chip'],.006)
+    h.box('Representative bias regulator',(x,.2485,1.45),(.14,.070,.12),hm['chip'],.006)
     h.line('Bias routing',[(x,.219,1.38),(x,.219,1.26),(x+.11,.219,1.26)],.004,hm['copper'])
 h.connector('Bias and timing output',(1.44,.25,1.83),.32,hm)
 h.line('Timing to video harness',[(2.61,.26,1.30),(2.84,.26,1.15),(2.82,.25,.47),(2.67,.21,.33)],.023,hm['loom'])
 h.line('Bias and timing to detector flex',[(1.44,.25,1.91),(1.20,.35,1.80),(.84,.35,1.07),(.83,.30,.59)],.020,hm['loom'])
 
+# The card role plates stand on short brackets from the tray end wall.
+for x in [1.49,2.59]:h.box('Bias and timing role-plate bracket',(x,.06,2.37025),(.08,.08,.0215),hm['silver'],.004)
 h.role('ThermalFeedback')
 h.enclosure('Cryocooler control electronics tray',(2.13,.07,-2.62),(1.90,.33,1.21),hm,True)
 expansion.card(h,hm,'Cold-head control electronics',(2.13,.27,-2.62),(1.70,1.01),'drive')
+for x in [1.53,2.73]:h.box('Cooler control role-plate bracket',(2.13+(x-2.13),.135,-1.99975),(.08,.08,.0315),hm['silver'],.004)
 h.box('Cold-head resistance thermometer',(-.64,.263,-1.00),(.17,.035,.11),hm['edge'],.004)
 for dx in [-.034,.034]:h.line('Thermometer lead',[(-.64+dx,.285,-1.0),(-.50+dx,.30,-1.17),(-.13+dx,.28,-1.66),(.41+dx,.28,-1.91),(1.40+dx,.34,-2.33)],.008,hm['copper'])
 h.line('Cooler power-amplifier cable',[(1.42,.31,-2.80),(1.08,.25,-2.45),(.95,.21,-1.89),(.97,.20,-1.38)],.031,hm['loom'])
 h.line('Warm control heat path',[(2.86,.07,-2.63),(3.16,.06,-2.63),(3.18,.06,-1.90)],.030,hm['silver'])
 h.box('Control-board heat-rejection interface',(3.20,.03,-1.92),(.17,.25,.43),hm['silver'],.015)
-h.box('Cooler controller rear identification stock',(2.13,.12,-3.26),(1.65,.23,.025),hm['dark'],.005)
+h.box('Cooler controller rear identification stock',(2.13,.12,-3.24875),(1.65,.23,.0475),hm['dark'],.005)
 
 h.role('WarmReadout')
 # Distinct package leads, service connectors and a shield frame make the warm
@@ -136,7 +139,7 @@ for side in [-1,1]:
     for i in range(8):
         h.box('Video package terminal',(2.11+side*.35,.137,-.29+(i-3.5)*.068),(.058,.022,.019),hm['goldedge'],.002)
 for x in [1.38,2.69]:h.box('Warm video shield rail',(x,.29,-.1),(.04,.23,1.66),hm['silver'],.008)
-for z in [-.92,.72]:h.box('Warm video shield end',(2.04,.28,z),(1.23,.20,.038),hm['silver'],.008)
+for z in [-.92,.72]:h.box('Warm video shield end',(2.04,.28,z),(1.31,.20,.038),hm['silver'],.008)
 for x in [1.43,2.66]:
     for z in [-.94,.74]:h.screw((x,.42,z),hm['edge'],r=.027)
 
