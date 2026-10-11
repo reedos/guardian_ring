@@ -5,7 +5,7 @@ export function siteHeader(current = '') {
   return `<header class="topbar" id="topbar">
   <a class="brand" href="index.html" aria-label="The Guardian Ring, home"><span class="mark ring-mark" aria-hidden="true"></span><span class="brand-t">The Guardian Ring</span></a>
   <nav class="topnav" id="topnav" aria-label="Site">
-    <a href="index.html#ring">The ring</a><a href="index.html#satellite">Spacecraft</a><a href="index.html#payload">Payload</a><a href="index.html#data-path">Data path</a><span class="sep" aria-hidden="true"></span>
+    <a href="index.html#ring">The ring</a><a href="index.html#photon">Infrared</a><a href="index.html#satellite">Spacecraft</a><a href="index.html#payload">Payload</a><a href="index.html#data-path">Data path</a><span class="sep" aria-hidden="true"></span>
     ${REFERENCE_NAV.map(([id, title]) => `<a href="${id}.html"${id === current ? ' aria-current="page"' : ''}>${title}</a>`).join('')}
   </nav>
   <a class="btn go top-cta" id="top-cta" href="visualizer.html">Open the visualizer <span aria-hidden="true">→</span></a>

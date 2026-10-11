@@ -45,3 +45,21 @@ html{scroll-behavior:smooth;scroll-padding-top:96px}[hidden]{display:none!import
 .signal-chain.instrument-packages li:nth-child(n) {grid-column:auto;grid-row:auto}
 .signal-chain.instrument-packages li::after {display:none}
 @media(max-width:760px) {.signal-chain.instrument-packages {grid-template-columns:1fr}}
+/* Story review 10/10/2026: orbit trade-offs, the warning chain, and optional depth. */
+.orbit-trades{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px}
+.orbit-trades h3{grid-column:1/-1;margin:0;font-size:clamp(28px,2.6vw,38px);line-height:1}
+.orbit-trades>div{border-top:1px solid var(--accent);padding-top:17px;display:grid;gap:10px;align-content:start;justify-items:start;min-width:0}
+.orbit-trades h4{margin:0;font:600 24px/1.08 var(--display);text-transform:uppercase}
+.orbit-trades p{margin:0;color:var(--muted);font-size:13px;line-height:1.8}
+.signal-chain.warning-chain{grid-template-columns:repeat(5,minmax(0,1fr));margin-top:8px}
+.signal-chain.warning-chain li:nth-child(n){grid-column:auto;grid-row:auto}
+.caption-stack{display:grid;gap:14px}.caption-stack p{margin:0}
+.fact-note{font-size:13px;line-height:1.7;color:var(--muted);max-width:46ch}.fact-note a{color:var(--accent)}
+.deeper{margin-top:40px;border:1px solid var(--line);background:var(--surface)}
+.deeper>summary{cursor:pointer;padding:18px 22px;font:500 12px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);list-style-position:inside}
+.deeper>summary:hover,.deeper>summary:focus-visible{color:var(--ink)}
+.deeper[open]>summary{border-bottom:1px solid var(--line)}
+.deeper>.engineering-map{margin:0;padding:0 22px 22px}
+@media(max-width:1050px){.signal-chain.warning-chain{grid-template-columns:1fr 1fr 1fr}.signal-chain.warning-chain li::after{display:none}}
+@media(max-width:700px){.orbit-trades{grid-template-columns:1fr;gap:24px}.signal-chain.warning-chain{grid-template-columns:1fr;gap:26px}.signal-chain.warning-chain li::after{display:block;content:'↓';right:auto;left:20px;top:auto;bottom:-25px}.signal-chain.warning-chain li:last-child::after{display:none}.deeper>summary{padding:16px 18px;font-size:11px}.deeper>.engineering-map{padding:0 16px 18px}}
+.civil-fire{max-width:760px;margin-inline:auto}.civil-fire figcaption p{margin:0}.civil-fire figcaption .fire-lead{color:var(--ink);margin-bottom:8px}
