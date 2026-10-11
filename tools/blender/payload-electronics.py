@@ -55,10 +55,13 @@ def board(h,m,name,role,at,size,kind='digital'):
         for dx in [-.39,0,.39]:h.cyl(name+' power inductor',(x+dx,y+.19,z-.11),.075,.10,m['copper'],segments=16)
         for dx in [-.51,-.17,.17,.51]:h.cyl(name+' filter capacitor',(x+dx,y+.11,z+.24),.039,.17,m['dark'],segments=12)
     if kind=='drive':
-        for dx in [-.33,0,.33]:h.box(name+' driver heat spreader',(x+dx,y+.17,z-.12),(.19,.022,.19),m['edge'],.005)
+        for dx in [-.33,0,.33]:
+            h.box(name+' driver package',(x+dx,y+.089,z-.12),(.17,.141,.17),m['chip'],.006)
+            h.box(name+' driver heat spreader',(x+dx,y+.17,z-.12),(.19,.022,.19),m['edge'],.005)
     if kind=='clock':h.box(name+' oscillator case',(x-.28,y+.17,z-.22),(.25,.09,.17),m['edge'],.007)
     # Board labels sit on dedicated blank stock above the component envelope.
     h.box(name+' identification stock',(x,y+.24,z+d*.31),(w*.91,.025,.21),m['dark'],.004)
+    for sx in [-1,1]:h.box(name+' identification stock post',(x+sx*w*.44,y+.123,z+d*.31),(.05,.209,.05),m['silver'],.004)
 
 
 def build(h,m):
@@ -98,7 +101,7 @@ def build(h,m):
         for x in [4.83,5.08]:h.box('Internal interconnect socket',(x,-1.115,z),(.10,.08,.17),m['dark'],.004)
     for x,name in [(3.86,'Spacecraft regulated power'),(4.95,'Spacecraft command telemetry and timing'),(6.00,'Spacecraft science data')]:port(h,m,name,(x,-.97,3.57),.57)
     for x,name in [(3.95,'Sensor electronics interface'),(5.02,'Mechanism motor and encoder interface'),(6.01,'Cooler control interface')]:port(h,m,name,(x,-1.02,-1.09),.53,True)
-    h.box('Instrument unit identification stock',(4.95,-.59,3.585),(2.95,.24,.028),m['dark'],.005)
+    h.box('Instrument unit identification stock',(4.95,-.59,3.579),(2.95,.24,.028),m['dark'],.005)
     # Defined unit-to-unit harnesses, clamped to the common support. These
     # interfaces remain visible with the lids installed.
     h.line('Sensor-to-instrument data harness',[(2.28,-1.08,1.30),(2.28,-1.23,1.61),(3.15,-1.23,1.61),(3.15,-1.23,-1.45),(3.95,-1.02,-1.33)],.026,m['loom'])
@@ -108,7 +111,7 @@ def build(h,m):
     # Spacecraft boundaries terminate at restrained bulkhead connectors mounted
     # on the perimeter of this instrument support, rather than floating arrows.
     h.role('SpacecraftInterface')
-    h.box('Spacecraft interface bracket',(4.94,-1.08,4.37),(3.46,.70,.08),m['silver'],.014)
+    h.box('Spacecraft interface bracket',(4.94,-1.16,4.37),(3.46,.70,.08),m['silver'],.014)
     for x,name in [(3.86,'Spacecraft power boundary'),(4.95,'Spacecraft command boundary'),(6.00,'Spacecraft data boundary')]:
         port(h,m,name,(x,-.97,4.30),.57,True)
         h.line(name+' instrument harness',[(x,-.97,3.81),(x,-1.16,4.00),(x,-.97,4.06)],.026,m['loom'])

@@ -296,7 +296,13 @@ def focal_plane(m):
         line('Flex conductor',[(x,y+(j-4)*.059,z+.014) for x,y,z in centers],.006,m['trace'])
     # Representative cold finger and cooler form; no temperature or power claim.
     cylinder('Cooler body',(.54,1.36,.10),.29,1.42,m['silver'],'x')
-    for x in [.1,.3,.5,.7,.9]: cylinder('Cooler housing fin',(x,1.36,.10),.315,.040,m['dark'],'x')
+    # Conduction-cooled cold head: a bolted mounting flange and smooth housing,
+    # not air fins (which do nothing in vacuum). Form only, no performance.
+    cylinder('Cooler cold-end mounting flange',(-.12,1.36,.10),.36,.06,m['silver'],'x',vertices=48)
+    for k in range(8):
+        a=k*math.tau/8; cylinder('Cooler flange fastener',(-.155,1.36+.315*math.cos(a),.10+.315*math.sin(a)),.022,.012,m['bright'],'x',vertices=16,bevel=.003)
+    for x in [.30,.86]: cylinder('Cooler housing girth band',(x,1.36,.10),.297,.022,m['dark'],'x')
+    sphere('Cooler body end dome',(1.25,1.36,.10),(.10,.285,.285),m['silver'])
     cylinder('Cold finger',(-.46,1.36,.10),.13,.61,m['cyan'],'x')
     for j in range(6):
         ribbon('Thermal strap leaf',[(-.63,1.30,.1),(-.74,1.10,.14),(-.77,.90,.18),(-.77,.78,.22)],.12,m['strap']).location.x=j*.025
