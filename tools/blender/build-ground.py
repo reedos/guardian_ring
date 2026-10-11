@@ -1,4 +1,4 @@
-"""Ground side-level GLB, version 4: representative ground-system equipment.
+"""Ground side-level GLB, version 5: representative ground-system equipment.
 
 Run: Blender 5.2 --background --python tools/blender/build-ground.py
 
@@ -6,6 +6,9 @@ An authored teaching composition, not a real site, antenna design, operations
 layout or hardware specification. All sizes, counts, finishes and spacing are
 as drawn. No logos, part numbers, people, operational displays or location.
 Three.js export is Y-up; the equipment fronts face +Z.
+v5 puts the antenna outdoors: it stands on a concrete pad, separated from the
+raised equipment floor by a facility wall drawn cut down (section edge on top),
+with its cable entering through a wall feedthrough. As drawn.
 """
 import ast
 import bpy
@@ -15,7 +18,7 @@ from mathutils import Vector
 
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'public'/'models'
-VERSION=4
+VERSION=5
 OUT.mkdir(parents=True,exist_ok=True)
 
 
@@ -59,15 +62,31 @@ def rod(name,start,end,radius,mat):
     return obj
 
 
+# v5 outdoor pad: the back-left tiles give way to concrete, bounded by a cut
+# facility wall along the tile gaps. Boundaries and heights are as drawn.
+PAD_X,PAD_Y=-1.314,-1.261
+m['concrete']=lib['material']('Outdoor concrete pad as drawn',(.36,.35,.33),.0,.85)
+m['cut']=lib['material']('Cutaway section edge',(.62,.17,.07),.1,.5)
+
+
 def floor():
     box('Representative raised floor',(0,-1.25,-.13),(8.10,6.90,.24),m['floor'],.06)
     for ix in range(9):
         for iy in range(8):
-            box('Separated floor tile',((ix-4)*.876,1.7-iy*.846,.014),(.852,.822,.035),m['tile'],.008)
+            x,y=(ix-4)*.876,1.7-iy*.846
+            if x<PAD_X and y>PAD_Y:continue
+            box('Separated floor tile',(x,y,.014),(.852,.822,.035),m['tile'],.008)
+    # The pad ends inside the wall footprint, so no pad face lies in a wall face.
+    box('Outdoor antenna pad',((-4.02+PAD_X-.04)/2,(PAD_Y+.04+2.17)/2,.012),(PAD_X-.04+4.02,2.17-PAD_Y-.04,.046),m['concrete'],.01)
     for x in [-4.02,4.02]:box('Floor edge cap',(x,-1.25,-.08),(.055,6.77,.10),m['silver'],.012)
     for y in [-4.67,2.17]:box('Floor edge cap',(0,y,-.08),(8.0,.055,.10),m['silver'],.012)
+    # Facility wall between pad and equipment room, cut down to a stub.
+    box('Facility wall (cut)',(PAD_X-.04,(PAD_Y+2.17)/2,.15),(.08,2.17-PAD_Y,.32),m['dark'],.008)
+    box('Facility wall (cut)',((-4.02+PAD_X)/2,PAD_Y+.04,.15),(PAD_X+4.02,.08,.32),m['dark'],.008)
+    box('Facility wall section edge',(PAD_X-.04,(PAD_Y+2.17)/2,.313),(.084,2.17-PAD_Y,.012),m['cut'],0)
+    box('Facility wall section edge',((-4.02+PAD_X)/2,PAD_Y+.04,.313),(PAD_X+4.02,.084,.012),m['cut'],0)
     # Low route covers suggest facility services without drawing signal flow.
-    box('Floor service cover',(-.15,1.88,.075),(6.3,.17,.075),m['dark'],.012)
+    box('Floor service cover',(.89,1.88,.075),(4.22,.17,.075),m['dark'],.012)
 
 
 def receive():
@@ -108,6 +127,9 @@ def receive():
     for item in set(bpy.context.scene.objects)-fixed:item['antennaElevation']=True
     for x in [-.27,.27]:
         for y in [-.27,.27]:cylinder('Footing fastener',(cx+x,cy+y,.32),.035,.026,m['bright'],vertices=16,bevel=.004)
+    # v5: antenna cable in a conduit across the pad to a wall feedthrough.
+    line('Antenna cable conduit',[(cx+.20,cy-.30,.24),(cx+.30,cy-.55,.08),(cx+.30,-.95,.08),(PAD_X-.10,-.95,.08),(PAD_X-.10,-.95,.20)],.035,m['dark'])
+    box('Wall cable feedthrough plate',(PAD_X-.087,-.95,.18),(.016,.20,.20),m['silver'],.006)
 
 
 def process():
