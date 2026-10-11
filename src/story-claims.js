@@ -136,10 +136,29 @@ export const STORY_CLAIMS = [
   },
   {
     key: 'story:sbirs-scanning-staring', group: 'story',
-    label: 'SBIRS GEO payload sensor types', value: 'A scanning sensor and a staring sensor', basis: 'vendor',
-    ev: { refs: [['lm-sbirs-geo2-payload-2009', 'Payload description paragraph'], ['lm-sbirs-product-card-2016', 'PDF p. 2, overview paragraph and GEO payload line']],
-      vs: 'Attributed design description from the prime contractor, not a performance comparison; government fact sheets returned HTTP 403' },
-    scope: 'Sensor types only. Payload mass, focal-plane colors, detector counts, sensitivity and revisit wording are not adopted.',
+    label: 'SBIRS infrared payload sensors', value: 'A scanner and a step-starer (scanning and step-staring sensors)', basis: 'spec',
+    ev: { refs: [['ssc-sbirs-factsheet', 'Payload paragraph: “two sensors; a scanner and a step-starer”'],
+      ['lm-sbirs-geo2-payload-2009', 'Payload description paragraph (secondary, contractor)'],
+      ['lm-sbirs-product-card-2016', 'PDF p. 2, overview paragraph (secondary, contractor)']] },
+    scope: 'Official sensor types only (Space Force fact sheet, current as of March 2023). Sensitivity, revisit, dimensions, weights, focal-plane colors and detector counts are not adopted.',
+  },
+  {
+    key: 'story:sbirs-program-segments', group: 'story',
+    label: 'SBIRS program composition', value: 'GEO satellites, HEO sensors on host satellites, legacy DSP satellites and ground systems', basis: 'spec',
+    ev: { refs: [['ssc-sbirs-factsheet', 'Program composition paragraph']] },
+    scope: 'Official architecture description, current as of March 2023. No count, slot or status implied.',
+  },
+  {
+    key: 'story:sbirs-data-downlink', group: 'story',
+    label: 'SBIRS sensor data to the ground', value: 'Raw unprocessed data plus on-board detected events', basis: 'spec',
+    ev: { refs: [['ssc-sbirs-factsheet', 'Data paragraph: raw data down-linked; on-board signal processing transmits detected events']] },
+    scope: 'Official data-path description. No processing algorithm, rate, latency or performance implied.',
+  },
+  {
+    key: 'story:sbirs-ir-bands', group: 'story',
+    label: 'SBIRS infrared signal categories', value: 'Short-wave and mid-wave infrared', basis: 'spec',
+    ev: { refs: [['ssc-sbirs-factsheet', 'Mission paragraph: “detect short-wave and mid-wave infrared signals”']] },
+    scope: 'Official broad band categories only; no passband, sensitivity or focal-plane format.',
   },
   {
     key: 'story:schematic', group: 'story',

@@ -25,7 +25,7 @@ export function orbitsContent(model) {
         id: 'orbit-families', title: 'Read the orbit families', kicker: 'Public architecture',
         body: 'The public description of SBIRS includes geosynchronous and highly elliptical orbits. The drawn orbit families introduce their different shapes. Spacecraft counts and positions are illustrative, with no operational coverage represented.',
         specs: [
-          ['SBIRS orbit families', 'GEO and HEO', 'reported', { refs: [['gao-21-105249', 'Printed p. 4 (PDF p. 8), first paragraph; corroborated in GAO-26 Table 1.']] }],
+          ['SBIRS orbit families', 'GEO and HEO', 'reported', { refs: [['gao-21-105249', 'Printed p. 4 (PDF p. 8), first paragraph; corroborated in GAO-26 Table 1.'], ['ssc-sbirs-factsheet', 'Program composition paragraph: GEO satellites and HEO sensors on host satellites']] }],
           asDrawn(),
         ],
       },

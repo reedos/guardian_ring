@@ -51,52 +51,206 @@
       "kind": "primary",
       "marketing": false,
       "status": "unchecked",
-      "unchecked": "Direct web open returned HTTP 403 Forbidden. Search-result paraphrase not admitted; not cited."
+      "unchecked": "Dead link: on 10/11/2026 the URL redirects to the Los Angeles AFB newcomers page (review coordinator check); earlier direct open returned HTTP 403. Cite nowhere."
     }
   ],
   "facts": [
     {
       "id": "rocket-plume-ir-emitters",
-      "levels": ["plume"],
-      "row": ["Rocket-engine plume IR emitters", "Water vapor, carbon dioxide and carbon monoxide", "reported",
-        {"refs": [["nasa-rocket-plume-transmittance-2003", "PDF p. 1, Abstract"]]}],
+      "levels": [
+        "plume"
+      ],
+      "row": [
+        "Rocket-engine plume IR emitters",
+        "Water vapor, carbon dioxide and carbon monoxide",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-rocket-plume-transmittance-2003",
+              "PDF p. 1, Abstract"
+            ]
+          ]
+        }
+      ],
       "scope": "Named molecules in a NASA Stennis rocket-engine test-plume study. No intensity, temperature, vehicle or detectability is implied."
     },
     {
       "id": "rocket-plume-co2-band",
-      "levels": ["plume", "atmosphere"],
-      "row": ["CO2 ν3 band center (rocket-plume study)", "4.26 μm", "reported",
-        {"refs": [["nasa-rocket-plume-transmittance-2003", "PDF p. 4, CO2 ν3 fundamental at 4.26 μm; PDF p. 1, emission and absorption lines of the same species coincide"]]}],
+      "levels": [
+        "plume",
+        "atmosphere"
+      ],
+      "row": [
+        "CO2 ν3 band center (rocket-plume study)",
+        "4.26 μm",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-rocket-plume-transmittance-2003",
+              "PDF p. 4, CO2 ν3 fundamental at 4.26 μm; PDF p. 1, emission and absorption lines of the same species coincide"
+            ]
+          ]
+        }
+      ],
       "scope": "Molecular band location only. The paper states it as an absorption band and notes that emission and absorption share line positions; no band strength is assigned."
     },
     {
       "id": "rocket-plume-h2o-band",
-      "levels": ["plume", "atmosphere"],
-      "row": ["H2O ν3 and ν1 band centers (rocket-plume study)", "2.66 μm and 2.74 μm", "reported",
-        {"refs": [["nasa-rocket-plume-transmittance-2003", "PDF p. 4, H2O ν3 fundamental at 2.66 μm and ν1 at 2.74 μm; PDF p. 1, emission and absorption lines of the same species coincide"]]}],
+      "levels": [
+        "plume",
+        "atmosphere"
+      ],
+      "row": [
+        "H2O ν3 and ν1 band centers (rocket-plume study)",
+        "2.66 μm and 2.74 μm",
+        "reported",
+        {
+          "refs": [
+            [
+              "nasa-rocket-plume-transmittance-2003",
+              "PDF p. 4, H2O ν3 fundamental at 2.66 μm and ν1 at 2.74 μm; PDF p. 1, emission and absorption lines of the same species coincide"
+            ]
+          ]
+        }
+      ],
       "scope": "Molecular band locations only; no band strength, plume temperature or sensor passband is assigned."
     },
     {
       "id": "meo-mwmt-layer",
-      "levels": ["orbits"],
-      "row": ["Resilient Missile Warning/Missile Tracking – MEO", "Planned missile warning and tracking satellites in medium Earth orbit", "reported",
-        {"refs": [["gao-26-107085", "Table 1, Resilient Missile Warning/Missile Tracking – Medium Earth Orbit row; sentence beginning “DOD is prioritizing development of missile warning and tracking capabilities in LEO and medium Earth orbit (MEO)”"]]}],
+      "levels": [
+        "orbits"
+      ],
+      "row": [
+        "Resilient Missile Warning/Missile Tracking – MEO",
+        "Planned missile warning and tracking satellites in medium Earth orbit",
+        "reported",
+        {
+          "refs": [
+            [
+              "gao-26-107085",
+              "Table 1, Resilient Missile Warning/Missile Tracking – Medium Earth Orbit row; sentence beginning “DOD is prioritizing development of missile warning and tracking capabilities in LEO and medium Earth orbit (MEO)”"
+            ]
+          ]
+        }
+      ],
       "scope": "GAO description of a planned layer as of its 01/28/2026 report. No count, launch status, orbit parameters or performance is stated here."
     },
     {
       "id": "leo-tracking-layer",
-      "levels": ["orbits"],
-      "row": ["SDA Tranche 1 Tracking Layer", "Missile warning and tracking from low Earth orbit with wide-field-of-view infrared sensors", "reported",
-        {"refs": [["sda-tranche1-award", "Award paragraph and director quotation (07/18/2022)"], ["gao-26-107085", "Table 1, Proliferated Warfighter Space Architecture Tracking and Transport Layers row (low Earth orbit)"]]}],
+      "levels": [
+        "orbits"
+      ],
+      "row": [
+        "SDA Tranche 1 Tracking Layer",
+        "Missile warning and tracking from low Earth orbit with wide-field-of-view infrared sensors",
+        "reported",
+        {
+          "refs": [
+            [
+              "sda-tranche1-award",
+              "Award paragraph and director quotation (07/18/2022)"
+            ],
+            [
+              "gao-26-107085",
+              "Table 1, Proliferated Warfighter Space Architecture Tracking and Transport Layers row (low Earth orbit)"
+            ]
+          ]
+        }
+      ],
       "scope": "Dated award description and GAO architecture table. No numerical field of view, resolution, count or operational status is implied."
     },
     {
       "id": "sbirs-scanning-staring",
-      "levels": ["satellite", "payload"],
-      "row": ["SBIRS GEO payload sensor types", "A scanning sensor and a staring sensor", "vendor",
-        {"refs": [["lm-sbirs-geo2-payload-2009", "Payload description paragraph"], ["lm-sbirs-product-card-2016", "PDF p. 2, overview paragraph and GEO payload line"]],
-         "vs": "Attributed design description from the prime contractor, not a performance comparison; government fact sheets returned HTTP 403"}],
-      "scope": "Sensor types only. Payload mass, focal-plane colors, detector counts, sensitivity and revisit wording in these releases are deliberately not adopted."
+      "levels": [
+        "satellite",
+        "payload"
+      ],
+      "row": [
+        "SBIRS infrared payload sensors",
+        "A scanner and a step-starer (scanning and step-staring sensors)",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "Payload paragraph: “two sensors; a scanner and a step-starer”"
+            ],
+            [
+              "lm-sbirs-geo2-payload-2009",
+              "Payload description paragraph (secondary, contractor)"
+            ],
+            [
+              "lm-sbirs-product-card-2016",
+              "PDF p. 2, overview paragraph (secondary, contractor)"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official sensor types only. Sensitivity, revisit, dimensions, weights, focal-plane colors and detector counts are not adopted."
+    },
+    {
+      "id": "sbirs-program-segments",
+      "levels": [
+        "orbits",
+        "ground"
+      ],
+      "row": [
+        "SBIRS program composition",
+        "GEO satellites, HEO sensors on host satellites, legacy DSP satellites and ground systems",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "Program composition paragraph"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official architecture description, current as of March 2023. No count, slot or status implied."
+    },
+    {
+      "id": "sbirs-data-downlink",
+      "levels": [
+        "satellite",
+        "ground"
+      ],
+      "row": [
+        "SBIRS sensor data to the ground",
+        "Raw unprocessed data plus on-board detected events",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "Data paragraph: raw data down-linked; on-board signal processing transmits detected events"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official data-path description. No processing algorithm, rate, latency or performance implied."
+    },
+    {
+      "id": "sbirs-ir-bands",
+      "levels": [
+        "payload"
+      ],
+      "row": [
+        "SBIRS infrared signal categories",
+        "Short-wave and mid-wave infrared",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "Mission paragraph: “detect short-wave and mid-wave infrared signals”"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official broad band categories only; no passband, sensitivity or focal-plane format."
     }
   ]
 }

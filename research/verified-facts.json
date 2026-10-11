@@ -16,6 +16,10 @@
             [
               "gao-21-105249",
               "Printed p. 4 (PDF p. 8), first paragraph; corroborated in GAO-26 Table 1."
+            ],
+            [
+              "ssc-sbirs-factsheet",
+              "Program composition paragraph: GEO satellites and HEO sensors on host satellites"
             ]
           ]
         }
@@ -31,6 +35,10 @@
             [
               "gao-21-105249",
               "Printed p. 4 (PDF p. 8), first paragraph; corroborated in GAO-26 Table 1."
+            ],
+            [
+              "ssc-sbirs-factsheet",
+              "Program composition paragraph: GEO satellites and HEO sensors on host satellites"
             ]
           ]
         }
@@ -6362,24 +6370,89 @@
         "payload"
       ],
       "row": [
-        "SBIRS GEO payload sensor types",
-        "A scanning sensor and a staring sensor",
-        "vendor",
+        "SBIRS infrared payload sensors",
+        "A scanner and a step-starer (scanning and step-staring sensors)",
+        "spec",
         {
           "refs": [
             [
+              "ssc-sbirs-factsheet",
+              "Payload paragraph: “two sensors; a scanner and a step-starer”"
+            ],
+            [
               "lm-sbirs-geo2-payload-2009",
-              "Payload description paragraph"
+              "Payload description paragraph (secondary, contractor)"
             ],
             [
               "lm-sbirs-product-card-2016",
-              "PDF p. 2, overview paragraph and GEO payload line"
+              "PDF p. 2, overview paragraph (secondary, contractor)"
             ]
-          ],
-          "vs": "Attributed design description from the prime contractor, not a performance comparison; government fact sheets returned HTTP 403"
+          ]
         }
       ],
-      "scope": "Sensor types only. Payload mass, focal-plane colors, detector counts, sensitivity and revisit wording in these releases are deliberately not adopted."
+      "scope": "Official sensor types only. Sensitivity, revisit, dimensions, weights, focal-plane colors and detector counts are not adopted."
+    },
+    {
+      "id": "sbirs-program-segments",
+      "levels": [
+        "orbits",
+        "ground"
+      ],
+      "row": [
+        "SBIRS program composition",
+        "GEO satellites, HEO sensors on host satellites, legacy DSP satellites and ground systems",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "Program composition paragraph"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official architecture description, current as of March 2023. No count, slot or status implied."
+    },
+    {
+      "id": "sbirs-data-downlink",
+      "levels": [
+        "satellite",
+        "ground"
+      ],
+      "row": [
+        "SBIRS sensor data to the ground",
+        "Raw unprocessed data plus on-board detected events",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "Data paragraph: raw data down-linked; on-board signal processing transmits detected events"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official data-path description. No processing algorithm, rate, latency or performance implied."
+    },
+    {
+      "id": "sbirs-ir-bands",
+      "levels": [
+        "payload"
+      ],
+      "row": [
+        "SBIRS infrared signal categories",
+        "Short-wave and mid-wave infrared",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "Mission paragraph: “detect short-wave and mid-wave infrared signals”"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official broad band categories only; no passband, sensitivity or focal-plane format."
     }
   ]
 }

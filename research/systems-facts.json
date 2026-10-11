@@ -19,15 +19,18 @@
     {
       "kind": "primary",
       "marketing": false,
-      "accessed": "10/01/2026",
+      "accessed": "10/11/2026",
       "id": "ssc-sbirs-factsheet",
       "title": "Space Based Infrared System",
       "publisher": "U.S. Space Force",
       "url": "https://www.spaceforce.mil/about-us/fact-sheets/article/2197746/space-based-infrared-system/",
-      "published": null,
-      "status": "unchecked",
-      "reason": "Direct web open returned HTTP 403 Forbidden. Stopped; no alternate retrieval.",
-      "sourceType": "government primary"
+      "status": "verified",
+      "sourceType": "government primary",
+      "dated": "Page footer: Current as of March 2023",
+      "section": "Fact sheet body: payload, program composition, data and launch paragraphs",
+      "quote": "The infrared payload consists of two sensors; a scanner and a step-starer.",
+      "evidence": "research/review-accuracy-2026-10-10.md#round-5",
+      "note": "Opened in a real browser by the review coordinator on 10/11/2026 and quoted verbatim; this reviewer’s fetch tool received HTTP 403. Official sensor wording is “a scanner and a step-starer” (also “step-staring sensor”). Sensitivity, revisit, dimension and weight wording on the page is not adopted."
     },
     {
       "kind": "primary",
@@ -39,7 +42,7 @@
       "url": "https://media.defense.gov/2022/Apr/08/2002973444/-1/-1/1/SBIRS%20FACTSHEET.PDF",
       "published": null,
       "status": "unchecked",
-      "reason": "Direct web open returned HTTP 403 Forbidden. URL date is not verified document publication date. Stopped; no alternate retrieval.",
+      "reason": "Served as a file download (10/11/2026 check by the review coordinator); not downloaded, so not opened. Earlier direct open returned HTTP 403.",
       "sourceType": "government primary"
     },
     {
@@ -185,7 +188,7 @@
       "url": "https://www.ssc.spaceforce.mil/Portals/3/Documents/PRESS%20RELEASES/The%20first%20Medium%20Earth%20Orbit%20Resilient%20Missile%20Warning%20Missile%20Tracking%20Program%20successfully%20completes%20its%20critical%20design%20review%20and%20goes%20into%20production.pdf",
       "published": null,
       "status": "unchecked",
-      "reason": "Direct web open returned Internal Error with no diagnostic detail. No alternate retrieval.",
+      "reason": "Served as a file download (10/11/2026 check by the review coordinator); not downloaded, so not opened. Earlier opens returned Internal Error and HTTP 403. The MEO layer is cited to GAO-26-107085 instead.",
       "sourceType": "government primary"
     },
     {
@@ -256,6 +259,10 @@
             [
               "gao-21-105249",
               "Printed p. 4 (PDF p. 8), first paragraph; corroborated in GAO-26 Table 1."
+            ],
+            [
+              "ssc-sbirs-factsheet",
+              "Program composition paragraph: GEO satellites and HEO sensors on host satellites"
             ]
           ]
         }

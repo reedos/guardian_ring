@@ -156,3 +156,23 @@ now mention the rocket-engine plume study if the story uses the new keys.
 Round 4 verification: `npx tsc --noEmit` clean · `npx vitest run` 52 files, 293 tests passed · `npx tsx tools/claims.mjs`
 0 problems (970 claims, 518 research rows) · build ok · links PASS (0 problems) · pages PASS (8 of 8) ·
 test-claim-page-policy PASS · claim-audit-report certified (48 new page rows reviewed).
+
+## Round 5
+
+Coordinator request, 10/11/2026. The Space Force SBIRS fact sheet
+(https://www.spaceforce.mil/about-us/fact-sheets/article/2197746/space-based-infrared-system/, footer “Current as of
+March 2023”) was opened in a real browser by the review coordinator on 10/11/2026; this reviewer’s fetch tool still gets
+HTTP 403, so the quotes are the coordinator’s verbatim transcription. Recorded as `ssc-sbirs-factsheet`, verified.
+
+| Item | Action |
+|---|---|
+| Official sensor wording | “The infrared payload consists of two sensors; a scanner and a step-starer.” `story:sbirs-scanning-staring` relabeled Vendor → **Spec**, value “A scanner and a step-starer (scanning and step-staring sensors)”, fact sheet cited first, the two Lockheed Martin documents kept as secondary |
+| HEO hosted payloads | New `story:sbirs-program-segments` (Spec): GEO satellites, HEO sensors on host satellites, legacy DSP satellites and ground systems. Fact sheet added as a second ref to the orbits card row “SBIRS orbit families” (and its canonical row in systems-facts.json) and to the SBIRS glossary entry |
+| Onboard processing and raw downlink | New `story:sbirs-data-downlink` (Spec): raw unprocessed data plus on-board detected events. No algorithm, rate or latency |
+| SWIR/MWIR | New `story:sbirs-ir-bands` (Spec): “detect short-wave and mid-wave infrared signals.” Broad categories only. No existing site claim needed it |
+| Not adopted | Sensitivity and revisit wording; sensor/satellite dimensions and weights (the site assigns no masses; AGENTS.md rules out invented masses and PLAN §6 lists masses as not public, so these are left for Reed) |
+| Dead and download-only URLs | Los Angeles AFB fact sheet (…/Article/734550/…) redirects to the newcomers page: recorded dead, cited nowhere. media.defense.gov SBIRS PDF and SSC MEO release PDF serve as file downloads, not downloaded: stay unchecked with that reason |
+
+Round 5 verification: `npx tsc --noEmit` clean · `npx vitest run` 52 files, 293 tests passed · `npx tsx tools/claims.mjs`
+0 problems (973 claims, 524 research rows) · build ok · links PASS (0 problems) · pages PASS (8 of 8) ·
+test-claim-page-policy PASS · claim-audit-report certified (9 new page rows reviewed).
