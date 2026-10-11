@@ -206,3 +206,19 @@ AGENTS.md (“no invented … masses”) and the Blender README (“no assigned 
 
 Per the coordinator, the new page-claim review rows from this round were **not** self-signed. The 103 rows signed in
 rounds 1, 4 and 5 are listed for the independent second reviewer in `research/review-accuracy-signed-rows.md`.
+
+## Round 7 (fixes for the second reviewer’s rejections, commit 59253ff)
+
+- Rows 1676–1692 (`src/sbirs-published.js`): locators changed from “General characteristics: …” to “Features: Dimension,
+  Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”,
+  “Features: Weight (all weights approximate), Satellite line” and “Features: Power source line”. Spec weights now read
+  “Approximately 530 lb” and “Approximately 5,525 lb on orbit, including a 1,100 lb two-sensor payload and 430 lb of
+  fuel”. Sensor rows are labeled “SBIRS sensor (as listed on the fact sheet)” and their scope says “It describes the
+  published SBIRS sensor”. The metric Calc. strings say “About …”; the satellite one now adds “on orbit”. Values
+  re-derived unchanged (2.1/1.2/0.9 m; 240 kg; 14.9/6.7/6.1 m; 2,506/499/195 kg).
+- Row 1667: `story:sbirs-scanning-staring` scope now says sensitivity, revisit, focal-plane colors and detector counts
+  are not adopted, and that published dimensions and weights appear as separate Spec rows.
+- Side effect: the shared scope sentence changed from “Official SBIRS GEO figure” to “Official SBIRS figure”, so the
+  launches scope row (1694, previously confirmed) no longer matches and needs a recheck.
+- Mirrored in `research/accuracy-2026-10-10-facts.json`. Nothing was self-signed. The claim audit report shows 19
+  unreviewed rows: the 18 rejected rows as regenerated, plus the launches scope row.

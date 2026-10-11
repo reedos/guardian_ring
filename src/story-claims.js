@@ -141,7 +141,7 @@ export const STORY_CLAIMS = [
     ev: { refs: [['ssc-sbirs-factsheet', 'Payload paragraph: “two sensors; a scanner and a step-starer”'],
       ['lm-sbirs-geo2-payload-2009', 'Payload description paragraph (secondary, contractor)'],
       ['lm-sbirs-product-card-2016', 'PDF p. 2, overview paragraph (secondary, contractor)']] },
-    scope: 'Official sensor types only (Space Force fact sheet, current as of March 2023). Sensitivity, revisit, dimensions, weights, focal-plane colors and detector counts are not adopted.',
+    scope: 'Official sensor types only (Space Force fact sheet, current as of March 2023). Sensitivity, revisit, focal-plane colors and detector counts are not adopted; published dimensions and weights appear as separate Spec rows.',
   },
   {
     key: 'story:sbirs-program-segments', group: 'story',
