@@ -100,6 +100,11 @@ export const MODEL_CALCS = {
     title: 'Ideal refrigerator coefficient of performance', how: 'COPCarnot = Tc/(Th − Tc), with absolute temperatures and Th > Tc > 0. This limit is not the efficiency or input power of a real cryocooler; the scenario does not assign such values.',
     inputs: ['cold and hot temperatures supplied to the pure function', 'NIST refrigeration review, Eq. 1'],
   },
+  'us-customary-to-si': {
+    title: 'Unit conversion of published figures',
+    how: 'Length in meters = feet × 0.3048 exactly; mass in kilograms = pounds × 0.45359237 exactly (international foot and avoirdupois pound). Dimensions are shown to 0.1 m and masses to the nearest kilogram; the source’s own “approximately” qualifier still applies. Converts official published SBIRS GEO figures only; no dimension or mass is estimated or assigned to the site’s drawn hardware.',
+    inputs: ['ssc-sbirs-factsheet published U.S.-customary figures', 'exact foot and pound definitions'],
+  },
   'ideal-cooling-work': {
     title:'Ideal refrigerator work and rejected heat',
     how:'For the separate civil-temperature teaching example, COP = Tc/(Th−Tc), Wmin = Qcold/COP and Qhot = Qcold + Wmin. The cold temperature is the published TIRS-2 value; hot temperature and heat load are arbitrary teaching inputs. Reversible operation gives a lower work bound, not a real cooler power estimate or a military temperature.',

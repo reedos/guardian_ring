@@ -176,3 +176,33 @@ HTTP 403, so the quotes are the coordinator’s verbatim transcription. Recorded
 Round 5 verification: `npx tsc --noEmit` clean · `npx vitest run` 52 files, 293 tests passed · `npx tsx tools/claims.mjs`
 0 problems (973 claims, 524 research rows) · build ok · links PASS (0 problems) · pages PASS (8 of 8) ·
 test-claim-page-policy PASS · claim-audit-report certified (9 new page rows reviewed).
+
+## Round 6
+
+Coordinator request, 10/11/2026. **Decision recorded: Reed approved (in chat, 10/11/2026, relayed by the review
+coordinator) citing the Space Force fact sheet’s published SBIRS GEO dimensions and weights as Spec.** These figures
+describe SBIRS GEO as published. They are not properties of the site’s representative as-drawn satellite, which still has
+no assigned mass or dimensions. The values are the coordinator’s transcription of the fact sheet (current as of March 2023);
+this reviewer’s fetch tool still receives HTTP 403 from that page.
+
+| Key | Basis | Value |
+|---|---|---|
+| `story:sbirs-sensor-dimensions` | Spec | Approximately 7 ft × 4 ft × 3 ft |
+| `story:sbirs-sensor-dimensions-si` | Calc. | About 2.1 m × 1.2 m × 0.9 m (2.1336, 1.2192, 0.9144 m) |
+| `story:sbirs-sensor-weight` | Spec | 530 lb |
+| `story:sbirs-sensor-weight-si` | Calc. | About 240 kg (240.40 kg) |
+| `story:sbirs-geo-dimensions` | Spec | Approximately 49 ft × 22 ft × 20 ft with all appendages deployed on orbit |
+| `story:sbirs-geo-dimensions-si` | Calc. | About 14.9 m × 6.7 m × 6.1 m (14.935, 6.706, 6.096 m) |
+| `story:sbirs-geo-weight` | Spec | 5,525 lb on orbit, including a 1,100 lb two-sensor payload and 430 lb of fuel |
+| `story:sbirs-geo-weight-si` | Calc. | About 2,506 kg, including about 499 kg of payload and 195 kg of fuel (2,506.1; 498.95; 195.04 kg) |
+| `story:sbirs-power-source` | Spec | Sun-tracking solar arrays |
+| `story:sbirs-geo-launches` | Spec | 05/07/2011, 03/19/2013, 01/20/2017, 01/19/2018, 05/18/2021 and 08/04/2022 (sixth and final) |
+
+New calculation `us-customary-to-si` (exact 0.3048 m/ft and 0.45359237 kg/lb), `src/model/units.ts`, tested in
+`src/model/units.test.ts` and listed in the claim-audit test map. Rows live in `src/sbirs-published.js` (appended to
+the story claim registry) and are mirrored in `research/accuracy-2026-10-10-facts.json`. PLAN.md now says the Space Force
+fact sheet is verified and that official published SBIRS GEO figures may be cited, with no mass for drawn hardware.
+AGENTS.md (“no invented … masses”) and the Blender README (“no assigned hardware masses”) already agree and were not changed.
+
+Per the coordinator, the new page-claim review rows from this round were **not** self-signed. The 103 rows signed in
+rounds 1, 4 and 5 are listed for the independent second reviewer in `research/review-accuracy-signed-rows.md`.

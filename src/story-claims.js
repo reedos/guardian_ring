@@ -2,6 +2,7 @@
 // fact ledger; additional roles are documented in research/LEVELS-CONTENT-REVIEW.md.
 // No story claim is an output or performance estimate for a real sensor.
 import { SPACECRAFT_FACTS } from './spacecraft-content.js';
+import { SBIRS_PUBLISHED_CLAIMS } from './sbirs-published.js';
 const architecture = (key,label,value,ids) => ({
   key:`story:${key}`,group:'story',label,value,basis:'spec',
   ev:{refs:ids.flatMap(id=>SPACECRAFT_FACTS[id][3].refs)},
@@ -167,3 +168,5 @@ export const STORY_CLAIMS = [
     scope: 'As-drawn teaching geometry; no real constellation, performance, or physical dimensions.',
   },
 ];
+// Round 6: official published SBIRS GEO figures (see src/sbirs-published.js).
+STORY_CLAIMS.push(...SBIRS_PUBLISHED_CLAIMS);

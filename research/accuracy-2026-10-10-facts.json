@@ -251,6 +251,220 @@
         }
       ],
       "scope": "Official broad band categories only; no passband, sensitivity or focal-plane format."
+    },
+    {
+      "id": "sbirs-sensor-dimensions",
+      "levels": [
+        "satellite"
+      ],
+      "row": [
+        "SBIRS GEO sensor dimensions (published)",
+        "Approximately 7 ft × 4 ft × 3 ft",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "General characteristics: sensor dimensions"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+      "decision": "Use of official published SBIRS GEO dimensions and weights approved by Reed on 10/11/2026 (relayed by the review coordinator)."
+    },
+    {
+      "id": "sbirs-sensor-dimensions-si",
+      "levels": [
+        "satellite"
+      ],
+      "row": [
+        "SBIRS GEO sensor dimensions, metric (published figure converted)",
+        "About 2.1 m × 1.2 m × 0.9 m",
+        "derived",
+        {
+          "calc": "us-customary-to-si",
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "General characteristics: sensor dimensions"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
+      "decision": "Use of official published SBIRS GEO dimensions and weights approved by Reed on 10/11/2026 (relayed by the review coordinator)."
+    },
+    {
+      "id": "sbirs-sensor-weight",
+      "levels": [
+        "satellite"
+      ],
+      "row": [
+        "SBIRS GEO sensor weight (published)",
+        "530 lb",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "General characteristics: sensor weight"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+      "decision": "Use of official published SBIRS GEO dimensions and weights approved by Reed on 10/11/2026 (relayed by the review coordinator)."
+    },
+    {
+      "id": "sbirs-sensor-weight-si",
+      "levels": [
+        "satellite"
+      ],
+      "row": [
+        "SBIRS GEO sensor mass, metric (published figure converted)",
+        "About 240 kg",
+        "derived",
+        {
+          "calc": "us-customary-to-si",
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "General characteristics: sensor weight"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
+      "decision": "Use of official published SBIRS GEO dimensions and weights approved by Reed on 10/11/2026 (relayed by the review coordinator)."
+    },
+    {
+      "id": "sbirs-geo-dimensions",
+      "levels": [
+        "satellite"
+      ],
+      "row": [
+        "SBIRS GEO satellite dimensions (published)",
+        "Approximately 49 ft × 22 ft × 20 ft with all appendages deployed on orbit",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "General characteristics: satellite dimensions"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+      "decision": "Use of official published SBIRS GEO dimensions and weights approved by Reed on 10/11/2026 (relayed by the review coordinator)."
+    },
+    {
+      "id": "sbirs-geo-dimensions-si",
+      "levels": [
+        "satellite"
+      ],
+      "row": [
+        "SBIRS GEO satellite dimensions, metric (published figure converted)",
+        "About 14.9 m × 6.7 m × 6.1 m with all appendages deployed on orbit",
+        "derived",
+        {
+          "calc": "us-customary-to-si",
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "General characteristics: satellite dimensions"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
+      "decision": "Use of official published SBIRS GEO dimensions and weights approved by Reed on 10/11/2026 (relayed by the review coordinator)."
+    },
+    {
+      "id": "sbirs-geo-weight",
+      "levels": [
+        "satellite"
+      ],
+      "row": [
+        "SBIRS GEO satellite weight on orbit (published)",
+        "5,525 lb, including a 1,100 lb two-sensor payload and 430 lb of fuel",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "General characteristics: satellite weight"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+      "decision": "Use of official published SBIRS GEO dimensions and weights approved by Reed on 10/11/2026 (relayed by the review coordinator)."
+    },
+    {
+      "id": "sbirs-geo-weight-si",
+      "levels": [
+        "satellite"
+      ],
+      "row": [
+        "SBIRS GEO satellite mass on orbit, metric (published figure converted)",
+        "About 2,506 kg, including about 499 kg of payload and 195 kg of fuel",
+        "derived",
+        {
+          "calc": "us-customary-to-si",
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "General characteristics: satellite weight"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
+      "decision": "Use of official published SBIRS GEO dimensions and weights approved by Reed on 10/11/2026 (relayed by the review coordinator)."
+    },
+    {
+      "id": "sbirs-power-source",
+      "levels": [
+        "satellite"
+      ],
+      "row": [
+        "SBIRS GEO power source (published)",
+        "Sun-tracking solar arrays",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "General characteristics: power source"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+      "decision": "Use of official published SBIRS GEO dimensions and weights approved by Reed on 10/11/2026 (relayed by the review coordinator)."
+    },
+    {
+      "id": "sbirs-geo-launches",
+      "levels": [
+        "satellite"
+      ],
+      "row": [
+        "SBIRS GEO satellite launches (published)",
+        "05/07/2011, 03/19/2013, 01/20/2017, 01/19/2018, 05/18/2021 and 08/04/2022 (sixth and final)",
+        "spec",
+        {
+          "refs": [
+            [
+              "ssc-sbirs-factsheet",
+              "Launch list: first through sixth (final) satellite launch"
+            ]
+          ]
+        }
+      ],
+      "scope": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+      "decision": "Use of official published SBIRS GEO dimensions and weights approved by Reed on 10/11/2026 (relayed by the review coordinator)."
     }
   ]
 }
