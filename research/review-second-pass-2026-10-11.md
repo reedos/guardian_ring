@@ -8,7 +8,7 @@ PDF text came from the copies WebFetch returned, with text extracted by pypdf. E
 Schema: no reviewer field exists, so the reviewer is named in `basis`. Confirmed rows keep their status, and their basis now ends with “Confirmed by independent second reviewer (Claude), 10/11/2026”.
 Rejected rows get status `rejected`, which the policy treats as unreviewed. Cannot-verify rows keep the first reviewer’s status, with a “cannot verify” note added.
 
-**Totals.** 124 rows: 97 confirmed, 18 rejected, 4 cannot verify, 5 unused (their text no longer appears on any built page, so they were left out).
+**Totals (pass 1; see Pass 2 below for the current standing: 119 confirmed, 0 rejected, 0 cannot verify, 5 unused).** 124 rows: 97 confirmed, 18 rejected, 4 cannot verify, 5 unused (their text no longer appears on any built page, so they were left out).
 
 **Fact sheet transcription (character by character, live page).** All figures match: “Approximately 7 feet x 4 feet x 3 feet”; “Approximately 49 feet x 22 feet x 20 feet with all appendages deployed on-orbit”; “Weight (all weights approximate)”, “Sensor: 530 pounds”, “On-orbit, 5,525 pounds, including a 1,100 pound two-sensor payload and 430 pounds of fuel”; “Power source: Sun-tracking solar arrays”; launches May 7, 2011; March 19, 2013; Jan. 20, 2017; Jan. 19, 2018; May 18, 2021; Aug. 4, 2022 (“Sixth (final)”). Problems: (1) these figures sit under the page heading **“Features”**, and the cited locator “General characteristics: …” does not exist on the page; (2) the Spec weight values drop the sheet’s “all weights approximate” qualifier; (3) the sheet says “Sensor”, not “GEO sensor”.
 
@@ -155,5 +155,51 @@ Rejected rows get status `rejected`, which the policy treats as unreviewed. Cann
 - `npm run build`: ok, no source change. Preview at 127.0.0.1:47661.
 - `claim-page-inventory.mjs`: 1,666 text nodes, 0 layout findings.
 - `node tools/claim-audit-report.mjs`: fails under plain node with ERR_MODULE_NOT_FOUND, since it imports .ts files. Run as `node --import tsx`, it reports “18 page rows remain unreviewed; audit is not certified” (exit 1). These are the 18 rejected rows, so this result is expected.
+- `node tools/test-claim-page-policy.mjs`: PASS.
+- links gate: PASS, 0 problems, 15 states. pages gate: PASS, 8 of 8.
+
+## Pass 2 (10/11/2026, after accuracy-lane commit 9fc53f4)
+
+The live fact sheet was re-opened in the built-in browser and its Features block compared character by character. It is unchanged from pass 1. The GOES-R Series Data Book was read from the local copy in the main checkout (read only), with page text extracted by pypdf. The Read tool could not render PDF pages here because pdftoppm is not installed.
+
+**Pass 2 result.** All 23 rows are confirmed. With pass 1, the 124 rows now stand at 119 confirmed, 0 rejected, 0 cannot verify, 5 unused. The claim audit certifies with 0 unreviewed rows.
+
+| Index | Claim (page text) | Source checked | Verdict | Note |
+|---|---|---|---|---|
+| 1593 | ABI detector material, 1.378–13.3 μm channels | GOES-R Series Data Book (local copy, PDF pp. 39, 41–42) | confirmed | Table 3-5, printed p. 3-11 / PDF p. 39: Silicon for 0.47, 0.64, 0.86 μm; HgCdTe for 1.378 through 13.3 μm. Spec label correct. |
+| 1609 | A cooler rejects the heat it removes plus the work supplied to it. The separate ideal example below uses TI… | GOES-R Series Data Book (local copy, PDF pp. 39, 41–42) | confirmed | PDF p. 42: the TDU is an integral cooler, remote cold head and transfer line; waste energy goes to the loop heat pipes, then the radiator. PDF p. 41: Radiator/LHP assembly. Energy balance per NIST Eq. (1). |
+| 1616 | The Data Book lists HgCdTe detectors for ABI’s channels from 1.378 μm through 13.3 μm; its three shortest-w… | GOES-R Series Data Book (local copy, PDF pp. 39, 41–42) | confirmed | Table 3-5: HgCdTe 1.378–13.3 μm; the three shortest channels, 0.86 μm included, are silicon. Civil ABI only. |
+| 1617 | ABI detector material, 1.378–13.3 μm channels | GOES-R Series Data Book (local copy, PDF pp. 39, 41–42) | confirmed | Table 3-5, as for 1593. |
+| 1667 | Official sensor types only (Space Force fact sheet, current as of March 2023). Sensitivity, revisit, focal-… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | New text matches; no longer contradicts the published dimension and weight rows. The sensor-type quote is verbatim. |
+| 1676 | Approximately 7 ft × 4 ft × 3 ft | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Value matches the sheet; locator now “Features: …”, which matches the page; label now “SBIRS sensor (as listed on the fact sheet)”. |
+| 1677 | Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It descri… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Scope note accurate; subject is the published SBIRS sensor; not the as-drawn spacecraft. |
+| 1678 | About 2.1 m × 1.2 m × 0.9 m | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Conversion re-derived by hand and unchanged; locator now “Features: …”, which matches the page. |
+| 1679 | Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It descri… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Scope note accurate; subject is the published SBIRS sensor; not the as-drawn spacecraft. |
+| 1680 | Approximately 530 lb | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Value matches the sheet, now with “Approximately” per “all weights approximate”; locator now “Features: …”, which matches the page; label now “SBIRS sensor (as listed on the fact sheet)”. |
+| 1681 | Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It descri… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Scope note accurate; subject is the published SBIRS sensor; not the as-drawn spacecraft. |
+| 1682 | About 240 kg | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Conversion re-derived by hand and unchanged; locator now “Features: …”, which matches the page. |
+| 1683 | Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It descri… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Scope note accurate; subject is the published SBIRS sensor; not the as-drawn spacecraft. |
+| 1684 | Approximately 49 ft × 22 ft × 20 ft with all appendages deployed on orbit | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Value matches the sheet; locator now “Features: …”, which matches the page. |
+| 1685 | Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It descri… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Scope note accurate; subject is the SBIRS GEO satellite; not the as-drawn spacecraft. |
+| 1686 | About 14.9 m × 6.7 m × 6.1 m with all appendages deployed on orbit | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Conversion re-derived by hand and unchanged; locator now “Features: …”, which matches the page. |
+| 1687 | Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It descri… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Scope note accurate; subject is the SBIRS GEO satellite; not the as-drawn spacecraft. |
+| 1688 | Approximately 5,525 lb on orbit, including a 1,100 lb two-sensor payload and 430 lb of fuel | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Value matches the sheet, now with “Approximately” per “all weights approximate”; locator now “Features: …”, which matches the page. |
+| 1689 | Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It descri… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Scope note accurate; subject is the SBIRS GEO satellite; not the as-drawn spacecraft. |
+| 1690 | About 2,506 kg on orbit, including about 499 kg of payload and 195 kg of fuel | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Conversion re-derived by hand and unchanged; locator now “Features: …”, which matches the page. |
+| 1691 | Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It descri… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Scope note accurate; subject is the SBIRS GEO satellite; not the as-drawn spacecraft. |
+| 1692 | Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It descri… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Scope note accurate; subject is the SBIRS GEO satellite; not the as-drawn spacecraft. |
+| 1694 | Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It descri… | Space Force SBIRS fact sheet (built-in browser, re-opened 10/11/2026) | confirmed | Scope note accurate; subject is the SBIRS GEO satellite; not the as-drawn spacecraft. |
+
+### Audit launch fix
+
+The report imports .ts modules, so plain `node tools/claim-audit-report.mjs` cannot resolve them. Following the existing `claims` script pattern, `package.json` now has `"claims:audit": "tsx tools/claim-audit-report.mjs"`, and the tool has a header comment saying to run it through tsx. The audit logic is unchanged. The policy test still runs the report itself, via `--import tsx`, and still checks for exit 1 on an unsupported row.
+
+### Pass 2 checks
+
+- `npx tsc --noEmit`: clean.
+- `npx vitest run`: 53 files, 296 tests passed.
+- `npx tsx tools/claims.mjs`: 0 problems, 983 claims.
+- `npm run build`: ok. Page inventory on 127.0.0.1:47661: 1,666 text nodes, 0 layout findings.
+- `npm run claims:audit`: certified, exit 0, 0 unreviewed.
 - `node tools/test-claim-page-policy.mjs`: PASS.
 - links gate: PASS, 0 problems, 15 states. pages gate: PASS, 8 of 8.

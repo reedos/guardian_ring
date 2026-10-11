@@ -12,6 +12,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "claims": "tsx tools/claims.mjs",
+    "claims:audit": "tsx tools/claim-audit-report.mjs",
     "gates": "node tools/gates.mjs",
     "kit:sync": "node tools/kit.mjs sync",
     "kit:check": "node tools/kit.mjs check"

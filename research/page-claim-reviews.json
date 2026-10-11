@@ -27426,7 +27426,7 @@
       "card:light:abi:focal-planes:0"
     ],
     "status": "confirmed",
-    "basis": "goes-r-databook Table 3-5, printed p. 3-11 / PDF p. 39: HgCdTe for 1.378–13.3 μm channels, silicon for 0.47, 0.64 and 0.86 μm; accuracy review 10/10/2026 (research/review-accuracy-2026-10-10.md). Second review: cannot verify, independent second reviewer (Claude), 10/11/2026: GOES-R Series Data Book Table 3-5 not reachable (OSPO URL serves a file download; no copy in this worktree) (research/review-second-pass-2026-10-11.md)."
+    "basis": "goes-r-databook Table 3-5, printed p. 3-11 / PDF p. 39: HgCdTe for 1.378–13.3 μm channels, silicon for 0.47, 0.64 and 0.86 μm; accuracy review 10/10/2026 (research/review-accuracy-2026-10-10.md). Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2): goes-r-databook Table 3-5 (printed p. 3-11 / PDF p. 39) read from the local copy: Silicon for 0.47, 0.64, 0.86 μm; HgCdTe for 1.378–13.3 μm (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
@@ -27756,7 +27756,7 @@
       "component:focal-plane:thermal-feedback:comp-abi-power-amplifiers:0"
     ],
     "status": "confirmed",
-    "basis": "Calc. carnot-cop / ideal-cooling-work: COP = 43/257 = 0.1673, W = 257/43 = 5.977 W, Qhot = 6.977 W re-derived independently; nist-refrigeration-2020 Eq. (1) re-opened; civil-cooling-example assumption; accuracy review 10/10/2026 (research/review-accuracy-2026-10-10.md). Second review: cannot verify, independent second reviewer (Claude), 10/11/2026: ABI remote cold head / loop heat pipe / radiator sentence rests on the GOES-R Series Data Book, which was not reachable (OSPO URL serves a file download); cooler energy-balance and TIRS-2 parts were checked (research/review-second-pass-2026-10-11.md)."
+    "basis": "Calc. carnot-cop / ideal-cooling-work: COP = 43/257 = 0.1673, W = 257/43 = 5.977 W, Qhot = 6.977 W re-derived independently; nist-refrigeration-2020 Eq. (1) re-opened; civil-cooling-example assumption; accuracy review 10/10/2026 (research/review-accuracy-2026-10-10.md). Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2): goes-r-databook PDF p. 42 Cryocooler paragraph (“remote cold head”, waste energy to the loop heat pipes and radiator) and PDF p. 41 Radiator/Loop Heat Pipe Assembly, read from the local copy; cooler energy balance per nist-refrigeration-2020 Eq. (1) (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "parts",
@@ -28073,7 +28073,7 @@
       "component:abi:power:comp-abi-sue-redundancy:0"
     ],
     "status": "confirmed",
-    "basis": "goes-r-databook Table 3-5, printed p. 3-11 / PDF p. 39: HgCdTe for 1.378–13.3 μm channels, silicon for 0.47, 0.64 and 0.86 μm; accuracy review 10/10/2026 (research/review-accuracy-2026-10-10.md). Second review: cannot verify, independent second reviewer (Claude), 10/11/2026: GOES-R Series Data Book Table 3-5 not reachable (OSPO URL serves a file download; no copy in this worktree) (research/review-second-pass-2026-10-11.md)."
+    "basis": "goes-r-databook Table 3-5, printed p. 3-11 / PDF p. 39: HgCdTe for 1.378–13.3 μm channels, silicon for 0.47, 0.64 and 0.86 μm; accuracy review 10/10/2026 (research/review-accuracy-2026-10-10.md). Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2): goes-r-databook Table 3-5 (printed p. 3-11 / PDF p. 39) read from the local copy: Silicon for 0.47, 0.64, 0.86 μm (the three shortest); HgCdTe for 1.378–13.3 μm (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "parts",
@@ -28231,7 +28231,7 @@
       "component:abi:power:comp-abi-sue-redundancy:0"
     ],
     "status": "confirmed",
-    "basis": "goes-r-databook Table 3-5, printed p. 3-11 / PDF p. 39: HgCdTe for 1.378–13.3 μm channels, silicon for 0.47, 0.64 and 0.86 μm; accuracy review 10/10/2026 (research/review-accuracy-2026-10-10.md). Second review: cannot verify, independent second reviewer (Claude), 10/11/2026: GOES-R Series Data Book Table 3-5 not reachable (OSPO URL serves a file download; no copy in this worktree) (research/review-second-pass-2026-10-11.md)."
+    "basis": "goes-r-databook Table 3-5, printed p. 3-11 / PDF p. 39: HgCdTe for 1.378–13.3 μm channels, silicon for 0.47, 0.64 and 0.86 μm; accuracy review 10/10/2026 (research/review-accuracy-2026-10-10.md). Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2): goes-r-databook Table 3-5 (printed p. 3-11 / PDF p. 39) read from the local copy: HgCdTe for 1.378–13.3 μm (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
@@ -30723,14 +30723,14 @@
   },
   {
     "page": "evidence",
-    "text": "Official sensor types only (Space Force fact sheet, current as of March 2023). Sensitivity, revisit, dimensions, weights, focal-plane colors and detector counts are not adopted.",
+    "text": "Official sensor types only (Space Force fact sheet, current as of March 2023). Sensitivity, revisit, focal-plane colors and detector counts are not adopted; published dimensions and weights appear as separate Spec rows.",
     "contextId": "claim-story:sbirs-scanning-staring",
     "links": [],
     "keys": [
       "story:sbirs-scanning-staring"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md): Stale after round 6: the footnote says dimensions and weights are not adopted, but the evidence page now cites the same fact sheet’s published SBIRS GEO dimensions and weights as Spec. Recommended text: “Official sensor types only (Space Force fact sheet, current as of March 2023). Sensitivity, revisit, focal-plane colors and detector counts are not adopted; published dimensions and weights appear as separate Spec rows.” Previous basis: Explicit scope of story:sbirs-scanning-staring: ssc-sbirs-factsheet (Space Force, current as of March 2023), quotes recorded in accuracy review round 5, 10/11/2026 (research/review-accuracy-2026-10-10.md)."
+    "status": "footnoted",
+    "basis": "Explicit scope of story:sbirs-scanning-staring: ssc-sbirs-factsheet (Space Force, current as of March 2023) System Features paragraph “two sensors; a scanner and a step-starer”; sensitivity and revisit wording not adopted; the dimensions and weights it now points to are the separate Spec rows. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
@@ -31802,19 +31802,19 @@
     "keys": [
       "story:sbirs-sensor-dimensions"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-sensor-dimensions: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "confirmed",
+    "basis": "Exact registered value story:sbirs-sensor-dimensions: ssc-sbirs-factsheet Features section (“Dimension”, “Weight (all weights approximate)”, “Power source”), re-opened in the built-in browser 10/11/2026 and compared character by character. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+    "text": "Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the published SBIRS sensor, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
     "contextId": "claim-story:sbirs-sensor-dimensions",
     "links": [],
     "keys": [
       "story:sbirs-sensor-dimensions"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-sensor-dimensions: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "footnoted",
+    "basis": "Explicit scope of story:sbirs-sensor-dimensions: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features section; keeps the published figure off the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
@@ -31824,41 +31824,41 @@
     "keys": [
       "story:sbirs-sensor-dimensions-si"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-sensor-dimensions-si: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "confirmed",
+    "basis": "Exact registered value story:sbirs-sensor-dimensions-si: Calc. us-customary-to-si from ssc-sbirs-factsheet Features figures (exact 0.3048 m/ft, 0.45359237 kg/lb), re-derived by hand; locator “Features: …” matches the live page. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
+    "text": "Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the published SBIRS sensor, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
     "contextId": "claim-story:sbirs-sensor-dimensions-si",
     "links": [],
     "keys": [
       "story:sbirs-sensor-dimensions-si"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-sensor-dimensions-si: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "footnoted",
+    "basis": "Explicit scope of story:sbirs-sensor-dimensions-si: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features section; keeps the published figure off the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "530 lb",
+    "text": "Approximately 530 lb",
     "contextId": "claim-story:sbirs-sensor-weight",
     "links": [],
     "keys": [
       "story:sbirs-sensor-weight"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-sensor-weight: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "confirmed",
+    "basis": "Exact registered value story:sbirs-sensor-weight: ssc-sbirs-factsheet Features section (“Dimension”, “Weight (all weights approximate)”, “Power source”), re-opened in the built-in browser 10/11/2026 and compared character by character. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+    "text": "Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the published SBIRS sensor, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
     "contextId": "claim-story:sbirs-sensor-weight",
     "links": [],
     "keys": [
       "story:sbirs-sensor-weight"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-sensor-weight: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "footnoted",
+    "basis": "Explicit scope of story:sbirs-sensor-weight: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features section; keeps the published figure off the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
@@ -31868,19 +31868,19 @@
     "keys": [
       "story:sbirs-sensor-weight-si"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-sensor-weight-si: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "confirmed",
+    "basis": "Exact registered value story:sbirs-sensor-weight-si: Calc. us-customary-to-si from ssc-sbirs-factsheet Features figures (exact 0.3048 m/ft, 0.45359237 kg/lb), re-derived by hand; locator “Features: …” matches the live page. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
+    "text": "Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the published SBIRS sensor, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
     "contextId": "claim-story:sbirs-sensor-weight-si",
     "links": [],
     "keys": [
       "story:sbirs-sensor-weight-si"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-sensor-weight-si: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "footnoted",
+    "basis": "Explicit scope of story:sbirs-sensor-weight-si: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features section; keeps the published figure off the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
@@ -31890,19 +31890,19 @@
     "keys": [
       "story:sbirs-geo-dimensions"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-geo-dimensions: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "confirmed",
+    "basis": "Exact registered value story:sbirs-geo-dimensions: ssc-sbirs-factsheet Features section (“Dimension”, “Weight (all weights approximate)”, “Power source”), re-opened in the built-in browser 10/11/2026 and compared character by character. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+    "text": "Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
     "contextId": "claim-story:sbirs-geo-dimensions",
     "links": [],
     "keys": [
       "story:sbirs-geo-dimensions"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-geo-dimensions: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "footnoted",
+    "basis": "Explicit scope of story:sbirs-geo-dimensions: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features section; keeps the published figure off the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
@@ -31912,74 +31912,74 @@
     "keys": [
       "story:sbirs-geo-dimensions-si"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-geo-dimensions-si: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "confirmed",
+    "basis": "Exact registered value story:sbirs-geo-dimensions-si: Calc. us-customary-to-si from ssc-sbirs-factsheet Features figures (exact 0.3048 m/ft, 0.45359237 kg/lb), re-derived by hand; locator “Features: …” matches the live page. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
+    "text": "Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
     "contextId": "claim-story:sbirs-geo-dimensions-si",
     "links": [],
     "keys": [
       "story:sbirs-geo-dimensions-si"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-geo-dimensions-si: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "footnoted",
+    "basis": "Explicit scope of story:sbirs-geo-dimensions-si: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features section; keeps the published figure off the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "5,525 lb, including a 1,100 lb two-sensor payload and 430 lb of fuel",
+    "text": "Approximately 5,525 lb on orbit, including a 1,100 lb two-sensor payload and 430 lb of fuel",
     "contextId": "claim-story:sbirs-geo-weight",
     "links": [],
     "keys": [
       "story:sbirs-geo-weight"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-geo-weight: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "confirmed",
+    "basis": "Exact registered value story:sbirs-geo-weight: ssc-sbirs-factsheet Features section (“Dimension”, “Weight (all weights approximate)”, “Power source”), re-opened in the built-in browser 10/11/2026 and compared character by character. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+    "text": "Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
     "contextId": "claim-story:sbirs-geo-weight",
     "links": [],
     "keys": [
       "story:sbirs-geo-weight"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-geo-weight: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "footnoted",
+    "basis": "Explicit scope of story:sbirs-geo-weight: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features section; keeps the published figure off the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "About 2,506 kg, including about 499 kg of payload and 195 kg of fuel",
+    "text": "About 2,506 kg on orbit, including about 499 kg of payload and 195 kg of fuel",
     "contextId": "claim-story:sbirs-geo-weight-si",
     "links": [],
     "keys": [
       "story:sbirs-geo-weight-si"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-geo-weight-si: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "confirmed",
+    "basis": "Exact registered value story:sbirs-geo-weight-si: Calc. us-customary-to-si from ssc-sbirs-factsheet Features figures (exact 0.3048 m/ft, 0.45359237 kg/lb), re-derived by hand; locator “Features: …” matches the live page. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
+    "text": "Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions. Metric value converted here from the published U.S.-customary figure.",
     "contextId": "claim-story:sbirs-geo-weight-si",
     "links": [],
     "keys": [
       "story:sbirs-geo-weight-si"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-geo-weight-si: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "footnoted",
+    "basis": "Explicit scope of story:sbirs-geo-weight-si: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features section; keeps the published figure off the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
-    "text": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+    "text": "Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
     "contextId": "claim-story:sbirs-power-source",
     "links": [],
     "keys": [
       "story:sbirs-power-source"
     ],
-    "status": "rejected",
-    "basis": "Rejected by independent second reviewer (Claude), 10/11/2026 (research/review-second-pass-2026-10-11.md) for story:sbirs-power-source: Locator “General characteristics: …” does not exist on the cited page; the live Space Force fact sheet lists these figures under “Features” (“Dimension”, “Weight (all weights approximate)”, “Power source”). Recommended fix in src/sbirs-published.js: locators “Features: Dimension, Sensor line”, “Features: Dimension, Satellite line”, “Features: Weight (all weights approximate), Sensor line”, “Features: Weight (all weights approximate), Satellite line”, “Features: Power source line”; also prefix the Spec weights with “Approximately” to keep the sheet’s “all weights approximate” qualifier, and label the sensor rows “SBIRS sensor (as listed)” since the sheet says only “Sensor”, not “GEO sensor”. Values and metric conversions themselves match the source."
+    "status": "footnoted",
+    "basis": "Explicit scope of story:sbirs-power-source: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features section; keeps the published figure off the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "evidence",
@@ -31994,14 +31994,14 @@
   },
   {
     "page": "evidence",
-    "text": "Official SBIRS GEO figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
+    "text": "Official SBIRS figure as published by the U.S. Space Force (fact sheet current as of March 2023). It describes the real SBIRS GEO satellite, not the site’s representative as-drawn spacecraft, which has no assigned mass or dimensions.",
     "contextId": "claim-story:sbirs-geo-launches",
     "links": [],
     "keys": [
       "story:sbirs-geo-launches"
     ],
     "status": "footnoted",
-    "basis": "Explicit scope of story:sbirs-geo-launches: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features launch lines; not the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 against the live page (research/review-second-pass-2026-10-11.md)."
+    "basis": "Explicit scope of story:sbirs-geo-launches: ssc-sbirs-factsheet (Space Force, current as of March 2023), Features section; keeps the published figure off the site’s as-drawn spacecraft. Confirmed by independent second reviewer (Claude), 10/11/2026 (pass 2) against the live page (research/review-second-pass-2026-10-11.md)."
   },
   {
     "page": "method",

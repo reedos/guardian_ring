@@ -1,4 +1,5 @@
 // Reproducible evidence inventory; run after claims, tests, build and page inventory.
+// It imports .ts modules, so run it through tsx: `npm run claims:audit` (or `npx tsx tools/claim-audit-report.mjs`).
 import fs from 'node:fs';
 import {compute,SCENARIO_OPTIONS} from '../src/model/engine.ts';
 import {content} from '../src/data.js';
