@@ -1,4 +1,5 @@
-"""Level 6 illustrative molecular-emission plume GLB, version 4 (v3 metadata fix; v4 no downstream pinch).
+"""Level 6 illustrative molecular-emission plume GLB, version 5 (v3 metadata fix; v4 no downstream pinch;
+v5 smooth soft-edged haze surfaces replace the faceted low-poly wisps).
 
 Run: Blender 5.2 --background --python tools/blender/build-plume.py
 
@@ -18,7 +19,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 4
+VERSION = 5
 OUT.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.context.scene.unit_settings.system = 'NONE'
@@ -42,7 +43,7 @@ root = group('GuardianPlume', version=VERSION, level='plume', representative=Tru
 source = group('SourceCore', root, role='Illustrative luminous source gas', physicalHardware=False)
 envelope = group('GasEnvelope', root, role='Translucent illustrative gas', physicalHardware=False)
 ribbons = group('TurbulentRibbons', root, role='Authored flow-shaped surfaces', physicalHardware=False)
-wisps = group('DissipatingWisps', root, role='Faceted fading wisps', physicalHardware=False)
+wisps = group('DissipatingWisps', root, role='Smooth fading gas haze', physicalHardware=False)
 symbols = group('MolecularSymbols', root, role='Enlarged molecular diagrams', teachingOverlay=True,
     description='Symbol positions and sizes do not represent molecular distribution or abundance.')
 
@@ -189,17 +190,59 @@ for k in range(6):
             a=j*(across+1)+i;faces.append((a,a+1,a+across+2,a+across+1))
     mesh('Luminous ribbon '+str(k+1),verts,faces,ribbon_mat,ribbons,uv)
 
-wisp_materials = [plain_material('Dissipating gas facet '+str(i+1),(.29,.11,.045),.035+i*.015,.30) for i in range(3)]
-for i in range(18):
-    t = .50+random.random()*.43
-    angle = random.random()*math.tau
-    r = .78*profile(t)
-    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1,radius=1,
-        location=(.22*t+r*math.cos(angle),r*math.sin(angle),t*6.8))
-    obj=bpy.context.object;obj.name='Low-poly fading gas wisp'
-    obj.scale=(.12+random.random()*.13,.10+random.random()*.14,.25+random.random()*.24)
-    obj.data.materials.append(wisp_materials[i%3]);obj.parent=wisps
-    obj['representative']=True;obj['physicalHardware']=False;obj['solidForCamera']=False
+def haze_texture():
+    # v5: soft dissipating haze. Alpha rises and falls smoothly along the surface
+    # (zero at both open ends) and around it, so the surface has no hard edge.
+    width, height = 256, 256
+    u, t = np.meshgrid(np.linspace(-1, 1, width), np.linspace(0, 1, height))
+    warp = u + .10*np.sin(t*15) + .04*np.sin(t*41 + u*3)
+    cloud = .55 + .25*np.sin(warp*11 + t*23)*np.sin(t*17 - u*7) + .12*np.sin(warp*29 - t*37)
+    cloud = np.clip((cloud - .18)*1.5, 0, 1)
+    along = np.sin(np.pi*t)**1.6
+    around = np.clip(1 - u*u, 0, 1)**.6
+    rgba = np.ones((height, width, 4), dtype=np.float32)
+    stops = np.array([0, .5, 1])
+    colors = np.array([[.93, .46, .16], [.70, .30, .10], [.42, .18, .07]])
+    for channel in range(3): rgba[:, :, channel] = np.interp(t, stops, colors[:, channel])*(.75+.25*cloud)
+    rgba[:, :, 3] = cloud*along*around
+    image = bpy.data.images.new('Authored dissipating haze alpha — not a measurement', width=width, height=height, alpha=True)
+    image.pixels.foreach_set(rgba.ravel())
+    image.update()
+    image.pack()
+    image['basis'] = 'Original Blender-generated graphic texture; no observed or simulated field.'
+    return image
+
+
+HAZE_TEXTURE = haze_texture()
+
+
+def haze(name, start, width, opacity, strength, phase):
+    # Smooth lobed surface over the upper plume, wider than the envelope: the gas
+    # spreading and thinning as it rises. Shape and opacity are as drawn.
+    mat = gas_material(name+' — illustrative opacity', opacity, strength)
+    mat.node_tree.nodes['Image Texture'].image = HAZE_TEXTURE
+    verts, faces, uv = [], [], []
+    nr, ns = 30, 32
+    for j in range(nr+1):
+        v = j/nr
+        t = start + (1-start)*v
+        for i in range(ns+1):
+            a = i*math.tau/ns
+            lobes = 1 + .20*math.sin(a*4 + phase + t*9) + .10*math.sin(a*9 - t*17 + phase)
+            r = width*profile(t)*lobes*(1 + .25*v)
+            verts.append((.32*t+.18*t*math.sin(t*6)+r*math.cos(a),
+                          .11*t*math.sin(t*8)+r*math.sin(a), t*6.95))
+            uv.append((i/ns, v))
+    for j in range(nr):
+        for i in range(ns):
+            k = j*(ns+1)+i
+            faces.append((k, k+1, k+ns+2, k+ns+1))
+    obj = mesh(name, verts, faces, mat, wisps, uv)
+    for face in obj.data.polygons: face.use_smooth = True
+
+
+haze('Dissipating upper haze', .46, 1.22, .13, .45, .4)
+haze('Thinning outer haze', .56, 1.38, .08, .30, 2.1)
 
 atom_light = plain_material('Molecular symbol pale amber',(.49,.30,.12),1,.12)
 atom_dark = plain_material('Molecular symbol graphite',(.12,.16,.19),1,.08)
