@@ -1,4 +1,4 @@
-"""Level 4 focal-plane carrier GLB, version 8.
+"""Level 4 focal-plane carrier GLB, version 9.
 
 Run: Blender 5.2 --background --python tools/blender/build-focal-plane.py
 
@@ -6,6 +6,11 @@ Reuses the approved focal_plane() look geometry. The detector face is blank:
 no pixel grid, format, dimensions, temperature or real-system performance is
 implied. Package layout, bond/flex counts, colors and spacing are as drawn.
 All coordinates are arbitrary drawing units; Three.js export is Y-up.
+v9: the cold shield is opaque (dark outside, false-color cold inside) with a cold-stop
+aperture plate and a thin window across the aperture, cut away on the front
+and right with marked section edges; a visible braided thermal strap runs from
+a clamp on the cold finger to a lug on the cold plate. Window, aperture and
+strap sizes are as drawn, not a cold-stop or f-number prescription.
 """
 import ast
 import bpy
@@ -15,7 +20,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 8
+VERSION = 9
 OUT.mkdir(parents=True, exist_ok=True)
 
 
@@ -59,15 +64,47 @@ box, cylinder, line = builders['box'], builders['cylinder'], builders['line']
 # board contains representative warm video electronics, not the pixel ROIC.
 for obj in list(bpy.context.scene.objects):
     if 'readout' in obj.name.lower(): obj.name = obj.name.replace('readout', 'video').replace('Readout', 'Video')
+# v9: replace the hidden leaf strap (it passed into the cold plate) with a
+# visible braid from a cold-finger clamp to a lug on the cold plate margin.
+for obj in [o for o in bpy.context.scene.objects if o.name.startswith('Thermal strap leaf')]:
+    bpy.data.objects.remove(obj, do_unlink=True)
+box('Cold finger strap clamp',(-.70,1.36,.10),(.12,.34,.34),m['silver'],.012)
+box('Thermal strap carrier lug',(-.70,.865,.225),(.38,.13,.06),m['silver'],.008)
+braid = builders['material']('Copper thermal braid', (.62, .34, .16), .8, .38)
+for k in range(7):
+    dx = -.12 + k*.04
+    line('Thermal strap braid strand',[(-.70+dx,1.19,.13),(-.70+dx,1.12,.25),(-.70+dx,1.02,.30),(-.70+dx,.93,.285),(-.70+dx,.875,.255)],.014,braid)
 box('Detector package ROIC edge',(-.65,0,.325),(1.52,1.42,.032),m['ceramic'],.007)
-# Open-sided cold enclosure. The missing front and right walls are deliberate
-# cutaways so the optical surface, package perimeter and ribbon remain legible.
-box('Cold shield back wall',(-.65,.83,.74),(1.88,.05,.91),m['cyan'],.014)
-box('Cold shield left wall',(-1.565,.02,.74),(.05,1.57,.91),m['cyan'],.014)
-for x in [-1.565,.265]:
-    box('Cold stop top edge',(x,0,1.20),(.065,1.70,.05),m['dark'],.008)
-for y in [-.825,.825]:
-    box('Cold stop top edge',(-.65,y,1.20),(1.88,.065,.05),m['dark'],.008)
+# v9 cutaway cold shield: opaque walls, a cold-stop aperture plate and a window.
+# The missing front and right walls are deliberate cutaways (section edges mark
+# the cut) so the optical surface, package perimeter and ribbon remain legible.
+lining = builders['material']('Cold shield black interior', (.008, .012, .016), .05, .6)
+# Interior faces in the cold false color so the cut walls read against the page.
+interior = builders['material']('Cold shield interior false color', (.11, .28, .38), .45, .4)
+cut = builders['material']('Cutaway section edge', (.62, .17, .07), .1, .5)
+window = builders['material']('Representative cold-stop window', (.45, .62, .72), 0, .03)
+wb = window.node_tree.nodes.get('Principled BSDF')
+wb.inputs['Alpha'].default_value = .12
+window.diffuse_color = (.62, .80, .90, .12)
+window.surface_render_method = 'BLENDED'
+box('Cold shield back wall',(-.65,.83,.74),(1.88,.05,.91),m['dark'],.010)
+box('Cold shield left wall',(-1.565,.02,.74),(.05,1.57,.91),m['dark'],.010)
+box('Cold shield back wall interior',(-.64,.803,.74),(1.84,.008,.87),interior,0)
+box('Cold shield left wall interior',(-1.538,.02,.74),(.008,1.53,.87),interior,0)
+# Aperture plate: frame around the cold-stop opening above the detector.
+AX, AY = (-1.15, -.15), (-.45, .45)
+for name, x0, x1, y0, y1 in [('aft', -1.59, .29, AY[1], .855), ('forward', -1.59, .29, -.85, AY[0]),
+                             ('left', -1.59, AX[0], AY[0], AY[1]), ('right', AX[1], .29, AY[0], AY[1])]:
+    box('Cold stop aperture plate ('+name+')',((x0+x1)/2,(y0+y1)/2,1.20),(x1-x0,y1-y0,.05),m['dark'],.006)
+for x in AX: box('Cold stop aperture edge',(x,0,1.20),(.016,AY[1]-AY[0]+.016,.054),lining,0)
+for y in AY: box('Cold stop aperture edge',((AX[0]+AX[1])/2,y,1.20),(AX[1]-AX[0]+.016,.016,.054),lining,0)
+box('Cold stop window (representative)',((AX[0]+AX[1])/2,0,1.16),(AX[1]-AX[0]+.06,AY[1]-AY[0]+.06,.012),window,0)
+for x in AX: box('Cold stop window retainer',(x+(-.035 if x<-.6 else .035),0,1.164),(.03,AY[1]-AY[0]+.08,.022),m['dark'],0)
+# Section edges along every cut: plate front and right edges, wall ends.
+box('Cold shield section edge',(-.65,-.856,1.20),(1.88,.012,.056),cut,0)
+box('Cold shield section edge',(.296,0,1.20),(.012,1.71,.056),cut,0)
+box('Cold shield section edge',(-1.565,-.756,.74),(.056,.012,.91),cut,0)
+box('Cold shield section edge',(.276,.83,.74),(.012,.056,.91),cut,0)
 # Mounts are representative, with a clear gap below the carrier.
 for x in [-1.58,.28]:
     for y in [-.82,.82]:
@@ -161,7 +198,7 @@ bpy.ops.object.convert(target='MESH')
 root = group('GuardianFocalPlane', version=VERSION, level='focal-plane',
     representative=True, physicalScale=False, assumption='look-model',
     units='Arbitrary drawing units, not meters.',
-    description='Open cold shield, detector/ROIC package, isolated carrier, thermal strap, cooler, flex, warm video electronics, bias/timing board and separate cold-head thermometer feedback to cryocooler control electronics. Civil ABI component roles; packaging and layout as drawn.',
+    description='Cutaway cold shield with cold-stop aperture and window, detector/ROIC package, isolated carrier, thermal strap, cooler, flex, warm video electronics, bias/timing board and separate cold-head thermometer feedback to cryocooler control electronics. Civil ABI component roles; packaging and layout as drawn.',
     sourceGeometry='tools/blender/build-focal-plane.py and build-hardware-look.py: focal_plane()',
     upAxis='Y', detectorFacing='+Y', noPixelFormat=True,
     defaultCamera=[6.0, 6.0, 8.0], defaultTarget=[.48, .25, -.25])
@@ -193,7 +230,7 @@ anchors = group('Anchors', root, role='Nonrendering interface anchors')
 anchor_specs = {
     'AnchorArray': ((-.65, 0, .49), 'Blank representative detector entrance face'),
     'AnchorReadout': ((2.11, .29, .247), 'Warm readout cover'),
-    'AnchorColdStage': ((-.65, 1.08, .18), 'Thermal strap near cold finger'),
+    'AnchorColdStage': ((-.70, 1.06, .36), 'Braided thermal strap from the cold finger'),
     'AnchorShield': ((-.65, .805, .88), 'Cutaway cold optical enclosure'),
     'AnchorFlex': ((.84, -.26, .07), 'Representative package ribbon interconnect'),
     'AnchorCarrier': ((-.65, -.96, -.43), 'Carrier and supporting standoffs'),
