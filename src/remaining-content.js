@@ -11,7 +11,7 @@ const FACTS = {
   'abi-conus': ['ABI mainland U.S. cadence', '5 min', 'spec', { refs: [['noaa-abi-page', 'Instrument description']] }],
   'abi-meso': ['ABI mesoscale cadence', '30-60 s', 'spec', { refs: [['noaa-abi-page', 'One or two smaller areas, instrument description']] }],
   'abi-optics': ['ABI telescope', 'Four mirrors; three focal-plane modules', 'spec', { refs: [['goes-r-databook', 'Printed p. 3-8 / PDF p. 36']] }],
-  'abi-detector-material': ['ABI infrared channels', 'HgCdTe', 'spec', { refs: [['goes-r-databook', 'Table 3-5, printed p. 3-11 / PDF p. 39']] }],
+  'abi-detector-material': ['ABI detector material, 1.378–13.3 μm channels', 'HgCdTe', 'spec', { refs: [['goes-r-databook', 'Table 3-5, printed p. 3-11 / PDF p. 39']] }],
   'abi-ir-temp': ['ABI MWIR/LWIR optics and focal planes', 'Approximately 60 K', 'spec', { refs: [['goes-r-databook', 'Printed p. 3-8 / PDF p. 36']] }],
   'abi-vnir-temp': ['ABI VNIR optics and focal plane', 'Approximately 170 K; GOES-R FPM 180 K', 'spec', { refs: [['goes-r-databook', 'Printed p. 3-8 / PDF p. 36']] }],
   'abi-cooling': ['ABI cryocooler design', 'Two redundant two-stage pulse-tube coolers', 'spec', { refs: [['goes-r-databook', 'Printed p. 3-14 / PDF p. 42']] }],
@@ -114,7 +114,7 @@ export function remainingContent(_model) {
       light: [
         card('telescope', 'Follow ABI’s reflective telescope', 'Published component counts', 'The GOES-R Data Book describes a four-mirror telescope forming images on three focal-plane modules. The mirror count applies to the telescope, not every mirror in ABI. Shapes, spacing, and ray paths in the drawing remain representative.', ['abi-optics', 'abi-image-role']),
         card('bands', 'Separate the spectral channels', 'The named ABI instrument', 'ABI observes Earth using visible and infrared channels. Its published channel count belongs to ABI, and the display’s band colors are illustrative.', ['abi-bands']),
-        card('focal-planes', 'Identify ABI’s infrared detector material', 'Published civil hardware', 'The Data Book identifies the material used for ABI’s infrared channels. That civil-instrument specification stays with ABI; it does not identify any military detector material.', ['abi-detector-material']),
+        card('focal-planes', 'Identify ABI’s infrared detector material', 'Published civil hardware', 'The Data Book lists HgCdTe detectors for ABI’s channels from 1.378 μm through 13.3 μm; its three shortest-wavelength channels, including the 0.86 μm near-infrared channel, use silicon. That civil-instrument specification stays with ABI; it does not identify any military detector material.', ['abi-detector-material']),
       ],
       data: [
         card('telescope', 'Coordinate the scan with the instrument clock', 'Controller, motor drivers and encoders', 'ABI’s instrument controller operates the instrument, while its Telemetry and Timing card supplies system clocks. Motor-driver circuitry moves the scan mirrors and encoder processors determine their position. The published full-disk and regional image cadences describe completed observations; they are different from the electronics’ detector-readout timing.', ['abi-controller', 'abi-timing', 'abi-scanners', 'abi-full-disk', 'abi-conus']),

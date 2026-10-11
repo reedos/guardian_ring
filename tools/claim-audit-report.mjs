@@ -45,6 +45,7 @@ const testMap={
   'planck-band-radiance':'claims-audit.test.ts: frequency midpoint integration, all 96 scenarios',
   'planck-band-photons':'claims-audit.test.ts: independent photon mode occupancy integral, all 96 scenarios',
   'carnot-cop':'claims-audit.test.ts: reversible entropy and energy ledger',
+  'ideal-cooling-work':'civil-cooling.test.ts: Qhot − W = Qcold and reversible entropy balance Qhot/Th = Qcold/Tc; engine.test.ts independent COP 43/257',
   'cooler-energy-balance':'claims-audit.test.ts: entropy-derived rejected heat at three scales',
   'kepler-illustration-motion':'claims-audit.test.ts: small-angle inverse fixtures; orbits.test.ts: equal swept areas',
   'cinematic-spectrum':'claims-audit.test.ts: frequency spectral kernel and density Jacobian',
