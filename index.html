@@ -88,7 +88,7 @@
         </div>
       </section>
       <section class="level-study" id="photon" aria-labelledby="photon-title">
-        <header class="study-heading"><p class="eyebrow">02 / The photon</p><h2 id="photon-title">Why watch<br>in the infrared.</h2><p class="section-lede">A rocket’s exhaust is hot gas, and hot gases emit infrared radiation in characteristic molecular bands. Carbon dioxide and water vapor, two products of burning fuel, are the examples here, taken from a civil combustion study.</p></header>
+        <header class="study-heading"><p class="eyebrow">02 / The photon</p><h2 id="photon-title">Why watch<br>in the infrared.</h2><p class="section-lede">A rocket’s exhaust is hot gas, and hot gases emit infrared radiation in characteristic molecular bands. Carbon dioxide and water vapor, two products of burning fuel, are the examples here, taken from a civil combustion study. Hot gas glows whether or not the Sun is up, so an infrared view works on the night side too.</p></header>
         <figure class="study-figure">
           <picture><source media="(max-width: 700px)" srcset="look/plume-phone.webp?v=astra1" width="780" height="960"><img src="look/plume.webp?v=astra1" width="1600" height="1000" alt="A rising false-color plume above a curved atmospheric layer, with enlarged carbon dioxide and water-vapor diagrams in an inset." loading="lazy" decoding="async"></picture>
           <figcaption>Illustrative plume, as drawn. The inset shows the two emitting molecules, carbon dioxide and water vapor. Shape, brightness, and colored light paths are artistic choices. <button type="button" class="chip assumed" data-src="story:schematic" aria-expanded="false" aria-label="Assumed: what backs the plume illustration">Assumed</button></figcaption>
@@ -171,10 +171,12 @@
           <p class="quiet-note">At integration, mounting, power, commands and timing, science data and thermal interfaces connect the instrument to the spacecraft. NASA describes controlled interfaces and verification throughout design and integration. <button type="button" class="chip spec" data-src="integration:interface-management" aria-expanded="false" aria-label="Spec: NASA interface management guidance">Spec</button> <a class="text-link" href="parts.html#diagram-abi-instrument">Explore the assembly and interface map <span aria-hidden="true">↗</span></a></p>
         </div>
         </details>
+        <details class="deeper">
+          <summary>Go deeper: follow a measurement through the electronics</summary>
         <div class="engineering-map signal-map" aria-labelledby="signal-title">
           <header><p class="eyebrow">Functional path / Inside the same instrument</p><h3 id="signal-title">Follow a measurement through the electronics.</h3><p>The steps below describe what the electronics does. Readout and conversion belong to sensor-side electronics; packet handling and the spacecraft interface are cards inside the common Electronics Unit.</p></header>
           <ol class="signal-chain" aria-label="ABI detector data path">
-            <li><a href="visualizer.html?view=3.data.array"><span>Focal-plane array</span><strong>Detector + ROIC</strong><small>Electrical detector response</small></a></li>
+            <li><a href="visualizer.html?view=3.data.array"><span>Focal-plane array</span><strong>Detector + ROIC</strong><small>The detector and its readout integrated circuit give an electrical response</small></a></li>
             <li><a href="visualizer.html?view=2.data.readout"><span>Sensor Unit Electronics</span><strong>Video Processors</strong><small>Bias, timing, and samples</small></a></li>
             <li><a href="visualizer.html?view=2.data.digitizer"><span>Inside the same Sensor Unit Electronics</span><strong>Conversion circuitry</strong><small>Analog data becomes digital</small></a></li>
             <li><a href="visualizer.html?view=2.data.data-interface"><span>Electronics Unit</span><strong>Data Processor + HSIO</strong><small>Data Processor → High Speed I/O</small></a></li>
@@ -182,6 +184,7 @@
           <div class="signal-support"><p><a href="visualizer.html?view=2.data.controller">Instrument controller and clocks</a> coordinate operation.</p><p><a href="visualizer.html?view=2.data.thermal">Cryocooler control</a> closes a separate temperature-feedback loop.</p></div>
           <p class="quiet-note"><a class="text-link" href="parts.html#diagram-abi-instrument">Explore the complete instrument diagrams <span aria-hidden="true">↗</span></a></p><p class="quiet-note">The blocks show functional responsibilities; their spacing and the linked cutaway are representative. <button type="button" class="chip spec" data-src="story:payload-electronics" aria-expanded="false" aria-label="Spec: ABI electronics architecture sources">Spec</button></p>
         </div>
+        </details>
       </section>
       <section class="level-study" id="focal-plane" aria-labelledby="focal-plane-title">
         <header class="study-heading"><p class="eyebrow">05 / The focal plane</p><h2 id="focal-plane-title">Hold the image.<br>Manage the heat.</h2><p class="section-lede">At the focal plane, light becomes an electrical signal. Cooling can reduce thermal noise, a benefit described in NIST's cryocooler review. <button type="button" class="chip reported" data-src="story:cryogenic-noise-role" aria-expanded="false" aria-label="Reported: source for the thermal-noise benefit of cryogenic cooling">Reported</button></p></header>
@@ -230,7 +233,7 @@
       </section>
       <section class="learning-entry" aria-labelledby="learning-entry-title">
         <div><p class="eyebrow">Keep going</p><h2 id="learning-entry-title">Now explore it<br>in 3D.</h2><p>The explorer is the same journey as a model you can turn and open. Start with a question at each level, inspect a component, then continue inward. Related views return you to where you left off.</p></div>
-        <div class="learning-entry-options"><a href="visualizer.html?view=0.light&mission=1"><strong>Watch the mission →</strong><span>A guided flight from a launch to a generic alert, chapter by chapter.</span></a><a href="visualizer.html?view=0.light"><strong>Follow the learning journey →</strong><span>Questions, replayable illustrations, and a next-level link keep the path clear.</span></a><a href="visualizer.html?view=2.light.optics"><strong>Explore the hardware →</strong><span>Choose any part. Its name comes first, with function, internal components, and evidence below.</span></a><a href="visualizer.html?view=0.light&pane=scenario"><strong>Try the physics →</strong><span>Change a teaching input, inspect the result, and open the reasoning. Keep named instrument specifications separate.</span></a></div>
+        <div class="learning-entry-options"><a href="visualizer.html?view=0.light&mission=1"><strong>Watch the mission →</strong><span>A guided flight from a launch to a generic alert, chapter by chapter.</span></a><a href="visualizer.html?view=0.light"><strong>Follow the learning journey →</strong><span>Questions, replayable illustrations, and a next-level link keep the path clear.</span></a><a href="visualizer.html?view=2.light.optics"><strong>Explore the hardware →</strong><span>Choose any part. Its name comes first, with function, internal components, and evidence below.</span></a><a href="visualizer.html?view=0.light&pane=scenario"><strong>Try the physics →</strong><span>Change a teaching input, inspect the result, and open the reasoning. Named instrument specifications stay separate.</span></a></div>
       </section>
       <section class="evidence-story" aria-labelledby="evidence-title">
         <div><p class="eyebrow">The evidence rule</p><h2 id="evidence-title">Every number<br>has a way back.</h2></div>
@@ -238,7 +241,7 @@
       </section>
       <section class="making" aria-labelledby="making-title">
         <div><p class="eyebrow">Behind the project</p><h2 id="making-title">Built to be checked.</h2></div>
-        <div class="section-copy"><p>Reed directs the project, reviews the sources, and chooses the scope. AI coding assistants help build and check it. Blender scripts produce the representative geometry.</p><p>This edition connects the orbit, spacecraft, payload, detector, and emitting gas with ground and civil-instrument side views. Independent orbit and radiation examples show their inputs and formulas. Source, type, and browser checks keep the work reviewable.</p><a class="text-link" href="method.html">Read the method <span aria-hidden="true">↗</span></a></div>
+        <div class="section-copy"><p>Reed directs the project, reviews the sources, and chooses the scope. AI coding assistants help build and check it. Blender scripts produce the representative geometry.</p><p>The story and the explorer cover the orbit, spacecraft, payload, detector and emitting gas, with side views of the ground segment and the two civil instruments. Independent orbit and radiation examples show their inputs and formulas. Source, type, and browser checks keep the work reviewable.</p><a class="text-link" href="method.html">Read the method <span aria-hidden="true">↗</span></a></div>
       </section>
     </div>
   </main>

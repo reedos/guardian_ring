@@ -70,7 +70,7 @@ const glossaryGroups = [
     ['inclination', 'Inclination', 'The angle between an orbital plane and its reference plane. Earth’s equatorial plane is the usual reference for Earth satellites.', [['nasa-orbit-equation', 'The Orbit in Space']]],
     ['nadir', 'Nadir', 'The direction toward the surface point directly below the observer. The model uses that point to define its reference distance.', [], 'method.html#assume-model-nadir'],
     ['sidereal-day', 'Sidereal day', 'Earth’s rotation period measured relative to the distant celestial reference frame. It supplies the general geosynchronous reference period.', [['nasa-jpl-parameters', 'Parameter table: mean sidereal day']]],
-    ['kelvin', 'Kelvin (K)', 'The SI unit of temperature used for cold detectors. The kelvin scale counts up from absolute zero, the coldest possible temperature; one kelvin step equals one degree Celsius step.', [], 'method.html#calculations'],
+    ['kelvin', 'Kelvin (K)', 'The SI unit of temperature, used on this site for cold detectors. The kelvin scale counts up from absolute zero, the coldest possible temperature; one kelvin step equals one degree Celsius step.', [], 'method.html#calculations'],
   ]],
   ['light', 'Light and thermal radiation', [
     ['infrared', 'Infrared', 'Electromagnetic radiation at wavelengths longer than visible light. Infrared instruments can measure thermal emission from warm objects.', [['nasa-em-math', 'Electromagnetic spectrum and The Energy of Light activities']]],
@@ -90,7 +90,7 @@ const glossaryGroups = [
   ]],
   ['hardware', 'Instruments and architecture', [
     ['opir', 'OPIR', 'Overhead persistent infrared: the term used in the cited public architecture documents for space-based infrared observation supporting warning and related missions.', [['gao-21-105249', 'Background, printed pp. 3–4']]],
-    ['missile-warning', 'Missile warning', 'Detecting a missile launch and alerting the people who must respond. The cited GAO reports describe missile-warning satellites that observe Earth in the infrared from space; this site explains their physics and public architecture only.', [['gao-21-105249', 'Background, printed pp. 3–4']]],
+    ['missile-warning', 'Missile warning', 'Detecting a missile launch and alerting the people who must respond. The cited GAO report describes missile-warning satellites that observe Earth in the infrared from space; this site explains their physics and public architecture only.', [['gao-21-105249', 'Background, printed pp. 3–4']]],
     ['sbirs', 'SBIRS', 'Space Based Infrared System. The cited public GAO report describes spacecraft in geosynchronous and highly elliptical orbits and an associated ground segment.', [['gao-21-105249', 'Printed p. 4 / PDF p. 8']]],
     ['bus-payload', 'Bus and payload', 'The bus is the spacecraft platform supporting the mission equipment. An infrared payload, a mission processor, and communications equipment have distinct roles in the public architecture described by GAO.', [['gao-26-107085', 'PWSA-Enabling Technologies and Processes, opening description']]],
     ['pwsa', 'PWSA', 'Proliferated Warfighter Space Architecture: the Space Development Agency’s planned satellite architecture. GAO’s public description names a spacecraft bus, infrared payload, mission processor, and communications equipment.', [['gao-26-107085', 'PWSA-Enabling Technologies and Processes, opening description.']]],
