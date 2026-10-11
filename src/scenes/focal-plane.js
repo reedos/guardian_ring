@@ -3,7 +3,7 @@ const scene=illustrated({
   teaching:'focal-plane',signal:'AnchorArray',signalRadius:.48,
   layerMaterials:{data:['DetectorPackage','WarmReadout','FlexConnection','BiasTiming','ThermalFeedback'],heat:{DetectorPackage:'cold',ColdCarrier:'cold',ColdShield:'cold',CoolingAssembly:'warm',ColdFingerAndStrap:'cold',ColdHeadThermometer:'cold',WarmReadout:'warm',ThermalFeedback:'warm',BiasTiming:'warm'}},
   phaseHighlights:{absorb:'DetectorPackage',integrate:'DetectorPackage',digitize:'WarmReadout'},
-  url:'models/focal-plane.glb?v=7',
+  url:'models/focal-plane.glb?v=8',
   camera:{pos:[5.7,6.2,8.7],target:[.5,.1,-.35],min:2,max:25},distance:5.2,
   cameraPhone:{pos:[7,8.5,13]},
   points:{array:'AnchorArray',readout:'AnchorReadout','cold-stage':'AnchorColdStage',shield:'AnchorShield',flex:'AnchorFlex',carrier:'AnchorCarrier','bias-timing':'AnchorBiasTiming','thermal-feedback':'AnchorThermalFeedback'},
@@ -30,7 +30,7 @@ const scene=illustrated({
       {kind:'heat',phases:['lift'],points:['AnchorArray',[-.77,.35,-.8],'AnchorColdStage']},
       {kind:'heat',phases:['reject'],points:['AnchorColdStage',[.5,.44,-1.36],[1.4,.4,-1.6],[2.4,1,-1.9]]},
       {kind:'heat',phases:['reject'],points:['AnchorReadout',[2.6,.4,-.8],[2.9,1,-1.4]]},
-      {kind:'feedback',phases:['sense'],points:[[-.64,.30,-1],[-.13,.40,-1.66],'AnchorThermalFeedback']},
+      {kind:'feedback',phases:['sense'],points:[[-.64,.30,-1],[-.16,.49,-1.30],[.90,.42,-1.36],[.97,.26,-1.40],[1.08,.31,-2.45],'AnchorThermalFeedback']},
       {kind:'electrical',points:['AnchorThermalFeedback',[1.08,.25,-2.45],[.95,.21,-1.89],[.97,.20,-1.38]]},
 
     ],

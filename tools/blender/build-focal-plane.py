@@ -1,4 +1,4 @@
-"""Level 4 focal-plane carrier GLB, version 7.
+"""Level 4 focal-plane carrier GLB, version 8.
 
 Run: Blender 5.2 --background --python tools/blender/build-focal-plane.py
 
@@ -15,7 +15,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 7
+VERSION = 8
 OUT.mkdir(parents=True, exist_ok=True)
 
 
@@ -126,7 +126,8 @@ h.enclosure('Cryocooler control electronics tray',(2.13,.07,-2.62),(1.90,.33,1.2
 expansion.card(h,hm,'Cold-head control electronics',(2.13,.27,-2.62),(1.70,1.01),'drive')
 for x in [1.53,2.73]:h.box('Cooler control role-plate bracket',(2.13+(x-2.13),.135,-1.99975),(.08,.08,.0315),hm['silver'],.004)
 h.box('Cold-head resistance thermometer',(-.64,.263,-1.00),(.17,.035,.11),hm['edge'],.004)
-for dx in [-.034,.034]:h.line('Thermometer lead',[(-.64+dx,.285,-1.0),(-.50+dx,.30,-1.17),(-.13+dx,.28,-1.66),(.41+dx,.28,-1.91),(1.40+dx,.34,-2.33)],.008,hm['copper'])
+# Leads are dressed over the cooler body and along the power cable, not strung through open space.
+for dx in [-.034,.034]:h.line('Thermometer lead',[(-.64+dx,.285,-1.0),(-.50+dx,.31,-1.12),(-.16+dx,.47,-1.30),(.10+dx,.398,-1.36),(.90+dx,.398,-1.36),(.97+dx,.235,-1.40),(.95+dx,.245,-1.89),(1.08+dx,.285,-2.45),(1.42+dx,.345,-2.80)],.008,hm['copper'])
 h.line('Cooler power-amplifier cable',[(1.42,.31,-2.80),(1.08,.25,-2.45),(.95,.21,-1.89),(.97,.20,-1.38)],.031,hm['loom'])
 h.line('Warm control heat path',[(2.86,.07,-2.63),(3.16,.06,-2.63),(3.18,.06,-1.90)],.030,hm['silver'])
 h.box('Control-board heat-rejection interface',(3.20,.03,-1.92),(.17,.25,.43),hm['silver'],.015)
