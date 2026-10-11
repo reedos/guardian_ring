@@ -1557,6 +1557,8 @@ body.atmosphere-view .mode, body.atmosphere-view #animation-controls, body.atmos
 .scaffold-badge .note-line { display:block; }
 .compact-scene-key .scaffold-badge .note-line { display:inline; }
 .compact-scene-key .scaffold-badge .note-line + .note-line::before { content:' \00B7  '; }
+/* Loading and error messages wrap inside the stage gutter, centered. */
+.veil { padding:0 24px; text-align:center; line-height:1.6; }
 @media (max-width:760px) {
   /* The Parts handle is a flex row; center its label and count as the rule intends. */
   body.app.stage-priority #tab-parts { justify-content:center; }

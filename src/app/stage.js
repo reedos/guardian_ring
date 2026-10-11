@@ -469,7 +469,18 @@ export async function go(index, { record = true, restore = null, owner = null, r
     } else { if(getAssemblyPresentation()){getAssemblyPresentation().setView('assembled');inspect(true);}deselect();framedOverview=true; if (!firstView&&resetPane) emit('pane-request', { pane: 'parts', reset: true }); }
     if(!restore&&owner===null&&activity)previewActivity();
     $('veil').hidden = true; emit('scene-settings');
-  } catch (error) { if(epoch!==buildEpoch)return;$('veil').textContent = 'The viewer could not start. Reload to try again; the source and method pages remain available.'; throw error; }
+  } catch (error) {
+    if(epoch!==buildEpoch)return;
+    // A later level that fails to load leaves the current one in place, rather than a
+    // blank stage under the old level's controls. Its model is not cached, so trying again refetches.
+    if(ui.scene>=0&&ui.scene!==index&&built[ui.scene]){
+      $('veil').hidden=true;
+      const toast=$('toast');toast.textContent=`${store.C.SCENES[index].title} could not load. Check the connection and try again.`;toast.classList.remove('select');toast.hidden=false;
+      clearTimeout(go.toastTimer);go.toastTimer=setTimeout(()=>{toast.hidden=true;},6000);
+      console.warn('Level failed to load',error);return;
+    }
+    $('veil').textContent = 'The viewer could not start. Reload to try again; the source and method pages remain available.'; throw error;
+  }
   finally { if (epoch === buildEpoch) {busy = false;navigationOwner=null;} }
 }
 // Preserve the test hook's default-first-part contract. Normal level navigation
