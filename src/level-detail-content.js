@@ -30,7 +30,7 @@ const additions={
     detail('thermal','ABI cryocooler and heat transport',['abi-cooler','abi-cce','abi-shroud'],[
       ['Keep the infrared assembly in its thermal environment','The cooler serves the cold focal-plane region. Shields and shrouds limit unwanted radiation before that energy becomes another load to remove.'],
       ['Use temperature feedback to control refrigeration','A cold-head thermometer supplies feedback to Cryocooler Control Electronics. Cooler control is a separate circuit from the instrument image-data interface.'],
-      ['Trace heat from cold hardware to space','The cooler removes heat from the cold assembly. Warm-side rejection and heat-transport hardware carry energy toward the radiator. The geometry illustrates a path without assigning cooler performance.'],
+      ['Trace heat from cold hardware to space','The cooler removes heat from the cold assembly. Warm-side rejection and heat-transport hardware carry energy toward the radiator.'],
     ]),
     detail('power','ABI instrument power supply',['abi-power','comp-abi-parent-board','comp-abi-sue-redundancy'],[
       ['Provide energy to the instrument assemblies','The EU Power Supply converts spacecraft input into instrument electrical supplies. It supports the electronics responsible for observing, reading and controlling the instrument.'],
@@ -46,8 +46,8 @@ const additions={
     ]),
     detail('blackbody','TIRS-2 onboard blackbody',['tirs-scene-select','tirs-thermal'],[
       ['Provide an onboard thermal reference','The scene-select mirror can direct the telescope toward an internal blackbody reference instead of Earth. The target is distinct from the telescope lenses.'],
-      ['Associate samples with a reference view','Reference observations need the scene identity to accompany their samples. This illustration identifies the reference route without reproducing calibration algorithms.'],
-      ['Connect the reference to thermal control','The thermal target belongs to the instrument thermal design. Its drawn shape assigns no emissivity, operating temperature or calibration accuracy.'],
+      ['Associate samples with a reference view','Reference observations need the scene identity to accompany their samples. This illustration shows that reference route.'],
+      ['Connect the reference to thermal control','The thermal target belongs to the instrument’s thermal design rather than to its optics.'],
     ]),
     detail('readout','TIRS-2 focal-plane electronics',['tirs-fpe','tirs-redundancy'],[
       ['Connect the detector package to instrument electronics','The Focal Plane Electronics form the detector-side electrical interface. They are distinct from the detector material and from the main electronics chassis.'],
@@ -66,14 +66,14 @@ const additions={
     ]),
     detail('filters','TIRS-2 interference filters',['gap-tirs2-interference-filters','tirs-baffles'],[
       ['Select spectral channels above the arrays','Fixed interference filters select TIRS-2’s thermal channels. The filter tiles are separate from the telescope lenses and detector surfaces.'],
-      ['Preserve the channel identity','The filter selects the optical channel before the electronic signal is read. No bit depth, sample rate or additional channel is implied by the drawing.'],
+      ['Preserve the channel identity','The filter selects the optical channel before the electronic signal is read, so each measurement already belongs to one band.'],
       ['Place spectral selection in the detector environment','The filter and detector assembly belong to the instrument’s thermal design. The illustrated mount does not specify its material, coating stack or heat conductance.'],
     ]),
   ],
   ground:[
     detail('receiver','Receiver and demodulation equipment',['gap-ground-receiver'],[
       ['Receive the communication signal','This is radio reception after the spacecraft has made an observation. It is separate from infrared detection at the payload.'],
-      ['Recover the data carried by the signal','RF front ends and receiver processing turn received waveforms into data for the ground system. The illustration assigns no actual network route or receiver configuration.'],
+      ['Recover the data carried by the signal','RF front ends and receiver processing turn received waveforms into data for the ground system.'],
       ['Support the receiver electronics','The drawn equipment rack represents electrical hardware with a power and cooling interface. Its construction and thermal capacity are illustrative.'],
     ]),
     detail('archive','Telemetry and science-data archive',['gap-ground-archive'],[
@@ -100,7 +100,7 @@ const additions={
     ]),
     detail('output','Readout output circuitry',['gap-pixel-output'],[
       ['Continue beyond a single pixel','The absorber and interconnect feed the readout; its output continues toward the wider instrument. The exposed trace is symbolic.'],
-      ['Route pixel measurements outward','Webb’s ROIC architecture connects many pixels to fewer outputs. This example explains the output role without assigning a generic array size or rate.'],
+      ['Route pixel measurements outward','Webb’s ROIC architecture connects many pixels to fewer outputs.'],
       ['Place the output in the electronics assembly','The output belongs to the readout and package thermal environment. It is not another refrigerator or a separate detector.'],
     ]),
   ],

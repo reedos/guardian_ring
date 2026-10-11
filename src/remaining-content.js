@@ -55,17 +55,17 @@ export function remainingContent(_model) {
       intro: 'An enlarged conceptual detector element separates the absorbing region, electrical contact, and readout cell. Its layer stack and proportions are representative.',
       scale: 'Detector element · enlarged conceptual view',
       light: [
-        card('absorber', 'Let light interact with material', 'The absorbing region', 'Incoming radiation interacts with the detector material. This layer represents that role without assigning a military detector material, thickness, or quantum efficiency.'),
+        card('absorber', 'Let light interact with material', 'The absorbing region', 'Incoming radiation is absorbed here, in the detector material. This is the first step from light to an electrical signal.'),
         card('contact', 'Make an electrical connection', 'Representative contact', 'The contact stands for the electrical connection between detector and readout. Its enlarged shape makes the connection visible; it is not a fabrication drawing.'),
         card('readout', 'Place electronics beneath the response', 'The readout cell', 'The readout cell measures the detector’s electrical response. ABI’s detector-array readout supplies a civil example of the role. The generic layer stack is a conceptual arrangement, not ABI pixel construction.', ['abi-readout-role']),
       ],
       data: [
-        card('absorber', 'Begin with an electrical response', 'From radiation to signal', 'Absorbed light can produce an electrical response in a semiconductor detector. ABI’s published detector role gives a named civil example. The generic schematic assigns no material, conversion gain, signal size, or ABI pixel construction.', ['abi-detector-role']),
+        card('absorber', 'Begin with an electrical response', 'From radiation to signal', 'Absorbed light can produce an electrical response in a semiconductor detector. ABI gives a named civil example: its published detector role is to convert incident photons into an electrical signal.', ['abi-detector-role']),
         card('contact', 'Pass the response through a contact', 'Connection, not a network', 'The local electrical contact connects detector and readout. It is a different part of the story from the spacecraft communications link or the ground data path.'),
-        card('readout', 'Measure before processing', 'Readout and later stages', 'Measuring a detector response precedes later image processing and communication. ABI’s published array-readout role illustrates this stage. The conceptual cell assigns no ABI construction, timing, digitization precision, or data rate.', ['abi-readout-role']),
+        card('readout', 'Measure before processing', 'Readout and later stages', 'The readout measures each detector response before any image processing or communication. In ABI, the named civil example, video-processing electronics read the detector arrays.', ['abi-readout-role']),
       ],
       heat: [
-        card('absorber', 'Recognize thermal noise', 'Material and temperature', 'Thermal noise is part of the measurement problem; NIST lists its reduction among the benefits of cryogenic temperatures. The general principle assigns no material or operating conditions to a real military sensor.', ['cryogenic-noise-role']),
+        card('absorber', 'Recognize thermal noise', 'Material and temperature', 'Warmth in the detector adds thermal noise that competes with the light being measured. NIST lists reducing thermal noise among the benefits of cryogenic temperatures.', ['cryogenic-noise-role']),
         card('contact', 'See the physical bridge', 'Electrical and thermal roles', 'A physical contact also belongs to the thermal structure. Its shape here explains a connection, without specifying electrical resistance or thermal conductance.'),
         card('readout', 'Keep instrument temperatures specific', 'Use a named example', 'The temperature of a detector assembly is an instrument-specific design choice. The TIRS-2 side level provides a published civil focal-plane value; it does not set a generic pixel temperature.', [], 8),
       ],

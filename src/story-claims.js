@@ -91,6 +91,19 @@ export const STORY_CLAIMS = [
     ev: { refs: [['nasa-atmospheric-windows', 'Absorption Bands and Atmospheric Windows, first two paragraphs']] },
     scope: 'Qualitative atmospheric physics; no transmission curve, altitude dependence, or operational visibility.',
   },
+  // Teaching round 1 (10/11/2026): the atmosphere half of outcome 1. Passages re-read in the NTRS PDF text on 10/11/2026.
+  {
+    key: 'story:air-absorbs-plume-bands', group: 'story',
+    label: 'Air absorbs in the plume bands', value: 'The air’s own water vapor and carbon dioxide absorb strongly at the band centers where hot exhaust emits, and the loss grows with the length of the path', basis: 'reported',
+    ev: { refs: [['nasa-rocket-plume-transmittance-2003', 'PDF p. 1, Abstract (the same molecular species emit and absorb, with closely matching line positions; transmittance losses along the path) and Introduction (attenuation mainly by absorption by atmospheric molecular species, including H2O and CO2); PDF p. 4, Figs. 1a–1b discussion (strong H2O and very strong CO2 absorption at the band centers)']] },
+    scope: 'Near-ground test-stand paths in a NASA Stennis study. The story’s comparison of light from the ground with light from hot gas higher up is this site’s qualitative reading of the path-length result, not a finding of the study. No altitude, transmittance value, plume signal or sensor performance is implied.',
+  },
+  {
+    key: 'story:next-gen-opir-successor', group: 'story',
+    label: 'Next Gen OPIR', value: 'Planned system intended to replace SBIRS', basis: 'reported',
+    ev: { refs: [['gao-21-105249', 'Highlights, What GAO Found (also on the GAO product page): the planned Next Generation Overhead Persistent Infrared (Next Gen OPIR) system “is intended to replace the Space Based Infrared System”']] },
+    scope: 'GAO description of a planned program at the time of its report. No launch status, count, orbit or performance is implied.',
+  },
   {
     key: 'story:public-components', group: 'story',
     label: 'Public architecture', value: 'Bus, infrared payload, mission processor, communications', basis: 'reported',

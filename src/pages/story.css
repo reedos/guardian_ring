@@ -65,3 +65,5 @@ html{scroll-behavior:smooth;scroll-padding-top:96px}[hidden]{display:none!import
 .civil-fire{max-width:760px;margin-inline:auto}.civil-fire figcaption p{margin:0}.civil-fire figcaption .fire-lead{color:var(--ink);margin-bottom:8px}
 .deeper+.deeper{margin-top:12px}
 .band-pair>.fact:first-child{padding-left:24px}@media(max-width:700px){.band-pair>.fact:first-child{padding-left:20px}}
+.air-side{display:grid;gap:14px;align-content:start;min-width:0}.air-figure{margin:0;border:1px solid var(--line);background:#020304}.air-figure svg{display:block;width:100%;height:auto}.air-figure figcaption{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 14px;border-top:1px solid var(--line);color:var(--muted);font:400 10px/1.5 var(--mono);letter-spacing:.04em}
+.air-caption .caption-stack{align-content:start}
