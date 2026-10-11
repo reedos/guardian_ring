@@ -1,13 +1,21 @@
 """ABI civil assembly v6; nine inspectable groups, representative packaging.
 GOES-R component vocabulary; four telescope mirrors and three focal modules.
 Layout and optical angles as drawn, not a flight prescription. CPU export only.
+v7 follows the GOES-R Series Data Book (printed pp. 3-5 to 3-17): scanner control
+(SIMD) and the power supply are Electronics Unit cards; the SUE holds the video
+processor and the Peripheral and Thermal Control card; one telescope mirror has
+a focus motor; each of the two cryocoolers has its own CCE; each thermal dynamic
+unit is an integral cooler, transfer line and remote cold head. Parts now rest on
+the bench. The Data Book publishes no ABI dimensions, so sizes remain as drawn.
+v8 adds the Optical Port Sunshield Assembly (baffled port, deployed cover,
+released pin puller) and the scan shroud with its heat pipes (pp. 3-7, 3-14).
 """
 import bpy, importlib.util
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('civil',Path(__file__).with_name('civil-detail.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c);h=c.load_h()
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=6
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=8
 c.bench(h,m,(.35,-.26,.10),(10.8,8.2))
 h.role('Telescope')
 mirrors=[(-3.40,1.05,.55,.59),(-2.40,.97,-.65,.37),(-1.43,1.08,.47,.44),(-.48,.94,-.65,.30)]
@@ -17,16 +25,42 @@ for i,(x,y,z,r) in enumerate(mirrors,1):
     h.cyl('Telescope mirror backing '+str(i),(x,y,z-.03),r*1.07,.10,m['dark'],'z',40)
     h.cyl('Reflective telescope surface '+str(i),(x,y,z+.036),r,.022,m['mirror'],'z',48,.003)
     h.ring('Telescope mirror retaining ring '+str(i),(x,y,z+.040),r*1.13,r*1.045,.045,m['silver'],'z',48)
+# Data Book p. 3-8: one of the four telescope mirrors is motor-driven for minor
+# focus adjustment. Which mirror, and the actuator form, are as drawn.
+fx,fy,fz,fr=mirrors[2]
+h.box('Telescope focus motor bracket',(fx+.16,fy-.30,fz-.20),(.20,.10,.12),m['dark'])
+h.cyl('Telescope focus motor',(fx+.30,fy-.30,fz-.20),.085,.20,m['edge'],'z',24)
+h.rod('Telescope focus drive link',(fx+.30,fy-.30,fz-.10),(fx+.22,fy-.22,fz-.065),.022,m['silver'])
 c.plaque(h,m,'Telescope',(-2.4,-.08,1.43),2.5)
 h.role('ScanSystem')
 c.scan(h,m,'North south scan',(-3.20,.87,3.0),(.64,.25,.72),scale=.85,motion='ABIScanNorthSouth')
 c.scan(h,m,'East west scan',(-1.28,.86,2.78),(-.64,.45,.63),scale=.69,axis='y',motion='ABIScanEastWest')
 c.plaque(h,m,'Scan mirrors',(-2.48,-.06,3.78),2.48)
+# v8, Data Book pp. 3-7 and 3-14. Scan shroud: shields that keep direct sunlight
+# entering the optical port off the internal structure; the collected heat goes
+# to the radiator/loop-heat-pipe assembly through constant-conductance heat pipes.
+# Shield shape, number and the pipe route are as drawn; arcs stay south of the
+# mirrors so the scanner views and plates are unobstructed.
+c.arc_shield(h,m,'Scan shroud shield (north-south scanner)',(-3.20,3.0),.66,-.02,1.15)
+c.arc_shield(h,m,'Scan shroud shield (east-west scanner)',(-1.28,2.78),.56,-.02,1.05)
+h.line('Scan shroud heat pipe link',[(-3.20,.45,2.32),(-2.24,.45,2.26),(-1.28,.45,2.20)],.026,m['silver'])
+h.line('Scan shroud constant-conductance heat pipe',[(-.80,.40,2.48),(-.55,.06,2.12),(-.20,.06,2.02),(-.20,.06,-1.30),(1.70,.06,-1.30),(1.70,.60,-1.86),(2.15,.74,-1.95)],.026,m['silver'])
+# Optical Port Sunshield Assembly: baffled port tube and its one-time deployable
+# Optical Port Cover, drawn open on its spring hinge against a stop. The SMA
+# pin-puller launch lock is shown released. Tube size and vane count as drawn.
+h.ring('Optical port sunshield tube',(-4.62,.87,3.0),.40,.365,.80,m['dark'],'x',48)
+for n,xx in enumerate([-4.98,-4.80,-4.62,-4.44,-4.28],1):h.ring('Optical port stray-light baffle vane '+str(n),(xx,.87,3.0),.37,.25-.01*n,.02,m['black'],'x',48)
+for xx in [-4.90,-4.34]:c.riser(h,m,'Optical port sunshield saddle',xx,3.0,(.12,.46),.49)
+h.cyl('Optical port cover hinge',(-5.02,.87,3.42),.03,.80,m['edge'],'y',16)
+c.plate(h,m,'Optical port cover (deployed)',(-4.62,.87,3.44),(.78,.80),(0,0,1),'dark',.03)
+h.box('Optical port cover launch-lock pin puller (released)',(-4.98,1.30,3.0),(.10,.06,.12),m['edge'])
 h.role('Calibration')
 c.blackbody(h,m,'Internal calibration target',(.20,.63,2.62),.34)
 c.plate(h,m,'Solar calibration diffuser',(1.08,.74,2.75),(.57,.60),(0,.45,1),'white')
-h.box('Solar target support',(1.08,.36,2.58),(.16,.61,.15),m['silver'])
-h.cyl('Solar cover hinge',(1.08,.45,2.40),.06,.70,m['dark'],'x',24)
+# v7: the post meets the diffuser's lower edge and the cover hinge sits on that
+# edge; in v6 both hung free of the plate. Hinge placement is as drawn.
+c.riser(h,m,'Solar target support',1.08,2.86,(.16,.13),.49,'silver')
+h.cyl('Solar calibration cover hinge',(1.08,.47,2.875),.05,.62,m['dark'],'x',24)
 c.plaque(h,m,'Calibration targets',(.61,-.06,3.63),1.72)
 h.role('Bands')
 for name,at,normal,mat in [('Visible infrared splitter',(.41,.99,-.43),(.71,0,.71),'cyanedge'),('Infrared splitter',(1.27,1.0,-.42),(-.71,0,.71),'goldedge'),('Aft fold mirror',(.68,.99,.49),(.71,0,-.71),'mirror')]:
@@ -37,34 +71,53 @@ c.plaque(h,m,'Aft optics',(.67,-.06,1.34),1.5)
 h.role('FocalPlanes')
 for name,z in [('VNIR',-.83),('MWIR',.0),('LWIR',.83)]:
     x=2.70
-    h.box(name+' module base',(x,.12,z),(1.06,.22,.69),m['dark'])
+    c.riser(h,m,name+' module base',x,z,(1.06,.69),.23)
     h.box(name+' carrier',(x,.29,z),(.94,.095,.61),m['silver'])
     h.box(name+' cold surround',(x,.37,z),(.78,.049,.49),m['cyan'])
     h.box(name+' blank module entrance',(x,.43,z),(.64,.035,.35),m['solar'],.006)
     for xx in [x-.42,x+.42]:h.screw((xx,.36,z),m['edge'])
-    h.ribbon(name+' readout interface',[(x+.50,.31,z),(3.47,-.09,z),(3.47,-.09,1.78),(3.43,.14,1.93)],.17,m['goldedge'])
-c.plaque(h,m,'Focal modules',(2.73,-.06,1.38),1.77)
+    h.ribbon(name+' readout interface',[(x+.50,.31,z),(3.47,.006,z),(3.47,.006,1.78),(3.43,.14,1.93)],.17,m['goldedge'])
+# v7: plate shifted left so the readout ribbons pass beside it, not over it.
+c.plaque(h,m,'Focal modules',(2.45,-.06,1.38),1.77)
 h.role('Readout')
+# Data Book p. 3-16: the SUE holds the Video Processors and the Peripheral and
+# Thermal Control (P&TC) card; scan-mirror control is the SIMD card in the EU.
 h.enclosure('Sensor Unit Electronics chassis',(2.77,.34,2.72),(2.00,.63,1.70),m,True)
-c.card(h,m,'Video Processor',(2.77,.31,2.34),(1.68,.62))
-c.card(h,m,'Scan interface',(2.77,.34,3.19),(1.68,.58),'drive')
+c.seat(h,m,'Sensor Unit Electronics chassis',(2.77,.34,2.72),(2.00,.63,1.70))
+c.card(h,m,'Video Processor',(2.77,.31,2.34),(1.68,.62),floor=.06)
+c.card(h,m,'Peripheral and Thermal Control',(2.77,.34,3.19),(1.68,.58),'drive',floor=.06)
 c.plaque(h,m,'Sensor electronics',(2.78,.02,3.80),1.9)
 h.role('Controller')
+# Data Book Table 3-6 card names; the Telemetry and Timing and encoder cards are
+# described in the text but not drawn as separate boards.
 h.enclosure('Electronics Unit chassis',(4.44,.43,-.02),(1.48,.89,2.78),m,True)
-for name,z in [('Instrument Control',-.93),('Data Processor',-.09),('High-speed Interface',.74)]:c.card(h,m,name,(4.44,.40,z),(1.18,.63))
+for name,z,kind in [('Instrument Controller',-1.02,'digital'),('Data Processor',-.38,'digital'),('High Speed IO',.26,'digital'),('Scanner Interface and Motor Driver',.90,'drive')]:c.card(h,m,name,(4.44,.40,z),(1.18,.50),kind,floor=.02)
 h.role('Power')
-h.enclosure('Power supply enclosure',(4.59,.38,2.82),(1.32,.78,1.55),m,True)
-c.card(h,m,'Power Supply',(4.59,.35,2.80),(1.04,1.23),'power')
+# Data Book p. 3-16: "The EU contains the ABI power supplies." The power card is
+# drawn in its own bay of the same unit, joined to the EU by a parent-board link.
+h.enclosure('Electronics Unit power-supply bay',(4.59,.38,2.82),(1.32,.78,1.55),m,True)
+c.seat(h,m,'Electronics Unit power-supply bay',(4.59,.38,2.82),(1.32,.78,1.55))
+c.riser(h,m,'Electronics Unit parent-board link',4.62,1.7075,(1.0,.70),.18,'silver')
+c.card(h,m,'Power Supply',(4.59,.35,2.80),(1.04,1.23),'power',floor=.025)
 h.line('Power supply output harness',[(4.2,.22,2.24),(3.91,.17,2.06),(3.92,.17,1.20)],.03,m['loom'])
 c.plaque(h,m,'Power supply',(4.54,-.01,3.82),1.43)
 h.role('Thermal')
+# Data Book pp. 3-14 to 3-17: two redundant two-stage pulse-tube cryocoolers.
+# Each thermal dynamic unit is an integral cooler, a transfer line and a remote
+# cold head at the aft optics; each has its own CCE. Routing is as drawn.
+heads=[(2.02,.30,-1.50),(2.42,.30,-1.50)]
+routes=[[(-.12,.38,-2.39),(.00,.42,-2.00),(1.60,.36,-1.86),(2.02,.30,-1.62)],
+        [(1.21,.38,-2.39),(1.70,.34,-2.05),(2.42,.30,-1.62)]]
 for n,x in enumerate([-.58,.75],1):
-    h.box('Cooler mount',(x,.00,-2.39),(1.10,.14,.64),m['dark'])
+    c.riser(h,m,'Cooler mount',x,-2.39,(1.10,.64),.14)
     h.cyl('Representative redundant cooler '+str(n),(x,.38,-2.39),.23,.91,m['silver'],'x',32)
     for xx in [x-.31,x+.31]:h.ring('Cooler mounting clamp',(xx,.38,-2.39),.252,.231,.075,m['dark'],'x',32)
-    h.cyl('Cooler cold head',(x+.57,.38,-2.39),.118,.20,m['cyan'],'x',24)
-    h.line('Cooler transfer line',[(x+.70,.38,-2.39),(1.76,.28,-2.17),(2.29,.24,-1.10)],.03,m['silver'])
-c.card(h,m,'Cryocooler Control Electronics',(-2.60,.16,-2.63),(2.07,1.22),'drive')
+    hx,hy,hz=heads[n-1]
+    c.riser(h,m,'Remote cold head support',hx,hz,(.18,.16),hy-.09)
+    h.cyl('Remote cold head '+str(n),heads[n-1],.10,.22,m['cyan'],'z',24)
+    h.line('Cooler transfer line',routes[n-1],.03,m['silver'])
+    h.line('Cold-head thermal strap',[(hx,hy,hz+.11),(hx+.20,.20,-1.15)],.025,m['cyan'])
+    c.card(h,m,'Cryocooler Control Electronics '+str(n),(-2.60,.16,[-3.05,-2.25][n-1]),(2.07,.50),'drive')
 c.radiator(h,m,'Heat rejection radiator',(3.48,.77,-2.69),(2.86,1.69))
 h.line('Warm heat rejection path',[(.64,.14,-2.86),(1.59,.14,-3.24),(2.70,.56,-3.19)],.047,m['silver'])
 c.plaque(h,m,'Cooling hardware',(-.04,-.02,-1.59),2.47)

@@ -1,4 +1,4 @@
-"""Level 6 illustrative molecular-emission plume GLB, version 2.
+"""Level 6 illustrative molecular-emission plume GLB, version 4 (v3 metadata fix; v4 no downstream pinch).
 
 Run: Blender 5.2 --background --python tools/blender/build-plume.py
 
@@ -18,7 +18,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 3
+VERSION = 4
 OUT.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.context.scene.unit_settings.system = 'NONE'
@@ -131,7 +131,14 @@ def mesh(name, verts, faces, mat, parent, uvs=None):
     return obj
 
 
+PROFILE_PEAK = .533
+
+
 def profile(t):
+    # v4: hold the widest section downstream instead of pinching the gas back
+    # to a point; an expanding exhaust plume disperses and fades, it does not
+    # re-converge. Texture alpha still fades the downstream end. Shape as drawn.
+    t = min(t, PROFILE_PEAK)
     return (.035+.72*math.sin(math.pi*t)+.32*t)*max(math.sin(math.pi*t),0)**.3+.015
 
 

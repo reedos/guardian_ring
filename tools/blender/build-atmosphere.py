@@ -1,6 +1,10 @@
-"""Qualitative air-column illustration, v2. No physical altitude or transmission.
+"""Qualitative air-column illustration, v3. No physical altitude or transmission.
 Colored sheets are diagram layers only, not measured atmospheric strata.
-Molecular symbols and all spacing, proportions and colors are as drawn.
+Molecular symbols and all proportions and colors are as drawn.
+v3 spaces the four sheets as equal-mass levels of an exponential (isothermal)
+atmosphere: each gap holds the same amount of air, so the sheets crowd toward
+the ground and the top stays open. v2 spaced them evenly, which implied air of
+uniform density. The scale height in drawing units is a composition choice.
 """
 import ast
 import math
@@ -38,7 +42,10 @@ mesh=bpy.data.meshes.new('Curved reference surface');mesh.from_pydata(verts,[],f
 ground=bpy.data.objects.new('Schematic curved ground',mesh);bpy.context.collection.objects.link(ground);mesh.materials.append(land)
 cyl('Reference surface rim',(0,0,-.02),1.73,.10,m['dark'],vertices=64,bevel=.01)
 
-for z in [.85,1.70,2.55,3.40]:
+# Equal-mass levels: z = ground + H ln(5/(5-i)), i=1..4 (pressure falls as exp(-z/H)).
+GROUND,SCALE_HEIGHT=.24,1.75
+SHEETS=[round(GROUND+SCALE_HEIGHT*math.log(5/(5-i)),3) for i in range(1,5)]
+for z in SHEETS:
     cyl('Transparent explanatory sheet',(0,0,z),1.55,.035,air,vertices=64,bevel=0)
     pts=[(1.57*math.cos(math.tau*i/64),1.57*math.sin(math.tau*i/64),z) for i in range(65)]
     line('Sheet perimeter',pts,.009,rim)
@@ -80,7 +87,7 @@ bpy.ops.object.select_all(action='DESELECT')
 for o in geometry:o.select_set(True)
 bpy.context.view_layer.objects.active=geometry[0];bpy.ops.object.convert(target='MESH')
 root=bpy.data.objects.new('GuardianAtmosphere',None);bpy.context.collection.objects.link(root)
-root['version']=2;root['physicalScale']=False;root['representative']=True;root['assumption']='look-model'
+root['version']=3;root['sheetSpacing']='Equal-mass levels of an exponential atmosphere; each gap holds about one fifth of the column. Qualitative, no altitude scale.';root['physicalScale']=False;root['representative']=True;root['assumption']='look-model'
 root['description']='Qualitative atmospheric absorption diagram. No altitude, weather, humidity, temperature, transmission or detection model.'
 batches={}
 for o in list(bpy.context.scene.objects):

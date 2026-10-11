@@ -1,4 +1,4 @@
-"""Ground side-level GLB, version 2: representative ground-system equipment.
+"""Ground side-level GLB, version 4: representative ground-system equipment.
 
 Run: Blender 5.2 --background --python tools/blender/build-ground.py
 
@@ -15,7 +15,7 @@ from mathutils import Vector
 
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/'public'/'models'
-VERSION=3
+VERSION=4
 OUT.mkdir(parents=True,exist_ok=True)
 
 
@@ -98,9 +98,12 @@ def receive():
     thick=obj.modifiers.new('Dish surface thickness','SOLIDIFY');thick.thickness=.024
     rim=[tuple(transform((.86*math.cos(i*math.tau/64),.86*math.sin(i*math.tau/64),.24))) for i in range(65)]
     line('Antenna rim',rim,.018,m['silver'])
+    # v4: the paraboloid z=.24(r/.86)^2 has focal length .86^2/(4*.24)=.77, so the
+    # feed mouth now sits at the focus (f/D about .45); v3 put it .15 short of it.
+    focus=.86**2/(4*.24)
     for a in [math.pi/2,math.pi/2+math.tau/3,math.pi/2+2*math.tau/3]:
-        rod('Feed support as drawn',transform((.72*math.cos(a),.72*math.sin(a),.17)),transform((0,0,.50)),.014,m['dark'])
-    rod('Representative feed element',transform((0,0,.44)),transform((0,0,.62)),.055,m['goldedge'])
+        rod('Feed support as drawn',transform((.72*math.cos(a),.72*math.sin(a),.17)),transform((0,0,focus-.17)),.014,m['dark'])
+    rod('Representative feed element',transform((0,0,focus-.19)),transform((0,0,focus)),.055,m['goldedge'])
     rod('Back support',Vector((cx,cy,1.40)),transform((0,0,-.07)),.065,m['silver'])
     for item in set(bpy.context.scene.objects)-fixed:item['antennaElevation']=True
     for x in [-.27,.27]:
