@@ -48,3 +48,19 @@ function sync() {
   }
 }
 on('scene',sync); on('scene-settings',sync);
+// On a phone with the parts sheet open the stage keeps only its 45% floor, and the
+// orbit controls would cover most of it. Move them to the top of the sheet then,
+// and back onto the stage when the sheet closes, so the Earth stays in view.
+const phone = matchMedia('(max-width:760px)'), viewHost = document.getElementById('view');
+function placeControls() {
+  const scroller = document.querySelector('.panel-scroll'); if (!scroller) return;
+  const docked = phone.matches && document.body.classList.contains('sheet-open');
+  if (docked) {
+    const after = scroller.querySelector(':scope > .view-part');
+    if (root.parentElement !== scroller) after ? after.after(root) : scroller.prepend(root);
+  } else if (root.parentElement !== viewHost) viewHost.append(root);
+  root.classList.toggle('docked', docked);
+}
+new MutationObserver(placeControls).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+phone.addEventListener('change', placeControls);
+placeControls();

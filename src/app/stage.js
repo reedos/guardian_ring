@@ -200,13 +200,27 @@ function resize() {
   }
   updatePins();
 }
+/** The element's box joined with any absolutely positioned ::before/::after it paints. */
+export function paintedRect(el) {
+  const r = el.getBoundingClientRect(); let { left, right, top, bottom } = r;
+  for (const pseudo of ['::before', '::after']) {
+    const s = getComputedStyle(el, pseudo);
+    if (s.content === 'none' || s.display === 'none' || s.position !== 'absolute') continue;
+    const l = r.left + parseFloat(s.left), t = r.top + parseFloat(s.top), w = parseFloat(s.width), h = parseFloat(s.height);
+    if (![l, t, w, h].every(Number.isFinite)) continue;
+    left = Math.min(left, l); top = Math.min(top, t); right = Math.max(right, l + w); bottom = Math.max(bottom, t + h);
+  }
+  return { left, right, top, bottom, width: right - left, height: bottom - top };
+}
 function updatePins() {
   if (ui.scene < 0) return;
   camera.updateMatrixWorld();
   const width = view.clientWidth, height = view.clientHeight;
   const origin=view.getBoundingClientRect();
+  // Use the painted area, not the box: the title's contrast scrim (::before)
+  // extends past its box and sits above the pin layer.
   const hudBounds=[...view.querySelectorAll('.hud,.hud-row,#scene-note,#hud-btns,#orbit-controls')].filter(el=>el.checkVisibility()).map(el=>{
-    const r=el.getBoundingClientRect();return {left:r.left-origin.left,right:r.right-origin.left,top:r.top-origin.top,bottom:r.bottom-origin.top};
+    const r=paintedRect(el);return {left:r.left-origin.left,right:r.right-origin.left,top:r.top-origin.top,bottom:r.bottom-origin.top};
   });
   built[ui.scene]?.updateLabels?.(camera,{width,height,obstacles:hudBounds});
   const points = [];
@@ -293,7 +307,8 @@ function buildPanel() {
   const scene = store.C.SCENES[ui.scene], parts = partsFor(ui.scene);
   document.body.classList.toggle('atmosphere-view', scene.id === 'atmosphere');
   $('hud-title').textContent = scene.title; $('hud-sub').textContent = scene.scale;
-  if ($('scene-note')) $('scene-note').textContent = scene.id === 'orbits' ? 'Schematic · not to scale\nHistorical Earth imagery\nPatches are not sensor coverage' : scene.id === 'plume' ? 'Historical NASA Earth imagery · not to scale\nIllustrative event · no site' : scene.ready ? 'Representative geometry\nNot to scale · illustrative paths' : 'Reserved level\nViewer test object';
+  // One span per line: stacked where the note has room, run together with separators in the compact key.
+  if ($('scene-note')) $('scene-note').replaceChildren(...(scene.id === 'orbits' ? ['Schematic · not to scale', 'Historical Earth imagery', 'Patches are not sensor coverage'] : scene.id === 'plume' ? ['Historical NASA Earth imagery · not to scale', 'Illustrative event · no site'] : scene.ready ? ['Representative geometry', 'Not to scale · illustrative paths'] : ['Reserved level', 'Viewer test object']).map(text => Object.assign(document.createElement('span'), { className: 'note-line', textContent: text })));
   $('intro').textContent = scene.intro; $('parts-n').textContent = ` ${parts.length}`;
   $('lp-k').textContent = isSide(ui.scene) ? 'Side level' : `Level ${ui.scene + 1} of ${MAIN_LEVELS}`;
   $('lp-t').textContent = scene.title; $('back-out').hidden = !isSide(ui.scene);

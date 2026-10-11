@@ -16,6 +16,8 @@ if(g){
      await g.page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>requestAnimationFrame(r)))));
      const check=await g.page.evaluate(()=>{
       const T=grx.THREE,b=grx.built[grx.state.scene],bad=[],visible=[],hidden=[];
+      // Overlays are measured by what they paint: the title's contrast scrim (::before) reaches past its box.
+      const painted=el=>{const r=el.getBoundingClientRect();let {left,right,top,bottom}=r;for(const ps of ['::before','::after']){const s=getComputedStyle(el,ps);if(s.content==='none'||s.display==='none'||s.position!=='absolute')continue;const l=r.left+parseFloat(s.left),t=r.top+parseFloat(s.top),w=parseFloat(s.width),h=parseFloat(s.height);if(![l,t,w,h].every(Number.isFinite))continue;left=Math.min(left,l);top=Math.min(top,t);right=Math.max(right,l+w);bottom=Math.max(bottom,t+h);}return {left,right,top,bottom};};
       if(grx.state.selected){
        const label=document.querySelector('.pin.on .lbl'),view=document.getElementById('view').getBoundingClientRect();
        // Audit A3 explicitly permits hiding a callout when it cannot remain
@@ -33,7 +35,7 @@ if(g){
         const title=document.getElementById('card-t').textContent;
         if(label.textContent!==title)bad.push('selected callout does not match component name');
         for(const element of document.querySelectorAll('#view .hud,#view .hud-row,#scene-note'))if(element.checkVisibility()){
-         const p=element.getBoundingClientRect();
+         const p=painted(element);
          if(r.left<p.right&&r.right>p.left&&r.top<p.bottom&&r.bottom>p.top)bad.push('selected callout covers scene controls or note');
         }
         for(const pin of document.querySelectorAll('.pin .num'))if(pin.checkVisibility()){
@@ -68,7 +70,7 @@ if(g){
        if(!label.visible){hidden.push({name:label.name,reason:label.userData.readability?.reason});continue;}
        const bounds=label.userData.readability?.bounds,canvas=document.getElementById('view').getBoundingClientRect();
        if(bounds)for(const element of document.querySelectorAll('#view .hud,#view .hud-row,#scene-note'))if(element.checkVisibility()){
-        const p=element.getBoundingClientRect();
+        const p=painted(element);
         if(p.left-canvas.left<bounds.right&&p.right-canvas.left>bounds.left&&p.top-canvas.top<bounds.bottom&&p.bottom-canvas.top>bounds.top)bad.push(`${label.name}: covered by scene controls or note`);
        }
        if(bounds)for(const pin of document.querySelectorAll('.pin .num'))if(pin.checkVisibility()){
