@@ -163,10 +163,14 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     });
     render();if(focus){const picker=document.getElementById('part-select');(picker.checkVisibility()?picker:document.getElementById('card-next')).focus({preventScroll:true});}
   }
-  async function start({establish=false}={}) {
+  async function start({establish=false,focus=false}={}) {
     establishing=establish;
     const url=new URL(location.href);url.searchParams.delete('mission');history.replaceState(null,'',url);
-    explanation.open=false;explanationKey='';active=true;playing=!stage.reduced;stage.setActivityEnabled(playing);const opening=enter(0);find('[data-mission="play"]').focus();await opening;
+    explanation.open=false;explanationKey='';active=true;playing=!stage.reduced;stage.setActivityEnabled(playing);const opening=enter(0);
+    // A reader who pressed Watch keeps focus on the transport. A tour that
+    // starts by itself on load leaves focus at the top of the page so Tab
+    // reaches the skip links and site navigation first.
+    if(focus)find('[data-mission="play"]').focus();await opening;
   }
   function pause({remember=true}={}) {playing=false;if(remember)stage.setActivityEnabled(false);stage.getTeaching()?.pause();stage.built[stage.destination()]?.setMotion?.(false);render();}
   function play() {
@@ -185,7 +189,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
   }
   const handleAction=event=>{
     const action=event.target.closest('[data-mission]')?.dataset.mission;if(!action)return;
-    if(action==='start')void start();
+    if(action==='start')void start({focus:true});
     else if(action==='stop')stop({focus:true});
     else if(action==='play')playing?pause():play();
     else if(action==='previous'&&index>0)void enter(index-1);

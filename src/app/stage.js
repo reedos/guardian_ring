@@ -15,6 +15,7 @@ import { createVisitHistory, retainedPart, capturePane, refreshScenarioContent }
 import { assemblyViewFromQuery } from './explorer-url.js';
 import { followFromQuery } from './explorer-url.js';
 import { createSceneLook } from './scene-look.js';
+import { onModelProgress } from '../scenes/model-scene.js';
 import * as orbits from '../scenes/orbits.js';
 import * as satellite from '../scenes/satellite.js';
 import * as payload from '../scenes/payload.js';
@@ -98,6 +99,44 @@ export function cancelNavigation(owner) {
   buildEpoch++;busy=false;navigationOwner=null;$('veil').hidden=true;return true;
 }
 export const isCameraMoving = () => busy || !!tween;
+// Loading veil: one announced sentence, with byte progress drawn beside it.
+const inSentence = title => title.replace(/^The /, 'the ');
+const formatBytes = n => n >= 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1e3))} kB`;
+function setVeil(message, progress = null) {
+  const veil = $('veil'); veil.replaceChildren();
+  const text = document.createElement('span'); text.className = 'veil-t'; text.textContent = message; veil.append(text);
+  if (!progress) return;
+  const bar = document.createElement('span'), fill = document.createElement('i'), bytes = document.createElement('span');
+  bar.className = 'veil-bar'; bar.setAttribute('aria-hidden', 'true'); bytes.className = 'veil-bytes'; bytes.setAttribute('aria-hidden', 'true');
+  bar.append(fill); veil.append(bar, bytes); veil.classList.add('loading');
+  return { update(loaded, total) {
+    if (total > 0) { const share = Math.min(1, loaded / total); fill.style.width = `${Math.round(share * 100)}%`; bytes.textContent = `${formatBytes(loaded)} of ${formatBytes(total)}`; bar.classList.remove('indeterminate'); }
+    else { bar.classList.add('indeterminate'); bytes.textContent = loaded ? formatBytes(loaded) : ''; }
+  } };
+}
+function trackDownload(title) {
+  const files = new Map(); let meter = null;
+  const off = onModelProgress(event => {
+    files.set(event.url, event);
+    meter ||= setVeil(`Loading ${title}…`, true);
+    let loaded = 0, total = 0, known = true;
+    for (const file of files.values()) { loaded += file.loaded; if (file.total) total += file.total; else known = false; }
+    meter.update(loaded, known ? total : 0);
+  });
+  return () => { off(); $('veil').classList.remove('loading'); };
+}
+// Stage message with actions, centered over the view and clear of the title.
+function stageError(message, actions) {
+  const panel = $('stage-error'), text = $('stage-error-t'), row = $('stage-error-actions');
+  text.textContent = message; row.replaceChildren();
+  for (const { label, primary = false, run } of actions) {
+    const button = document.createElement('button'); button.type = 'button'; button.className = primary ? 'btn go' : 'btn'; button.textContent = label;
+    button.addEventListener('click', () => { panel.hidden = true; run(); }); row.append(button);
+  }
+  panel.hidden = false;
+  const first = row.querySelector('button'); if (first && (document.activeElement === document.body || view.contains(document.activeElement) || !document.activeElement?.checkVisibility?.())) first.focus({ preventScroll: true });
+}
+export const stageErrorShown = () => $('stage-error')?.hidden === false;
 // Progress belongs to the last camera pose played, not a gate callback's clock.
 // Keep the completed value after tween is cleared so observers can record u=1.
 export const getFlightProgress = () => renderedFlightProgress;
@@ -430,7 +469,9 @@ export async function go(index, { record = true, restore = null, owner = null, r
   const firstView = ui.scene < 0;
   if (record) visits.enter(captureView(), index, isSide(index));
   built[ui.scene]?.teaching?.pause();
-  const epoch = ++buildEpoch; busy = true; navigationOwner=owner;$('veil').hidden = false; $('veil').classList.remove('off'); $('veil').textContent = 'Preparing the scene…';
+  const epoch = ++buildEpoch; busy = true; navigationOwner=owner;$('veil').hidden = false; $('veil').classList.remove('off'); setVeil('Preparing the scene…');
+  $('stage-error').hidden = true;
+  const untrack = trackDownload(inSentence(store.C.SCENES[index].title));
   try {
     if (!built[index]) {
       await BUILDERS[index].preload(); if (epoch !== buildEpoch) return;
@@ -468,20 +509,28 @@ export async function go(index, { record = true, restore = null, owner = null, r
       emit('mode', ui.mode); emit('restore-pane', { ...restore.pane, restoreFocus: true });
     } else { if(getAssemblyPresentation()){getAssemblyPresentation().setView('assembled');inspect(true);}deselect();framedOverview=true; if (!firstView&&resetPane) emit('pane-request', { pane: 'parts', reset: true }); }
     if(!restore&&owner===null&&activity)previewActivity();
-    $('veil').hidden = true; emit('scene-settings');
+    $('veil').hidden = true; document.body.classList.add('scene-ready'); emit('scene-settings');
   } catch (error) {
     if(epoch!==buildEpoch)return;
     // A later level that fails to load leaves the current one in place, rather than a
     // blank stage under the old level's controls. Its model is not cached, so trying again refetches.
     if(ui.scene>=0&&ui.scene!==index&&built[ui.scene]){
       $('veil').hidden=true;
-      const toast=$('toast');toast.textContent=`${store.C.SCENES[index].title} could not load. Check the connection and try again.`;toast.classList.remove('select');toast.hidden=false;
-      clearTimeout(go.toastTimer);go.toastTimer=setTimeout(()=>{toast.hidden=true;},6000);
+      const current=inSentence(store.C.SCENES[ui.scene].title);
+      stageError(`${store.C.SCENES[index].title} could not load. Check the connection and try again.`,[
+        {label:'Try again',primary:true,run:()=>void go(index,{record:false,owner:null,resetPane,activity})},
+        {label:`Stay on ${current}`,run:()=>{}},
+      ]);
       console.warn('Level failed to load',error);return;
     }
-    $('veil').textContent = 'The viewer could not start. Reload to try again; the source and method pages remain available.'; throw error;
+    // The first level failed: keep the veil, and offer a fresh request for the model.
+    setVeil('The viewer could not load this level.');
+    stageError(`${store.C.SCENES[index].title} could not load. Check the connection and try again; the story, evidence and method pages remain available.`,[
+      {label:'Try again',primary:true,run:()=>void go(index,{record:false}).catch(()=>{})},
+    ]);
+    throw error;
   }
-  finally { if (epoch === buildEpoch) {busy = false;navigationOwner=null;} }
+  finally { untrack(); if (epoch === buildEpoch) {busy = false;navigationOwner=null;} }
 }
 // Preserve the test hook's default-first-part contract. Normal level navigation
 // uses go(), which opens an honest unselected overview.
@@ -513,7 +562,22 @@ export function start() {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
     sceneLook=createSceneLook(renderer);
     const gl = renderer.getContext(), debug = gl.getExtension('WEBGL_debug_renderer_info'); gpu = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
-  } catch { $('veil').textContent = 'WebGL is unavailable. The source and method pages remain available.'; busy = false; return; }
+  } catch { setVeil('WebGL is unavailable. The story, evidence and method pages remain available.'); busy = false; return; }
+  // A lost GPU context stops drawing. Explain it, and rebuild the lighting
+  // environments when the browser restores the context.
+  let contextLost = false;
+  canvas.addEventListener('webglcontextlost', event => {
+    event.preventDefault(); contextLost = true; tween = null;
+    stageError('The 3D view lost its graphics connection. It may recover by itself; reloading the page always restores it.', [
+      { label: 'Reload the page', primary: true, run: () => location.reload() },
+    ]);
+  });
+  canvas.addEventListener('webglcontextrestored', () => {
+    contextLost = false;
+    sceneLook.dispose(); sceneLook = createSceneLook(renderer);
+    built.forEach((scene, i) => { if (scene) sceneLook.apply(scene, { sceneId: store.C.SCENES[i].id, tier: tiers[i] }); });
+    $('stage-error').hidden = true; resize();
+  });
   setQualityPreference(preference);
   const mainLevels = document.createElement('div'), sideLevels = document.createElement('div');
   mainLevels.className = 'lm-group'; sideLevels.className = 'lm-group';
@@ -566,7 +630,7 @@ export function start() {
     const dt = resetFrameClock ? 0 : Math.max(0, (now - last) / 1000); last = now; resetFrameClock = false;
     const suspended = activitySuspended();
     getTeaching()?.setSuspended?.(suspended); built[ui.scene]?.setSuspended?.(suspended);
-    if (lifecycleFrozen || document.hidden || ui.scene < 0 || !built[ui.scene]) return;
+    if (contextLost || lifecycleFrozen || document.hidden || ui.scene < 0 || !built[ui.scene]) return;
     const cpuStart = performance.now();
     if (tween) { const u = Math.max(0, Math.min(1, (now - tween.start) / tween.duration)); poseAt(tween, u, camera.position, controls.target); renderedFlightProgress = u; if (u >= 1) tween = null; }
     if(!tween)restoreOrbitMinimum();

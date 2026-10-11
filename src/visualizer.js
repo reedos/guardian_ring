@@ -119,4 +119,9 @@ function placeBackOut(){
   backOut.classList.toggle('stage-back',onStage);
 }
 phoneStage.addEventListener('change',placeBackOut);placeBackOut();
+// Skip links move focus without writing a fragment into shared view links.
+for(const link of document.querySelectorAll('.skip-links a[href^="#"]'))link.addEventListener('click',event=>{
+  const target=document.getElementById(link.getAttribute('href').slice(1));if(!target)return;
+  event.preventDefault();target.focus({preventScroll:false});
+});
 stage.start();

@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="/src/touch.css">
 </head>
 <body class="app">
+<nav class="skip-links" aria-label="Skip links"><a class="skip" href="#gl">Skip to the 3D view</a><a class="skip" href="#inspector">Skip to the parts panel</a></nav>
 <header class="topbar" id="topbar">
   <a class="brand" href="index.html" aria-label="The Guardian Ring, the story"><span class="mark ring-mark" aria-hidden="true"></span><span class="brand-t">The Guardian Ring</span></a>
   <nav class="topnav" id="topnav" aria-label="Site">
@@ -59,6 +60,7 @@
           </div></div>
           <div class="scaffold-badge" id="scene-note" aria-label="Scale context">Schematic orbits<br>Not to scale</div>
           <div class="toast" id="toast" role="status" hidden></div><div class="veil" id="veil" role="status">Preparing the scene…</div>
+          <div class="stage-error" id="stage-error" role="alert" hidden><p id="stage-error-t"></p><div class="se-actions" id="stage-error-actions"></div></div>
         </div>
         <div class="hud-btns" id="hud-btns">
           <button type="button" class="btn" id="back-out" hidden>← The ring</button>
@@ -74,7 +76,7 @@
         </div>
         <section class="animation-controls" id="animation-controls" aria-label="Illustrative animation" hidden></section>
       </div>
-      <aside class="panel" id="inspector" aria-label="Components">
+      <aside class="panel" id="inspector" aria-label="Components" tabindex="-1">
         <div class="pane-tabs" role="group" aria-label="Side pane"><button type="button" class="sheet-toggle" id="sheet-toggle" aria-expanded="false" aria-label="Expand the panel"><i aria-hidden="true"></i></button><button type="button" id="tab-parts" data-pane="parts" aria-controls="pane-parts">Parts<span class="tab-n" id="parts-n"></span></button><span class="pane-sum" id="pane-sum">GEO · MWIR</span></div>
         <div class="panel-scroll">
           <details id="try-it" class="try-it" hidden><summary id="tab-scenario">Try it</summary><section class="scenario pane-scenario" id="pane-scenario" aria-labelledby="tab-scenario" hidden>

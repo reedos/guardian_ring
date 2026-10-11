@@ -1582,3 +1582,39 @@ body.atmosphere-view .mode, body.atmosphere-view #animation-controls, body.atmos
   body.app #orbit-controls .btn { padding-inline:6px; }
   body.app #orbit-time { width:64px; }
 }
+
+/* Skip links: hidden above the viewport until keyboard focus reaches them. */
+body.app .skip-links .skip { position:fixed; top:-80px; left:12px; z-index:100; padding:12px 16px; color:var(--ground,#05070a); background:var(--accent); font-weight:600; text-decoration:none; }
+body.app .skip-links .skip:focus { top:10px; outline:2px solid var(--ink,#fff); outline-offset:2px; }
+body.app #inspector:focus { outline:none; }
+body.app #inspector:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
+
+/* Loading progress and stage errors sit at the center of the view, clear of the title. */
+body.app .veil { grid-auto-flow:row; align-content:center; justify-items:center; gap:12px; }
+body.app .veil .veil-bar { position:relative; display:block; width:min(240px,60%); height:3px; background:var(--line-2); overflow:hidden; }
+body.app .veil .veil-bar i { position:absolute; inset:0 auto 0 0; width:0; background:var(--accent); transition:width .2s linear; }
+body.app .veil .veil-bar.indeterminate i { width:30%; animation:veil-slide 1.2s ease-in-out infinite; }
+body.app .veil .veil-bytes { font-size:11px; color:var(--muted); min-height:1em; }
+@keyframes veil-slide { from { left:-30%; } to { left:100%; } }
+@media (prefers-reduced-motion: reduce) { body.app .veil .veil-bar.indeterminate i { animation:none; width:100%; opacity:.5; } body.app .veil .veil-bar i { transition:none; } }
+body.app .stage-error { position:absolute; z-index:9; left:50%; top:50%; transform:translate(-50%,-50%); width:min(420px,calc(100% - 32px)); padding:18px 20px; display:grid; gap:14px; background:var(--surface); border:1px solid var(--accent); box-shadow:0 12px 40px rgba(0,0,0,.6); color:var(--ink); font-size:14px; line-height:1.5; }
+body.app .stage-error[hidden] { display:none; }
+body.app .stage-error p { margin:0; }
+body.app .stage-error .se-actions { display:flex; flex-wrap:wrap; gap:8px; }
+body.app .stage-error .btn { min-height:44px; padding-inline:16px; }
+
+/* First load: placeholder lines hold the panel's shape until the level arrives. */
+body.app:not(.scene-ready) #learning-question:empty, body.app:not(.scene-ready) #learning-takeaway:empty { display:block; height:14px; margin:6px 0; background:linear-gradient(90deg,var(--line) 0,var(--line-2) 50%,var(--line) 100%); background-size:200% 100%; animation:skeleton 1.4s linear infinite; }
+body.app:not(.scene-ready) #learning-question:empty { width:70%; height:20px; }
+body.app:not(.scene-ready) #learning-takeaway:empty { width:90%; }
+body.app:not(.scene-ready) #parts:empty { min-height:120px; background:repeating-linear-gradient(180deg,var(--line) 0 30px,transparent 30px 44px); opacity:.6; }
+@keyframes skeleton { from { background-position:200% 0; } to { background-position:0 0; } }
+@media (prefers-reduced-motion: reduce) { body.app:not(.scene-ready) :is(#learning-question,#learning-takeaway):empty { animation:none; } }
+
+/* Desktop mission: the side panel keeps this level's question below the tour card,
+   as reading context only. Inspection controls return when the reader explores. */
+@media (min-width:1101px), (max-width:1100px) and (orientation:landscape) and (min-width:761px) {
+  body.app.stage-priority.mission-active .panel-scroll > #pane-parts { display:block; }
+  body.app.stage-priority.mission-active #pane-parts > :not(#learning-guide) { display:none; }
+  body.app.stage-priority.mission-active #learning-guide > :is(button,details,.learning-example) { display:none; }
+}
