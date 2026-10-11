@@ -108,3 +108,31 @@ were unreviewed before this branch). Preview on port 47631.
 
 Round 2 verification: `npx tsc --noEmit` clean · `npx vitest run` 52 files, 293 tests passed · `npx tsx tools/claims.mjs` 0 problems. No rendered prose changed in round 2, so the
 build, links and pages gates from round 1 still apply.
+
+## Round 3 (fresh sample; nothing material found, loop stopped)
+
+| Claim | Location | Verdict | Evidence |
+|---|---|---|---|
+| ESA battery passivation: discharge and prevent renewed charging | satellite power card | correct | ESA: discharge “as much as possible”; disconnect “from the solar arrays to avoid any further charge” |
+| Heat transfer in vacuum by conduction and radiation | cooling lesson, thermal cards | correct | NASA SST-SoA 7.2.1: “only by radiation and conduction with no convection” |
+| TIRS-2 views Earth, onboard blackbody and space | calibration lesson | correct | NTRS 20180005348: scene select mirror selects “nadir view, onboard variable temperature blackbody and space view” |
+
+## Totals
+
+About 560 claims checked: 318 unique site claim rows (all 30 Calc. rows re-derived; every numeric Spec/Reported row
+re-opened; about 204 Data Book rows checked page by page), 76 glossary definitions, method formulas and assumptions,
+index story text, 50 lesson beats, 10 mission chapters and about 75 card and diagram bodies. Errors fixed: 11 (2 overstated
+ABI rows, 1 misattributed GOES-R thermal row, 1 unsupported “cold finger”, 2 wrong locators shown on three pages, 1 slab
+terminology error, 1 glossary imprecision, 1 stale generator label, 2 research-note errors), plus 1 audit-tool gap.
+
+## Items for Reed
+
+1. `nasa-tirs2-build` (science.nasa.gov TIRS-2 article) returned HTTP 403 on 10/10/2026. It was verified on 10/01/2026 and
+   every figure it supports (43 K, 185 K, 185 km, 100 m, f/1.64) also appears on the NASA TIRS page (`landsat9-tirs2-nasa`).
+   Keep it as verified, or add the TIRS page as a second reference? Left unchanged.
+2. GAO-26-107085 Table 3 lists 39 Tranche 1 Tracking satellites as originally planned (as of July 2025), with seven
+   Raytheon satellites later removed. The research ledger’s `t1-original-award` row (“28 satellites / four planes,”
+   07/18/2022 award) is historically correct and not shown on the site; no change made.
+3. 46 page rows were newly recorded as reviewed in `research/page-claim-reviews.json` so the claim audit certifies. Some of
+   them (the civil-cooling rows and the Kenneth Fire caption) were already unreviewed before this branch. I checked each,
+   but a second reviewer may want to confirm them.
