@@ -64,3 +64,4 @@ html{scroll-behavior:smooth;scroll-padding-top:96px}[hidden]{display:none!import
 @media(max-width:700px){.orbit-trades{grid-template-columns:1fr;gap:24px}.signal-chain.warning-chain{grid-template-columns:1fr;gap:26px}.signal-chain.warning-chain li::after{display:block;content:'↓';right:auto;left:20px;top:auto;bottom:-25px}.signal-chain.warning-chain li:last-child::after{display:none}.deeper>summary{padding:16px 18px;font-size:11px}.deeper>.engineering-map{padding:0 16px 18px}}
 .civil-fire{max-width:760px;margin-inline:auto}.civil-fire figcaption p{margin:0}.civil-fire figcaption .fire-lead{color:var(--ink);margin-bottom:8px}
 .deeper+.deeper{margin-top:12px}
+.band-pair>.fact:first-child{padding-left:24px}@media(max-width:700px){.band-pair>.fact:first-child{padding-left:20px}}
