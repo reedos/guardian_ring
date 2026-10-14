@@ -7,7 +7,7 @@ import { replaceOrbitGuideTubes } from './orbit-guides.js';
 import { createSurfacePathClear } from './surface-path.js';
 import { orbitalOverviewPose, createOrbitBackdrop, createGeoViewingPatches } from './orbit-overview.js';
 
-const URL = 'models/earth-orbits.glb?v=5';
+const URL = 'models/earth-orbits.glb?v=6';
 // A fixed lighting direction for the illustration, unrelated to a date or ephemeris.
 const ILLUSTRATIVE_SUN = new THREE.Vector3(-5, 2, 1).normalize();
 

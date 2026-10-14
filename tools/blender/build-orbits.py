@@ -1,4 +1,9 @@
-"""Level 1 authored GLB, version 5 (HEO planes at the generic Molniya tilt). No operational constellation is represented.
+"""Level 1 authored GLB, version 6 (HEO planes at the generic Molniya tilt). No operational constellation is represented.
+
+v6 (blender round 1): the spacecraft proxy takes the satellite model's finishes (silver frame, blanketed
+side, blue cells, dark chassis) lifted so it reads against black, with a round telescope barrel in place of the
+box housing; the atmospheric limb shell is a translucent glow in any viewer, so it no longer hides the textured
+Earth in tools that ignore back-face culling. Bounds, triangle budget, ports and transforms are unchanged.
 
 Run: Blender 5.2 --background --python tools/blender/build-orbits.py
 
@@ -27,7 +32,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
 TEXTURES = ROOT / 'research' / 'look' / 'textures'
-VERSION = 5
+VERSION = 6
 OUT.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 SCENE = bpy.context.scene
@@ -79,15 +84,45 @@ def material(name, color, metal=0, rough=.45, emission=0):
     return mat
 
 
+def shipped_derivative(filename):
+    """Fallback when the gitignored NASA originals are absent (a fresh worktree):
+    reuse the already-adjusted 2K derivative embedded in the shipped GLB. No
+    second color adjustment is applied. Returns a temp JPEG path, or None."""
+    import json, struct, tempfile
+    glb = OUT / 'earth-orbits.glb'
+    if not glb.exists(): return None
+    data = glb.read_bytes()
+    jlen = struct.unpack('<I', data[12:16])[0]
+    doc = json.loads(data[20:20+jlen])
+    blob = data[20+jlen+8:]
+    want = 'blue' if 'blue' in filename else 'black'
+    for entry in doc.get('images', []):
+        if want in entry.get('name', '').lower():
+            view = doc['bufferViews'][entry['bufferView']]
+            start = view.get('byteOffset', 0)
+            out = Path(tempfile.gettempdir()) / ('grx-' + want + '-shipped.jpg')
+            out.write_bytes(blob[start:start+view['byteLength']])
+            return out
+    return None
+
+
 def derivative(filename, name, night=False):
     """CPU resampling/color adjustment; the original research images are untouched."""
-    image = bpy.data.images.load(str(TEXTURES / filename), check_existing=False)
+    source = TEXTURES / filename
+    adjusted = False
+    if not source.exists():
+        source = shipped_derivative(filename)
+        adjusted = True
+        if source is None: raise FileNotFoundError(f'{filename}: original missing and no shipped derivative to reuse')
+    image = bpy.data.images.load(str(source), check_existing=False)
     image.name = name
     image.scale(2048, 1024)
     pixels = np.empty(2048 * 1024 * 4, dtype=np.float32)
     image.pixels.foreach_get(pixels)
     rgba = pixels.reshape((-1, 4))
-    if night:
+    if adjusted:
+        pass
+    elif night:
         # Isolate the warm light highlights from the source's blue background.
         # This color-based art adjustment is explicitly not radiometry.
         luminance = rgba[:, 0] * .2126 + rgba[:, 1] * .7152 + rgba[:, 2] * .0722
@@ -146,8 +181,13 @@ earth['drawingRadius'] = 1.0
 earth['solidForCamera'] = True
 earth['sourceImages'] = 'NASA Blue Marble 01/2004 and Black Marble 2016; historical, color-adjusted'
 earth['motion'] = 'Inherit EarthSpin; no independent rotation.'
-atmosphere = sphere('Atmosphere', 1.012,
-    material('Atmospheric limb — thickness exaggerated', (.014, .10, .25), 0, 1, 1.5),
+limb_material = material('Atmospheric limb — thickness exaggerated', (.014, .10, .25), 0, 1, 1.5)
+# Translucent in every viewer: an opaque inverted shell hides the textured Earth
+# wherever back-face culling is ignored. The runtime replaces it with a rim glow.
+limb_material.node_tree.nodes.get('Principled BSDF').inputs['Alpha'].default_value = .16
+limb_material.diffuse_color = (.014, .10, .25, .16)
+limb_material.surface_render_method = 'DITHERED'
+atmosphere = sphere('Atmosphere', 1.012, limb_material,
     EARTH_SPIN, segments=96, rings=48, inverted=True)
 atmosphere['role'] = 'schematic-atmospheric-limb'
 atmosphere['solidForCamera'] = False
@@ -173,10 +213,12 @@ def curve(name, points, mat, parent, radius=.0022):
     return obj
 
 
-GOLD = material('Representative proxy thermal blanket', (.53, .32, .10), .68, .37)
-DARK = material('Representative proxy bus', (.055, .078, .10), .24, .44)
-SOLAR = material('Representative proxy solar surface', (.018, .060, .12), .32, .28)
-TRIM = material('Representative proxy structure', (.40, .47, .53), .68, .30)
+# v6: finishes follow the satellite model's palette, lifted one step so the
+# small proxy keeps a readable value against black space.
+GOLD = material('Representative proxy thermal blanket', (.64, .38, .12), .66, .34)
+DARK = material('Representative proxy bus', (.15, .18, .225), .30, .42)
+SOLAR = material('Representative proxy solar surface', (.032, .095, .21), .36, .30, .30)
+TRIM = material('Representative proxy structure', (.58, .66, .74), .68, .30)
 
 
 def proxy_mesh():
@@ -281,7 +323,7 @@ def proxy_mesh():
         # A junction cover and hinge blocks explain how the wing attaches.
         bevel_box((side*.086,-.009,0),(.016,.005,.023),0,.0006)
         for z in [-.024,.024]:bevel_box((side*.071,-.001,z),(.005,.016,.008),3,.0006)
-    bevel_box((0, -.006, .057), (.038, .040, .027), 3,.0012)
+    cylinder_y((0, -.006, .057), .0135, .040, 3, 16)   # v6: round telescope barrel (was a box); same z extent
     aperture_ring((0,-.030,.057),.012,.0085,.008)
     aperture_ring((0,-.033,.057),.0127,.0095,.0018)
     # A recessed optical entrance, without reconstructing an optical train.
