@@ -1,4 +1,4 @@
-"""Qualitative air-column illustration, v3. No physical altitude or transmission.
+"""Qualitative air-column illustration, v5 (v3 text below). No physical altitude or transmission.
 Colored sheets are diagram layers only, not measured atmospheric strata.
 Molecular symbols and all proportions and colors are as drawn.
 v3 spaces the four sheets as equal-mass levels of an exponential (isothermal)
@@ -11,6 +11,10 @@ level as an outlined band, and the ground has thickness. The molecular symbols
 stand in front of the slab with clearance and short leader lines; v3 let them
 pass through the column wall. Curvature, depth and extent are as drawn; no
 altitude scale, cloud, weather or transmission profile is implied.
+v5 (blender round 1) puts the two enlarged symbols inside the air volume, between
+its sheets and well within the slab's side edges, drawn smaller than before. They
+stay enlarged teaching symbols, not to scale with the sheets, and no longer sit
+on or past the slab edge or hang off leader lines.
 """
 import ast
 import math
@@ -88,35 +92,29 @@ arc_line('Drawn top of the illustrated air',TOP,FRONT-.004,rim,.006)
 # A faint translucent back face gives the air volume a boundary to read against.
 curved_slab('Transparent air-slab back face',0,TOP,BACK,BACK+.01,air)
 
-def molecule(center,linear=True):
+def molecule(center,linear=True,k=.74):
     before=set(bpy.context.scene.objects)
     x,y,z=center
-    points=[(x-.4,y,z),(x,y,z),(x+.4,y,z)] if linear else [(x-.3,y,z-.20),(x,y,z),(x+.3,y,z-.20)]
-    line('Symbolic molecular bond',points,.033,m['silver'])
+    points=[(x-.4*k,y,z),(x,y,z),(x+.4*k,y,z)] if linear else [(x-.3*k,y,z-.20*k),(x,y,z),(x+.3*k,y,z-.20*k)]
+    line('Symbolic molecular bond',points,.033*k,m['silver'])
     for i,p in enumerate(points):
         if linear:
             material=carbon if i==1 else oxygen
-            radius=.16 if i==1 else .18
+            radius=(.16 if i==1 else .18)*k
         else:
             material=oxygen if i==1 else hydrogen
-            radius=.18 if i==1 else .11
+            radius=(.18 if i==1 else .11)*k
         sphere('Carbon dioxide atom symbol' if linear else 'Water-vapor atom symbol',p,(radius,radius,radius),material)
     for obj in set(bpy.context.scene.objects)-before:
         obj['assetRole']='CarbonDioxide' if linear else 'WaterVapor'
         obj['teachingOverlay']=True
         obj['physicalHardware']=False
         obj['solidForCamera']=False
-# v4: symbols stand in front of the cut face with clearance (the nearest atom
-# surface is about 0.27 in front of the slab), each tied to it by a leader.
-MOLECULE_Y=-1.0
-molecule((1.95,MOLECULE_Y,2.55))
-molecule((-1.90,MOLECULE_Y,1.55),False)
-for x,z,role in [(1.95,2.55,'CarbonDioxide'),(-1.90,1.55,'WaterVapor')]:
-    before=set(bpy.context.scene.objects)
-    line('Molecular symbol leader',[(x,MOLECULE_Y+.19,z),(x,FRONT-.01,z)],.006,rim)
-    cyl('Leader foot on the slab face',(x,FRONT-.012,z),.03,.012,rim,axis='y',vertices=16,bevel=0)
-    for obj in set(bpy.context.scene.objects)-before:
-        obj['assetRole']=role;obj['teachingOverlay']=True;obj['physicalHardware']=False;obj['solidForCamera']=False
+# v5: symbols sit inside the air volume (mid-depth), between sheets and clear of
+# the side edges, so nothing hangs outside the slab. Size is a teaching choice.
+MOLECULE_Y=.08
+molecule((1.20,MOLECULE_Y,2.22))
+molecule((-1.25,MOLECULE_Y,1.25),False)
 
 for material in bpy.data.materials:
     if material.use_nodes:
@@ -127,7 +125,7 @@ bpy.ops.object.select_all(action='DESELECT')
 for o in geometry:o.select_set(True)
 bpy.context.view_layer.objects.active=geometry[0];bpy.ops.object.convert(target='MESH')
 root=bpy.data.objects.new('GuardianAtmosphere',None);bpy.context.collection.objects.link(root)
-root['version']=4;root['sheetSpacing']='Equal-mass levels of an exponential atmosphere on a curved slab; each gap holds about one fifth of the column. Qualitative, no altitude scale.';root['physicalScale']=False;root['representative']=True;root['assumption']='look-model'
+root['version']=5;root['sheetSpacing']='Equal-mass levels of an exponential atmosphere on a curved slab; each gap holds about one fifth of the column. Qualitative, no altitude scale.';root['physicalScale']=False;root['representative']=True;root['assumption']='look-model'
 root['description']='Qualitative atmospheric absorption diagram. No altitude, weather, humidity, temperature, transmission or detection model.'
 batches={}
 for o in list(bpy.context.scene.objects):
@@ -139,7 +137,7 @@ for (role,names),objects in batches.items():
     if len(objects)>1:bpy.ops.object.join()
     o=bpy.context.object;o.name=role+' — '+names[0];o.parent=root;o['representative']=True;o['assetRole']=role
 for name,p in {'AnchorAir':(-.9,-.62,3.1),'AnchorBands':(.4,-1.25,2.3),'AnchorContext':(.7,-.62,.25),
-    'AnchorCO2':(1.95,-1.18,2.55),'AnchorH2O':(-1.9,-1.19,1.55)}.items():
+    'AnchorCO2':(1.20,MOLECULE_Y-.0,2.22),'AnchorH2O':(-1.25,MOLECULE_Y-.0,1.25)}.items():
     o=bpy.data.objects.new(name,None);bpy.context.collection.objects.link(o);o.parent=root;o.location=p
 out=ROOT/'public/models/atmosphere.glb'
 bpy.ops.export_scene.gltf(filepath=str(out),export_format='GLB',export_yup=True,export_extras=True,export_apply=True,export_animations=False,export_cameras=False,export_lights=False)
