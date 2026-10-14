@@ -428,6 +428,9 @@ export function deselect() {
   document.querySelectorAll('#parts button, #pins button').forEach(button => { button.setAttribute('aria-pressed', 'false'); button.classList.remove('on'); });
   emit('select', null);
 }
+// With a part framed, the level title steps back (its plate fades) so it does not cover the geometry being studied.
+const syncFramedTitle = () => document.body.classList.toggle('part-framed', !!ui.selected);
+on('select', syncFramedTitle); on('scene-settings', syncFramedTitle);
 export function overview() {
   pendingPartAnimation = null;
   if (orbitTracking) setOrbitFollow(null);

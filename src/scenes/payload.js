@@ -18,7 +18,7 @@ const scene=illustrated({
   views:{
     optics:{pos:[1.8,2.8,4.4],target:[-1.2,.2,-.15]},
     baffles:{pos:[-.2,2.8,4.9],target:[-1.65,.45,1.45]},
-    detector:{pos:[1.1,3.5,-5.8],target:[-1.1,-.30,-3.47]},
+    detector:{pos:[1.54,4.26,-6.27],target:[-1.1,-.30,-3.47]},   // pulled back 20% along the same line of sight; the dark housing now has room around it
     readout:{pos:[.6,3.5,2.3],target:[.99,-.96,-.65]},
     digitizer:{pos:[2.5,3.5,2.3],target:[2.28,-.96,-.65]},
     controller:{pos:[4.1,4.0,2.7],target:[4.13,-.96,-.43]},

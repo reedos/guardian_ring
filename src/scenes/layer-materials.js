@@ -2,6 +2,9 @@ import {Color} from 'three';
 
 // Reversible teaching colors on authored hardware. Categories are qualitative
 // engineering roles, not a temperature field or a real instrument measurement.
+// The tint carries the role; the key light and the environment carry the form. A smaller glow keeps the shading from
+// washing out to one flat color, and some metalness lets the studio environment draw edges.
+const GLOW=.35,TINT_METAL=.6;
 const thermal={cold:'#84d8ff',warm:'#ff786b',radiator:'#f6a1b8',power:'#ffd06b'};
 /** @param {import('three').Object3D} asset @param {{data?:string[],heat?:Record<string,string>}} options */
 export function createLayerMaterials(asset,{data=[],heat={}}={}){
@@ -27,9 +30,9 @@ export function createLayerMaterials(asset,{data=[],heat={}}={}){
    const active=mode==='heat'?!!r.heatRole:r.dataRole;
    const color=mode==='heat'?r.heatColor:r.dataColor;
    m.color.copy(active?color:r.color).multiplyScalar(active?1:.35);
-   if(active)m.emissive.copy(color);else m.emissive.set('#000000');m.emissiveIntensity=active?pulse:0;
+   if(active)m.emissive.copy(color);else m.emissive.set('#000000');m.emissiveIntensity=active?pulse*GLOW:0;
    m.opacity=active?r.opacity:Math.min(r.opacity,.3);m.transparent=!active||r.transparent;
-   m.depthWrite=active&&r.depthWrite;m.metalness=active?.12:r.metalness;
+   m.depthWrite=active&&r.depthWrite;m.metalness=active?TINT_METAL:r.metalness;
    if(current!==mode)m.needsUpdate=true;
   }
   current=mode;

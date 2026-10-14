@@ -5,9 +5,9 @@
 import * as THREE from 'three';
 
 const PROFILES = {
-  // One dominant Sun direction; a restrained ambient term keeps the cutaway
+  // One dominant Sun direction; a moderate ambient term (raised from .22 / .12 so the shadow side keeps its detail) keeps the cutaway
   // readable without flattening every face into a studio-lit gray box.
-  satellite: { envIntensity: .22, hemisphere: .12, directional: [3.4, 0] },
+  satellite: { envIntensity: .42, hemisphere: .3, directional: [3.4, 0] },
   ground: { envIntensity: .58, hemisphere: .90, directional: [2.45, 1.05] },
   pixel: { envIntensity: .65, hemisphere: .75, directional: [2.25, 1.0] },
   'focal-plane': { envIntensity: .65, hemisphere: .75, directional: [2.35, 1.0] },

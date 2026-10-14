@@ -1,5 +1,5 @@
 {
-  "renderedAt": "2026-10-14T16:32:49.231Z",
+  "renderedAt": "2026-10-14T18:47:07.832Z",
   "inputs": {
     "public/models/abi.glb": "0a7bc21f00fef28e9a9e039344877eab154bf559f10abad1193dad304baebdd6",
     "public/models/atmosphere.glb": "ce8ed7a3f9898a02200df0d9a98a35f5a0d86e10a64015ffb03a132bf3075cc6",
@@ -17,8 +17,8 @@
     "src/app/cinematic-drawing.js": "edcf5b8298ee8cfc9537265d9e4d6e1ecf76dc3cf33d58643ba090edb642a714",
     "src/app/cinematic-earth.js": "11c603bc4c1818f1448e79f139c88e2d7f3bb49c41b106f9de52cfaedb2aa9fb",
     "src/app/cinematic-renderers.js": "f81c711158c2a651c4ed695b1fee2adb2ed4e0dac825d9e519eb6fc2d86d680e",
-    "src/app/scene-look.js": "d0ba45b8a4b26a4193a6eb5e6b626895bf46e0e619f1c65066e641fdf25e488e",
-    "src/app/stage.js": "de5af5cdc63fefebf9e7a73cb1abb309ed52df7da0caab802c1480fcbd90fdf8",
+    "src/app/scene-look.js": "bca251c10ee235edc57ab685d1ae7b10cb0b7fb8ad4d17b30171ce9da2d0e3e9",
+    "src/app/stage.js": "7cddd420408ec8bb4fdd613c078041e460e916db2ef0563f3484c7dd4bc7e039",
     "src/app/view-controls.js": "53e6e8897d2552ee0e9af2f3af0a46803623a6b49381d5768216fc9027654081",
     "src/explainer-kit/src/render-quality.js": "50e5dbbf7adbb1c9a0fd81d716b44a998f4cb5587aa8ea53e7c937e016d30a94",
     "src/scenes/activity-display.js": "cf70e2861d23b0919467dc9add6b0c00ccf46486f9d74a1245125deab572984f",
@@ -27,7 +27,7 @@
     "src/scenes/focal-plane.js": "7b5f5c6b91acc3c70230338c26b78bfaf457bafc9d9fdfd2548487f721e708f0",
     "src/scenes/illustrated.js": "8efe0f897bb23a45a032cf7fd84008a66a60b2f87f7fd7e1dd2b4158b35c7f99",
     "src/scenes/label-visibility.js": "648d1746ab1f3fa6daef8dfd98fce7f5478531fd4f1399d52e8c926118f40c16",
-    "src/scenes/layer-materials.js": "920dac1ddeb159120087265593730750cddf81fc34ea95155f5b0df2264ed3d6",
+    "src/scenes/layer-materials.js": "89f5068c7ad19f12855aede7716cd8d3b2d95f04b229b8864081138f3449df1b",
     "src/scenes/mechanism-pose.js": "203a85f4da2dcb2fd62593eb08690f90e881e20e1cb2ef28e74b5583fbb60630",
     "src/scenes/mirror-demo.js": "0e054c319285d5bc4f50893cef3789ea31c7dd776b8050a1925064dd8c15ba3f",
     "src/scenes/model-scene.js": "9f51a65ad76b658199bda26c79e693cc521671c12515e81280ddbd3066fcdc0d",
@@ -38,8 +38,8 @@
     "src/scenes/orbit-presentation.js": "c855d1fc6ae2c99493d2639ec3674504e69bd4bc6c12dca314b6db240586701d",
     "src/scenes/orbit-streams.js": "cb24ef87135289b5aca70769f57ec6abb23ddd8ce0ebfbf1522eb7cdc98d31ee",
     "src/scenes/orbits.js": "a92c106b60f384d6972127244739f4438306dc5f520c4148cb1b065a9619fc95",
-    "src/scenes/payload.js": "e05d7b7a807f85663d2891bdce41d2b158261f6a94b3e49af9df17669037f1c7",
-    "src/scenes/pixel.js": "e92ca56eba7520801a4cc0b48c31f9a1328333b2e5a53a09ff668dc6bc4fb93b",
+    "src/scenes/payload.js": "53418d2660b0e0648f5647422b549306e1281544f102be25b06501dec09f4658",
+    "src/scenes/pixel.js": "6609098527a79d431df1cf6cff766ca021649df213adb7ce9105f1385bb45730",
     "src/scenes/placeholder.js": "0aaebb7022b4fd66411590a06eaf7b3d554c3d2e505512ad4547c617ba0deca4",
     "src/scenes/plume-illustration.js": "82316f1c5f18f65cc4adfc5876efe07dbcb6f62af07e967c34cc53920d45d353",
     "src/scenes/plume.js": "332b4ea3c1cc237a0e8759fc4759201730921eba5c746647aaa67e540f3f0b0f",
@@ -61,17 +61,17 @@
     "tools/render-story-stills.mjs": "bbf1704b412a413725fbebfd46ec6880c0e2faff5c8f34d80529d2d07543c233"
   },
   "outputs": {
-    "public/look/satellite.webp": "dd44f3f94fd0cc98701a9b200084546337a79a9518b8d1631c5c0822ad76b2b5",
-    "public/look/satellite-phone.webp": "43b760098bb592b209fff6da265dc393c3aad8c280f6fed746340b2219f91d2e",
-    "public/look/payload.webp": "4a223834c6f9e36aefa758303497979361cd61bf34fc43ff1d9ed0892f2d846c",
-    "public/look/payload-phone.webp": "12416db49fdf9b57a8d2334cf11b92eee1afa5487022ef5ce90f4bd43f054838",
-    "public/look/focal-plane.webp": "6891863b8e4a2c895272e8db432a562e53fce7db4152dc9a8e8af0b56f0599b0",
-    "public/look/focal-plane-phone.webp": "35065d02d82d082cc670bec10a1e055640c2efc768806ab2b12862563606f620",
-    "public/look/pixel.webp": "41e0a50344523085446c6041b176c229a6518b7847fcb942eb000fc2e910410c",
-    "public/look/pixel-phone.webp": "0010f32367613b760edba73784f9b33fd81cdb04998a8becc6563cbe44f7a2d9",
-    "public/look/ring.webp": "510ac76ffe2eeb6bc9f50fa685484e0921f25fbd22ca666f093a96a8afec1f79",
-    "public/look/plume.webp": "064adcc7b366537cd3daefde841aa889483e7fdfeb5ec01ee2ae6647fc65d36a",
-    "public/look/ring-phone.webp": "5f58c6706d9fe52c83e6326a491be41275d9c4b7d358b5c7905d2d4c6954affa",
-    "public/look/plume-phone.webp": "e67b028d57e0731a47a586507ac9e8f7fa579286d55332d9d44bdc3b29ca437b"
+    "public/look/satellite.webp": "94ed24906a49106bd3695045640e76b6851140f482f37fe1445a181341f40ad1",
+    "public/look/satellite-phone.webp": "18967f1e73dc1a2c5ceaf1c3b4891b37ec6b928f6bf416d4d1ec713183885cba",
+    "public/look/payload.webp": "dce69a4a011a1dafdb371c6451d2a296e3feebefe1fcd6f8c4691984a0598f63",
+    "public/look/payload-phone.webp": "5f651f70a745bf448ce0e0b1dc1130990db9c987cce6c14570a8c0b1700e6939",
+    "public/look/focal-plane.webp": "9778dca72af9f8bd3c5383d79fc32c983c3db443fbc6a8a9ab1e2e7543fbffa8",
+    "public/look/focal-plane-phone.webp": "0751a29897ab7e36f81d40b58d9ef1d0adbf73917146508d129fe147415968fd",
+    "public/look/pixel.webp": "993ff3afe27dfe5053c231490977809da3aa94d9f85431cfde8f9a7167015e48",
+    "public/look/pixel-phone.webp": "909ec402dac0314212c87adbf93f4e5c8172a606c7126a27ee1f35d20f0063ff",
+    "public/look/ring.webp": "51ab47d98f887ff8685af2bcaa470dd36b602ac0fad754e40e841a4a036e9761",
+    "public/look/plume.webp": "f4926b09be7871041368d416b6c53927ad72f07355a890fe1bf53aea46ac0fe3",
+    "public/look/ring-phone.webp": "32032b6fc8ca9443d74cb6619e767ab78de1da8cfd8fe39c59423e397368b98f",
+    "public/look/plume-phone.webp": "4acf523a55ee29341809f9887d6b4482ccf0fd1c95a3ca12134233301a0b4828"
   }
 }

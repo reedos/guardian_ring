@@ -6,7 +6,7 @@ const scene=illustrated({
   camera:{pos:[4.7,3.6,6],target:[0,1.25,0],min:2,max:18},distance:5.5,
   points:{absorber:'AnchorAbsorber',contact:'AnchorContact',readout:'AnchorReadout',bump:'AnchorBump',support:'AnchorSupport',output:'AnchorOutput'},
   views:{
-    absorber:{pos:[3.5,4.6,5.2],target:[0,2.3,0]},
+    absorber:{pos:[3.99,4.42,5.93],target:[0,1.8,0]},   // pulled back about 14% and lowered, so the readout under the absorber stays in frame
     contact:{pos:[3.3,2.8,4.5],target:[0,1.82,.708],focus:[0,1.82,0],detailSize:[1.95,.35,1.65],minDistance:2.4},
     readout:{pos:[3.4,2.2,5],target:[.44,.326,-.21]},
     bump:{pos:[3.3,1.65,4.5],target:[0,1.1,.254],focus:[0,1.1,0],detailSize:[.9,1.2,.9],minDistance:2},
