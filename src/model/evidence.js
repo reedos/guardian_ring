@@ -96,6 +96,18 @@ export const MODEL_CALCS = {
     title: 'Ideal blackbody photon radiance', how: 'Integrate Bλ/(hc/λ) dλ over the same teaching interval. Units are photons s⁻¹ m⁻² sr⁻¹, not photons at a detector. No aperture area, field of view, atmosphere, throughput, quantum efficiency, or detector response is applied.',
     inputs: ['Planck spectral radiance', 'photon energy at each wavelength', 'assumed teaching band'],
   },
+  'orbit-compare': {
+    title: 'Four-orbit comparison row', how: 'Altitude, period and one-way light time are the orbit-altitude, orbit-period and vacuum-light-time results for the same teaching orbits. Share of Earth in view is the spherical-cap fraction (1 − R/r)/2 of Earth’s surface that lies above the horizon of a point at orbital radius r from Earth’s center (R is Earth’s radius). It applies no minimum elevation angle, no field of view and no sensor, so it is geometry, not coverage, revisit or performance. HEO is evaluated at apogee, like the other HEO calculations.',
+    inputs: ['orbit-altitude, orbit-period and vacuum-light-time results', 'spherical Earth radius', 'model-orbits assumption'],
+  },
+  'horizon-elevation': {
+    title: 'Angle above the horizon from a latitude', how: 'elevation = atan2(cos ψ − R/r, sin ψ), where ψ is the central angle between a ground point and the point directly below the satellite (for a GEO satellite on the equator, the latitude on the same meridian) and r is the orbital radius. The satellite sits on the horizon where cos ψ = R/r. Spherical Earth; no terrain, no atmospheric refraction and no minimum-elevation rule. It is a geometric viewing angle and says nothing about what any sensor can or cannot detect.',
+    inputs: ['GEO orbital radius from the model-orbits assumption', 'spherical Earth radius', 'model-view-geometry assumption'],
+  },
+  'planck-contrast-example': {
+    title: 'Ideal blackbody contrast between hot gas and the ground', how: 'For two ideal blackbodies, one at 288 K and one at an assumed 1,000 K, integrate the Planck spectral radiance over the teaching bands 3.8–4.8 μm and 8–12 μm with the same quadrature as the band-radiance calculation, then divide the hot value by the ground value. Emissivity is 1; there is no atmosphere, no molecular band structure, no optics and no detector. Real exhaust emits in molecular bands and varies in temperature along the plume, so this shows only how contrast changes with temperature and wavelength.',
+    inputs: ['NIST h, c and k', 'model-blackbody assumption', 'illustrative-hot-gas assumption', 'model-band-examples assumption'],
+  },
   'carnot-cop': {
     title: 'Ideal refrigerator coefficient of performance', how: 'COPCarnot = Tc/(Th − Tc), with absolute temperatures and Th > Tc > 0. This limit is not the efficiency or input power of a real cryocooler; the scenario does not assign such values.',
     inputs: ['cold and hot temperatures supplied to the pure function', 'NIST refrigeration review, Eq. 1'],
@@ -118,6 +130,18 @@ export const MODEL_ASSUMPTIONS = {
   'civil-cooling-example': {
     title:'Independent ideal cooling example',value:'300 K warm reservoir; 1 W cold load; reversible operation',
     why:'These arbitrary inputs demonstrate the refrigeration limit with the separately cited 43 K TIRS-2 cold temperature. They do not describe TIRS-2 heat load, radiator temperature, efficiency, electrical input or any military instrument. No fraction of Carnot performance is assigned.',
+  },
+  'model-view-geometry': {
+    title: 'Viewing-angle geometry', value: 'Spherical Earth; satellite on the same meridian as the ground point',
+    why: 'The angle above the horizon is computed on a sphere of Earth’s published equatorial radius for a GEO satellite on the equator and a ground point on its meridian. It includes no terrain, no atmospheric refraction and no minimum-elevation rule, and it is not a statement about what any sensor sees.',
+  },
+  'illustrative-hot-gas': {
+    title: 'Illustrative hot gas', value: '1,000 K, emissivity 1, compared with a 288 K ground',
+    why: 'A round-number temperature chosen to show how contrast depends on temperature and wavelength. It is not a measured or estimated rocket-exhaust temperature, and real exhaust emits in molecular bands rather than as a smooth blackbody. The 288 K ground is the model-blackbody assumption. The result is ideal radiance, not a sensor signal, detection threshold or performance.',
+  },
+  'story-toy-pixel': {
+    title: 'Toy pixel example', value: '1,000 photons, 65% each freeing one electron, full scale 1,000 electrons, eight output levels',
+    why: 'Round numbers chosen so the three steps (photons, charge, a whole number) can be followed by hand. The 65% efficiency and eight levels are the lesson inputs of the cinematic-model-inputs assumption. Nothing here is a real detector’s efficiency, well capacity, noise or bit depth, and no sensor performance is implied.',
   },
   'model-orbits': {
     title: 'General orbit examples', value: 'A spherical Earth and negligible satellite mass',

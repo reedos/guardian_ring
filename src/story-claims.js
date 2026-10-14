@@ -3,6 +3,7 @@
 // No story claim is an output or performance estimate for a real sensor.
 import { SPACECRAFT_FACTS } from './spacecraft-content.js';
 import { SBIRS_PUBLISHED_CLAIMS } from './sbirs-published.js';
+import { ORBIT_ROWS, orbitRow, geoViewAngles, contrastExample, toyPixel, storyNumbers } from './model/story-examples.js';
 const architecture = (key,label,value,ids) => ({
   key:`story:${key}`,group:'story',label,value,basis:'spec',
   ev:{refs:ids.flatMap(id=>SPACECRAFT_FACTS[id][3].refs)},
@@ -181,5 +182,67 @@ export const STORY_CLAIMS = [
     scope: 'As-drawn teaching geometry; no real constellation, performance, or physical dimensions.',
   },
 ];
+
+// Improvement round 1, teaching (10/14/2026): quantified beats for outcomes 1 and 2 and a worked toy pixel.
+// Every figure comes from src/model/story-examples.ts; src/model/story-examples.test.ts checks index.html against it.
+const ORBIT_COMPARE_REFS = [
+  ['nasa-jpl-parameters', 'Planetary Masses: Earth GM; parameter table: mean sidereal day'],
+  ['nasa-earth-facts', 'Bulk parameters: equatorial radius'],
+  ['nasa-kepler-derivation', 'Equation 4, Kepler’s Third Law; negligible secondary mass approximation'],
+  ['noaa-geo-definition', 'Geostationary orbit definition: 35,786 km reference altitude'],
+  ['nasa-orbit-catalog', 'Medium Earth Orbit: Molniya orbit paragraphs, eccentricity 0.722 and 12-hour period; this model chooses a half-sidereal-day example'],
+  ['nist-codata-2022', 'Rows for speed of light, Planck constant and Boltzmann constant'],
+];
+const ORBIT_NAMES = { geo: 'GEO', heo: 'HEO', meo: 'MEO', leo: 'LEO' };
+const N = storyNumbers();
+const contrast = [
+  ['nist-codata-2022', 'Rows for speed of light, Planck constant and Boltzmann constant'],
+  ['noaa-planck-function', 'First formula image: wavelength-form Planck law and spectral radiance units'],
+];
+export const STORY_CALC_CLAIMS = [
+  ...ORBIT_ROWS.map(id => {
+    const row = orbitRow(id);
+    return {
+      key: `story:orbit-compare-${id}`, group: 'story',
+      label: `${ORBIT_NAMES[id]} teaching orbit: altitude, period, share of Earth in view, light time`,
+      value: `Altitude ${row.text.altitude}; period ${row.text.period}; ${row.text.share} of Earth’s surface above the horizon; ${row.text.light} one-way light time straight down`,
+      basis: 'derived', ev: { calc: 'orbit-compare', assume: 'model-orbits', refs: ORBIT_COMPARE_REFS },
+      scope: 'A teaching orbit (the model-orbits assumption), not a program parameter. The share of Earth in view is horizon-to-horizon geometry with no minimum elevation angle or field of view, so it is not sensor coverage, revisit or performance.',
+    };
+  }),
+  {
+    key: 'story:geo-view-angle', group: 'story',
+    label: 'Angle above the horizon from high latitudes, GEO satellite on the same meridian',
+    value: `${N['geo:elevation:60']} at 60° latitude, ${N['geo:elevation:75']} at 75° latitude, on the horizon at ${N['geo:limb']}`,
+    basis: 'derived', ev: { calc: 'horizon-elevation', assume: 'model-view-geometry', refs: ORBIT_COMPARE_REFS.slice(1, 4) },
+    scope: 'Spherical-Earth viewing geometry only. It says nothing about what any sensor can or cannot detect, and it is not a coverage statement for any real system.',
+  },
+  {
+    key: 'story:plume-contrast', group: 'story',
+    label: 'Ideal blackbody contrast: 1,000 K gas versus 288 K ground',
+    value: `About ${N['contrast:mwir:ratio']} times brighter in 3.8–4.8 μm and about ${N['contrast:lwir:ratio']} times in 8–12 μm`,
+    basis: 'derived', ev: { calc: 'planck-contrast-example', assume: 'illustrative-hot-gas', refs: contrast },
+    scope: 'Ideal radiators at an assumed illustrative temperature. Not a plume measurement or estimate, a transmission through air, or a sensor signal, threshold or performance.',
+  },
+  {
+    key: 'story:ground-288k', group: 'story',
+    label: 'Earth’s surface treated as an ideal radiator', value: 'About 288 K (15 °C), emissivity 1', basis: 'assumed', ev: { assume: 'model-blackbody' },
+    scope: 'A round teaching value for an ideal source, not a measured scene temperature.',
+  },
+  {
+    key: 'story:pixel-toy', group: 'story',
+    label: 'Toy pixel: photons, charge, a whole number',
+    value: `${N['pixel:photons']} photons, ${N['pixel:electrons']} electrons, whole-number output ${N['pixel:code']} of 0 to ${toyPixel().levels - 1}`,
+    basis: 'derived', ev: { calc: 'cinematic-charge', assume: 'story-toy-pixel' },
+    scope: 'Round numbers for a hand-followable example. Not a real detector’s efficiency, full well, noise or bit depth.',
+  },
+  {
+    key: 'story:abi-full-disk-cadence', group: 'story',
+    label: 'ABI full-disk repeat time', value: 'Every 10 minutes', basis: 'spec',
+    ev: { refs: [['noaa-abi-page', 'Instrument description']] },
+    scope: 'GOES-R ABI civil twin only; never a military payload figure. It is how often the whole disk is imaged again, not a detection time.',
+  },
+];
+STORY_CLAIMS.push(...STORY_CALC_CLAIMS);
 // Round 6: official published SBIRS GEO figures (see src/sbirs-published.js).
 STORY_CLAIMS.push(...SBIRS_PUBLISHED_CLAIMS);

@@ -7,8 +7,10 @@
 // shipped bundle does not change.
 import { STORY_CLAIMS } from './story-claims.js';
 import { SBIRS_PUBLISHED_CLAIMS } from './sbirs-published.js';
+// Teaching improvement round 1 (10/14/2026) cites the converted dimensions and mass of the real SBIRS GEO satellite.
+const STORY_CITED_SBIRS_KEYS = new Set(['story:sbirs-geo-dimensions-si', 'story:sbirs-geo-weight-si']);
 export const STORY_EVIDENCE_ONLY_KEYS = new Set([
   'story:rocket-plume-emitters', 'story:rocket-plume-co2-band', 'story:rocket-plume-h2o-band',
-  ...SBIRS_PUBLISHED_CLAIMS.map(c => c.key),
+  ...SBIRS_PUBLISHED_CLAIMS.map(c => c.key).filter(key => !STORY_CITED_SBIRS_KEYS.has(key)),
 ]);
 export const STORY_PAGE_CLAIMS = STORY_CLAIMS.filter(c => !STORY_EVIDENCE_ONLY_KEYS.has(c.key));

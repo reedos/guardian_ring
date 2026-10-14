@@ -56,6 +56,9 @@ const testMap={
   'cinematic-power':'claims-audit.test.ts: accumulated power samples versus stored energy',
   'cinematic-slab':'claims-audit.test.ts: numerical integration of radiative-transfer differential equation',
   'cinematic-calibration':'claims-audit.test.ts: independently solved two-reference gain/offset at three scales',
+  'orbit-compare':'story-examples.test.ts: visible share counted by line of sight over an equal-area sphere sampling; light time times c recovers distance',
+  'horizon-elevation':'story-examples.test.ts: elevation from explicit three-dimensional vectors; zero at the horizon angle, 90 degrees overhead',
+  'planck-contrast-example':'story-examples.test.ts: both band ratios through a frequency-space integral',
   'ideal-prime-focus':'ideal-focus.test.ts: focus direction versus reflected direction; equal optical paths',
   'ideal-scan-reflection':'scan-optics.test.ts: plane intersections, reciprocity, angular doubling',
 };

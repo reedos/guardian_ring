@@ -110,3 +110,38 @@ export function slantRangeMeters(orbitalRadiusM: number, centralAngleRadians = 0
   return Math.hypot(orbitalRadiusM - earthRadiusM,
     2 * Math.sqrt(orbitalRadiusM * earthRadiusM) * Math.sin(centralAngleRadians / 2));
 }
+
+/** Share of a sphere's surface that lies above the horizon of a point at the given radius: the spherical cap
+ * (1 - R/r)/2 of the whole sphere. Pure geometry. It applies no minimum elevation angle, no field of view and no
+ * sensor, so it is not coverage.
+ */
+export function visibleSurfaceFraction(orbitalRadiusM: number, earthRadiusM = EARTH_EQUATORIAL_RADIUS_M): number {
+  positive(earthRadiusM, 'Sphere radius');
+  positive(orbitalRadiusM, 'Orbital radius');
+  if (orbitalRadiusM < earthRadiusM) throw new RangeError('Orbital radius must be outside the sphere');
+  return (1 - earthRadiusM / orbitalRadiusM) / 2;
+}
+
+/** Angle above the local horizon, in degrees, at which a ground point sees a satellite whose sub-satellite point is a
+ * central angle away on a spherical Earth: atan2(cos(psi) - R/r, sin(psi)). Negative means below the horizon. Pure
+ * geometry: no terrain, no atmospheric refraction, no minimum-elevation rule.
+ */
+export function elevationAboveHorizonDegrees(orbitalRadiusM: number, centralAngleRadians: number, earthRadiusM = EARTH_EQUATORIAL_RADIUS_M): number {
+  positive(earthRadiusM, 'Sphere radius');
+  positive(orbitalRadiusM, 'Orbital radius');
+  if (orbitalRadiusM < earthRadiusM) throw new RangeError('Orbital radius must be outside the sphere');
+  if (!Number.isFinite(centralAngleRadians) || centralAngleRadians < 0 || centralAngleRadians > Math.PI) {
+    throw new RangeError('Central angle must be finite and in [0, pi]');
+  }
+  return Math.atan2(Math.cos(centralAngleRadians) - earthRadiusM / orbitalRadiusM, Math.sin(centralAngleRadians)) * 180 / Math.PI;
+}
+
+/** Central angle, in degrees, from the sub-satellite point to the horizon: acos(R/r). On an equatorial orbit and
+ * the satellite's own meridian this is also the latitude where the satellite sits on the horizon.
+ */
+export function horizonCentralAngleDegrees(orbitalRadiusM: number, earthRadiusM = EARTH_EQUATORIAL_RADIUS_M): number {
+  positive(earthRadiusM, 'Sphere radius');
+  positive(orbitalRadiusM, 'Orbital radius');
+  if (orbitalRadiusM < earthRadiusM) throw new RangeError('Orbital radius must be outside the sphere');
+  return Math.acos(earthRadiusM / orbitalRadiusM) * 180 / Math.PI;
+}
