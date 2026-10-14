@@ -56,7 +56,7 @@
   html body:not(.app) button.chip.chip::before { content: ""; position: absolute; inset: var(--cp) 0; border: 1px solid var(--chip-frame); border-style: inherit; border-radius: 0; pointer-events: none; }
   html body:not(.app) button.chip.chip:hover::before, html body:not(.app) button.chip.chip[aria-expanded="true"]::before { border-color: var(--accent); }
   html body:not(.app) button.chip.chip:focus-visible { outline: none; }
-  html body:not(.app) button.chip.chip:focus-visible::before { outline: 1px solid var(--accent); outline-offset: 2px; }
+  html body:not(.app) button.chip.chip:focus-visible::before { outline: 2px solid var(--accent); outline-offset: 2px; }
   /* chips that end a sentence get a little air so the next tap does not land on a neighbor */
   body.landing :is(p, li, .lede, .section-lede) > button.chip { margin-inline: 2px; }
 
@@ -130,4 +130,26 @@
   body.app .mission-description:not(#_) { font-size: 13px; }
   body.app .lp-k:not(#_) { font-size: 11px; }
   body.app .hud.tl .sub:not(#_) { font-size: 11px; }
+}
+
+/* ---------- reading pages above phone width: the same 12 px floor for labels, captions and chips ---------- */
+/* The phone block above sets a 12 px floor on phones; larger screens had 9 to 11 px mono labels, chip text and captions on
+   the story and the four reference pages. Same selectors, same floor, and a brighter gray for small print (the kit's
+   faint gray is below 4.5:1 on the black ground, so small text uses the muted gray instead). The explorer is excluded. */
+@media (min-width: 761px) {
+  body:not(.app) :is(.eyebrow, .mini-label, .fact-label, .layer-label, .kicker, .chip-k, .basis-tag, .view-cap):not(#_) { font-size: 12px; line-height: 1.5; }
+  body.landing :is(figcaption, caption, small, .hero-cap, .art-note, .figure-note, .compare-note, .texture-credit, .fact-note, .reading-key a, .service-branch, .service-branch strong, .signal-chain span, .signal-chain small, .service-path li span):not(#_) { font-size: 12px; line-height: 1.6; }
+  body.landing :is(th, summary):not(#_) { font-size: 12px; }
+  body.landing :is(.orbit-table, .contrast-table) td::before { font-size: 12px; }
+  body.landing :is(.journey-nav a small, .journey-nav span, .text-link, .text-link span):not(#_) { font-size: 12px; }
+  body.landing .fire-tag:not(#_) { font-size: 11px; }
+  body:not(.app) :is(.chip, button.chip):not(#_) { font-size: 12px; letter-spacing: .06em; }
+  body:not(.app) button.chip[data-src]:not(#_)::after { width: 13px; height: 13px; font-size: 9.5px; }
+  .page-wrap :is(.hero-note, .part-open, .part-open span, .part-evidence-link, .part-parent, .parts-schematics > summary span, .sd-connection-label, .sd-boundary, .sd-boundary a, .sd-data span, .sd-heat span, .sd-light span, .sd-mechanical span, .sd-power span, .source .kicker, .assumption-row .kicker, .formula > summary, label):not(#_) { font-size: 12px; }
+  .page-wrap .hero-note:not(#_) { font-size: 13px; color: var(--muted); }
+  /* reading copy on the reference pages: 14 px and up */
+  .page-wrap :is(.source p, .claim-scope, .part-component p, .parts-heading p, .part-parent-note, .part-layer > div > p, .basis-list dd):not(#_) { font-size: 14px; line-height: 1.7; }
+  .page-wrap .part-specs > div:not(#_) { font-size: 13px; }
+  .site-footer p:not(#_) { color: var(--muted); font-size: 13px; }
+  .footer-links a:not(#_) { font-size: 13px; }
 }

@@ -12,12 +12,35 @@
 .footer-links a { color: var(--muted); font: 500 12px/1.4 var(--sans); text-underline-offset: 4px; }
 @media (min-width: 901px) and (max-width: 1320px) { .topbar:has(.top-cta) .brand-t { display: none; } }
 
-body.page .topbar { background: rgba(3,5,8,.86); border-bottom-color: var(--line); }
+body.page .topbar { background: rgba(3,5,8,.94); border-bottom-color: var(--line); }
 .page-wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 48px; width: min(1320px, 100%); margin: 0 auto; padding: calc(var(--bar) + 56px) var(--gutter) 96px; }
 .wrap.page-wrap > * { min-width: 0; width: 100%; margin-inline: 0; }
 .page-head { display: grid; gap: 18px; padding-top: 22px; border-top: 2px solid var(--accent); }
 .page-head > * { max-width: 70ch; margin: 0; }
 .page-head .page-t { max-width: 14ch; font: 600 clamp(44px, 6.4vw, 96px)/.9 var(--display); text-transform: uppercase; letter-spacing: -.01em; text-wrap: balance; }
+/* The head of a reference page: the title and lede on the left; on the right one still from the story and an index
+   of the page's sections. Below 1000 px the aside stacks under the text. */
+.page-head.has-aside { grid-template-columns: minmax(0, 1fr); gap: 28px 56px; }
+.page-head.has-aside > * { max-width: none; }
+.page-head-text { display: grid; gap: 18px; align-content: start; }
+.page-head-text > * { max-width: 70ch; margin: 0; }
+.page-aside { display: grid; gap: 20px; align-content: start; min-width: 0; }
+.page-fig { margin: 0; border: 1px solid var(--line); background: var(--surface); }
+.page-fig img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; background: #000; }
+.page-fig figcaption { padding: 10px 14px; border-top: 1px solid var(--line); font: 400 12px/1.5 var(--mono); letter-spacing: .04em; color: var(--muted); }
+.page-toc { padding: 16px 0 0; border-top: 1px solid var(--line-2); }
+.page-toc .mini-label { margin: 0 0 8px; font: 500 12px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.page-toc ol { display: grid; margin: 0; padding: 0; list-style: none; counter-reset: toc; }
+.page-toc li { counter-increment: toc; border-top: 1px solid var(--line); }
+.page-toc li:first-child { border-top: 0; }
+.page-toc a { display: grid; grid-template-columns: 2.2em minmax(0, 1fr); align-items: baseline; min-height: 38px; padding: 8px 0; color: var(--ink); font: 500 14px/1.35 var(--sans); text-decoration: none; }
+.page-toc a::before { content: counter(toc, decimal-leading-zero); font: 500 12px/1 var(--mono); color: var(--faint); }
+.page-toc a:hover { color: var(--accent); }
+@media (min-width: 1000px) {
+  .page-head.has-aside { grid-template-columns: minmax(0, 1.2fr) minmax(320px, 1fr); }
+  .page-head.has-aside .page-toc ol { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 28px; }
+  .page-head.has-aside .page-toc li:nth-child(2) { border-top: 0; }
+}
 .page-head .lede { font-size: 17px; line-height: 1.65; color: var(--muted); }
 .page-head .hero-note { max-width: 74ch; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; line-height: 1.6; color: var(--faint); }
 .page-wrap > section { display: grid; gap: 18px; margin: 0; }
@@ -56,3 +79,7 @@ body.page .topbar { background: rgba(3,5,8,.86); border-bottom-color: var(--line
 .top-facts a{color:var(--ink)}.basis-tag{font:400 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-left:6px}
 .plain-calc{margin:4px 0 10px;font-size:14px;line-height:1.65}
 .formula{margin:0 0 10px;border:1px solid var(--line, rgba(240,240,250,.14))}.formula>summary{cursor:pointer;padding:10px 14px;font:500 11px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}.formula[open]>summary{border-bottom:1px solid var(--line, rgba(240,240,250,.14))}.formula>p{padding:0 14px;margin:12px 0}
+
+/* Section dividers: each section of a reference page starts under a hairline, so a long page reads as sections. */
+.page-wrap > section:not(.start-here-evidence) { padding-top: 40px; border-top: 1px solid var(--line-2); }
+.page-wrap :is(section, h2)[id] { scroll-margin-top: 84px; }

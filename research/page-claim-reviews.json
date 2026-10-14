@@ -34987,5 +34987,16 @@
     ],
     "status": "confirmed",
     "basis": "Restates the already-registered Spec ABI full-disk cadence (10 min, noaa-abi-page, Instrument description; registry row abi-full-disk), now also keyed story:abi-full-disk-cadence for the story page. Same figure and source; civil twin only. Teaching improvement round 1, 10/14/2026."
+  },
+  {
+    "page": "parts",
+    "text": "Civil twin: TIRS-2",
+    "contextId": "",
+    "links": [
+      "#parts-tirs2"
+    ],
+    "keys": [],
+    "status": "ui-label",
+    "basis": "Navigation label in the head's On this page index: the name of the TIRS-2 level heading, linking to that section. The digit is part of the instrument name TIRS-2, not a value. Visual design round 1, 10/14/2026."
   }
 ]

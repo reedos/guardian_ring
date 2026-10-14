@@ -566,8 +566,9 @@ body.story #story-btn, body.story #layer-play { display: none; }
 /* ---------- the top bar ---------- */
 /* Translucent over the hero, firmer once the page scrolls under it. Chapters on this page, and on phones a menu. */
 .topbar { position: fixed; top: 0; left: 0; right: 0; z-index: 60; height: calc(var(--bar) + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) var(--gutter) 0; display: flex; align-items: center; gap: 28px; background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.25)); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3); border-bottom: 1px solid rgba(240,240,250,.07); transition: background .3s, border-color .3s; }
-body.scrolled .topbar { background: rgba(3,5,8,.86); border-bottom-color: var(--line); }
-.topnav a { position: relative; display: inline-flex; align-items: center; height: 36px; padding: 0 12px; font: 600 11.5px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .2s; }
+body.scrolled .topbar { background: rgba(3,5,8,.94); border-bottom-color: var(--line); }
+body.bar-solid .topbar { background: rgba(3,5,8,.94); border-bottom-color: var(--line); }
+.topnav a { position: relative; display: inline-flex; align-items: center; height: 36px; padding: 0 12px; font: 600 12px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .2s; }
 .topnav a::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 4px; height: 2px; background: var(--c, var(--accent)); transform: scaleX(0); transform-origin: left; transition: transform .25s; }
 .topnav a:hover { color: var(--ink); }
 .topnav a[aria-current="true"] { color: var(--ink); }
@@ -582,7 +583,7 @@ body.scrolled .topbar { background: rgba(3,5,8,.86); border-bottom-color: var(--
 }
 
 /* the story page's one way into the visualizer: a button in the top bar, on every width */
-.top-cta { flex: none; min-height: 38px; padding: 0 16px; gap: 8px; margin-left: 8px; background: var(--accent); border-color: var(--accent); color: #000; font-size: 11.5px; white-space: nowrap; }
+.top-cta { flex: none; min-height: 38px; padding: 0 16px; gap: 8px; margin-left: 8px; background: var(--accent); border-color: var(--accent); color: #000; font-size: 12px; white-space: nowrap; }
 .top-cta:hover { background: #f0cc9c; border-color: #f0cc9c; }
 .top-cta:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
 @media (pointer: coarse) { .top-cta { min-height: 44px; } }
@@ -663,6 +664,7 @@ body.scrolled .topbar { background: rgba(3,5,8,.86); border-bottom-color: var(--
 @media (max-width: 640px) { .site-status { grid-template-columns: minmax(0, 1fr); } }
 
 @media (max-width: 1240px) and (min-width: 901px) { .topnav a { padding: 0 8px; letter-spacing: .07em; } .topbar { gap: 16px; } }
+@media (max-width: 1040px) and (min-width: 901px) { .topnav a { padding: 0 4px; letter-spacing: .03em; } .topnav a::after { left: 4px; right: 4px; } .topbar { gap: 8px; } .topbar:has(.top-cta) .top-cta { padding: 0 12px; margin-left: 0; } }   /* the whole bar must fit just above the menu breakpoint */
 
 /* ---------- where a step leads ---------- */
 .beat-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
@@ -1445,7 +1447,13 @@ body.app.stage-priority.inspector-collapsed:not(.mission-active) .panel { displa
 
 /* Audit A4: a stable dark backing isolates the title from emissive hardware. */
 body.app .hud.tl { isolation:isolate; }
-body.app .hud.tl::before { content:''; position:absolute; z-index:-1; pointer-events:none; inset:-14px -28px -22px -14px; background:linear-gradient(90deg,rgba(0,0,0,.94) calc(100% - 28px),transparent 100%); }
+/* The plate is solid behind the words and feathers out on every side, so it reads as a shadow, not a box laid over the model.
+   With a part framed it thins out further, and the text keeps its own shadow. */
+body.app .hud.tl::before { content:''; position:absolute; z-index:-1; pointer-events:none; inset:-30px -120px -38px -22px; background:linear-gradient(90deg,rgba(0,0,0,.9) calc(100% - 120px),transparent 100%); -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 30px,#000 calc(100% - 38px),transparent 100%); mask-image:linear-gradient(180deg,transparent 0,#000 30px,#000 calc(100% - 38px),transparent 100%); transition:opacity .35s; }
+body.app.part-framed .hud.tl::before { opacity:.55; }
+body.app.part-framed .hud.tl .sub { display:none; }   /* with a part framed the part card names what is shown; the title alone stays */
+body.app .hud.tl .ttl { text-shadow:0 0 14px #000, 0 1px 3px #000; }
+body.app .hud.tl .sub { text-shadow:0 0 10px #000, 0 1px 3px #000; }
 
 body.app.stage-priority .mission-active-panel { display:flex; flex-direction:column; }
 body.app.stage-priority .mission-active-panel[hidden] { display:none; }
@@ -1551,6 +1559,16 @@ body.atmosphere-view .mode, body.atmosphere-view #animation-controls, body.atmos
 .parts-assembly[open]>summary::before { content:"−"; }
 .parts-assembly>summary>div { flex:1; }
 #claim-register>.parts-toc { display:flex;flex-wrap:wrap;gap:12px 22px;margin-bottom:20px;font:12px/1.5 var(--mono); }
+/* The register's level index sits on its own full-width row above the groups. A closed group takes one of two
+   columns; an open one takes the whole row, so its claim cards are not squeezed into half a column. */
+.claim-register { align-items:start; }
+.claim-register .claim-row[hidden], .claim-register .reference-group[hidden] { display:none; }
+.claim-register>.parts-toc { grid-column:1/-1; margin-bottom:4px; padding-bottom:16px; border-bottom:1px solid var(--line); }
+.claim-register>.reference-group { grid-column:auto; margin:0; min-width:0; }
+.claim-register>.reference-group[open] { grid-column:1/-1; }
+.claim-register>.reference-group[open] [data-reference-rows] { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.claim-register>.reference-group[open] [data-reference-rows]>.reference-pager { grid-column:1/-1; }
+@media (max-width:700px) { .claim-register>.reference-group[open] [data-reference-rows] { grid-template-columns:1fr; } }
 
 /* Viewer UX review 10/10/2026 */
 /* Scene note lines: stacked where the note has room, joined by separators in the compact key. */
@@ -1618,3 +1636,16 @@ body.app:not(.scene-ready) #parts:empty { min-height:120px; background:repeating
   body.app.stage-priority.mission-active #pane-parts > :not(#learning-guide) { display:none; }
   body.app.stage-priority.mission-active #learning-guide > :is(button,details,.learning-example) { display:none; }
 }
+
+/* ---------- keyboard focus: a 2 px amber ring with a dark gap, legible over the page and over the model ---------- */
+/* Each control keeps the ring offset its own rule gives it; this sets the weight and the dark backing for all of them.
+   Controls with no rule of their own get the amber ring at zero specificity, so the specific rules above still win. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:is(a, button, input, select, textarea, summary, [tabindex], .btn):focus-visible:not(#_, .chip, .pin-group, .pin, #inspector, canvas) { outline-width: 2px; box-shadow: 0 0 0 4px #000; }
+button.chip:focus-visible:not(#_) { outline-width: 2px; }
+.pin-group:focus-visible:not(#_) { outline-width: 2px; }
+
+/* The mission's own buttons: centered caps on the same border and height as the stage buttons. */
+.mission-tour .btn, .animation-controls .btn, .orbit-playback .btn { justify-content: center; text-align: center; }
+.mission-transport .btn, .mission-step-controls .btn { flex: 1 1 auto; min-width: 88px; min-height: 40px; padding-inline: 14px; font-size: 11px; letter-spacing: .1em; }
+.mission-prompt .btn { justify-content: center; }

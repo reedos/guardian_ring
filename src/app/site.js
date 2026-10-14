@@ -26,8 +26,11 @@ const bar = $('topbar'), nav = $('topnav'), menu = $('menu-btn'), hero = $('top'
 
 // scrolled: the bar needs its own ground once the hero is gone from behind it
 const onScroll = () => document.body.classList.toggle('scrolled', !hero || scrollY > hero.offsetHeight - (bar?.offsetHeight || 60) - 8);
-addEventListener('scroll', onScroll, { passive: true });
-onScroll();
+// bar-solid: the bar gets its own dark ground a few pixels into the page, whatever the hero's height, so text that
+// scrolls under it never shows through. The translucent look stays for the first pixels, over the hero's picture.
+const onBarScroll = () => document.body.classList.toggle('bar-solid', scrollY > 24);
+addEventListener('scroll', () => { onScroll(); onBarScroll(); }, { passive: true });
+onScroll(); onBarScroll();
 
 // the phone menu
 function setMenu(open) {
