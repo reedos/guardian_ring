@@ -1,5 +1,5 @@
 {
-  "renderedAt": "2026-10-11T19:24:08.606Z",
+  "renderedAt": "2026-10-14T06:45:51.629Z",
   "inputs": {
     "public/models/abi.glb": "5f89abae4fd38d0ac3dcc4ed6c35dc3314e6f5c280e553029efcd91184c15032",
     "public/models/atmosphere.glb": "f9f7d17b85c1250cb9924c2bfa17fe2d1704d49ae986f13b4d5c1927c297afbe",
@@ -18,7 +18,7 @@
     "src/app/cinematic-earth.js": "4e1b68b797fa3637c4d0a4663a9504e6ecf8340a54924d51e89ab034d8727d12",
     "src/app/cinematic-renderers.js": "f81c711158c2a651c4ed695b1fee2adb2ed4e0dac825d9e519eb6fc2d86d680e",
     "src/app/scene-look.js": "f894abce0d0cdf28b25e8901cec9530321ccf1c80dda459a01526f6cb2b3f31f",
-    "src/app/stage.js": "ab882c64a57c462f05eb6d557e979a6ddf0f81105b490c2936206f6da25fff37",
+    "src/app/stage.js": "445560e0fc18e19f39d408b63e8e75be113f850bba8906339479a921ae7fdb00",
     "src/app/view-controls.js": "53e6e8897d2552ee0e9af2f3af0a46803623a6b49381d5768216fc9027654081",
     "src/explainer-kit/src/render-quality.js": "50e5dbbf7adbb1c9a0fd81d716b44a998f4cb5587aa8ea53e7c937e016d30a94",
     "src/scenes/activity-display.js": "cf70e2861d23b0919467dc9add6b0c00ccf46486f9d74a1245125deab572984f",
@@ -30,7 +30,7 @@
     "src/scenes/layer-materials.js": "920dac1ddeb159120087265593730750cddf81fc34ea95155f5b0df2264ed3d6",
     "src/scenes/mechanism-pose.js": "203a85f4da2dcb2fd62593eb08690f90e881e20e1cb2ef28e74b5583fbb60630",
     "src/scenes/mirror-demo.js": "0e054c319285d5bc4f50893cef3789ea31c7dd776b8050a1925064dd8c15ba3f",
-    "src/scenes/model-scene.js": "e6fa845674dc12ae6d6d471f56ac14eb7043b0aeb05239c86021bfae38c3ddec",
+    "src/scenes/model-scene.js": "9f51a65ad76b658199bda26c79e693cc521671c12515e81280ddbd3066fcdc0d",
     "src/scenes/optical-routing.js": "3da811a605376c90e3bd022fa2c7a721280a172ad77321c2697191a6a4c8fb1b",
     "src/scenes/orbit-guides.js": "94530718446b27d5ede010adb5351457aa5ed979bc9dc4206cd224fa92ceb26a",
     "src/scenes/orbit-motion.js": "435af4cdda18e2787c33d59c1a05371b2d349e645ff79504a90912450c2d5c4d",
@@ -55,23 +55,23 @@
     "src/scenes/teaching-focus.js": "2dea59b6142ebfe0f24d008d92e7962e0c1f2510b9741721ca61f4376cb32e7b",
     "src/scenes/teaching-programs.js": "93b4316dd21b3e5d8c483582a814834122dcfd045f9c6858f1752422190421bc",
     "src/scenes/teaching-sequence.js": "6eef540e4cb9d5e1a555fe48eb776bdd3acaeb12ce90e732e6a3852ed483aec8",
-    "src/visualizer.js": "ea63c9f3a045519087beab609ec12fd6bfa82fd394412680fd7168a885e3a48e",
+    "src/visualizer.js": "31a2e934b4306785a272c5dbbe96db22cde06f3fd0aae172140f9befe75d9332",
     "tools/blender/build-hardware-look.py": "047dd0955e8d321063ab848ff8ee173cb28f5a5c9ba4cd7841220fa3bc555b32",
     "tools/blender/render-authored.py": "74969c872588c16b52bacb7ae24eded85edc2e55fcbbd3c0a6bffcc151d8e0f9",
     "tools/render-story-stills.mjs": "bbf1704b412a413725fbebfd46ec6880c0e2faff5c8f34d80529d2d07543c233"
   },
   "outputs": {
-    "public/look/satellite.webp": "e6da1e288a80c59f11567e7c5aac566fb7425c5b86aa1196714693318e7a2041",
-    "public/look/satellite-phone.webp": "f30c993d6791688368076a78801dc417770e3cb79c6b5f01191028f1550ffd71",
-    "public/look/payload.webp": "978fc2689a49fe7e1d455268f920849bc82e755a2ebea7925f5c5466bced699c",
-    "public/look/payload-phone.webp": "decf714a1d6420aa85af116dc48c49e7fcf6ab0338844bf91a05f2d0a92047c2",
-    "public/look/focal-plane.webp": "8754be4c48f2efe5605332dc216bc58303313437f190faee14176a8c3dbaef42",
-    "public/look/focal-plane-phone.webp": "c1ef3bc74d8bc8c3817a3c3d5683176fdd97d0e343c3144d15f7a4735ab8626b",
-    "public/look/pixel.webp": "636e4019fbaf7cde85b675f3a04b71049910f0d013f6f411ce2d3682e8509e9d",
-    "public/look/pixel-phone.webp": "0010f32367613b760edba73784f9b33fd81cdb04998a8becc6563cbe44f7a2d9",
-    "public/look/ring.webp": "3a0db4d6bb0122d86c26ac33c9cb931f38288f8ecdb319a438737d20cb785614",
-    "public/look/plume.webp": "bb30f0f10070b2450083165c8c4fab44d66c8a6204d3274bb97b615c1814eb48",
-    "public/look/ring-phone.webp": "d4bafda076768d5185023fb56dded5cb2883600b519ab83f4a52da4195726633",
-    "public/look/plume-phone.webp": "78e583bb876df3894ca7f9f375d9c8b052e1549d985facbef788e0a9ce2a154a"
+    "public/look/satellite.webp": "60e7224a8227d28cd5f9dfe69236bbbbd17b1392c61d2c0a30fbf9a43232d81d",
+    "public/look/satellite-phone.webp": "b1df572b576f5af7bebb26c80aa292742f98d97849a52502878a4a71c9abc7b5",
+    "public/look/payload.webp": "a22fd650c86499b1e01adcaf969ba1105c647f9b24f3f2487b9e68989ecbdcdb",
+    "public/look/payload-phone.webp": "9081271df34d70cacc5ded3c7f218a6b05ed7101cdf0aa4f920eaf4950b4d5e2",
+    "public/look/focal-plane.webp": "c0813f28eb4b272b9dba50a8800be82fbc9dcbd13d349e26626c024cd04f1d8c",
+    "public/look/focal-plane-phone.webp": "36fc09bd2a0fb075579b7c8be9eac1cc1ab970278f43c6a12db034106bfcf32a",
+    "public/look/pixel.webp": "072b3751b2187138e44606cf283d06024d7ca18c9c0fac185dd5aad410f9460f",
+    "public/look/pixel-phone.webp": "f49c6bab5bfdf5fabfcb8c45beaacb1deec3ecc2d8475f8d9ff1a0f975b45db8",
+    "public/look/ring.webp": "43b80fb8008952a219b3ea6990c83355523e1326c3fb4a317050f58ca59bde2e",
+    "public/look/plume.webp": "f00d5412938ff9f39d4ce6e8ed46892ad375cc9094fc83b00265fc022611f503",
+    "public/look/ring-phone.webp": "cd6d290e5cef86ea7acfb96182177ddc911185fa50b1ac34d69b241ae0c4c04e",
+    "public/look/plume-phone.webp": "81920e6ec0448b06f5cd8cc7dd194186dce3971f9a4726a33a6b98d185beea18"
   }
 }
