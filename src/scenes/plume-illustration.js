@@ -32,7 +32,8 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
     if(!node)throw new Error(`Missing authored plume group: ${name}`);
     head.attach(node);gas.push({node,position:node.position.clone(),quaternion:node.quaternion.clone()});
   }
-  head.rotation.z=Math.PI;head.scale.set(.92,.65,.92);
+  // The gas is authored in its displayed orientation (source at the top, plume below).
+  head.scale.set(.92,.65,.92);
   const materials=new Map();head.traverse(node=>{
     if(node.isMesh)for(const material of Array.isArray(node.material)?node.material:[node.material])
       materials.set(material,{opacity:Math.min(.8,material.opacity*2.2),emissive:material.emissiveIntensity});

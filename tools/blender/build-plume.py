@@ -1,5 +1,8 @@
-"""Level 6 illustrative molecular-emission plume GLB, version 5 (v3 metadata fix; v4 no downstream pinch;
-v5 smooth soft-edged haze surfaces replace the faceted low-poly wisps).
+"""Level 6 illustrative molecular-emission plume GLB, version 6 (v3 metadata fix; v4 no downstream pinch;
+v5 smooth soft-edged haze surfaces replace the faceted low-poly wisps; v6 adds a luminous core with a
+repeating shock-diamond pattern and an expanding bottle neck near the source, authors the gas in its
+displayed orientation, source at the top and the plume trailing below, and puts a dark inset plate behind
+the enlarged molecule diagrams).
 
 Run: Blender 5.2 --background --python tools/blender/build-plume.py
 
@@ -19,7 +22,7 @@ from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'public' / 'models'
-VERSION = 5
+VERSION = 6
 OUT.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.context.scene.unit_settings.system = 'NONE'
@@ -37,7 +40,7 @@ def group(name, parent=None, **metadata):
 root = group('GuardianPlume', version=VERSION, level='plume', representative=True,
     physicalScale=False, assumption='look-model', upAxis='Y',
     units='Arbitrary drawing units, not meters.',
-    description='Illustrative molecular-emission plume; shape, color, glow, opacity and symbol sizes are not measurements.',
+    description='Illustrative molecular-emission plume; shape, color, glow, opacity and symbol sizes are not measurements. The shock-diamond pattern is a drawing device, not a flow calculation.',
     sourceLook='tools/blender/build-plume-look.py',
     defaultCamera=[8.0, 5.8, 11.0], defaultTarget=[0.0, 3.2, 0.0])
 source = group('SourceCore', root, role='Illustrative luminous source gas', physicalHardware=False)
@@ -143,7 +146,7 @@ def profile(t):
     return (.035+.72*math.sin(math.pi*t)+.32*t)*max(math.sin(math.pi*t),0)**.3+.015
 
 
-def shell(name, length, width, mat, parent, phase=0):
+def shell(name, length, width, mat, parent, phase=0, cells=0):
     # Same billowing silhouette as the approved still, lower surface resolution.
     verts, faces, uv = [], [], []
     nr, ns = 48, 28
@@ -152,7 +155,8 @@ def shell(name, length, width, mat, parent, phase=0):
         for i in range(ns+1):
             a = i*math.tau/ns
             ripple = 1+.13*math.sin(a*3+t*29+phase)+.085*math.sin(a*7-t*42)
-            r = width*profile(t)*ripple
+            # cells: decaying bottle-neck swellings near the source (expansion structure).
+            r = width*profile(t)*ripple*(1+cells*.12*math.cos(t*34)*math.exp(-t*4.2))
             verts.append((.32*t+.18*t*math.sin(t*6)+r*math.cos(a),
                           .11*t*math.sin(t*8)+r*math.sin(a), t*length))
             uv.append((i/ns,t))
@@ -165,8 +169,24 @@ def shell(name, length, width, mat, parent, phase=0):
 
 
 shell('Soft outer gas surface',6.8,1.10,gas_material('Fading envelope — illustrative opacity',.16,.35),envelope,.7)
-shell('Warm billowing gas surface',6.25,.79,gas_material('Amber gas — illustrative opacity',.29,.95),envelope)
-shell('Luminous source surface',2.35,.18,gas_material('Source glow — illustrative opacity',.50,2.0),source,.3)
+shell('Warm billowing gas surface',6.25,.79,gas_material('Amber gas — illustrative opacity',.29,.95),envelope,0,1)
+shell('Luminous source surface',2.35,.18,gas_material('Source glow — illustrative opacity',.50,2.0),source,.3,1)
+
+# v6: a bright core with a repeating pattern of shock diamonds. Spacing and sizes
+# are drawn for legibility; no pressure ratio, Mach number or flow field exists.
+core_glow = plain_material('Shock-diamond glow — illustrative', (1.0, .50, .16), .14, .15)
+for k, t in enumerate([.13, .27, .41, .55, .69, .83]):
+    r = .18*profile(t)*(1.08-.07*k)
+    cx = .32*t+.18*t*math.sin(t*6)
+    cy = .11*t*math.sin(t*8)
+    bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=2, radius=1, location=(cx, cy, t*2.35))
+    d = bpy.context.object
+    d.name = 'Shock diamond '+str(k+1)
+    d.scale = (r*.92, r*.92, .15)
+    bpy.ops.object.transform_apply(location=True, scale=True)
+    d.parent = source
+    d.data.materials.append(core_glow)
+    d['representative'] = True; d['physicalHardware'] = False; d['solidForCamera'] = False
 
 ribbon_mat = gas_material('Folded luminous wisps — illustrative opacity',.26,1.35)
 for k in range(6):
@@ -281,6 +301,30 @@ for diagram in symbols.children:
             # Atom and bond meshes are object-local; keep their authored shapes.
             obj.scale *= .65
 
+# v6: a dark inset plate behind the enlarged molecule diagrams, so they read as a
+# labeled inset and not as objects floating in the gas. Not to scale.
+plate_mat = plain_material('Molecular inset plate', (.025, .042, .06), 1, 0)
+bpy.ops.mesh.primitive_cube_add(size=1, location=(2.5, -.045, 1.0))
+inset = bpy.context.object
+inset.name = 'Molecular inset plate'
+inset.scale = (1.3, .012, 1.9)
+bpy.ops.object.transform_apply(scale=True)
+inset.parent = symbols
+inset.data.materials.append(plate_mat)
+inset['representative'] = True; inset['teachingOverlay'] = True; inset['physicalHardware'] = False; inset['solidForCamera'] = False
+symbols['notToScale'] = True
+
+# v6: author the gas in its displayed orientation (source at the top, plume
+# trailing below). The runtime used to turn the whole gas group half a turn about
+# Z; this is the same rotation baked into the vertices (a half turn about the
+# Blender Y axis), so nothing else changes. Anchors turn with the gas.
+for group_node in [source, envelope, ribbons, wisps]:
+    for obj in group_node.children:
+        if obj.type != 'MESH': continue
+        for vertex in obj.data.vertices:
+            vertex.co.x = -vertex.co.x; vertex.co.z = -vertex.co.z
+        obj.data.update()
+
 # Batch only matching material and semantic parent; retain optional symbol group.
 for parent in [source,envelope,ribbons,wisps,*symbols.children]:
     batches={}
@@ -294,9 +338,9 @@ for parent in [source,envelope,ribbons,wisps,*symbols.children]:
 
 anchors=group('Anchors',root,role='Nonrendering interface anchors')
 for name, point, role in [
-    ('AnchorSource',(.04,-.12,.55),'Illustrative source gas'),
-    ('AnchorBands',(.67,-.55,4.45),'Illustrative gas emission region; not a spectrum measurement'),
-    ('AnchorTimeline',(-.75,-.15,5.65),'Upper dispersing plume; qualitative event sequence'),
+    ('AnchorSource',(-.04,-.12,-.55),'Illustrative source gas'),
+    ('AnchorBands',(-.67,-.55,-4.45),'Illustrative gas emission region; not a spectrum measurement'),
+    ('AnchorTimeline',(.75,-.15,-5.65),'Upper dispersing plume; qualitative event sequence'),
     ('AnchorCO2',(2.5,-.30,1.45),'Enlarged carbon dioxide molecular symbol'),
     ('AnchorH2O',(2.5,-.30,.55),'Enlarged water-vapor molecular symbol'),
 ]:
