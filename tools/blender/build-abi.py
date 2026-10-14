@@ -19,10 +19,17 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('civil',Path(__file__).with_name('civil-detail.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c);h=c.load_h()
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=9
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=10
 c.readable_mirror(m)
 c.bench(h,m,(.35,-.26,.10),(10.8,8.2))
-c.cutaway_enclosure(h,m,(.35,0,-.26),(10.8,8.2),1.95)
+# v10: a stepped, hooded housing (a tall scanner head over the telescope end that
+# steps down along the bench) so ABI reads as a different instrument from the
+# arched, blanketed TIRS-2 housing. Heights and steps are as drawn.
+AX0,AX1,AZ0,AZ1=.35-10.8/2,.35+10.8/2,-.26-8.2/2,-.26+8.2/2
+c.cutaway_enclosure(h,m,(.35,0,-.26),(10.8,8.2),1.95,
+    back=[(AX0,2.60),(AX0+3.15,2.60),(AX0+3.15,1.95),(AX1-10.8*.42,1.95),(AX1-10.8*.22,.32),(AX1,.32)],
+    side=[(AZ0,2.60),(AZ0+2.85,2.60),(AZ0+2.85,1.95),(AZ0+8.2*.52,1.95),(AZ0+8.2*.74,.32),(AZ1,.32)],
+    lining_back=1.9,lining_side=1.9)
 h.role('Telescope')
 mirrors=[(-3.40,1.05,.55,.59),(-2.40,.97,-.65,.37),(-1.43,1.08,.47,.44),(-.48,.94,-.65,.30)]
 for i,(x,y,z,r) in enumerate(mirrors,1):
@@ -72,6 +79,11 @@ h.line('Scan shroud constant-conductance heat pipe',[(-.80,.40,2.48),(-.55,.06,2
 h.ring('Optical port sunshield tube',(-4.62,.87,3.0),.40,.365,.80,m['dark'],'x',48)
 for n,xx in enumerate([-4.98,-4.80,-4.62,-4.44,-4.28],1):h.ring('Optical port stray-light baffle vane '+str(n),(xx,.87,3.0),.37,.25-.01*n,.02,m['black'],'x',48)
 for xx in [-4.90,-4.34]:c.riser(h,m,'Optical port sunshield saddle',xx,3.0,(.12,.46),.49)
+# v10: a flared hood extends the port past the housing wall: a blanketed outer
+# shell and a black baffled inner shell, so the optical port reads as a sunshield.
+h.frustum('Optical port sunshield flare',(-4.98,.87,3.0),0,-.66,.395,.74,.014,m['gold'],axis='x')
+h.frustum('Optical port flare interior',(-4.98,.87,3.0),-.004,-.655,.379,.724,.012,m['black'],axis='x')
+h.ring('Optical port flare rim',(-5.627,.87,3.0),.755,.725,.034,m['edge'],'x',48)
 h.cyl('Optical port cover hinge',(-5.02,.87,3.42),.03,.80,m['edge'],'y',16)
 c.plate(h,m,'Optical port cover (deployed)',(-4.62,.87,3.44),(.78,.80),(0,0,1),'dark',.03)
 h.box('Optical port cover launch-lock pin puller (released)',(-4.98,1.30,3.0),(.10,.06,.12),m['edge'])

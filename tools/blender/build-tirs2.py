@@ -1,4 +1,4 @@
-"""TIRS-2 civil assembly v7; nine groups. Public NASA architecture vocabulary.
+"""TIRS-2 civil assembly v9; nine groups. Public NASA architecture vocabulary.
 Lens/array counts retained; packaging and dimensions as drawn. Fixed filters
 and ground-set alignment shims, not an added on-orbit focus actuator.
 v6 follows NASA's 2018 TIRS-2 design presentation (NTRS 20180005348): the two
@@ -10,19 +10,28 @@ v8 draws the bench as a cutaway of a closed instrument: a sectioned housing
 (far walls full height, near walls cut, cover removed), a lens barrel cut open
 on the viewer side, a smooth Earth-shield blanket, and a broader mirror
 highlight. Housing and barrel form and size are as drawn.
+v9 (blender round 1): the housing is an arched, blanketed outline instead of the
+ABI's stepped one, and the chassis finish is lifted a step.
 """
 import bpy,importlib.util,math
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('civil',Path(__file__).with_name('civil-detail.py'))
 c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c);h=c.load_h()
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=8
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=9
 c.readable_mirror(m)
 m['lens']=h.material('Refractive element teaching blue',(.16,.38,.47),.25,.22)
 c.bench(h,m,(.40,-.27,.10),(10.4,8.25))
 # The far wall stays lower than the side wall so the authored over-the-back
 # cooling view still reaches its role plate.
-c.cutaway_enclosure(h,m,(.40,0,-.27),(10.4,8.25),2.25,back_height=.95)
+# v9: an arched, blanketed housing (a vaulted drum outline) so TIRS-2 reads as a
+# different instrument from the stepped, hooded ABI housing. The far wall stays
+# low enough for the over-the-back cooling view. Outline and finish as drawn.
+def arch(a,b,top,curb=.32,n=16):
+    return [(a+(b-a)*i/n,curb+(top-curb)*math.sin(math.pi*i/n)**.75) for i in range(n+1)]
+BX0,BX1,BZ0,BZ1=.40-10.4/2,.40+10.4/2,-.27-8.25/2,-.27+8.25/2
+c.cutaway_enclosure(h,m,(.40,0,-.27),(10.4,8.25),2.25,back_height=.95,
+    back=arch(BX0,BX1,1.30),side=arch(BZ0,BZ1,2.25),wall='gold',lining_back=.70,lining_side=1.0)
 h.role('Telescope')
 for i,z in enumerate([1.30,.64,-.03,-.70],1):
     h.sphere('Refractive element '+str(i),(-2.35,1.10,z),(.79,.79,.055),m['lens'],segments=32,rings=16)

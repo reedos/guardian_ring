@@ -82,7 +82,7 @@ def readable_mirror(m):
     bs.inputs['Base Color'].default_value=(.72,.80,.88,1);m['mirror'].diffuse_color=(.72,.80,.88,1)
     bs.inputs['Metallic'].default_value=.86;bs.inputs['Roughness'].default_value=.27
 
-def cutaway_enclosure(h,m,at,size,height,curb=.32,t=.05,back_height=None):
+def cutaway_enclosure(h,m,at,size,height,curb=.32,t=.05,back_height=None,back=None,side=None,wall='dark',lining_back=None,lining_side=None):
     """v9 (ABI) / v8 (TIRS-2): sectioned instrument housing around the open bench.
     The far walls (-X, -Z) stand to full height and step down along a cut line;
     the near +X wall is cut to a curb and the near +Z wall and the cover are
@@ -92,12 +92,12 @@ def cutaway_enclosure(h,m,at,size,height,curb=.32,t=.05,back_height=None):
     x0,x1,z0,z1=x-w/2,x+w/2,z-d/2,z+d/2
     cut=section_material(h)
     bh=back_height or height
-    back=[(x0,bh),(x1-w*.42,bh),(x1-w*.22,curb),(x1,curb)]
-    side=[(z0,height),(z0+d*.52,height),(z0+d*.74,curb),(z1,curb)]
+    back=back or [(x0,bh),(x1-w*.42,bh),(x1-w*.22,curb),(x1,curb)]
+    side=side or [(z0,height),(z0+d*.52,height),(z0+d*.74,curb),(z1,curb)]
     near=[(z0,curb),(z1,curb)]
-    cut_wall(h,m,'Instrument housing far wall (cutaway)','x',z0,t,back)
-    cut_wall(h,m,'Instrument housing side wall (cutaway)','z',x0,t,side)
-    cut_wall(h,m,'Instrument housing near wall (cut to curb)','z',x1-t,t,near)
+    cut_wall(h,m,'Instrument housing far wall (cutaway)','x',z0,t,back,wall)
+    cut_wall(h,m,'Instrument housing side wall (cutaway)','z',x0,t,side,wall)
+    cut_wall(h,m,'Instrument housing near wall (cut to curb)','z',x1-t,t,near,wall)
     # Section caps trace every cut edge so the removed material is explicit.
     for name,pts in [('back',[(s,yy+.008,z0+t/2) for s,yy in back[1:]]),('side',[(x0+t/2,yy+.008,s) for s,yy in side[1:]]),
                      ('near',[(x1-t/2,curb+.008,z0),(x1-t/2,curb+.008,z1)])]:
@@ -105,8 +105,10 @@ def cutaway_enclosure(h,m,at,size,height,curb=.32,t=.05,back_height=None):
     # Vertical section edges where each cut wall ends at the open +Z face.
     for xx in [x0+t/2,x1-t/2]:h.line('Cutaway section edge (end)',[(xx,BENCH_TOP,z1-.004),(xx,curb+.008,z1-.004)],t*.62,cut)
     # Black stray-light lining on the inside of the full-height walls.
-    h.box('Housing stray-light lining (far wall)',((x0+x1-w*.42)/2,(bh+BENCH_TOP)/2,z0+t+.004),(x1-w*.42-x0-t,bh-BENCH_TOP-.06,.012),m['black'],0)
-    h.box('Housing stray-light lining (side wall)',(x0+t+.004,(height+BENCH_TOP)/2,(z0+z0+d*.52)/2+t/2),(.012,height-BENCH_TOP-.06,d*.52-t),m['black'],0)
+    lb=lining_back if lining_back is not None else bh
+    ls=lining_side if lining_side is not None else height
+    h.box('Housing stray-light lining (far wall)',((x0+x1-w*.42)/2,(lb+BENCH_TOP)/2,z0+t+.004),(x1-w*.42-x0-t,lb-BENCH_TOP-.06,.012),m['black'],0)
+    h.box('Housing stray-light lining (side wall)',(x0+t+.004,(ls+BENCH_TOP)/2,(z0+z0+d*.52)/2+t/2),(.012,ls-BENCH_TOP-.06,d*.52-t),m['black'],0)
 
 def riser(h,m,name,x,z,size,top,material='dark'):
     """Solid mounting block from just below the bench top up to `top`."""
