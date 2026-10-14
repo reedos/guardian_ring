@@ -83,8 +83,9 @@ def expand(h,m):
     optic(h,'Representative tertiary relay mirror',(-1.46,.05,-1.07),(.47,.50),(.7,0,.7),m['mirror'])
     optic(h,'Representative quaternary relay mirror',(-.42,.05,-1.43),(.40,.44),(-.7,0,.7),m['mirror'])
     for x,z in [(-1.46,-1.07),(-.42,-1.43)]:
-        h.box('Relay mirror support',(x,-.78,z),(.18,1.26,.18),m['dark'],.012)
-        h.box('Relay mirror pedestal',(x,-1.46,z),(.47,.10,.41),m['silver'],.014)
+        h.box('Relay mirror support',(x,-.78,z),(.22,1.26,.22),m['dark'],.014)
+        h.box('Relay mirror pedestal',(x,-1.46,z),(.62,.10,.54),m['silver'],.014)
+        for sx in [-1,1]:h.rod('Relay mirror brace',(x+sx*.27,-1.40,z),(x+sx*.08,-.80,z),.026,m['edge'])
 
     h.role('ScanSystem')
     h.box('Scanning subsystem mounting deck',(-1.81,-1.24,3.38),(3.75,.12,2.26),m['silver'],.023)
@@ -139,18 +140,27 @@ def expand(h,m):
         ('Aft-optics fold mirror',(-.78,-.03,-2.66),(.71,0,.71),'mirror')]:
         optic(h,name+' optical face',at,(.47,.56),normal,m[mat],.023)
         h.box(name+' mount',(at[0],-.55,at[2]),(.13,.84,.14),m['dark'],.009)
+        # v17: a footed base and two braces tie each slender mirror post to the deck.
+        h.box(name+' mount foot',(at[0],-.935,at[2]),(.46,.05,.40),m['silver'],.010)
+        for sx in [-1,1]:
+            h.rod(name+' mount brace',(at[0]+sx*.17,-.915,at[2]),(at[0]+sx*.04,-.30,at[2]),.022,m['edge'])
     for x,z in [(-.77,-3.04),(.36,-2.85),(.78,-1.84)]:
         h.ring('Stationary channel filter retainer',(x,-.06,z),.22,.172,.053,m['silver'],'z',32)
         h.cyl('Stationary channel filter optical surface',(x,-.06,z-.012),.17,.012,m['solar'],'z',32,.002)
         h.ring('Stationary cold stop spacer',(x,-.06,z-.062),.215,.19,.075,m['dark'],'z',32)
         h.ring('Stationary cold stop',(x,-.06,z-.11),.21,.125,.025,m['black'],'z',32)
-        h.box('Filter cassette post',(x,-.615,z),(.07,.70,.07),m['dark'],.006)
-        h.box('Filter cassette foot',(x,-.935,z),(.28,.05,.23),m['dark'],.009)
+        h.box('Filter cassette post',(x,-.615,z),(.10,.70,.10),m['dark'],.008)
+        h.box('Filter cassette foot',(x,-.935,z),(.34,.05,.28),m['silver'],.009)
+        for sx in [-1,1]:h.rod('Filter cassette brace',(x+sx*.13,-.915,z),(x+sx*.045,-.50,z),.018,m['edge'])
 
     h.role('Thermal')
     h.box('Cold-head thermometer',(-.42,-.40,-3.51),(.12,.08,.12),m['edge'],.006)
     h.cyl('Remote cold head',(-.22,-.84,-3.29),.15,.55,m['cyan'],'x',28,.012)
-    h.line('Cooler transfer line',[(3.81,-.86,-2.24),(3.42,-1.08,-2.70),(1.08,-1.10,-2.95),(.59,-.96,-3.18),(.08,-.84,-3.29)],.035,m['silver'])
+    # v17: the transfer line comes down to the bench and runs on standoff clips,
+    # rather than hanging in the air above it. Route and clip spacing are as drawn.
+    route=[(3.81,-.86,-2.24),(3.52,-1.40,-2.62),(1.40,-1.40,-3.02),(.62,-1.40,-3.20),(.30,-1.10,-3.29),(.08,-.84,-3.29)]
+    h.line('Cooler transfer line',route,.035,m['silver'])
+    h.clamp_run('Transfer line clip',route[1:4],.035,m['edge'],-1.51,every=.9)
     h.line('Cold-stage thermal strap',[(-.53,-.54,-3.44),(-.37,-.64,-3.4),(-.41,-.83,-3.29)],.054,m['copper'])
 
     return {

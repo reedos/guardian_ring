@@ -1,4 +1,6 @@
-"""Detailed representative infrared payload and electronics, version 16.
+"""Detailed representative infrared payload and electronics, version 17.
+v17 (blender round 1): routed heat pipes and the cooler transfer line sit on standoff
+clips, slender mirror and filter posts get footed bases and braces, and the chassis finish is lifted.
 Blender --background --python tools/blender/build-payload.py.
 The opened telescope and integrated electronics units show subsystem
 relationships with authored removable covers. No military optical prescription, electronics schematic,
@@ -9,7 +11,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
-bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=16
+bpy.ops.wm.read_factory_settings(use_empty=True);m=h.palette();VERSION=17
 
 # Keep the approved reflective cutaway, then expose the rest of its signal chain.
 source=Path(__file__).with_name('build-hardware-look.py');tree=ast.parse(source.read_text(encoding='utf-8'))
@@ -95,6 +97,9 @@ h.box('Cooling role plate',(4.70,-.57,-2.24),(.94,.03,.24),m['dark'],.006)
 h.line('Instrument chassis heat pipe',[(6.36,-1.43,1.05),(6.76,-1.43,1.05),(6.76,-1.42,-1.32),(6.49,-.75,-1.55)],.025,m['silver'])
 h.line('Sensor baseplate heat pipe',[(1.65,-1.43,-.30),(3.13,-1.44,-.30),(3.13,-1.43,-1.62),(5.56,-1.40,-1.55)],.025,m['silver'])
 h.line('Cooler controller baseplate heat pipe',[(4.80,-1.43,-3.53),(6.22,-1.44,-3.53),(6.22,-1.42,-2.72),(6.49,-.75,-2.72)],.025,m['silver'])
+# v17: clips lift each bench-level run slightly and hold it, as drawn (spacing is a drawing choice).
+for pts in [[(6.36,-1.43,1.05),(6.76,-1.43,1.05),(6.76,-1.42,-1.32)],[(1.65,-1.43,-.30),(3.13,-1.44,-.30),(3.13,-1.43,-1.62)],[(4.80,-1.43,-3.53),(6.22,-1.44,-3.53),(6.22,-1.42,-2.72)]]:
+    h.clamp_run('Heat pipe clip',pts,.025,m['edge'],-1.51,every=1.0)
 
 spec=importlib.util.spec_from_file_location('payload_expansion',Path(__file__).with_name('payload-expansion.py'))
 expansion=importlib.util.module_from_spec(spec);spec.loader.exec_module(expansion)
