@@ -1,0 +1,133 @@
+/* Phone pass (improvement round 1, "Phone experience"): 360 to 430 px wide screens.
+   Loaded last on every page so it can settle the size and spacing rules the other sheets left small.
+   Nothing here changes a desktop layout: every rule sits inside a phone-width media query. */
+
+/* ---------- the top bar: a solid ground from the first pixel ---------- */
+/* On a phone the bar sits over the hero's picture and, once scrolled, over body copy. A translucent bar let the
+   words show through behind the button and menu, so it is opaque here at every scroll position. */
+@media (max-width: 900px) {
+  .topbar:not(#_), body.scrolled .topbar:not(#_) { background: #05080b; -webkit-backdrop-filter: none; backdrop-filter: none; border-bottom-color: var(--line); }
+}
+
+/* ---------- readable type ---------- */
+/* Floor of 12 px for labels, captions and chips; 15 px for reading copy. The ":not(#_)" raises specificity above
+   the per-section rules in the story's sheet without using !important. */
+@media (max-width: 760px) {
+  /* labels and captions */
+  body:not(.app) :is(.eyebrow, .mini-label, .fact-label, .layer-label, .kicker, .chip-k, .basis-tag, .view-cap, .scaffold-badge):not(#_) { font-size: 12px; line-height: 1.5; letter-spacing: .08em; }
+  body.landing :is(figcaption, caption, small, .hero-cap, .art-note, .figure-note, .compare-note, .texture-credit, .fact-note, .reading-key a, .service-branch, .service-branch strong, .signal-chain span, .signal-chain small, .service-path li span):not(#_) { font-size: 12.5px; line-height: 1.6; }
+  body.landing :is(.study-figure figcaption, .air-figure figcaption, .os-panel figcaption):not(#_) { font-size: 12px; }
+  body.landing .texture-credit small:not(#_) { font-size: 12px; }
+  body.landing :is(th, summary):not(#_) { font-size: 12px; line-height: 1.5; }
+  body.landing :is(.orbit-table, .contrast-table) td::before { font-size: 12px; }
+  body.landing :is(.quiet-note, .caption-stack p, .signal-support, .hero-note):not(#_) { font-size: 13px; line-height: 1.7; }
+  body.landing .fire-tag:not(#_) { font-size: 10.5px; padding: 2px 5px; }
+  body.landing .journey-nav a small:not(#_), body.landing .journey-nav span:not(#_) { font-size: 12px; }
+  body.landing .hero-cap:not(#_) { font-size: 12px; line-height: 1.55; }
+  /* the evidence chip: 12 px label */
+  body:not(.app) :is(.chip, button.chip):not(#_) { font-size: 12px; letter-spacing: .06em; }
+  body:not(.app) button.chip[data-src]::after { width: 14px; height: 14px; font-size: 10px; }
+  /* reading copy */
+  body.landing main :is(.section-copy, .section-lede, .making p, .civil-pair p:not(.mini-label), .layer-notes p, .study-caption p, .engineering-map header > p:last-child, .contrast-copy p, .orbit-compare p:not(.compare-note):not(.figure-note), .remember-list li, .trip-head p, .fire-lead):not(#_) { font-size: 15px; line-height: 1.7; }
+  body.landing main :is(.section-lede, .study-heading .section-lede):not(#_) { font-size: 16px; line-height: 1.65; max-width: none; }
+  body.landing main :is(td, li):not(#_):not(.service-path li):not(.signal-chain li) { line-height: 1.6; }
+  body.landing main :is(.orbit-table td, .contrast-table td):not(#_) { font-size: 14.5px; }
+  body.landing main .service-path strong:not(#_) { font-size: 14.5px; line-height: 1.5; }
+  /* pages built from page-wrap (Evidence, Method, Glossary, Parts) */
+  .page-wrap :is(p, li, dd):not(#_) { line-height: 1.7; }
+  .page-wrap :is(.source p, .basis-list dd):not(#_) { font-size: 14.5px; }
+  .page-wrap .hero-note:not(#_) { font-size: 13px; }
+  .page-wrap label:not(#_) { font-size: 12px; }
+  .page-wrap :is(.formula > summary, .assumption-row .kicker, .source .kicker):not(#_) { font-size: 12px; }
+  .page-wrap .formula > summary:not(#_) { padding-block: 13px; }
+  .page-wrap :is(.parts-toc, .parts-schematics > summary span, .part-parent):not(#_) { font-size: 12.5px; }
+  .page-wrap :is(.part-open, .part-open span, .part-evidence-link, .sd-connection-label, .sd-data span, .sd-heat span, .sd-light span, .sd-mechanical span, .sd-power span):not(#_) { font-size: 12px; }
+  .site-footer p:not(#_), .footer-links a:not(#_) { font-size: 13px; }
+}
+
+/* ---------- finger-sized targets ---------- */
+@media (max-width: 760px) {
+  /* The evidence chip keeps its look and its place in the line, but its box is 44 px tall: the outline moves to
+     ::before, and a negative block margin gives back the extra height so no line moves.
+     --cp is the padding above and below the drawn outline. */
+  body:not(.app) { --cp: 12px; --chip-frame: currentColor; }
+  body.landing { --cp: 6px; --chip-frame: var(--line-2); }
+  html body:not(.app) button.chip:not(#_) { position: relative; box-sizing: border-box; min-height: 44px; height: auto; margin-block: calc(var(--cp) * -1); padding: 0 10px; border-color: transparent; background: transparent; vertical-align: middle; }
+  html body:not(.app) button.chip.chip::before { content: ""; position: absolute; inset: var(--cp) 0; border: 1px solid var(--chip-frame); border-style: inherit; border-radius: 0; pointer-events: none; }
+  html body:not(.app) button.chip.chip:hover::before, html body:not(.app) button.chip.chip[aria-expanded="true"]::before { border-color: var(--accent); }
+  html body:not(.app) button.chip.chip:focus-visible { outline: none; }
+  html body:not(.app) button.chip.chip:focus-visible::before { outline: 1px solid var(--accent); outline-offset: 2px; }
+  /* chips that end a sentence get a little air so the next tap does not land on a neighbor */
+  body.landing :is(p, li, .lede, .section-lede) > button.chip { margin-inline: 2px; }
+
+  /* Links inside running text and small tables: vertical padding on an inline box adds hit area without moving
+     a line (an inline element's padding does not change line height). */
+  body.landing :is(p, li, small, th, td, figcaption, strong, span):not(.btn):not(.button) > a:not(.btn):not(.button):not(.brand):not(.top-cta) { padding-block: 13px; }
+  body.landing .quiet-note a, body.landing .fact-note a, body.landing .try-this a { padding-block: 13px; }
+  body.landing :is(.service-path a, .signal-chain a) { padding-block: 6px; }
+}
+
+@media (max-width: 760px) {
+  /* width too: grow the box sideways and take the same space back with a negative margin */
+  body.landing :is(p, li, small, td, figcaption, strong, span) > a:not(.btn):not(.button):not(.brand):not(.top-cta) { padding-inline: 6px; margin-inline: -6px; }
+  body.landing th > a { padding: 16px 14px; margin: 0 -14px; }
+}
+
+/* labels drawn inside the atmosphere figure (SVG user units, scaled to about 0.96 on a phone) */
+@media (max-width: 760px) {
+  body.landing .air-figure svg text:not(#_) { font-size: 11px; letter-spacing: .02em; }
+  .top-cta:not(#_) { font-size: 12px; padding-inline: 12px; }
+  .menu-btn:not(#_) { font-size: 12px; }
+}
+
+/* 360 to 400 px: the logo, the button and the menu all have to share one row */
+@media (max-width: 400px) {
+  .topbar:not(#_) { gap: 6px; }
+  .top-cta:not(#_) { padding-inline: 9px; letter-spacing: .04em; gap: 5px; margin-left: auto; }
+  .menu-btn:not(#_) { padding-inline: 10px; gap: 8px; }
+}
+
+/* ---------- the story's place-keeper (src/app/site.js adds the element) ---------- */
+.read-strip { display: none; }
+@media (max-width: 900px) {
+  .read-strip:not(#_) { position: absolute; top: 100%; left: 0; right: 0; z-index: 0; display: flex; align-items: center; gap: 12px; height: 28px; padding: 0 var(--gutter); background: #05080b; border-bottom: 1px solid var(--line); color: var(--ink); font: 500 12px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; pointer-events: none; transform: translateY(-100%); opacity: 0; visibility: hidden; }
+  body.scrolled .read-strip:not(#_) { transform: none; opacity: 1; visibility: visible; }
+  @media (prefers-reduced-motion: no-preference) { .read-strip { transition: transform .25s ease, opacity .2s ease, visibility .25s; } }
+  .read-strip .rs-n { flex: none; color: var(--accent); }
+  .read-strip .rs-t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .read-strip .rs-bar { position: absolute; left: 0; bottom: -1px; width: 100%; height: 2px; background: var(--accent); transform-origin: left; transform: scaleX(var(--read, 0)); }
+  /* the open chapter menu draws over the strip, and an anchor jump lands clear of both */
+  .topnav:not(#_) { z-index: 1; }
+  html:not(#_) { scroll-padding-top: 92px; }
+}
+
+@media (max-width: 760px) {
+  /* list items that hold only a link (the Evidence page's source lists) and the diagram boundary notes */
+  .page-wrap li > a:not(#_):not([class]) { padding-block: 13px; }
+  .page-wrap .sd-boundary a:not(#_) { padding-block: 14px; }
+}
+
+/* ---------- the explorer on a phone ---------- */
+@media (max-width: 760px) {
+  /* A guided mission has no parts sheet to open, so its card takes the height it needs and the 3D stage gets the
+     rest, instead of leaving a block of empty ground under the card. */
+  body.app.stage-priority.mission-active:not(.sheet-open) .panel:not(#_) { flex: 0 1 auto; height: auto; min-height: 0; }
+  body.app.stage-priority.mission-active:not(.sheet-open) .panel .panel-scroll:not(#_) { flex: 0 1 auto; }
+}
+@media (max-width: 760px) {
+  /* a fixed floor (the tallest step of the tour) so the stage does not change height as steps change */
+  body.app.stage-priority.mission-active:not(.sheet-open) .panel:not(#_) { min-height: 238px; }
+  /* Pause / Back / Next: same centered, 44 px, bordered button as the part bar; they share the row equally */
+  body.app .mission-transport:not(#_) { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); }
+  body.app .mission-transport .btn:not(#_) { justify-content: center; text-align: center; min-height: 44px; padding-inline: 8px; font-size: 12px; letter-spacing: .08em; }
+}
+
+/* explorer type: the mission card is reading copy, so it gets reading size; the small captions get 11 px */
+@media (max-width: 760px) {
+  body.app .mission-body:not(#_) { font-size: 13px; line-height: 1.45; }
+  body.app .mission-phase:not(#_) { font-size: 12.5px; }
+  body.app :is(.mission-note, .mission-detail-note, .mission-count, .mission-step-count, .mission-transport label):not(#_) { font-size: 11px; }
+  body.app .mission-description:not(#_) { font-size: 13px; }
+  body.app .lp-k:not(#_) { font-size: 11px; }
+  body.app .hud.tl .sub:not(#_) { font-size: 11px; }
+}

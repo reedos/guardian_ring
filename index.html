@@ -13,7 +13,7 @@
   <meta property="og:title" content="The Guardian Ring">
   <meta property="og:description" content="How missile-warning satellites watch Earth in the infrared, from the geostationary ring down to one detector element. Cited public sources; schematic models.">
   <meta property="og:url" content="https://reedos.dev/guardian_ring/">
-  <meta property="og:image" content="https://reedos.dev/guardian_ring/look/ring.webp?v=blr2">
+  <meta property="og:image" content="https://reedos.dev/guardian_ring/look/ring.webp?v=blr3">
   <meta property="og:image:width" content="1600">
   <meta property="og:image:height" content="1000">
   <meta property="og:image:alt" content="An illuminated Earth surrounded by a schematic orbital ring and enlarged representative satellites.">
@@ -22,6 +22,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="/src/pages/story.css">
+  <link rel="stylesheet" href="/src/phone.css">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -57,7 +58,7 @@
   </header>
   <main id="main">
     <section class="hero" id="top" aria-labelledby="hero-title">
-      <div class="hero-img"><picture><source media="(max-width: 760px)" srcset="look/ring-phone.webp?v=blr2" width="780" height="960"><img src="look/ring.webp?v=blr2" width="1600" height="1000" alt="An illuminated Earth surrounded by a schematic orbital ring and enlarged representative satellites." fetchpriority="high" decoding="async"></picture><video id="ring-loop" hidden muted loop playsinline preload="none" aria-label="Schematic GEO day loop: the patches stay fixed to the rotating Earth"><source src="look/ring-loop.mp4" type="video/mp4"></video></div>
+      <div class="hero-img"><picture><source media="(max-width: 760px)" srcset="look/ring-phone.webp?v=blr3" width="780" height="960"><img src="look/ring.webp?v=blr3" width="1600" height="1000" alt="An illuminated Earth surrounded by a schematic orbital ring and enlarged representative satellites." fetchpriority="high" decoding="async"></picture><video id="ring-loop" hidden muted loop playsinline preload="none" aria-label="Schematic GEO day loop: the patches stay fixed to the rotating Earth"><source src="look/ring-loop.mp4" type="video/mp4"></video></div>
       <div class="hero-in">
         <p class="eyebrow">Light · Data · Heat <span> / Orbit to pixel</span></p>
         <h1 id="hero-title">The Guardian Ring</h1>
@@ -123,7 +124,7 @@
       <section class="level-study" id="photon" aria-labelledby="photon-title">
         <header class="study-heading"><p class="eyebrow">02 / The photon</p><h2 id="photon-title">Why watch<br>in the infrared.</h2><p class="section-lede">A rocket’s exhaust is hot gas, and hot gases emit infrared radiation in characteristic molecular bands. Carbon dioxide and water vapor, two products of burning fuel, are the examples here, taken from a civil combustion study. Hot gas glows whether or not the Sun is up, so an infrared view works on the night side too.</p></header>
         <figure class="study-figure">
-          <picture><source media="(max-width: 700px)" srcset="look/plume-phone.webp?v=blr2" width="780" height="960"><img src="look/plume.webp?v=blr2" width="1600" height="1000" alt="A rising false-color plume above a curved atmospheric layer, with enlarged carbon dioxide and water-vapor diagrams in an inset." loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width: 700px)" srcset="look/plume-phone.webp?v=blr3" width="780" height="960"><img src="look/plume.webp?v=blr3" width="1600" height="1000" alt="A rising false-color plume above a curved atmospheric layer, with enlarged carbon dioxide and water-vapor diagrams in an inset." loading="lazy" decoding="async"></picture>
           <figcaption>Illustrative plume, as drawn. The inset shows the two emitting molecules, carbon dioxide and water vapor. Shape, brightness, and colored light paths are artistic choices. <button type="button" class="chip assumed" data-src="story:schematic" aria-expanded="false" aria-label="Assumed: what backs the plume illustration">Assumed</button></figcaption>
         </figure>
         <div class="contrast-beat">
@@ -192,7 +193,7 @@
       <section class="level-study" id="satellite" aria-labelledby="satellite-title">
         <header class="study-heading"><p class="eyebrow">03 / The satellite · A civil stand-in: GOES-R</p><h2 id="satellite-title">A sensor needs<br>a spacecraft.</h2><p class="section-lede">The payload observes. The spacecraft supports it with power, communications, and paths for heat to leave. This section does not show a missile-warning satellite. Military warning spacecraft are not documented in this detail, so it borrows a published civil design as a stand-in: NOAA’s GOES-R weather satellite and its Advanced Baseline Imager (ABI).</p></header>
         <figure class="study-figure">
-          <picture><source media="(max-width: 700px)" srcset="look/satellite-phone.webp?v=blr2" width="780" height="960"><img src="look/satellite.webp?v=blr2" width="1600" height="1000" alt="Open representative spacecraft bus with solar-cell strings, array drives, battery and avionics equipment, reaction wheels, a propellant tank, antennas, and a displaced radiator." loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width: 700px)" srcset="look/satellite-phone.webp?v=blr3" width="780" height="960"><img src="look/satellite.webp?v=blr3" width="1600" height="1000" alt="Open representative spacecraft bus with solar-cell strings, array drives, battery and avionics equipment, reaction wheels, a propellant tank, antennas, and a displaced radiator." loading="lazy" decoding="async"></picture>
           <figcaption>Representative spacecraft, as drawn. The telescope sits on top, solar wings feed power, and the open bus holds batteries, wheels and electronics. Layout and proportions are illustrative. <button type="button" class="chip assumed" data-src="story:schematic" aria-expanded="false" aria-label="Assumed: what backs the spacecraft illustration">Assumed</button></figcaption>
         </figure>
         <div class="band-pair">
@@ -245,7 +246,7 @@
       <section class="level-study" id="payload" aria-labelledby="payload-title">
         <header class="study-heading"><p class="eyebrow">04 / The payload</p><h2 id="payload-title">An instrument.<br>Designed as a whole.</h2><p class="section-lede">The payload is the instrument the spacecraft carries. A telescope collects light and forms an image on a detector, electronics read the detector, and a cooler keeps it cold. Start with the assembled hardware, then open its enclosures to see the boards and connections inside.</p></header>
         <figure class="study-figure">
-          <picture><source media="(max-width: 700px)" srcset="look/payload-phone.webp?v=blr2" width="780" height="960"><img src="look/payload.webp?v=blr2" width="1600" height="1000" alt="Representative integrated infrared instrument: sensor assembly with optics and detector-side electronics, common instrument-electronics chassis, and separate cooler controls." loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width: 700px)" srcset="look/payload-phone.webp?v=blr3" width="780" height="960"><img src="look/payload.webp?v=blr3" width="1600" height="1000" alt="Representative integrated infrared instrument: sensor assembly with optics and detector-side electronics, common instrument-electronics chassis, and separate cooler controls." loading="lazy" decoding="async"></picture>
           <figcaption>Representative instrument, as drawn. The telescope and its steering mirrors sit at left; boxes of circuit cards at center and right read and control it. Ray paths and internal geometry are schematic. <button type="button" class="chip assumed" data-src="story:schematic" aria-expanded="false" aria-label="Assumed: what backs the payload illustration">Assumed</button></figcaption>
         </figure>
         <div class="study-caption"><span class="mini-label">An optical path</span><p>The drawing connects the telescope to the detector. In the named ABI instrument, the telescope forms a scene image at the focal-plane detectors. <button type="button" class="chip spec" data-src="story:abi-image-role" aria-expanded="false" aria-label="Spec: source for ABI's image-forming telescope role">Spec</button></p></div>
@@ -286,7 +287,7 @@
       <section class="level-study" id="focal-plane" aria-labelledby="focal-plane-title">
         <header class="study-heading"><p class="eyebrow">05 / The focal plane</p><h2 id="focal-plane-title">Hold the image.<br>Manage the heat.</h2><p class="section-lede">At the focal plane, light becomes an electrical signal. Cooling can reduce thermal noise, a benefit described in NIST's cryocooler review. <button type="button" class="chip reported" data-src="story:cryogenic-noise-role" aria-expanded="false" aria-label="Reported: source for the thermal-noise benefit of cryogenic cooling">Reported</button></p></header>
         <figure class="study-figure">
-          <picture><source media="(max-width: 700px)" srcset="look/focal-plane-phone.webp?v=blr2" width="780" height="960"><img src="look/focal-plane.webp?v=blr2" width="1600" height="1000" alt="Representative detector and readout package inside an open cold shield, with mounting supports, a gold flex interconnect, thermal strap, cooler, warm video electronics, bias/timing board and temperature-feedback electronics." loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width: 700px)" srcset="look/focal-plane-phone.webp?v=blr3" width="780" height="960"><img src="look/focal-plane.webp?v=blr3" width="1600" height="1000" alt="Representative detector and readout package inside an open cold shield, with mounting supports, a gold flex interconnect, thermal strap, cooler, warm video electronics, bias/timing board and temperature-feedback electronics." loading="lazy" decoding="async"></picture>
           <figcaption>Representative detector assembly, as drawn. The dark detector sits inside an open cold shield; a gold flex cable carries its signal to warm electronics boards, and a strap links it to the cooler. The arrangement is illustrative. <button type="button" class="chip assumed" data-src="story:schematic" aria-expanded="false" aria-label="Assumed: what backs the focal-plane illustration">Assumed</button></figcaption>
         </figure>
         <div class="study-caption"><span class="mini-label">The cold region</span><p>Supports, electrical connections, and thermal paths meet at the detector assembly. ABI's published design moves heat from its focal planes through the cooler toward loop heat pipes and a radiator. The assembly above remains representative. <button type="button" class="chip spec" data-src="story:abi-cooler-role" aria-expanded="false" aria-label="Spec: source for ABI's cooler heat path">Spec</button></p></div>
@@ -301,7 +302,7 @@
       <section class="level-study" id="pixel" aria-labelledby="pixel-title">
         <header class="study-heading"><p class="eyebrow">06 / The pixel</p><h2 id="pixel-title">Light arrives.<br>Charge is read.</h2><p class="section-lede">A semiconductor detector converts absorbed light into an electrical response. Readout electronics measure that response and pass it onward.</p></header>
         <figure class="study-figure">
-          <picture><source media="(max-width: 700px)" srcset="look/pixel-phone.webp?v=blr2" width="780" height="960"><img src="look/pixel.webp?v=blr2" width="1600" height="1000" alt="Enlarged conceptual hybrid detector with separate absorber, contact pad, indium joint, readout cell, support and output interface." loading="lazy" decoding="async"></picture>
+          <picture><source media="(max-width: 700px)" srcset="look/pixel-phone.webp?v=blr3" width="780" height="960"><img src="look/pixel.webp?v=blr3" width="1600" height="1000" alt="Enlarged conceptual hybrid detector with separate absorber, contact pad, indium joint, readout cell, support and output interface." loading="lazy" decoding="async"></picture>
           <figcaption>Conceptual detector element, as drawn, pulled apart: the absorber on top, a contact, an indium joint and a second contact, and the readout cell below. Layers and proportions are representative. <button type="button" class="chip assumed" data-src="story:schematic" aria-expanded="false" aria-label="Assumed: what backs the pixel illustration">Assumed</button></figcaption>
         </figure>
         <div class="study-caption"><span class="mini-label">A physical connection</span><p>The absorber, contact, and readout cell illustrate a sequence. ABI's published component roles provide a named example of photon-to-electrical conversion <button type="button" class="chip spec" data-src="story:abi-detector-role" aria-expanded="false" aria-label="Spec: source for ABI's detector conversion role">Spec</button> and electronics reading detector arrays. <button type="button" class="chip spec" data-src="story:abi-readout-role" aria-expanded="false" aria-label="Spec: source for ABI's detector-array readout role">Spec</button> The drawing does not reproduce an ABI pixel. A detector array repeats this element many times; reading every element produces an image of the scene.</p></div>

@@ -18,6 +18,19 @@ describe('Earth opening composition', () => {
       expect(camera.position.length()).toBeGreaterThan(2.6);
     }
   });
+  it('centers the globe in the canvas left clear above controls drawn over its foot', () => {
+    const width=390,height=624,inset=174,aspect=width/height;
+    const centerY=(insetBottom:number)=>{
+      const pose=orbitalOverviewPose(width,height,insetBottom);
+      const camera=new THREE.PerspectiveCamera(aspect<.9?48:35,aspect,.03,120);
+      camera.position.fromArray(pose.pos);camera.lookAt(new THREE.Vector3(...pose.target));camera.updateMatrixWorld();
+      return new THREE.Vector3(0,0,0).project(camera).y;
+    };
+    // a point at the center of the clear strip sits inset/height of the canvas above the middle, in normalized units
+    expect(centerY(0)).toBeCloseTo(0,1);
+    expect(centerY(inset)).toBeCloseTo(inset/height,1);
+    expect(centerY(inset)).toBeGreaterThan(centerY(0)+.2);
+  });
   it('keeps the illustrative patch centers on the GEO subpoints through Earth rotation', () => {
     const spin=new THREE.Group(),family=new THREE.Group();spin.add(family);
     const vehicles=[.2,1.5,3.1,4.2,5.5].map(a=>{const node=new THREE.Object3D();node.position.set(2.5*Math.cos(a),0,2.5*Math.sin(a));family.add(node);return node;});

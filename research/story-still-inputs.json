@@ -1,5 +1,5 @@
 {
-  "renderedAt": "2026-10-14T06:45:51.629Z",
+  "renderedAt": "2026-10-14T12:21:11.520Z",
   "inputs": {
     "public/models/abi.glb": "5f89abae4fd38d0ac3dcc4ed6c35dc3314e6f5c280e553029efcd91184c15032",
     "public/models/atmosphere.glb": "f9f7d17b85c1250cb9924c2bfa17fe2d1704d49ae986f13b4d5c1927c297afbe",
@@ -18,7 +18,7 @@
     "src/app/cinematic-earth.js": "4e1b68b797fa3637c4d0a4663a9504e6ecf8340a54924d51e89ab034d8727d12",
     "src/app/cinematic-renderers.js": "f81c711158c2a651c4ed695b1fee2adb2ed4e0dac825d9e519eb6fc2d86d680e",
     "src/app/scene-look.js": "f894abce0d0cdf28b25e8901cec9530321ccf1c80dda459a01526f6cb2b3f31f",
-    "src/app/stage.js": "445560e0fc18e19f39d408b63e8e75be113f850bba8906339479a921ae7fdb00",
+    "src/app/stage.js": "de5af5cdc63fefebf9e7a73cb1abb309ed52df7da0caab802c1480fcbd90fdf8",
     "src/app/view-controls.js": "53e6e8897d2552ee0e9af2f3af0a46803623a6b49381d5768216fc9027654081",
     "src/explainer-kit/src/render-quality.js": "50e5dbbf7adbb1c9a0fd81d716b44a998f4cb5587aa8ea53e7c937e016d30a94",
     "src/scenes/activity-display.js": "cf70e2861d23b0919467dc9add6b0c00ccf46486f9d74a1245125deab572984f",
@@ -34,7 +34,7 @@
     "src/scenes/optical-routing.js": "3da811a605376c90e3bd022fa2c7a721280a172ad77321c2697191a6a4c8fb1b",
     "src/scenes/orbit-guides.js": "94530718446b27d5ede010adb5351457aa5ed979bc9dc4206cd224fa92ceb26a",
     "src/scenes/orbit-motion.js": "435af4cdda18e2787c33d59c1a05371b2d349e645ff79504a90912450c2d5c4d",
-    "src/scenes/orbit-overview.js": "4c2fa974c91a73cf6a908c2f23eddc9227fc17014e469eb953ab2c4b61d1acce",
+    "src/scenes/orbit-overview.js": "6c77f4c88c9ddb8406f803b2bb22905206ed2d65f55e854d4876ec837b00ef61",
     "src/scenes/orbit-presentation.js": "c855d1fc6ae2c99493d2639ec3674504e69bd4bc6c12dca314b6db240586701d",
     "src/scenes/orbit-streams.js": "cb24ef87135289b5aca70769f57ec6abb23ddd8ce0ebfbf1522eb7cdc98d31ee",
     "src/scenes/orbits.js": "8693df593aed01fdaaf48d1349fd98a5dc70778aa164752adce8f404f60b810e",
@@ -61,17 +61,17 @@
     "tools/render-story-stills.mjs": "bbf1704b412a413725fbebfd46ec6880c0e2faff5c8f34d80529d2d07543c233"
   },
   "outputs": {
-    "public/look/satellite.webp": "60e7224a8227d28cd5f9dfe69236bbbbd17b1392c61d2c0a30fbf9a43232d81d",
-    "public/look/satellite-phone.webp": "b1df572b576f5af7bebb26c80aa292742f98d97849a52502878a4a71c9abc7b5",
-    "public/look/payload.webp": "a22fd650c86499b1e01adcaf969ba1105c647f9b24f3f2487b9e68989ecbdcdb",
+    "public/look/satellite.webp": "a662690e4e618a7923b301215a30fe176b502530ef2161766eacd40fd1d83711",
+    "public/look/satellite-phone.webp": "932acb3f9125aa0c57e608ec3e8d83eb1c124d9d852433ed9e86f3e67eb948a1",
+    "public/look/payload.webp": "6c82f3a2641d8ac9ae3cac9680065d1cdc9176c303c03eecb86740606445105e",
     "public/look/payload-phone.webp": "9081271df34d70cacc5ded3c7f218a6b05ed7101cdf0aa4f920eaf4950b4d5e2",
-    "public/look/focal-plane.webp": "c0813f28eb4b272b9dba50a8800be82fbc9dcbd13d349e26626c024cd04f1d8c",
-    "public/look/focal-plane-phone.webp": "36fc09bd2a0fb075579b7c8be9eac1cc1ab970278f43c6a12db034106bfcf32a",
-    "public/look/pixel.webp": "072b3751b2187138e44606cf283d06024d7ca18c9c0fac185dd5aad410f9460f",
-    "public/look/pixel-phone.webp": "f49c6bab5bfdf5fabfcb8c45beaacb1deec3ecc2d8475f8d9ff1a0f975b45db8",
-    "public/look/ring.webp": "43b80fb8008952a219b3ea6990c83355523e1326c3fb4a317050f58ca59bde2e",
-    "public/look/plume.webp": "f00d5412938ff9f39d4ce6e8ed46892ad375cc9094fc83b00265fc022611f503",
-    "public/look/ring-phone.webp": "cd6d290e5cef86ea7acfb96182177ddc911185fa50b1ac34d69b241ae0c4c04e",
-    "public/look/plume-phone.webp": "81920e6ec0448b06f5cd8cc7dd194186dce3971f9a4726a33a6b98d185beea18"
+    "public/look/focal-plane.webp": "ce17ce938edc911142c8e7e901f9e9f5d7c02fe65ab9c239d4cd5110359ed30a",
+    "public/look/focal-plane-phone.webp": "3e9c2cf4bd8e1cc6370bda5a744503d595fb7cc337ff5358e736b22d00ef5d6a",
+    "public/look/pixel.webp": "18403f9bbd6972b5bd045169d1358ce67ea87e7e5363d879065662111d6bad24",
+    "public/look/pixel-phone.webp": "909ec402dac0314212c87adbf93f4e5c8172a606c7126a27ee1f35d20f0063ff",
+    "public/look/ring.webp": "357924056c4668542654d7114838d5349ee97a172f40950713ec8f7c0659395f",
+    "public/look/plume.webp": "38a3ce76eb36f10cb2e7fe9c93c20835f2a99dac120d5a47ca806e36a17bcb3a",
+    "public/look/ring-phone.webp": "208f559f06f5c3cc7bcee969d172b315aabd4ea28b2e32c57c0e628b5c0c5a3a",
+    "public/look/plume-phone.webp": "5229dc669872d73ed6b3c758375a32f90612a488ff688a3308c24080ddc4f9a2"
   }
 }

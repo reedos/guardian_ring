@@ -71,12 +71,34 @@ for (const type of ['click', 'auxclick']) document.addEventListener(type, e => {
 const links = [...document.querySelectorAll('#topnav a[href^="#"], .journey-nav a[href^="#"]')];
 const chapters = [...new Set(links.map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean))].sort((a, b) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
 let ticking = false;
+// Phone story: once the hero is behind the bar, a slim strip under it names the chapter on screen and shows how far
+// down the page the reader is. The page is long; this keeps the place. It only shows where you are (the chapter
+// menu already announces the same thing with aria-current), so it is hidden from assistive tech and not tappable.
+const strip = document.body.classList.contains('landing') && bar && nav && chapters.length ? document.createElement('div') : null;
+if (strip) {
+  strip.className = 'read-strip'; strip.setAttribute('aria-hidden', 'true');
+  strip.innerHTML = '<span class="rs-n"></span><span class="rs-t"></span><i class="rs-bar"></i>';
+  bar.append(strip);
+}
+// the journey cards carry a number and an "Explorer level" line around the name; the strip wants the name alone
+function linkName(a) { const copy = a.cloneNode(true); copy.querySelectorAll('span, small').forEach(n => n.remove()); return copy.textContent.trim(); }
+function updateStrip(on) {
+  if (!strip) return;
+  const index = chapters.findIndex(c => c.id === on);
+  const link = links.find(a => a.getAttribute('href') === `#${on}`);
+  const name = index < 0 ? 'The whole trip' : linkName(link);
+  strip.querySelector('.rs-n').textContent = index < 0 ? 'Start' : `${index + 1} of ${chapters.length}`;
+  strip.querySelector('.rs-t').textContent = name;
+  const room = document.documentElement.scrollHeight - innerHeight;
+  strip.style.setProperty('--read', room > 0 ? Math.min(1, Math.max(0, scrollY / room)).toFixed(4) : '0');
+}
 function spy() {
   ticking = false;
   const mid = innerHeight * 0.45;
   let on = null;
   for (const c of chapters) if (c.getBoundingClientRect().top < mid) on = c.id;
   for (const a of links) a.setAttribute('aria-current', String(a.getAttribute('href') === `#${on}`));
+  updateStrip(on);
 }
 addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
 spy();

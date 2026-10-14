@@ -218,6 +218,17 @@ export function flyTo(pos, target, duration = .9, { inspection = true } = {}) {
 function partFrame(spot) {
   return fitComponent(spot.view,view.clientWidth,view.clientHeight,{minDistance:controls.minDistance,maxDistance:controls.maxDistance});
 }
+// Height of the controls drawn over the foot of the canvas (a phone keeps the part bar and the orbit controls there),
+// so an overview can be centered in the part of the canvas that is left clear.
+function overlayInset() {
+  if(!phoneStage.matches)return 0;
+  const box=view.getBoundingClientRect();let top=box.bottom;
+  for(const el of view.querySelectorAll('#orbit-controls,#hud-btns')){
+    if(!el.checkVisibility()||getComputedStyle(el).position!=='absolute')continue;
+    top=Math.min(top,el.getBoundingClientRect().top);
+  }
+  return Math.max(0,Math.min(box.bottom-top,box.height*.45));
+}
 function overviewFrame() { return built[ui.scene]?.overviewFrame?.(view.clientWidth,view.clientHeight)||built[ui.scene]?.camera; }
 function resize() {
   if (!renderer) return;
@@ -251,6 +262,13 @@ export function paintedRect(el) {
   }
   return { left, right, top, bottom, width: right - left, height: bottom - top };
 }
+const phoneStage = matchMedia('(max-width: 760px)');
+function phoneNeighbourPins() {
+  if (!phoneStage.matches || !ui.selected) return null;
+  const ids = partsFor(ui.scene).map(part => part.id), at = ids.indexOf(ui.selected);
+  if (at < 0 || ids.length < 6) return null;
+  return new Set([ui.selected, ids[(at + ids.length - 1) % ids.length], ids[(at + 1) % ids.length]]);
+}
 function updatePins() {
   if (ui.scene < 0) return;
   camera.updateMatrixWorld();
@@ -263,11 +281,14 @@ function updatePins() {
   });
   built[ui.scene]?.updateLabels?.(camera,{width,height,obstacles:hudBounds});
   const points = [];
+  // On a phone, with a part open, only its pin and the pins of the parts Previous and Next lead to stay on the model:
+  // twelve numbered badges crowd a small stage and cover the part being read. The part list still reaches every part.
+  const keep = phoneNeighbourPins();
   for (const button of $('pins').querySelectorAll('button')) {
     const spot = hotspotsFor(ui.scene)[button.dataset.id]; if (!spot) continue;
     const p = new THREE.Vector3(...spot.pos).project(camera);
     const x = (p.x + 1) / 2 * width, y = (1 - p.y) / 2 * height;
-    button.hidden = !!orbitTracking || getAssemblyPresentation()?.isPartVisible(button.dataset.id) === false || built[ui.scene]?.isPartVisible?.(button.dataset.id, {selected:button.dataset.id===ui.selected}) === false || p.z < -1 || p.z > 1 || x < 12 || x > width - 12 || y < 12 || y > height - 12;
+    button.hidden = !!orbitTracking || (keep && !keep.has(button.dataset.id)) || getAssemblyPresentation()?.isPartVisible(button.dataset.id) === false || built[ui.scene]?.isPartVisible?.(button.dataset.id, {selected:button.dataset.id===ui.selected}) === false || p.z < -1 || p.z > 1 || x < 12 || x > width - 12 || y < 12 || y > height - 12;
     if (!button.hidden) points.push({ id:button.dataset.id, x, y, button });
   }
   // Keep badges at the component whenever possible. Resolve only local
@@ -476,6 +497,8 @@ export async function go(index, { record = true, restore = null, owner = null, r
     if (!built[index]) {
       await BUILDERS[index].preload(); if (epoch !== buildEpoch) return;
       built[index] = BUILDERS[index].build({ quality: { ...TIERS[tiers[index]], mobile }, model: store.M });
+      // An overview is the frame for the stage as it is now, so it accounts for controls drawn over the canvas.
+      if (built[index].overviewFrame) { const authored = built[index].overviewFrame; built[index].overviewFrame = (width, height, inset = overlayInset()) => authored(width, height, inset); }
       sceneLook.apply(built[index],{sceneId:store.C.SCENES[index].id,tier:tiers[index]});
       built[index].scene.updateMatrixWorld(true);
       const start = performance.now(), builder = occupancyBuilder(built[index].solids, { maxCells: 64_000 }); builder.step();
@@ -616,7 +639,9 @@ export function start() {
     if (tween && frozenAt !== null) tween.start += performance.now() - frozenAt;
     lifecycleFrozen = false; frozenAt = null; resetFrameClock = true; suspendActivity();
   });
-  new ResizeObserver(resize).observe(view);
+  const viewObserver = new ResizeObserver(resize); viewObserver.observe(view);
+  // the controls over the foot of the canvas change the clear area, so an untouched overview is fitted again
+  for (const id of ['orbit-controls', 'hud-btns']) { const el = document.getElementById(id); if (el) viewObserver.observe(el); }
   document.addEventListener('keydown', event => {
     if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
     const target = event.target instanceof Element ? event.target : null;

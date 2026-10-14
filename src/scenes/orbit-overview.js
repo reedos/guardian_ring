@@ -2,13 +2,22 @@ import * as THREE from 'three';
 
 // The globe, rather than the complete compressed orbit diagram, owns the first
 // frame. Orbital arcs may leave the frame; selecting a family inspects its craft.
-export function orbitalOverviewPose(width, height) {
+// insetBottom is the height in pixels of controls drawn over the foot of the canvas (on a phone, the orbit family
+// buttons and the part bar). The globe is centered in the canvas that is left clear above them.
+export function orbitalOverviewPose(width, height, insetBottom = 0) {
   const aspect = Math.max(1, width) / Math.max(1, height);
   const fov = aspect < .9 ? 48 : 35;
   const halfAngle = Math.atan(Math.tan(THREE.MathUtils.degToRad(fov) / 2) * Math.min(1, aspect));
   const distance = 1 / Math.sin(Math.atan(Math.tan(halfAngle) * .68));
   const target = new THREE.Vector3(0, .06, 0);
-  const position = new THREE.Vector3(1.6, 1.8, 5.6).normalize().multiplyScalar(distance).add(target);
+  const toCamera = new THREE.Vector3(1.6, 1.8, 5.6).normalize();
+  const clear = Math.max(0, Math.min(.45, insetBottom / Math.max(1, height)));
+  if (clear > 0) {
+    // lower the aim point along the screen's up direction so the globe rises by half the covered strip
+    const up = new THREE.Vector3(0, 1, 0).addScaledVector(toCamera, -toCamera.y).normalize();
+    target.addScaledVector(up, -clear * distance * Math.tan(THREE.MathUtils.degToRad(fov) / 2));
+  }
+  const position = toCamera.clone().multiplyScalar(distance).add(target);
   return { pos: position.toArray(), target: target.toArray() };
 }
 
