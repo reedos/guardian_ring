@@ -80,7 +80,7 @@ export function mountMissionTour({openFocusDemo=()=>{}}={}) {
     orbitFact.hidden=!chapter.follow;
     if(chapter.follow&&factFamily!==chapter.follow){const family=chapter.follow,example=ORBIT_EXAMPLES[family];factFamily=family;orbitFact.innerHTML=`${example.claims.orbitSpeedKmS[1]} ${chip('derived',`orbit-example:${family}:orbitSpeedKmS`,`${family.toUpperCase()} teaching speed`)} · ${example.claims.altitudeKm[1]} altitude ${chip('derived',`orbit-example:${family}:altitudeKm`,'teaching altitude')}<span>Physical circular-orbit example; drawing and playback scales are illustrative.</span>`;}
     find('.mission-count').textContent=`${index+1} / ${MISSION_CHAPTERS.length}`;
-    find('.mission-title').textContent=establishing?'Start with the whole Earth':chapter.title;find('.mission-body').textContent=establishing?'Watch the planet turn inside its orbital architecture. Next, ride beside a GEO spacecraft.':chapter.body;
+    find('.mission-title').textContent=establishing?'Start with the whole Earth':chapter.title;find('.mission-body').textContent=establishing?'Watch the planet turn inside its orbital architecture. Next, ride beside a GEO spacecraft. Leave any time: Esc, or ⋯ then Explore this view.':chapter.body;
     find('[data-mission="play"]').textContent=failed?'Retry':completed?'Replay':playing?'Pause':'Play';
     find('[data-mission="play"]').setAttribute('aria-pressed',String(playing));
     const focused=document.activeElement;

@@ -80,3 +80,14 @@ function spy() {
 }
 addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
 spy();
+
+// A link to a formula inside a closed disclosure opens the disclosure so the target is visible.
+function openDisclosureForHash() {
+  if (!location.hash) return;
+  let target = null;
+  try { target = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch { return; }
+  for (let node = target?.parentElement; node; node = node.parentElement) if (node.tagName === 'DETAILS') node.open = true;
+  if (target && target.querySelector?.(':scope > details.formula')) target.querySelector(':scope > details.formula').open = true;
+}
+addEventListener('hashchange', openDisclosureForHash);
+openDisclosureForHash();

@@ -48,3 +48,11 @@ body.page .topbar { background: rgba(3,5,8,.86); border-bottom-color: var(--line
   .basis-list { grid-template-columns: 80px minmax(0, 1fr); gap: 14px; }
   .embedded .page-wrap { padding-top: 24px; }
 }
+/* Improvement round 1, teaching: gentle entries to the reference pages. */
+.start-here,.start-here-evidence{margin:0 0 28px;padding:18px 22px;border-left:2px solid var(--accent);background:var(--surface)}
+.start-here p{margin:0 0 8px;max-width:78ch;font-size:14px;line-height:1.7}.start-here p:last-child{margin-bottom:0}
+.start-here-evidence h2{margin-top:0}.start-here-evidence h3{font:600 22px/1.1 var(--display);text-transform:uppercase;margin:18px 0 8px}
+.chip-guide ol,.top-facts ul{margin:0;padding-left:20px;display:grid;gap:8px;font-size:14px;line-height:1.65;max-width:90ch}
+.top-facts a{color:var(--ink)}.basis-tag{font:400 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-left:6px}
+.plain-calc{margin:4px 0 10px;font-size:14px;line-height:1.65}
+.formula{margin:0 0 10px;border:1px solid var(--line, rgba(240,240,250,.14))}.formula>summary{cursor:pointer;padding:10px 14px;font:500 11px/1.5 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}.formula[open]>summary{border-bottom:1px solid var(--line, rgba(240,240,250,.14))}.formula>p{padding:0 14px;margin:12px 0}
