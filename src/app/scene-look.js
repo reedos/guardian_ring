@@ -12,7 +12,10 @@ const PROFILES = {
   pixel: { envIntensity: .65, hemisphere: .75, directional: [2.25, 1.0] },
   'focal-plane': { envIntensity: .65, hemisphere: .75, directional: [2.35, 1.0] },
 };
-const HARDWARE = { envIntensity: .62, hemisphere: .78, directional: [2.45, 1.05] };
+// Lifted from .62 / .78 / [2.45, 1.05]: dark anodized enclosures and black recesses
+// were reading as flat black boxes beside the Cycles stills. The environment and
+// fill carry the value step; the key stays the single dominant direction.
+const HARDWARE = { envIntensity: .95, hemisphere: 1.0, directional: [2.85, 1.45] };
 
 export function sceneLookProfile(built, { sceneId = '', tier = 0 } = {}) {
   const look = built.look || {}, night = sceneId === 'orbits' || look.env === 'night';

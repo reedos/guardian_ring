@@ -1,4 +1,4 @@
-"""Representative spacecraft engineering cutaway, v12.
+"""Representative spacecraft engineering cutaway, v13.
 Blender --background --python tools/blender/build-satellite.py.
 Open decks, separated covers, equipment counts and arrangement are teaching
 choices, not a military satellite reconstruction or bill of materials.
@@ -7,6 +7,14 @@ drive and its harness), leaves only the viewer-facing +Z closeout cut back to
 a narrow flange with marked section edges, removes the detached blanket that
 hung on brackets beside the array yoke, and gives the antenna and terminal
 their own white finish name instead of the radiator coating. As drawn.
+v13 (blender round 1): the sunshade is a flared hood with a blanketed exterior and
+a black baffled interior, so it reads as a light shield rather than a longer
+barrel; the telescope sits in a saddle-and-rail mount tied into the deck beams;
+the TT&C dish stands off the rear on a hinged boom; the array yokes are heavier
+and show a cross-member; and the chassis finish is lifted a step. The cutaway
+stays on the viewer-facing +Z face only; every other face is closed or
+blanketed. Form is a generic representative spacecraft: the GOES-R references
+in the story are for named systems, not this drawing's silhouette.
 """
 import bpy, math, importlib.util
 from pathlib import Path
@@ -14,7 +22,7 @@ ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('detail',Path(__file__).with_name('hardware-detail.py'))
 h=importlib.util.module_from_spec(spec);spec.loader.exec_module(h)
 bpy.ops.wm.read_factory_settings(use_empty=True)
-m=h.palette();VERSION=12
+m=h.palette();VERSION=13
 # Thin metallic foil catches the single Sun in irregular creases, not a flat
 # yellow label panel. These finishes are drawing choices, not flight materials.
 m['gold'].node_tree.nodes.get('Principled BSDF').inputs['Metallic'].default_value=.88
@@ -161,19 +169,34 @@ h.box('Sun-sensor dark active face',(1.21,2.302,.65),(.20,.018,.16),m['solar'],.
 h.line('Attitude sensor harness',[(-1.04,2.2,-.49),(-.96,1.98,-.35),(-.79,1.87,-.23)],.019,m['loom'])
 
 h.role('Payload')
-for x in [-.40,.40]:h.box('Instrument support foot',(x,2.21,.12),(.15,.20,.82),m['silver'],.018)
+# v13 mount: two rails under the feet tie into the deck perimeter beams, and a
+# saddle clamp under each structural band carries the barrel. As drawn.
+for x in [-.40,.40]:
+    h.box('Instrument support foot',(x,2.21,.12),(.15,.20,.82),m['silver'],.018)
+    h.box('Instrument mount rail',(x,2.075,0),(.14,.075,2.06),m['silver'],.012)
+for z in [-.38,.37]:
+    h.box('Telescope saddle clamp',(0,2.30,z),(.80,.24,.085),m['dark'],.012)
+    for x in [-.30,.30]:h.screw((x,2.25,z+.0475),m['edge'],'z',.026)
 h.cyl('Representative telescope housing',(0,2.78,.13),.52,1.45,m['silver'],'z',48,.025)
 h.cyl('Recessed optical entrance',(0,2.78,.873),.39,.016,m['solar'],'z',48,.002)
-# A continuous sunshade extends the barrel; stray-light vanes sit inside it.
-h.ring('Instrument sunshade tube',(0,2.78,1.095),.535,.505,.48,m['silver'],'z',48)
-h.ring('Sunshade black interior',(0,2.78,1.095),.506,.494,.47,m['black'],'z',48)
-for z in [.96,1.10,1.24]:h.ring('Stray-light baffle vane',(0,2.78,z),.495,.43,.018,m['black'],'z',48)
-h.ring('Instrument sunshade lip',(0,2.78,1.315),.565,.505,.05,m['silver'],'z',48)
+# A flared sunshade hood extends the barrel: a blanketed exterior shell and a
+# black baffled interior shell with a visible rim, so it reads as a shade and
+# not as a longer barrel. Stray-light vanes sit inside it.
+SH0,SH1=.855,1.42
+SR=lambda z:.545+(.74-.545)*(z-SH0)/(SH1-SH0)
+h.frustum('Instrument sunshade hood',(0,2.78,0),SH0,SH1,.545,.74,.014,m['gold'])
+h.frustum('Sunshade black interior',(0,2.78,0),SH0+.004,SH1-.006,SR(SH0+.004)-.016,SR(SH1-.006)-.016,.012,m['black'])
+for z in [.99,1.13,1.27]:h.ring('Stray-light baffle vane',(0,2.78,z),SR(z)-.03,SR(z)-.115,.016,m['black'],'z',48)
+h.ring('Sunshade rim ring',(0,2.78,SH1-.012),.757,.725,.034,m['edge'],'z',48)
 for z in [-.38,.37]:h.ring('Payload structural band',(0,2.78,z),.545,.515,.060,m['dark'],'z',48)
 h.line('Payload readout harness',[(.40,2.48,-.22),(.67,2.20,-.18),(.75,1.93,.02)],.027,m['loom'])
 
 h.role('Links')
-h.rod('TT&C antenna support',(-.72,2.16,-.90),(-.52,3.02,-1.12),.026,m['silver'])
+# v13: the reflector stands off the aft face on a hinged boom with a gimbal
+# bracket, not on a short stick at the corner. Boom form is as drawn.
+h.cyl('TT&C boom hinge',(-.72,2.20,-.92),.062,.10,m['dark'],'x',20,.006)
+h.rod('TT&C boom',(-.72,2.20,-.92),(-.55,2.98,-1.12),.032,m['silver'])
+h.box('TT&C gimbal bracket',(-.52,3.02,-1.12),(.11,.11,.09),m['dark'],.012)
 ANTENNA_WHITE=h.material('White antenna and terminal finish',(.67,.72,.74),.12,.52)
 dish('Representative TT&C reflector',(-.52,3.05,-1.12),.34,.085,ANTENNA_WHITE)
 h.ring('TT&C reflector rim',(-.52,3.05,-1.035),.352,.335,.016,m['silver'],'z',40)
@@ -198,8 +221,9 @@ for y in [.93,1.63]:h.line('Heat-pipe connection',[(.75,y,.35),(1.20,y,.45),(1.5
 for side in [-1,1]:
     h.role('ArrayDriveLeft' if side<0 else 'ArrayDriveRight')
     for x,r,d,mat in [(1.66,.20,.21,'silver'),(1.87,.15,.17,'dark'),(2.04,.115,.16,'goldedge')]:h.cyl('Solar-array rotary drive',(side*x,1.10,-.13),r,d,m[mat],'x',32,.012)
-    for y in [.38,1.82]:h.rod('Array yoke arm',(side*2.10,1.10,-.13),(side*2.15,y,-.15),.022,m['silver'])
-    for y in [.38,1.82]:h.box('Yoke root fitting',(side*2.135,y,-.15),(.07,.10,.07),m['edge'],.006)
+    for y in [.38,1.82]:h.rod('Array yoke arm',(side*2.10,1.10,-.13),(side*2.15,y,-.15),.042,m['silver'])
+    for y in [.38,1.82]:h.box('Yoke root fitting',(side*2.135,y,-.15),(.12,.13,.11),m['edge'],.008)
+    h.box('Array yoke cross-member',(side*2.075,1.10,-.17),(.07,.30,.10),m['dark'],.010)
     h.line('Array power harness',[(side*2.09,1.10,-.08),(side*1.98,1.33,-.02),(side*1.67,1.39,.01),(side*1.42,1.27,.28)],.019,m['loom'])
     h.box('Representative deployment-position sensor',(side*1.74,1.38,-.05),(.17,.10,.15),m['dark'],.010)
     h.box('Position-sensor actuating tab',(side*1.90,1.39,-.05),(.15,.033,.065),m['goldedge'],.004)

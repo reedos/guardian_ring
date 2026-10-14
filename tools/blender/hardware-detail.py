@@ -20,8 +20,10 @@ def palette():
     return {k:material(n,c,me,ro,em) for k,n,c,me,ro,em in [
         ('silver','Machined satin aluminum',(.43,.52,.61),.66,.32,0),
         ('edge','Polished hardware edges',(.67,.73,.79),.75,.25,0),
-        ('dark','Anodized chassis',(.029,.043,.056),.42,.42,0),
-        ('black','Optical and connector recess',(.006,.012,.02),.08,.58,0),
+        # blender round 1: lifted from (.029,.043,.056) so enclosures keep a readable
+        # value step from the black recesses under real-time lighting.
+        ('dark','Anodized chassis',(.052,.066,.086),.32,.40,0),
+        ('black','Optical and connector recess',(.030,.042,.058),.18,.42,0),
         ('gold','Representative MLI outer layer',(.56,.31,.09),.66,.34,0),
         ('goldedge','MLI seams and gold contacts',(.75,.48,.16),.68,.29,0),
         ('foilback','MLI inner layer',(.28,.34,.39),.58,.48,0),
@@ -79,6 +81,49 @@ def ring(name,at,outer,inner,depth,mat,axis='z',segments=48):
     for i in range(segments):
         n=(i+1)%segments;faces.extend([(i,n,n+segments,i+segments),(i+2*segments,i+3*segments,n+3*segments,n+2*segments),(i,i+2*segments,n+2*segments,n),(i+segments,n+segments,n+3*segments,i+3*segments)])
     d=bpy.data.meshes.new(name);d.from_pydata(verts,[],faces);d.update();o=bpy.data.objects.new(name,d);bpy.context.collection.objects.link(o);return finish(o,name,mat,.003)
+def frustum(name,at,z0,z1,r0,r1,thickness,mat,segments=56,axis='z'):
+    """Hollow conical shell along local Z (a flared shade or tapered barrel).
+    Outer radius r0 at z0 and r1 at z1; wall `thickness` is measured inward.
+    axis='x' lays the same shell along X (z0/z1 are then x offsets)."""
+    import bmesh
+    verts=[];n=segments
+    for z,r in [(z0,r0-thickness),(z0,r0),(z1,r1),(z1,r1-thickness)]:
+        for i in range(n):
+            a=i*math.tau/n
+            q=(at[0]+r*math.cos(a),at[1]+r*math.sin(a),at[2]+z) if axis=='z' else (at[0]+z,at[1]+r*math.cos(a),at[2]+r*math.sin(a))
+            verts.append(p(q))
+    faces=[]
+    for k in range(4):
+        for i in range(n):
+            j=(i+1)%n;a=k*n;b=((k+1)%4)*n
+            faces.append((a+i,a+j,b+j,b+i))
+    d=bpy.data.meshes.new(name);d.from_pydata(verts,[],faces);d.update()
+    bm=bmesh.new();bm.from_mesh(d);bmesh.ops.recalc_face_normals(bm,faces=bm.faces);bm.to_mesh(d);bm.free()
+    o=bpy.data.objects.new(name,d);bpy.context.collection.objects.link(o);return finish(o,name,mat,.003)
+def clamp_run(name,points,radius,mat,floor,every=.85,height_min=.02):
+    """Standoff clips under a routed line: a post up from `floor` to the line
+    and a strap over it, spaced along the run. Counts and spacing are as drawn."""
+    pts=[Vector(q) for q in points];made=0
+    for a,b in zip(pts[:-1],pts[1:]):
+        seg=b-a;length=seg.length
+        if length<.3:continue
+        count=max(1,int(length/every))
+        for k in range(count):
+            t=(k+.5)/count;q=a+seg*t;top=q[1]-radius
+            if top-floor<height_min:
+                # line already rests on the surface: strap only
+                post=0
+            else:post=top-floor
+            ang=math.atan2(seg[0],seg[2])
+            w=radius*3.4
+            if post>0:
+                bpy.ops.mesh.primitive_cylinder_add(vertices=12,radius=radius*1.15,depth=post,location=p((q[0],floor+post/2,q[2])))
+                o=bpy.context.object;finish(o,name+' standoff post',mat,.003)
+            strap=box(name+' strap',(q[0],q[1],q[2]),(w,radius*2.7,radius*1.5),mat,.004)
+            strap.rotation_euler.z=ang;made+=1
+            foot=box(name+' clip foot',(q[0],floor+.012,q[2]),(w*1.25,.024,w*1.25),mat,.004)
+            foot.rotation_euler.z=ang
+    return made
 def screw(at,mat,axis='y',r=.027):
     cyl('Captive fastener as drawn',at,r,r*.55,mat,axis,12,.003)
 def foil(name,center,u,v,normal,mat,seed=19):
