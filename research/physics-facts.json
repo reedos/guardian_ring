@@ -818,12 +818,12 @@
             ],
             [
               "nasa-orbit-catalog",
-              "Three Classes of Orbit, opening example (a weather satellite about 36,000 km up, one orbit in 23 h 56 min 4 s; the page does not state 35,786 km); corroborates the calculation"
+              "Introduction, opening example just before the Three Classes of Orbit heading (a weather satellite about 36,000 km up, one orbit in 23 h 56 min 4 s; the page does not state 35,786 km); corroborates the calculation"
             ]
           ]
         }
       ],
-      "section": "Sidereal day in hours, minutes and seconds; NASA Three Classes of Orbit opening example corroborates",
+      "section": "Sidereal day in hours, minutes and seconds; NASA catalog introduction example (just before Three Classes of Orbit) corroborates",
       "scope": "The sidereal day, written in hours, minutes and seconds. General orbital value, not a program parameter."
     },
     {

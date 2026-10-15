@@ -103,7 +103,7 @@ export const STORY_CLAIMS = [
   {
     key: 'story:air-path-reading', group: 'story',
     label: 'Ground light crosses more air than light from hot gas higher up', value: 'More air above a source means more of its plume-band light is absorbed', basis: 'assumed',
-    ev: { assume: 'air-path-reading', refs: [['nasa-rocket-plume-transmittance-2003', 'PDF p. 1, Abstract and Introduction: attenuation by absorption grows along the path (the premise only; the comparison of ground and elevated sources is this site’s reading)']] },
+    ev: { assume: 'air-path-reading', refs: [['nasa-rocket-plume-transmittance-2003', 'PDF p. 1, Abstract (repeated in the Introduction, PDF p. 2): attenuation by absorption grows along the path (the premise only; the comparison of ground and elevated sources is this site’s reading)']] },
     scope: 'This site’s qualitative inference from the path-length result in story:air-absorbs-plume-bands. It is not a finding of the NASA study. No altitude, transmittance value, plume signal or sensor performance is implied.',
   },
   {
