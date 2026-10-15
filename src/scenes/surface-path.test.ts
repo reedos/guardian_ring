@@ -2,13 +2,17 @@ import { describe, expect, it } from 'vitest';
 // @ts-expect-error Node I/O is provided by Vitest; app types are browser-only.
 import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { createSurfacePathClear } from './surface-path.js';
 import { authoredOrbitalPorts } from './orbits.js';
 import { DAY_PLAYBACK_SECONDS } from './orbit-motion.js';
 import { earthClearSegment } from './orbit-presentation.js';
 
+await MeshoptDecoder.ready;
+
 // Decode the actual opaque spacecraft primitives without loading Earth images
 // or requiring a DOM/GPU. Preserve authored faces, material sides, and hierarchy.
+// The file is meshopt-compressed (tools/compress-models.mjs), so each buffer view is decoded first.
 function orbitalAsset() {
   const bytes = readFileSync(new URL('../../public/models/earth-orbits.glb', import.meta.url));
   const jsonLength = bytes.readUInt32LE(12), gltf = JSON.parse(bytes.subarray(20, 20 + jsonLength).toString()), binStart = 28 + jsonLength;
@@ -16,8 +20,11 @@ function orbitalAsset() {
     const accessor = gltf.accessors[index], view = gltf.bufferViews[accessor.bufferView];
     const sizes: Record<string, number> = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4 };
     const types: Record<number, typeof Uint16Array | typeof Uint32Array | typeof Float32Array> = { 5123: Uint16Array, 5125: Uint32Array, 5126: Float32Array };
-    expect(view.byteStride).toBeUndefined();
-    const raw = bytes.subarray(binStart + view.byteOffset + (accessor.byteOffset || 0));
+    const packed = view.extensions?.EXT_meshopt_compression, stored = packed ?? view, begin = binStart + stored.byteOffset;
+    let source = bytes.subarray(begin, begin + stored.byteLength);
+    if (packed) { const target = new Uint8Array(packed.count * packed.byteStride); MeshoptDecoder.decodeGltfBuffer(target, packed.count, packed.byteStride, source, packed.mode, packed.filter); source = target; }
+    else expect(view.byteStride).toBeUndefined();
+    const raw = source.subarray(accessor.byteOffset || 0);
     return new THREE.BufferAttribute(new types[accessor.componentType](raw.buffer, raw.byteOffset, accessor.count * sizes[accessor.type]), sizes[accessor.type]);
   };
   const nodes: THREE.Group[] = gltf.nodes.map((raw: any) => {

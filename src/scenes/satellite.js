@@ -15,7 +15,7 @@ const scene = illustrated({
     reject:{role:'Radiator',kind:'heat',intensity:.18},
     radiate:{role:'Radiator',kind:'radiation',intensity:.16},
   },
-  url:'models/satellite.glb?v=13',
+  url:'models/satellite.glb?v=14',
   camera:{pos:[8,6.5,13.5],target:[0,1.35,.25],min:1.8,max:32},distance:4.2,
   cameraDesktopZoom:.88,
   cameraPhone:{pos:[7.885,6.87,16.643]},

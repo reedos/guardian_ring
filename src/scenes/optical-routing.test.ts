@@ -1,7 +1,7 @@
 import { describe,expect,it } from 'vitest';
 // @ts-expect-error Node I/O is provided by Vitest; the app's TS environment is browser-only.
 import { readFileSync } from 'node:fs';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { gltfLoader } from './gltf-loader.js';
 import { Matrix3,Mesh,Quaternion,Raycaster,Vector3 } from 'three';
 import { MIRROR_DEMONSTRATIONS,OPTICAL_CONNECTIONS,TIRS_REFERENCE_DIRECTIONS } from './optical-routing.js';
 import { createMirrorDemo } from './mirror-demo.js';
@@ -11,7 +11,7 @@ import { mechanismAngle } from './mechanism-pose.js';
 
 const load=async(file:string)=>{
   const b=readFileSync(new URL(`../../public/models/${file}.glb`,import.meta.url));
-  return (await new GLTFLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'' )).scene;
+  return (await gltfLoader().parseAsync(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),'' )).scene;
 };
 
 describe('optical connections and actual authored reflective surfaces',()=>{

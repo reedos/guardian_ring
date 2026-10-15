@@ -5,8 +5,8 @@ import {smooth,between} from '../model/cinematic-physics.js';
 // Reuse the NASA historical Blue Marble texture already packed in the authored
 // Earth GLB. This small software sphere adds no WebGL context or new asset.
 export async function prepareLessonEarth(){
-  await preloadModel('models/earth-orbits.glb?v=6');
-  const root=copyModel('models/earth-orbits.glb?v=6'),earth=root.getObjectByName('earth');
+  await preloadModel('models/earth-orbits.glb?v=7');
+  const root=copyModel('models/earth-orbits.glb?v=7'),earth=root.getObjectByName('earth');
   const material=Array.isArray(earth.material)?earth.material[0]:earth.material,image=material.map.image;
   const map=document.createElement('canvas');map.width=512;map.height=256;
   const mc=map.getContext('2d',{willReadFrequently:true});mc.drawImage(image,0,0,512,256);const pixels=mc.getImageData(0,0,512,256).data;

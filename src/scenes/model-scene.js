@@ -1,7 +1,7 @@
 // Detailed geometry is authored in Blender. This module supplies only loading,
 // product lighting and nonphysical teaching overlays shared by the levels.
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { gltfLoader } from './gltf-loader.js';
 
 const assets = new Map(), progressListeners = new Set();
 // Byte progress for the loading veil. total is 0 when the server sends no length.
@@ -10,7 +10,7 @@ export function preloadModel(url) {
   if (!assets.has(url)) {
     const record = { scene: null, promise: null };
     const progress = event => { for (const listener of progressListeners) listener({ url, loaded: event.loaded || 0, total: event.lengthComputable ? event.total : 0 }); };
-    record.promise = new GLTFLoader().loadAsync(url, progress).then(gltf => { record.scene = gltf.scene; });
+    record.promise = gltfLoader().loadAsync(url, progress).then(gltf => { record.scene = gltf.scene; });
     assets.set(url, record);
     record.promise.catch(() => assets.delete(url));
   }

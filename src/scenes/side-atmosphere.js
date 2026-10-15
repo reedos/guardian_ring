@@ -5,7 +5,7 @@ import { fitComponent } from '../app/component-frame.js';
 const overview={pos:[2.6,3.3,10],target:[.1,1.95,.3],focus:[.1,1.95,.3],detailSize:[4.9,4.1,2.4],minDistance:5};
 const scene=illustrated({
   teaching:'atmosphere',signal:'AnchorCO2',signalRadius:.30,
-  url:'models/atmosphere.glb?v=5',
+  url:'models/atmosphere.glb?v=6',
   camera:{...overview,min:2.5,max:24},distance:6,
   points:{air:'AnchorAir',bands:'AnchorBands',context:'AnchorContext',co2:'AnchorCO2',h2o:'AnchorH2O'},
   markerRegions:{co2:{center:[1.2,2.22,-.08],size:[.9,.4,.4]},h2o:{center:[-1.25,1.2,-.08],size:[.65,.5,.4]}},

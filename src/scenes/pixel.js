@@ -2,7 +2,7 @@ import { illustrated } from './illustrated.js';
 const scene=illustrated({
   teaching:'pixel',signal:'AnchorReadout',absorptionSignal:'AnchorAbsorber',signalRadius:.42,
   phaseHighlights:{absorb:'Absorber',integrate:'Readout'},
-  url:'models/pixel.glb?v=2',
+  url:'models/pixel.glb?v=3',
   camera:{pos:[4.7,3.6,6],target:[0,1.25,0],min:2,max:18},distance:5.5,
   points:{absorber:'AnchorAbsorber',contact:'AnchorContact',readout:'AnchorReadout',bump:'AnchorBump',support:'AnchorSupport',output:'AnchorOutput'},
   views:{
