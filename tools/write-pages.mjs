@@ -210,7 +210,7 @@ const HEAD_ASIDE = {
 };
 function headAside(id) {
   const { still, caption, toc } = HEAD_ASIDE[id];
-  return `<aside class="page-aside"><figure class="page-fig"><img src="look/${still}.webp?v=vis1" width="1600" height="1000" alt="${esc(STILL_ALT[still])}" decoding="async"><figcaption>${esc(caption)}</figcaption></figure><nav class="page-toc" aria-label="On this page"><p class="mini-label">On this page</p><ol>${toc.map(([anchor, title]) => `<li><a href="#${esc(anchor)}">${esc(title)}</a></li>`).join('')}</ol></nav></aside>`;
+  return `<aside class="page-aside"><figure class="page-fig"><img src="look/${still}.webp?v=exp1" width="1600" height="1000" alt="${esc(STILL_ALT[still])}" decoding="async"><figcaption>${esc(caption)}</figcaption></figure><nav class="page-toc" aria-label="On this page"><p class="mini-label">On this page</p><ol>${toc.map(([anchor, title]) => `<li><a href="#${esc(anchor)}">${esc(title)}</a></li>`).join('')}</ol></nav></aside>`;
 }
 const requested = process.argv.slice(2), targets = requested.length ? requested : ['evidence', 'method', 'glossary', 'parts'];
 for (const id of targets) {
