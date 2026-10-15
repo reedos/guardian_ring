@@ -336,6 +336,10 @@ PC, real GPU).
 | `flights.mjs` | 0 camera moves through geometry, both forms |
 | `perf.mjs desktop` / `phone` | inside budget |
 | `links.mjs` | every story-page link lands on its part |
+| `page-weight.mjs` | every page's brotli load and every GLB's gzip size stay inside their budgets; the Earth loop stays opt-in; no third-party host beyond Google Fonts (`research/page-weight.md`) |
+| `robustness.mjs desktop` / `phone` | slow-network loading state, refused first and later model requests (message, Try again, Stay), WebGL context loss and restore, WebGL off, and an out-of-range view link all behave with no uncaught error; captures in `.local/robustness/` |
+| `cross-browser.mjs` | all six pages and all ten levels work in WebKit (iPhone profile and desktop) and Firefox, with context loss and restore; frame times recorded, not budgeted (`research/cross-browser.md`) |
+| `perf-stress.mjs` | a throttled-CPU real-GPU run and a software-GL run: every tier's frame time, and where the governor settles when left free (`research/perf-stress.md`); measurements, not budgets |
 
 `npm run gates` runs 44 serialized browser commands. The activity runs cover all nine hardware scenes ×
 three layers for running, deliberately paused, and reduced-motion states; they also cross natural repeat

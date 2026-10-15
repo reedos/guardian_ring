@@ -2,6 +2,9 @@
 import { runGates } from '../src/explainer-kit/tools/gate-sequence.mjs';
 const gates=[['project-audit','desktop'],['project-audit','phone'],['mission','desktop'],['mission','phone'],['activity','desktop'],['activity','phone'],['navigation','desktop'],['navigation','phone'],['learning','desktop'],['learning','phone'],['cycle'],['parts'],['views','desktop'],['views','phone'],['labels','desktop'],['labels','phone'],['ui','desktop'],['ui','phone'],['coplanar'],['flights','desktop'],['flights','phone'],['govern','desktop'],['govern','phone'],['links'],['perf','desktop'],['perf','phone'],['look'],['pages']];
 gates.unshift(['story-freshness']);
+// Load, reliability and engine checks: weight budgets, forced failures, other engines, then the governor under load (slow, last).
+gates.unshift(['page-weight'],['robustness','desktop'],['robustness','phone'],['cross-browser']);
+gates.push(['perf-stress']);
 gates.unshift(['story-loop']);
 gates.unshift(['audit-layout','desktop'],['audit-layout','phone']);
 gates.unshift(['controls-audit','desktop'],['controls-audit','phone']);
@@ -13,5 +16,5 @@ gates.unshift(['optics','desktop'],['optics','phone']);
 gates.unshift(['cinematics','desktop'],['cinematics','phone']);
 // Surface interaction regressions before the exhaustive scenario matrices.
 // All gates retain their full scope; performance remains at the end.
-const { total, failures } = runGates(gates, { slow: ['cycle', 'parts', 'flights', 'perf'] });
+const { total, failures } = runGates(gates, { slow: ['cycle', 'parts', 'flights', 'perf', 'perf-stress'] });
 console.log(`${total - failures}/${total} gate runs passed.`);process.exitCode = failures ? 1 : 0;
