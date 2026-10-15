@@ -7,6 +7,7 @@ const scene=illustrated({
   mechanisms:[{node:'TIRSSceneSelect',axis:[0,0,1],range:.52,motion:'reference'}],
   url:'models/tirs2.glb?v=9',
   camera:{pos:[12,12,16],target:[.3,.5,.1],min:3,max:38},cameraPhone:{pos:[11.5,13,18.5]},distance:6,
+  cameraDesktopZoom:.92,
   points:{telescope:'AnchorTelescope',arrays:'AnchorArrays',cooling:'AnchorCooling','scene-select':'AnchorSceneSelect',blackbody:'AnchorBlackbody',readout:'AnchorReadout',electronics:'AnchorElectronics',radiator:'AnchorRadiator',filters:'AnchorFilters'},
   views:{
     telescope:{pos:[-.3,6.9,3.6],target:[-2.35,.55,.75],focus:[-2.35,1,.3],detailSize:[2.1,2.2,2.9],minDistance:3.2,labelNodes:['Telescope'],safe:{x0:-.82,x1:.82,y0:-.76,y1:.48}},

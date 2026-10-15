@@ -7,10 +7,10 @@ const PIN_DIRECTIONS = Array.from({length:16},(_,i)=>({x:Math.sin(i*Math.PI/8),y
 // Search is deterministic and bounded; a fully occupied viewport keeps every pin
 // in placements and reports the unsolved IDs instead of silently hiding controls.
 /** @param {{id:string,x:number,y:number}[]} points
- * @param {{width:number,height:number,obstacles?:{left:number,right:number,top:number,bottom:number}[],selected?:string|null}} options
+ * @param {{width:number,height:number,obstacles?:{left:number,right:number,top:number,bottom:number}[],selected?:string|null,separation?:number}} options
  * @returns {{placements:Map<string,{x:number,y:number,ax:number,ay:number}>,unresolved:Set<string>}} */
-export function layoutAnchoredPins(points, {width,height,obstacles=[],selected=null}) {
-  const HALF=14, MARGIN=15, SEPARATION=30, CLEARANCE=4, LIMIT=1024;
+export function layoutAnchoredPins(points, {width,height,obstacles=[],selected=null,separation=30}) {
+  const HALF=14, MARGIN=15, SEPARATION=Math.max(30,separation), CLEARANCE=4, LIMIT=1024;
   const minX=Math.min(MARGIN,width/2),maxX=Math.max(minX,width-MARGIN);
   const minY=Math.min(MARGIN,height/2),maxY=Math.max(minY,height-MARGIN);
   const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));

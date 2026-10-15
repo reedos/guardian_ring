@@ -26,6 +26,11 @@ export function illustrated(config) {
         return anchor.getWorldPosition(new THREE.Vector3()).toArray();
       };
       const camera = {near:.025,far:150,min:2,max:28,...config.camera,...(quality.mobile?config.cameraPhone:{})};
+      // A wide stage has room the phone framing does not: dolly the authored overview in along its own line of sight.
+      if (!quality.mobile && config.cameraDesktopZoom) {
+        const target = new THREE.Vector3(...camera.target);
+        camera.pos = new THREE.Vector3(...camera.pos).sub(target).multiplyScalar(config.cameraDesktopZoom).add(target).toArray();
+      }
       // Surface labels use IF's printed adapter, separate from selectable pins.
       // No catalog numbers or ratings: these name the teaching component roles.
       const labels=[];

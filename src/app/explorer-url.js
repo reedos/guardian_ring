@@ -22,3 +22,23 @@ export function explorerQuery(search, { scene, mode, selected = null, assemblyVi
   else query.delete('follow');
   return query;
 }
+
+/**
+ * A readable deep link: `#/payload`, `#/payload/detector`, `#/payload/heat` or
+ * `#/payload/heat/detector`. A level is its id (`focal-plane`) or its name without
+ * "the". A `?view=` query is the precise form and always wins over this one.
+ * @param {string} hash
+ * @param {string[]} sceneIds
+ * @param {string[]} modes
+ * @returns {{scene: number, mode: string|null, part: string|null} | null}
+ */
+export function viewFromHash(hash, sceneIds, modes = ['light', 'data', 'heat']) {
+  const tokens = String(hash || '').replace(/^#\/?/, '').split('/').map(token => decodeURIComponent(token).trim().toLowerCase()).filter(Boolean);
+  if (!tokens.length || tokens.length > 3) return null;
+  const scene = sceneIds.indexOf(tokens[0].replace(/^the-/, '').replace(/_/g, '-'));
+  if (scene < 0) return null;
+  const rest = tokens.slice(1);
+  const mode = modes.includes(rest[0]) ? rest.shift() : null;
+  if (rest.length > 1) return null;
+  return { scene, mode, part: rest[0] || null };
+}

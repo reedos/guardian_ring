@@ -5,6 +5,7 @@ const scene=illustrated({
   phaseHighlights:{absorb:'DetectorPackage',integrate:'DetectorPackage',digitize:'WarmReadout'},
   url:'models/focal-plane.glb?v=9',
   camera:{pos:[5.7,6.2,8.7],target:[.5,.1,-.35],min:2,max:25},distance:5.2,
+  cameraDesktopZoom:.9,
   cameraPhone:{pos:[7,8.5,13]},
   points:{array:'AnchorArray',readout:'AnchorReadout','cold-stage':'AnchorColdStage',shield:'AnchorShield',flex:'AnchorFlex',carrier:'AnchorCarrier','bias-timing':'AnchorBiasTiming','thermal-feedback':'AnchorThermalFeedback'},
   views:{

@@ -7,6 +7,7 @@ const scene=illustrated({
   mechanisms:MIRROR_DEMONSTRATIONS.abi,
   url:'models/abi.glb?v=10',
   camera:{pos:[12,12,16],target:[.4,.35,.1],min:3,max:38},cameraPhone:{pos:[11.5,13,18.5]},distance:6,
+  cameraDesktopZoom:.92,
   points:{telescope:'AnchorTelescope',bands:'AnchorBands','focal-planes':'AnchorFocalPlanes','scan-system':'AnchorScanSystem',calibration:'AnchorCalibration',readout:'AnchorReadout',controller:'AnchorController',thermal:'AnchorThermal',power:'AnchorPower'},
   views:{
     telescope:{pos:[.5,6.5,3.6],target:[-2.3,.65,.3]},

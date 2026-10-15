@@ -160,3 +160,12 @@ describe('small-screen pin declutter', () => {
     }
   });
 });
+
+describe('layoutAnchoredPins separation', () => {
+  it('keeps a wider gap between pins when asked, and never less than the default marker spacing', () => {
+    const points = [{ id: 'a', x: 200, y: 150 }, { id: 'b', x: 204, y: 152 }, { id: 'c', x: 210, y: 140 }];
+    const gap = (placements: Map<string, { x: number; y: number }>) => Math.min(...[...placements.values()].flatMap((p, i, all) => all.slice(i + 1).map(q => Math.hypot(p.x - q.x, p.y - q.y))));
+    expect(gap(layoutAnchoredPins(points, { width: 400, height: 300, separation: 36 }).placements)).toBeGreaterThanOrEqual(36 - 1e-6);
+    expect(gap(layoutAnchoredPins(points, { width: 400, height: 300, separation: 10 }).placements)).toBeGreaterThanOrEqual(30 - 1e-6);
+  });
+});

@@ -133,7 +133,9 @@ export function build({ quality, model }) {
   const point = featured.geo.position.toArray();
   const camera = { ...orbitalOverviewPose(1000,600), near: .03, far: 120, min: 2.6, max: 25 };
   const make = (positions, rotating = true) => Object.fromEntries(Object.entries(positions).map(([id,pos]) => [id, { pos:[...pos], local:[...pos], rotating, view:{pos:[...camera.pos],target:[...pos]} }]));
-  const hotspots = make({ geo:point, earth:ground, 'orbit-families':[-2,0,.4] });
+  // "Orbit families" rides the drawn GEO ring itself (same radius as the representative spacecraft, left of the Earth disk), not an empty point inside it.
+  const ringRadius = Math.hypot(point[0], point[2]), ringAngle = -.97 * Math.PI;
+  const hotspots = make({ geo:point, earth:ground, 'orbit-families':[ringRadius * Math.cos(ringAngle), 0, ringRadius * Math.sin(ringAngle)] });
   const dataHotspots = make({ processing:point, downlink:point, ground });
   const heatHotspots = make({ sunlight:point, power:point, radiator:point });
   for(const spot of [hotspots.geo,dataHotspots.processing,heatHotspots.power])spot.node=featured.geo;

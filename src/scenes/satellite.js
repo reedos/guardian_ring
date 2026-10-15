@@ -17,6 +17,7 @@ const scene = illustrated({
   },
   url:'models/satellite.glb?v=13',
   camera:{pos:[8,6.5,13.5],target:[0,1.35,.25],min:1.8,max:32},distance:4.2,
+  cameraDesktopZoom:.88,
   cameraPhone:{pos:[7.885,6.87,16.643]},
   points:{instrument:'AnchorPayload',structure:'AnchorBus','solar-array':'AnchorSolarArray','array-drive':'AnchorArrayDrive',power:'AnchorPower',battery:'AnchorBattery',attitude:'AnchorAttitude',wheels:'AnchorWheels',propulsion:'AnchorPropulsion',computer:'AnchorComputer',links:'AnchorAntenna',radiator:'AnchorRadiator'},
   views:{

@@ -22,6 +22,8 @@ An optional guided mission follows GEO and LEO spacecraft above Earth's limb, th
 
 Ten optional “See…” lessons extend the light-focus and scan-mirror demonstrations. Press Play to follow charge conversion, cooling, reaction-wheel pointing, pushbroom imaging, geostationary motion, eclipse power, downlink reconstruction, thermal emission, atmospheric transfer, or calibration. Each lesson advances its own captions and diagrams; rotating the view preserves playback. Evidence and equations are available beneath the animation. [Implementation and independent review](research/CINEMATIC-LESSONS-2026-10-05.md) records the sources, assumptions, and corrections.
 
+Explorer links are readable: `visualizer.html#/payload` opens a level, `#/payload/detector` a part, and `#/payload/heat/thermal` a layer and part. The precise form `?view=<level index>.<layer>.<part>` that Share this view copies takes priority over a fragment. Screen readers hear the selected part and how many other parts are in view each time a flight ends.
+
 **Live site: [The Guardian Ring](https://reedos.dev/guardian_ring/)** · [Open the 3D explorer](https://reedos.dev/guardian_ring/visualizer.html)
 
 Reed authorized public launch on 10/05/2026. Public pages allow search indexing and are linked from [Reedos.dev](https://reedos.dev/#project-gr).

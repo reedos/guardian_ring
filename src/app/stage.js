@@ -13,7 +13,7 @@ import { chip } from '../evidence.js';
 import { renderComponentDetails } from './component-details.js';
 import { createVisitHistory, retainedPart, capturePane, refreshScenarioContent } from './exploration-context.js';
 import { assemblyViewFromQuery } from './explorer-url.js';
-import { followFromQuery } from './explorer-url.js';
+import { followFromQuery, viewFromHash } from './explorer-url.js';
 import { createSceneLook } from './scene-look.js';
 import { onModelProgress } from '../scenes/model-scene.js';
 import * as orbits from '../scenes/orbits.js';
@@ -304,7 +304,9 @@ function updatePins() {
     }
     if(projected.length===8)markerBounds.push({left:Math.min(...projected.map(p=>p.x)),right:Math.max(...projected.map(p=>p.x)),top:Math.min(...projected.map(p=>p.y)),bottom:Math.max(...projected.map(p=>p.y))});
   }
-  const {placements}=layoutAnchoredPins(points,{obstacles:[...printedBounds,...hudBounds,...markerBounds],width,height,selected:ui.selected});
+  const {placements}=layoutAnchoredPins(points,{obstacles:[...printedBounds,...hudBounds,...markerBounds],width,height,selected:ui.selected,
+    // With nothing selected the whole level is on show: give each numbered pin a visible gap so a cluster over the hardware reads as separate pins.
+    separation:ui.selected?30:36});
   for (const point of points) {
     const spot = placements.get(point.id), button = point.button;
     const x = Math.max(13,Math.min(width-13,spot.x)), y = Math.max(13,Math.min(height-13,spot.y));
@@ -429,6 +431,26 @@ export function deselect() {
   emit('select', null);
 }
 // With a part framed, the level title steps back (its plate fades) so it does not cover the geometry being studied.
+// Screen-reader summary of what the camera now shows: the same facts a sighted
+// reader takes from the framing. It waits for the flight to land, and stays quiet
+// while the guided mission narrates in its own live region.
+let announcePending = false;
+const queueViewAnnouncement = () => { announcePending = true; };
+function announceView() {
+  announcePending = false;
+  if (ui.scene < 0 || document.body.classList.contains('mission-active')) return;
+  const node = $('view-announce'), scene = store.C.SCENES[ui.scene], parts = partsFor(ui.scene);
+  if (!node || !scene) return;
+  const inView = new Set([...$('pins').querySelectorAll('button.pin:not([hidden])')].map(button => button.dataset.id));
+  const part = parts.find(candidate => candidate.id === ui.selected);
+  if (part) {
+    const others = parts.filter(candidate => candidate.id !== part.id && inView.has(candidate.id)).length;
+    node.textContent = `${scene.title}, part ${parts.indexOf(part) + 1} of ${parts.length}: ${part.title}. The camera is framed on it${others ? `, with ${others} other numbered part${others === 1 ? '' : 's'} in view` : ', and no other numbered part is in view'}. Its description is in the Parts panel.`;
+  } else {
+    node.textContent = `${scene.title}, overview. ${parts.length} numbered parts, ${inView.size} in view. Choose one from the Part menu, or step with Previous and Next.`;
+  }
+}
+on('select', queueViewAnnouncement); on('scene', queueViewAnnouncement); on('mode', queueViewAnnouncement);
 const syncFramedTitle = () => document.body.classList.toggle('part-framed', !!ui.selected);
 on('select', syncFramedTitle); on('scene-settings', syncFramedTitle);
 export function overview() {
@@ -582,13 +604,34 @@ function govern(now) {
   }
   governorAt = now; frameSamples = []; cpuSamples = [];
 }
+// Without WebGL the stage cannot draw. Say so once, list the six levels as text and
+// link to the pages that need no graphics, instead of leaving loading placeholders.
+function showWithoutWebGL() {
+  document.body.classList.add('no-webgl');
+  $('veil').hidden = true;
+  stageError('The 3D view needs WebGL, which this browser has turned off or does not support. The six levels are listed in the panel, and the story, evidence and method pages work without it.', []);
+  for (const [label, href] of [['Read the story', 'index.html'], ['Evidence', 'evidence.html'], ['Method', 'method.html']]) {
+    const link = document.createElement('a'); link.className = 'btn' + (href === 'index.html' ? ' go' : ''); link.href = href; link.textContent = label; $('stage-error-actions').append(link);
+  }
+  const levels = store.C.SCENES.slice(0, MAIN_LEVELS);
+  $('intro').textContent = 'Six levels, from the whole ring down to a single photon. Each has numbered parts in the 3D view.';
+  $('parts-n').textContent = ` ${levels.length}`;
+  $('lp-k').textContent = '3D view unavailable'; $('lp-t').textContent = 'Levels';
+  $('parts').replaceChildren(...levels.map((scene, index) => {
+    const item = document.createElement('li'), row = document.createElement('div'); row.className = 'parts-text';
+    const number = document.createElement('span'); number.className = 'pn'; number.textContent = String(index + 1);
+    const title = document.createElement('span'); title.className = 'pt'; title.textContent = scene.title;
+    const kicker = document.createElement('span'); kicker.className = 'pk'; kicker.textContent = scene.scale;
+    row.append(number, title, kicker); item.append(row); return item;
+  }));
+}
 export function start() {
   if (started) return; started = true;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
     sceneLook=createSceneLook(renderer);
     const gl = renderer.getContext(), debug = gl.getExtension('WEBGL_debug_renderer_info'); gpu = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
-  } catch { setVeil('WebGL is unavailable. The story, evidence and method pages remain available.'); busy = false; return; }
+  } catch { showWithoutWebGL(); busy = false; return; }
   // A lost GPU context stops drawing. Explain it, and rebuild the lighting
   // environments when the browser restores the context.
   let contextLost = false;
@@ -674,17 +717,26 @@ export function start() {
         emit('scene-settings');
       }
     }
-    built[ui.scene].update(now / 1000); updateOrbitFollow(suspended); tickers.forEach(fn => fn(now / 1000, dt)); updatePins();
+    built[ui.scene].update(now / 1000); updateOrbitFollow(suspended); tickers.forEach(fn => fn(now / 1000, dt)); updatePins(); if(announcePending&&!tween&&!busy)announceView();
     sceneLook.activate(built[ui.scene]);renderer.render(built[ui.scene].scene, camera);
     const cpu = performance.now() - cpuStart; if (dt < .25) { frameSamples.push(dt * 1000); cpuSamples.push(cpu); }
     frameObservers.forEach(fn => fn({ frame: dt * 1000, cpu })); govern(now);
   });
-  const [level, mode, part] = (new URLSearchParams(location.search).get('view') || '').split('.');
+  let [level, mode, part] = (new URLSearchParams(location.search).get('view') || '').split('.');
+  if (!(/^\d$/.test(level) && modes.includes(mode))) {
+    // A readable fragment such as #/payload/detector opens that level and part.
+    const linked = viewFromHash(location.hash, store.C.SCENES.map(scene => scene.id), modes);
+    if (linked) {
+      const linkedMode = linked.mode || 'light', known = partsFor(linked.scene, linkedMode).some(candidate => candidate.id === linked.part);
+      [level, mode, part] = [String(linked.scene), linkedMode, known ? linked.part : undefined];
+    }
+  }
   const sharedAssemblyView = assemblyViewFromQuery(location.search);
   const sharedFollow = followFromQuery(location.search);
   if (/^\d$/.test(level) && modes.includes(mode)) {
     ui.mode=mode;
-    const opening=part?show({scene:Number(level),mode,part}):go(Number(level),{record:false});
+    // A linked part opens with its description beside it, not far down the panel.
+    const opening=part?show({scene:Number(level),mode,part},{scroll:true}):go(Number(level),{record:false});
     void opening.then(() => {
       if (ui.scene !== Number(level) || ui.mode !== mode) return;
       setMode(mode,{activity:false});
@@ -701,7 +753,7 @@ export function start() {
       }
       if(!part&&Number(level)===0&&sharedFollow)setOrbitFollow(sharedFollow);
       else if(!part&&!sharedAssemblyView)previewActivity();
-    });
+    }).catch(() => {});   // go() already shows its message and a Try again action
   }
-  else void go(0);
+  else void go(0).catch(() => {});
 }

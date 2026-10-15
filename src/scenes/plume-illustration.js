@@ -79,7 +79,8 @@ export function createPlumeIllustration({scene,asset,paths,hotspots,dataHotspots
     pins.co2.markerRegion={center:[2.5,1.45,.3],size:[.91,.49,.43]};
     pins.h2o.markerRegion={center:[2.5,.48,.3],size:[.82,.56,.43]};
   }
-  hotspots.timeline.pos.splice(0,3,2.675,4.275,.7825);
+  // The light-layer "Radiation paths" pin rides the outer end of the upper drawn emission line (the one from the CO2 diagram to [3.6,1.8,.6]) instead of floating in empty space.
+  hotspots.timeline.pos.splice(0,3,3.55,1.78,.6);
   let lastKey='';
   return {head,ground,atmosphere,update(state,mode){
     const pose=plumePose(state),key=[pose.height,pose.fade,pose.phase,mode].join(':');

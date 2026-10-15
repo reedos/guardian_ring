@@ -16,6 +16,7 @@ const scene=illustrated({
   lessonNote:'Illustrative event. The antenna demonstrates a pointing adjustment, not a real satellite track. Abstract tiles and the final ALERT demonstrate received data, processing, and notification. They are not a real event, site, operational timeline, threshold, sensor format, or detection performance.',
   url:'models/ground.glb?v=5',
   camera:{pos:[9.5,8.5,13],target:[0,.9,1.15],min:3,max:34},
+  cameraDesktopZoom:.92,
   cameraPhone:{pos:[10,9.38,14.63]},distance:7,
   points:{receive:'AnchorReceive',process:'AnchorProcess',operations:'AnchorOperations',receiver:'AnchorReceiver',archive:'AnchorArchive',power:'AnchorPower'},
   views:{

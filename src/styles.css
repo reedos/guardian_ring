@@ -1649,3 +1649,18 @@ button.chip:focus-visible:not(#_) { outline-width: 2px; }
 .mission-tour .btn, .animation-controls .btn, .orbit-playback .btn { justify-content: center; text-align: center; }
 .mission-transport .btn, .mission-step-controls .btn { flex: 1 1 auto; min-width: 88px; min-height: 40px; padding-inline: 14px; font-size: 11px; letter-spacing: .1em; }
 .mission-prompt .btn { justify-content: center; }
+
+/* Explorer round 1: the tour can always be left from its own card. */
+.mission-skip { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin: 6px 0 10px; min-height: 40px; background: transparent; border-color: color-mix(in srgb, var(--accent) 55%, transparent); color: var(--accent); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+.mission-skip:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.mission-skip kbd { font: 600 10px/1 var(--mono); letter-spacing: .06em; padding: 3px 5px; border: 1px solid currentColor; border-radius: 3px; opacity: .85; }
+@media (pointer: coarse) { .mission-skip kbd { display: none; } }
+body.app.stage-priority .mission-skip { order: -1; }
+@media (max-width: 760px) { .mission-skip { min-height: 44px; font-size: 12px; } }
+
+/* Explorer round 1: no WebGL. Drop the loading placeholders and every control that needs the 3D view. */
+body.no-webgl #learning-question:empty, body.no-webgl #learning-takeaway:empty { display: none; }
+body.no-webgl:not(#_) :is(.mission-tour, .toprow, #hud-btns, .part-transport, #orbit-controls, .hud.tr, .hud.bl, #animation-controls, #try-it, #learning-guide, #intro-more, .pane-sum, .view-part) { display: none; }
+body.no-webgl .parts .parts-text { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 2px 10px; padding: 8px 4px; align-items: baseline; }
+body.no-webgl .parts .parts-text .pk { grid-column: 2; color: var(--muted); font: 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+body.no-webgl .stage-error a.btn { display: inline-flex; align-items: center; text-decoration: none; }

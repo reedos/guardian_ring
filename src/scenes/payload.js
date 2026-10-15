@@ -17,8 +17,8 @@ const scene=illustrated({
   points:{optics:'AnchorOptics',baffles:'AnchorBaffles',detector:'AnchorDetector',readout:'AnchorReadout',digitizer:'AnchorDigitizer',controller:'AnchorController',thermal:'AnchorThermal','scan-system':'AnchorScanSystem',mechanisms:'AnchorMechanisms',calibration:'AnchorCalibration','aft-optics':'AnchorAftOptics','data-interface':'AnchorDataInterface',power:'AnchorPower'},
   views:{
     optics:{pos:[1.8,2.8,4.4],target:[-1.2,.2,-.15]},
-    baffles:{pos:[-.2,2.8,4.9],target:[-1.65,.45,1.45]},
-    detector:{pos:[1.54,4.26,-6.27],target:[-1.1,-.30,-3.47]},   // pulled back 20% along the same line of sight; the dark housing now has room around it
+    baffles:{pos:[.24,3.5,5.94],target:[-1.65,.45,1.45]},
+    detector:{pos:[1.8,4.72,-6.55],target:[-1.1,-.30,-3.47]},   // pulled back 20%, then another 10%, along the same line of sight: the dark housing and its neighbours stay in frame
     readout:{pos:[.6,3.5,2.3],target:[.99,-.96,-.65]},
     digitizer:{pos:[2.5,3.5,2.3],target:[2.28,-.96,-.65]},
     controller:{pos:[4.1,4.0,2.7],target:[4.13,-.96,-.43]},

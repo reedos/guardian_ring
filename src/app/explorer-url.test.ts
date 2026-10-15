@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assemblyViewFromQuery, explorerQuery, followFromQuery } from './explorer-url.js';
+import { assemblyViewFromQuery, explorerQuery, followFromQuery, viewFromHash } from './explorer-url.js';
 
 describe('shared enclosure views', () => {
   it('retains a supported orbital follow view without leaking it to other scenes',()=>{
@@ -37,4 +37,17 @@ describe('shared enclosure views', () => {
   it.each(['?view=2.light', '?view=2.data.controller', '?view=2.light&assembly=exploded', '?assembly=INSIDE'])('leaves default behavior intact for %s', search => {
     expect(assemblyViewFromQuery(search)).toBeNull();
   });
+});
+
+describe('readable deep links', () => {
+  const ids = ['orbits', 'satellite', 'payload', 'focal-plane', 'pixel', 'plume', 'ground', 'abi', 'tirs2', 'atmosphere'];
+  it.each([
+    ['#/payload', { scene: 2, mode: null, part: null }],
+    ['#payload', { scene: 2, mode: null, part: null }],
+    ['#/payload/detector', { scene: 2, mode: null, part: 'detector' }],
+    ['#/payload/heat', { scene: 2, mode: 'heat', part: null }],
+    ['#/Focal-Plane/data/readout', { scene: 3, mode: 'data', part: 'readout' }],
+    ['#/the-ring'.replace('ring', 'pixel'), { scene: 4, mode: null, part: null }],
+  ])('reads %s', (hash, expected) => expect(viewFromHash(hash, ids)).toEqual(expected));
+  it.each(['', '#', '#/nowhere', '#/payload/light/detector/extra', '#detector', '#/payload/a/b'])('ignores %s', hash => expect(viewFromHash(hash, ids)).toBeNull());
 });
