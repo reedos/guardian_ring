@@ -90,10 +90,15 @@ export function createSceneLook(renderer, { environmentFactory = null } = {}) {
       if (environmentFactory) target = environmentFactory(kind, size);
       else {
         const source = reflectionScene(kind);
+        // three's own GGX-convolution shader makes ANGLE/D3D11 print X4122 double-precision
+        // notes (harmless, in code this app does not author). Skip the link-log readout for
+        // those built-in PMREM programs only; every shader this app compiles stays checked.
+        const debug = renderer.debug, checked = debug?.checkShaderErrors;
         try {
+          if (debug) debug.checkShaderErrors = false;
           pmrem ||= new THREE.PMREMGenerator(renderer);
           target = pmrem.fromScene(source, .04, .1, 100, { size });
-        } finally { disposeCapture(source); }
+        } finally { if (debug) debug.checkShaderErrors = checked; disposeCapture(source); }
       }
       cache.set(key, target);
     }
@@ -123,7 +128,10 @@ export function createSceneLook(renderer, { environmentFactory = null } = {}) {
       renderer.toneMappingExposure = built.scene.userData.sceneLook?.exposure ?? built.look?.exposure ?? 1;
       if(renderer.shadowMap){renderer.shadowMap.enabled=!!built.look?.shadows;renderer.shadowMap.type=THREE.PCFShadowMap;}
     },
-    dispose() {
+    // After a lost WebGL context the old render targets are already gone from the GPU, and disposing them would make
+    // three send deletes for handles from the dead context (INVALID_OPERATION in the console). Pass contextLost to drop
+    // them without that.
+    dispose({ contextLost = false } = {}) {
       if (disposed) return;
       disposed = true;
       for (const [scene, original] of originals) {
@@ -131,8 +139,8 @@ export function createSceneLook(renderer, { environmentFactory = null } = {}) {
         for (const { light, intensity } of original.lights) light.intensity = intensity;
         delete scene.userData.sceneLook;
       }
-      for (const target of cache.values()) target.dispose();
-      cache.clear(); originals.clear(); pmrem?.dispose();
+      if (!contextLost) for (const target of cache.values()) target.dispose();
+      cache.clear(); originals.clear(); if (!contextLost) pmrem?.dispose(); pmrem = null;
       renderer.toneMappingExposure = initialExposure;
       if(initialShadows)Object.assign(renderer.shadowMap,initialShadows);
     },

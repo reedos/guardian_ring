@@ -20,7 +20,17 @@ export function mountSceneKey(){
   const dock=document.createElement('div');dock.className='compact-scene-key';dock.hidden=true;view.after(dock);
   dock.hidden=false;dock.append(note,legend);
   const phase=document.querySelector('.animation-step');if(phase)dock.prepend(phase);
-  const keySize=new ResizeObserver(()=>document.body.style.setProperty('--scene-key-height',`${dock.getBoundingClientRect().height}px`));
+  // The key's height resizes the stage, which an observer callback must not do in the same frame: WebKit reports
+  // that as a ResizeObserver loop error. Write the variable on the next frame, and only when the height changed.
+  let keyFrame=0,keyHeight=-1;
+  const keySize=new ResizeObserver(()=>{
+    if(keyFrame)return;
+    keyFrame=requestAnimationFrame(()=>{
+      keyFrame=0;const height=dock.getBoundingClientRect().height;
+      if(Math.abs(height-keyHeight)<.01)return;
+      keyHeight=height;document.body.style.setProperty('--scene-key-height',`${height}px`);
+    });
+  });
   keySize.observe(dock);
   let previous='';
   const sync=()=>{

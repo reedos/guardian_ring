@@ -2,7 +2,7 @@ import { store, on, emit } from './store.js';
 import { learningFor } from '../learning-content.js';
 import { LEARNING_EXAMPLES } from '../learning-examples.js';
 import { chip } from '../evidence.js';
-import { go, backOut, isSide } from './stage.js';
+import { visit, backOut, isSide } from './stage.js';
 
 const host = document.getElementById('learning-guide');
 const next = document.getElementById('learning-next');
@@ -18,7 +18,7 @@ export function syncLearning() {
   const nextIndex = store.C.SCENES.findIndex(item => item.id === lesson.next);
   next.hidden = nextIndex < 0 && !isSide(store.ui.scene);
   next.textContent = isSide(store.ui.scene) ? 'Return to your exploration →' : nextIndex >= 0 ? `Next level: ${store.C.SCENES[nextIndex].title.replace(/^The /, 'the ')} →` : '';
-  next.onclick = () => { void (isSide(store.ui.scene) ? backOut() : go(nextIndex)); };
+  next.onclick = () => { void (isSide(store.ui.scene) ? backOut().catch(() => {}) : visit(nextIndex)); };
   host.dataset.scene = scene.id;
   host.querySelector('.learning-example')?.remove();
   const example = LEARNING_EXAMPLES[scene.id];

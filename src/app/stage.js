@@ -413,7 +413,7 @@ export function select(id, fly = true, { reveal = true } = {}) {
   const next = store.C.SCENES[part.drill];
   $('card-drill').hidden = !next?.ready;
   $('card-drill').textContent = next ? `Explore ${next.title.replace(/^The /,'the ')} →` : '';
-  $('card-drill').onclick = () => void go(part.drill);
+  $('card-drill').onclick = () => void visit(part.drill);
   document.querySelectorAll('#parts button, #pins button').forEach(button => {
     const active = button.dataset.id === id;
     button.setAttribute('aria-pressed',String(active));
@@ -583,6 +583,9 @@ export async function go(index, { record = true, restore = null, owner = null, r
 // Preserve the test hook's default-first-part contract. Normal level navigation
 // uses go(), which opens an honest unselected overview.
 export async function show({ scene = ui.scene, mode = ui.mode, part = null }, { scroll = false } = {}) { if (modes.includes(mode)) ui.mode = mode; await go(scene, { record: false, activity:false }); setMode(mode,{activity:false}); select(part||partsFor(ui.scene)[0]?.id, true, { reveal: scroll });emit('pane-request',{pane:'parts',reset:!scroll,expand:true}); }
+// Navigation from a click or key: go() already shows its own message and a Try again action when a level
+// cannot load, so the rejection it also raises for awaiting callers must not escape as an unhandled one.
+export const visit = (...args) => go(...args).catch(() => {});
 export async function backOut() { const origin = visits.back(); await go(origin?.scene ?? 0, { record: false, restore: origin }); }
 on('scenario', () => {
   if (!started) return;
@@ -594,8 +597,13 @@ on('scenario', () => {
   emit('scene-settings');
 });
 function median(values) { const sorted = [...values].sort((a, b) => a - b); return sorted[Math.floor(sorted.length / 2)] || 0; }
+// A frame longer than a second is a hidden tab or a stall, not rendering pressure; anything faster counts, so a
+// device drawing only a few frames per second still reaches the lower tiers. Such slow frames take long to
+// accumulate, so eight of them over four seconds are enough to judge.
+const FRAME_SAMPLE_CAP = 1;
 function govern(now) {
-  if (now - governorAt < 2000 || frameSamples.length < 30) return;
+  const slowEnough = frameSamples.length >= 8 && now - governorAt >= 4000;
+  if (now - governorAt < 2000 || (frameSamples.length < 30 && !slowEnough)) return;
   judged = { frame: median(frameSamples), cpu: median(cpuSamples), gpu: null };
   if (preference !== 'max' && !held.has(ui.scene)) {
     const pressure = qualityPressure(judged), floor = preference === 'laptop' ? 4 : 0;
@@ -625,8 +633,19 @@ function showWithoutWebGL() {
     row.append(number, title, kicker); item.append(row); return item;
   }));
 }
+// three logs console errors when it cannot create a context. Ask a throwaway canvas first, so a browser with
+// WebGL off goes straight to the text fallback without that noise.
+function webglAvailable() {
+  try {
+    const gl = document.createElement('canvas').getContext('webgl2');
+    if (!gl) return false;
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return true;
+  } catch { return false; }
+}
 export function start() {
   if (started) return; started = true;
+  if (!webglAvailable()) { showWithoutWebGL(); busy = false; return; }
   try {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
     sceneLook=createSceneLook(renderer);
@@ -643,7 +662,7 @@ export function start() {
   });
   canvas.addEventListener('webglcontextrestored', () => {
     contextLost = false;
-    sceneLook.dispose(); sceneLook = createSceneLook(renderer);
+    sceneLook.dispose({ contextLost: true }); sceneLook = createSceneLook(renderer);
     built.forEach((scene, i) => { if (scene) sceneLook.apply(scene, { sceneId: store.C.SCENES[i].id, tier: tiers[i] }); });
     $('stage-error').hidden = true; resize();
   });
@@ -659,11 +678,11 @@ export function start() {
     const item = document.createElement('button'); item.type = 'button'; item.className = 'lm-item'; item.dataset.level = String(index);
     item.innerHTML = `<span class="n">${index < MAIN_LEVELS ? index + 1 : '↳'}</span><span class="t"></span><span class="meta"></span>`;
     item.querySelector('.t').textContent = scene.title; item.querySelector('.meta').textContent = scene.scale;
-    item.addEventListener('click', () => void go(index)); (index < MAIN_LEVELS ? mainLevels : sideLevels).append(item);
-    if (index < MAIN_LEVELS) { button.addEventListener('click', () => void go(index)); $('steps').append(button); }
+    item.addEventListener('click', () => void visit(index)); (index < MAIN_LEVELS ? mainLevels : sideLevels).append(item);
+    if (index < MAIN_LEVELS) { button.addEventListener('click', () => void visit(index)); $('steps').append(button); }
   });
   document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => setMode(button.dataset.mode)));
-  $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('back-out').addEventListener('click', backOut);
+  $('card-prev').addEventListener('click', () => cycle(-1)); $('card-next').addEventListener('click', () => cycle(1)); $('back-out').addEventListener('click', () => void backOut().catch(() => {}));
   $('quality').addEventListener('change', event => setQualityPreference(event.target.value));
   controls.addEventListener('start', () => {
     // OrbitControls emits this for rotate, pan, pinch, and wheel zoom. None is
@@ -692,7 +711,7 @@ export function start() {
     if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
     const target = event.target instanceof Element ? event.target : null;
     if (!stageActive() || target?.closest('input, select, textarea, [contenteditable="true"], [role="tablist"], [role="dialog"], button, a[href], summary')) return;
-    if (/^[1-6]$/.test(event.key)) void go(Number(event.key) - 1);
+    if (/^[1-6]$/.test(event.key)) void visit(Number(event.key) - 1);
     else if (['l', 'd', 'h'].includes(event.key.toLowerCase())) setMode({ l: 'light', d: 'data', h: 'heat' }[event.key.toLowerCase()]);
     else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); cycle(event.key === 'ArrowLeft' ? -1 : 1); }
   });
@@ -719,7 +738,7 @@ export function start() {
     }
     built[ui.scene].update(now / 1000); updateOrbitFollow(suspended); tickers.forEach(fn => fn(now / 1000, dt)); updatePins(); if(announcePending&&!tween&&!busy)announceView();
     sceneLook.activate(built[ui.scene]);renderer.render(built[ui.scene].scene, camera);
-    const cpu = performance.now() - cpuStart; if (dt < .25) { frameSamples.push(dt * 1000); cpuSamples.push(cpu); }
+    const cpu = performance.now() - cpuStart; if (dt < FRAME_SAMPLE_CAP) { frameSamples.push(dt * 1000); cpuSamples.push(cpu); }
     frameObservers.forEach(fn => fn({ frame: dt * 1000, cpu })); govern(now);
   });
   let [level, mode, part] = (new URLSearchParams(location.search).get('view') || '').split('.');

@@ -3,7 +3,7 @@ import { store, setScenario, pin, on } from './store.js';
 import { renderMath } from './math-view.js';
 import { renderComparison, scenarioSummary } from './comparison.js';
 import { learningFor } from '../learning-content.js';
-import { go, setMode, select } from './stage.js';
+import { visit, setMode, select } from './stage.js';
 const root = document.getElementById('scenario-controls');
 const labels = { orbit: 'Orbit geometry', aperture: 'Optics example', band: 'Teaching wavelength interval', detector: 'Detector reference topic' };
 const notes = {
@@ -33,7 +33,7 @@ for (const key of ['orbit', 'band', 'aperture', 'detector']) {
   group.append(label, segment, note);
   if (key === 'detector') {
     const link = document.createElement('a'); link.href = 'visualizer.html?view=8.light.arrays'; link.textContent = 'Explore the published TIRS-2 detector →';
-    link.addEventListener('click', async event => { event.preventDefault(); await go(8); if (store.ui.scene === 8) { setMode('light'); select('arrays'); } });
+    link.addEventListener('click', async event => { event.preventDefault(); await visit(8); if (store.ui.scene === 8) { setMode('light'); select('arrays'); } });
     group.append(link);
   }
   root.append(group);

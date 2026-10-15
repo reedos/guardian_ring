@@ -88,6 +88,14 @@ describe('cached scene lighting', () => {
     finish.activate(second.built); expect(renderer.toneMappingExposure).toBe(1.1);
   });
 
+  it('drops the old targets without disposing them after a lost context', () => {
+    const { finish, captures } = harness(), first = fixture();
+    finish.apply(first.built, { sceneId: 'satellite', tier: 0 });
+    finish.dispose({ contextLost: true });
+    expect(captures.length).toBeGreaterThan(0);
+    for (const target of captures) expect(target.dispose).not.toHaveBeenCalled();
+    expect(() => finish.apply(first.built)).toThrow(/disposed/);
+  });
   it('restores original scene state and disposes each shared target only once', () => {
     const { finish, renderer, captures } = harness(), first = fixture(), second = fixture();
     const original = new Texture(); first.scene.environment = original; first.scene.environmentIntensity = .28;
