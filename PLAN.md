@@ -170,9 +170,13 @@ filters, readout integrated circuits, the cryocooler head.
 - **Civil twin: GOES-R ABI.** The published sensor in detail: 16 bands, scan cadence (full disk every
   10 min, CONUS every 5 min, mesoscale every 30 to 60 s), telescope, focal planes, cryocooler, with
   figures from the GOES-R Series Data Book.
-- **Civil twin: Landsat 9 TIRS-2.** QWIP arrays of 640 detectors, 1,850 effective pixels across a 185 km
-  swath at 100 m, bands 10.6 to 11.2 and 11.5 to 12.5 µm, a two-stage cryocooler holding 43 K, f/1.64
-  refractive telescope with a 15° field of view (all from `landsat9-tirs2-nasa`).
+- **Civil twin: Landsat 9 TIRS-2.** QWIP arrays of 640 × 512 pixels, 1,850 effective pixels across a 185 km
+  swath at 100 m, a two-stage cryocooler holding 43 K, an f/1.64 four-element refractive telescope with a 15°
+  field of view. Sources are split by what each page covers: the 640 × 512 format, the 1,850 detectors and the 15°
+  field of view are from the TIRS-2 spectral-test paper (`nasa-tirs2-spectral`, PDF p. 1); the swath, 100 m, f/1.64,
+  43 K and 185 K are from NASA's TIRS-2 build article (`nasa-tirs2-build`); bands 10.6 to 11.2 and 11.5 to 12.5 µm
+  are from NASA's TIRS page (`landsat9-tirs2-nasa`), which describes TIRS generally and gives no separate TIRS-2
+  figures.
 - **The atmosphere.** A column of air with the absorption bands drawn as layers; why "see-to-ground"
   bands and "above-the-horizon" bands exist.
 
@@ -275,7 +279,7 @@ page plus one 3D still per main level, in IF's tokens.
 4. `focal-plane.glb`: sensor chip assemblies on a cold plate, flex leads, cryocooler head, thermal straps.
 5. `pixel.glb`: one detector element cross-section (absorber, contact, indium bump, readout cell).
 6. `ground-ops.glb`: representative operations floor and an antenna farm.
-7. `abi-twin.glb` and `tirs2-twin.glb`: the civil sensors, dimensioned from their published documents.
+7. `abi-twin.glb` and `tirs2-twin.glb`: the civil sensors drawn as representative, not-to-scale hardware. Only the cited figures (bands, cadence, element count, temperatures) come from their published documents; no part is dimensioned from them.
 
 ## 8. Architecture
 

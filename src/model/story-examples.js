@@ -46,6 +46,12 @@ export function orbitRow(id) {
   };
 }
 
+/** Geostationary orbit worked out from the sidereal day alone (Kepler's third law), the check beside the NOAA and NASA definitions. */
+export function geoFromSiderealDay() {
+  const radiusM = semiMajorAxisMeters(SIDEREAL_DAY_SECONDS);
+  return { siderealDaySeconds: SIDEREAL_DAY_SECONDS, radiusM, altitudeKm: (radiusM - EARTH_EQUATORIAL_RADIUS_M) / 1000, earthRadiusKm: EARTH_EQUATORIAL_RADIUS_M / 1000 };
+}
+
 export function geoViewAngles() {
   const radiusM = orbitRow('geo').radiusM;
   return {
@@ -79,6 +85,11 @@ export function storyNumbers() {
     out[`orbit:${id}:share`] = row.text.share;
     out[`orbit:${id}:light`] = row.text.light;
   }
+  const check = geoFromSiderealDay();
+  out['geo:check:sidereal'] = `${group(check.siderealDaySeconds)} s`;
+  out['geo:check:radius'] = `${group(check.radiusM / 1000)} km`;
+  out['geo:check:earth'] = `${group(check.earthRadiusKm)} km`;
+  out['geo:check:altitude'] = `${group(check.altitudeKm)} km`;
   const view = geoViewAngles();
   for (const { lat, elevationDeg } of view.elevations) out[`geo:elevation:${lat}`] = `${Math.round(elevationDeg)}°`;
   out['geo:limb'] = `${Math.round(view.limbDeg)}°`;

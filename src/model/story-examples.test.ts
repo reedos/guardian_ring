@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { compute } from './engine';
 import { EARTH_EQUATORIAL_RADIUS_M as R, elevationAboveHorizonDegrees, horizonCentralAngleDegrees, visibleSurfaceFraction } from './orbits';
-import { ORBIT_ROWS, contrastExample, geoViewAngles, orbitRow, storyNumbers, toyPixel, GROUND_K, HOT_GAS_K } from './story-examples';
+import { ORBIT_ROWS, contrastExample, geoFromSiderealDay, geoViewAngles, orbitRow, storyNumbers, toyPixel, GROUND_K, HOT_GAS_K } from './story-examples';
 
 const h = 6.62607015e-34, c = 299792458, k = 1.380649e-23;
 const relative = (actual: number, expected: number, tolerance = 1e-9) =>
@@ -105,5 +105,21 @@ describe('story page figures', () => {
   it('prints every orbit-table and contrast figure at least once', () => {
     const keys = new Set(printed.map(([key]) => key));
     for (const key of Object.keys(expected)) if (/^(orbit|contrast|pixel|geo):/.test(key)) expect(keys.has(key), `index.html does not print ${key}`).toBe(true);
+  });
+});
+
+describe('geostationary check from the sidereal day', () => {
+  it('recovers the 35,786 km altitude and the circumference without the NOAA figure as an input', () => {
+    const check = geoFromSiderealDay(), GM = 398600.435507e9;
+    // Independent route: circular speed from v = sqrt(GM / r); one lap at that speed takes the sidereal day exactly.
+    const speed = Math.sqrt(GM / check.radiusM);
+    relative(2 * Math.PI * check.radiusM / speed, check.siderealDaySeconds, 1e-12);
+    expect(Math.round(check.altitudeKm)).toBe(35786);
+    // The altitude the explorer uses (NOAA's reference value) agrees to within a kilometer.
+    expect(Math.abs(check.altitudeKm - orbitRow('geo').altitudeKm)).toBeLessThan(1);
+  });
+  it('writes the sidereal day as 23 h 56 min 4 s', () => {
+    const s = geoFromSiderealDay().siderealDaySeconds, h = Math.floor(s / 3600), m = Math.floor((s - h * 3600) / 60);
+    expect([h, m, Math.floor(s - h * 3600 - m * 60)]).toEqual([23, 56, 4]);
   });
 });

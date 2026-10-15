@@ -63,6 +63,11 @@ export const MODEL_CALCS = {
     title: 'Two-body orbital period', how: 'T = 2π√(a³/μ), where a is the ellipse’s semi-major axis (the center-to-center radius for a circular orbit). The satellite mass is neglected. GEO uses the public reference altitude; other choices use the stated teaching geometry. Earth is treated as spherical; perturbations are omitted.',
     inputs: ['semi-major axis', 'Earth GM from NASA/JPL', 'model-orbits assumption'],
   },
+  'geo-sidereal-kepler': {
+    title: 'Geostationary orbit from the sidereal day',
+    how: 'A satellite that stays over one point must go around once per sidereal day, T = 86,164.09 s, the time Earth takes to turn once relative to the stars. That is 23 h 56 min 4 s. Kepler’s third law, a = (μT²/4π²)^(1/3), then gives the orbit radius, 42,164 km from Earth’s center; subtracting the equatorial radius, 6,378 km, gives the altitude, 35,786 km. Circular, equatorial orbit around a spherical Earth, satellite mass neglected, perturbations omitted. NOAA gives the same altitude and NASA gives the same period, so those pages corroborate the result.',
+    inputs: ['mean sidereal day from NASA/JPL', 'Earth GM from NASA/JPL', 'Earth equatorial radius from NASA', 'NASA Kepler’s third law, Eq. 4'],
+  },
   'orbit-speed': {
     title: 'Two-body orbital speed',
     how: 'v = √[μ(2/r − 1/a)], where r is distance from Earth’s center and a is the semi-major axis. The result is an Earth-centered inertial speed, not speed over the rotating ground. A circle has r = a and v = √(μ/r). HEO is evaluated at apogee, r = a(1 + e). The calculation uses the physical teaching orbit, never the compressed drawing coordinates. Gravity is the only modeled acceleration; perturbations and maneuvers are omitted.',
@@ -146,6 +151,10 @@ export const MODEL_ASSUMPTIONS = {
   'model-orbits': {
     title: 'General orbit examples', value: 'A spherical Earth and negligible satellite mass',
     why: 'The sphere uses the published equatorial radius, 6,378.137 km. GEO uses a 35,786 km circular reference altitude. HEO is a teaching ellipse with period one half of the published sidereal day and eccentricity 0.722, evaluated at apogee. MEO and LEO are arbitrary circular examples at 20,000 km and 1,000 km. These are not program or spacecraft orbital parameters, and no constellation is computed.',
+  },
+  'air-path-reading': {
+    title: 'Qualitative reading of the path-length result', value: 'More air above a source means more of its light is absorbed in the plume bands',
+    why: 'The NASA Stennis study measured absorption along near-ground test-stand paths and found the loss grows with path length. Reading that as “light from the ground crosses more air than light from hot gas higher up” is this site’s own teaching inference, not a finding of the study. It assigns no altitude, transmittance, plume signal or sensor performance, and the diagram is drawn without numbers.',
   },
   'model-nadir': {
     title: 'Reference distance', value: 'The surface point directly below the illustrated orbit position',

@@ -33,12 +33,12 @@ const claimRows = renderClaimRows(registry);
 
 const sourceRecords = Object.entries(SOURCES).map(([id, source]) => {
   const verified = source.status === 'verified' && !source.unchecked;
-  return `<article class="source ${verified ? '' : 'unchecked'}" id="source-${esc(id)}" data-source-key="${esc(id)}" data-search="${esc([id, source.title, source.publisher, source.status, source.unchecked].join(' ').toLowerCase())}"><p class="kicker">${verified ? 'Verified public source' : 'Unchecked · not cited'}</p><h3>${esc(source.title || id)}</h3><p>${esc(source.publisher || 'Publisher not established')} · ${esc(source.published || source.dated || 'Publication date not established')} · ${verified ? 'Checked' : 'Attempted'} ${esc(source.accessed || source.attempted || 'Date not recorded')}</p>${verified ? `${source.section ? `<p>${esc(source.section)}</p>` : ''}<a href="${esc(source.url)}" rel="noopener noreferrer" target="_blank">Open source ↗</a>` : `<p>${esc(source.unchecked || 'The source has not been verified and cannot support a claim.')}</p>`}</article>`;
+  return `<article class="source ${verified ? '' : 'unchecked'}" id="source-${esc(id)}" data-source-key="${esc(id)}" data-search="${esc([id, source.title, source.publisher, source.status, source.unchecked].join(' ').toLowerCase())}"><p class="kicker">${verified ? 'Verified public source' : 'Unchecked · not cited'}</p><h3>${esc(source.title || id)}</h3><p>${esc(source.publisher || 'Publisher not established')} · ${esc(source.published || source.dated || 'Publication date not established')} · ${verified ? 'Checked' : 'Attempted'} ${esc(source.accessed || source.attempted || 'Date not recorded')}</p>${verified ? `${source.section ? `<p>${esc(source.section)}</p>` : ''}${source.access ? `<p>${esc(source.access)}</p>` : ''}<a href="${esc(source.url)}" rel="noopener noreferrer" target="_blank">Open source ↗</a>` : `<p>${esc(source.unchecked || 'The source has not been verified and cannot support a claim.')}</p>`}</article>`;
 }).join('\n');
 
 const extraCalcRefs = { 'carnot-cop': [['nist-refrigeration-2020', 'PDF pp. 2–3, equation (1) and definitions of cold and hot temperatures']] };
 const calcAssumptions = {
-  'orbit-period': ['model-orbits'], 'orbit-altitude': ['model-orbits'],
+  'orbit-period': ['model-orbits'], 'orbit-altitude': ['model-orbits'], 'geo-sidereal-kepler': [],
   'orbit-slant-range': ['model-orbits', 'model-nadir'], 'vacuum-light-time': ['model-orbits', 'model-nadir'],
   'ideal-diffraction': ['model-lab-aperture', 'model-band-examples'], 'photon-energy': ['model-band-examples'],
   'planck-band-radiance': ['model-blackbody', 'model-band-examples'], 'planck-band-photons': ['model-blackbody', 'model-band-examples'],
@@ -55,6 +55,7 @@ const calcPlain = {
   'kepler-illustration-motion': 'Places a satellite along an ellipse over time, fastest when closest to Earth.',
   'cooler-energy-balance': 'The heat a cooler must throw away is the heat it removes plus the power it uses.',
   'orbit-period': 'How long one lap takes, from the orbit’s size.',
+  'geo-sidereal-kepler': 'Works out the height and lap time of a geostationary orbit from how long Earth takes to turn once.',
   'orbit-speed': 'How fast a satellite moves at a given distance from Earth’s center.',
   'orbit-altitude': 'The height above Earth at a point along an ellipse.',
   'orbit-slant-range': 'The straight-line distance from a satellite down to the ground point below it.',

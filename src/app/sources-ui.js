@@ -18,7 +18,7 @@ const methodLink = (hash, text, search, fixed) => `<a href="method.html?${esc(se
 const dated = s => [s.published && `published ${esc(s.published)}`, s.accessed && `checked ${esc(s.accessed)}`].filter(Boolean).join(' · ');
 const refItem = ([id, at]) => {
   const s = SOURCES[id]; if (!s) return '';
-  return `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a><span>${esc(s.publisher)}${at ? ` · ${esc(at)}` : ''}</span>${dated(s) ? `<span class="sp-d">${dated(s)}</span>` : ''}</li>`;
+  return `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a><span>${esc(s.publisher)}${at ? ` · ${esc(at)}` : ''}</span>${dated(s) ? `<span class="sp-d">${dated(s)}</span>` : ''}${s.access ? `<span class="sp-d">${esc(s.access)}</span>` : ''}</li>`;
 };
 
 function body(key) {

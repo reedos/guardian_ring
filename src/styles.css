@@ -1046,7 +1046,7 @@ body.app .panel-scroll > * { min-width: 0; }
   body.app .panel { flex-basis: var(--inspector-size, 216px); }
   body.app:not(.sheet-open) #card { gap: 6px; padding: 10px 12px; }
   body.app:not(.sheet-open) #card h3 { font-size: 24px; }
-  body.app:not(.sheet-open) #card :is(#card-b, .card-components), body.app:not(.sheet-open) #card-s > div:nth-child(n+2) { display: none; }
+  body.app:not(.sheet-open) #card :is(#card-b, .card-components, .named-note), body.app:not(.sheet-open) #card-s > div:nth-child(n+2) { display: none; }
   body.app:not(.sheet-open) #card-s { order: 1; }
   body.app:not(.sheet-open) #card .card-door { order: 2; }
   body.app:not(.sheet-open) #card .card-more { display: inline-flex; margin-left: auto; }
@@ -1664,3 +1664,8 @@ body.no-webgl:not(#_) :is(.mission-tour, .toprow, #hud-btns, .part-transport, #o
 body.no-webgl .parts .parts-text { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 2px 10px; padding: 8px 4px; align-items: baseline; }
 body.no-webgl .parts .parts-text .pk { grid-column: 2; color: var(--muted); font: 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
 body.no-webgl .stage-error a.btn { display: inline-flex; align-items: center; text-decoration: none; }
+
+/* Accuracy round 1: rows about named civil hardware say so, and the card says the drawn part is not that hardware. */
+.specs .named-tag { grid-column: 1 / -1; font: 400 10.5px/1.4 var(--mono); letter-spacing: .06em; color: var(--muted); }
+.named-note { margin: 8px 0 0; font: 400 11.5px/1.45 var(--mono); color: var(--muted); }
+.card-assembly .named-tag { flex-basis: 100%; font: 400 10.5px/1.4 var(--mono); letter-spacing: .06em; color: var(--muted); }

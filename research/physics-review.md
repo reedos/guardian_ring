@@ -255,6 +255,7 @@ Rows in `physics-facts.json` use IF's `[label, value, basis, {refs: [[sourceId, 
 ## Unresolved and bounded
 
 - ABI aperture: seed's approximately 0.313 m value was not located in the downloaded Data Book. Do not cite or implement as Spec.
+  Re-checked 10/14/2026 against the extracted Data Book text: no ABI aperture, primary-mirror diameter or focal length is stated anywhere. The only entrance-pupil figure (110 mm) is GLM's lens, and the 20 cm primary diameter is SUVI's. A single trade-press article (Aerospace America, "Building GOES-R") gives about 27 cm; one secondary source, not adopted. The ABI aperture and its diffraction output stay unavailable.
 - ABI standalone detector/output data rate: not established. Data Book spacecraft raw and GRB broadcast rates must not be relabeled as ABI rates.
 - No universal detector operating-temperature table; T2SL remains unresolved, and device-specific evidence must remain device-specific.
 - No rocket plume intensity, temperature, pixel photon budget, real-system threshold, or altitude-dependent atmospheric model has been established.

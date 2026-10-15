@@ -145,3 +145,6 @@ html{scroll-behavior:smooth;scroll-padding-top:96px}[hidden]{display:none!import
 .fire-crop { border: 1px solid var(--line); }
 .fire-details .fire-full { filter: brightness(.8) contrast(1.05); }
 .fire-details[open] > summary::after { content: " · shown dimmed to suit the page"; color: var(--faint); }
+/* Accuracy round 1: the Kepler check beside the geostationary definitions. */
+.orbit-facts .geo-check{grid-column:1/-1;max-width:none;margin:0;padding:18px 0;border-top:1px solid var(--line)}
+.orbit-facts .geo-check strong{color:var(--ink)}

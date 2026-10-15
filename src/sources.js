@@ -22,6 +22,7 @@ export const SOURCES = { ...{
     "accessed": "10/11/2026",
     "status": "verified",
     "evidence": "research/review-accuracy-2026-10-10.md#round-5",
+    "access": "spaceforce.mil returns HTTP 403 to scripted fetches, so this page cannot be reopened automatically. Its wording and figures were read in a browser on 10/11/2026 and are recorded line by line in research/sbirs-factsheet-record.md.",
     "section": "Fact sheet body: payload, program composition, data and launch paragraphs"
   },
   "af-sbirs-factsheet-pdf": {

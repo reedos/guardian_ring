@@ -1,5 +1,6 @@
 // Level 1 cards. Orbit values and architecture statements come from the reviewed
 // fact ledger. Calculated outputs are added only after the model contract is set.
+import { geoAltitudeEvidence, geoPeriodEvidence } from './geo-evidence.js';
 const asDrawn = () => ['Drawing', 'Representative / not to scale', 'assumed', { assume: 'look-model' }];
 
 export function orbitsContent(model) {
@@ -11,8 +12,8 @@ export function orbitsContent(model) {
         id: 'geo', title: 'Stay with Earth’s rotation', kicker: 'Geostationary orbit', drill: 1,
         body: 'A geostationary satellite follows a circular orbit over the equator, moving in the same direction and with the same period as Earth’s rotation. It stays above the same point on the ground. The satellite markers are representative.',
         specs: [
-          ['Geostationary altitude', '35,786 km', 'reported', { refs: [['noaa-geo-definition', 'Definition paragraph']] }],
-          ['Geosynchronous period', '23 h 56 min 4 s', 'reported', { refs: [['nasa-orbit-catalog', 'Introductory altitude-and-period example']] }],
+          ['Geostationary altitude', '35,786 km', 'derived', geoAltitudeEvidence()],
+          ['Geosynchronous period', '23 h 56 min 4 s', 'derived', geoPeriodEvidence()],
           asDrawn(),
         ],
       },

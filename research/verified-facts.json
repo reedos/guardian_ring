@@ -391,7 +391,7 @@
           "refs": [
             [
               "nasa-tirs2-spectral",
-              "PDF p. 1, Introduction"
+              "PDF p. 1, Introduction: three sensor chip assemblies of 640 × 512 pixels each. This TIRS-2 paper carries the format; NASA’s TIRS-2 build page does not"
             ]
           ]
         }
@@ -413,7 +413,7 @@
           "refs": [
             [
               "nasa-tirs2-spectral",
-              "PDF p. 1; two physical rows combined per channel and inter-array overlap"
+              "PDF p. 1, Introduction: 1,850 detectors across the TIRS-2 image; two physical rows combined per channel and overlap between the three arrays"
             ]
           ]
         }
@@ -498,7 +498,7 @@
           "refs": [
             [
               "nasa-tirs2-spectral",
-              "PDF p. 1, Introduction"
+              "PDF p. 1, Introduction: the TIRS-2 15 degree (185 km) image. NASA’s TIRS-2 build page does not state the field of view; NASA’s TIRS page gives 15° for TIRS generally"
             ]
           ]
         }
@@ -556,14 +556,18 @@
         "tirs2"
       ],
       "row": [
-        "TIRS thermal bands",
+        "TIRS thermal bands (family, shared with TIRS-2)",
         "10.6-11.2 μm; 11.5-12.5 μm",
         "spec",
         {
           "refs": [
             [
               "landsat9-tirs2-nasa",
-              "Spectral Bands table, bands 10 and 11"
+              "Spectral Bands table, bands 10 and 11. The page describes TIRS generally and gives no separate TIRS-2 band table"
+            ],
+            [
+              "nasa-tirs2-spectral",
+              "PDF p. 1, Introduction: TIRS-2 has two thermal channels centered at 10.8 and 12 μm, consistent with these ranges"
             ]
           ]
         }
@@ -686,18 +690,31 @@
       "row": [
         "Geostationary altitude",
         "35,786 km",
-        "reported",
+        "derived",
         {
+          "calc": "geo-sidereal-kepler",
           "refs": [
             [
+              "nasa-jpl-parameters",
+              "Planetary Masses: Earth GM; parameter table: mean sidereal day (86,164.09 s)"
+            ],
+            [
+              "nasa-earth-facts",
+              "Bulk parameters: equatorial radius (6,378.137 km)"
+            ],
+            [
+              "nasa-kepler-derivation",
+              "Equation 4, Kepler’s Third Law; negligible secondary mass approximation"
+            ],
+            [
               "noaa-geo-definition",
-              "Definition paragraph"
+              "Definition paragraph: states 35,786 km as the geostationary altitude; corroborates the calculation"
             ]
           ]
         }
       ],
-      "section": "Definition paragraph",
-      "scope": "General circular equatorial GEO definition; no slot positions."
+      "section": "Kepler’s third law with the sidereal day; NOAA Definition paragraph corroborates",
+      "scope": "Calculated from the sidereal day; NOAA states the same altitude. General circular equatorial GEO value; no slot positions."
     },
     {
       "id": "geo-period",
@@ -707,18 +724,31 @@
       "row": [
         "Geosynchronous period",
         "23 h 56 min 4 s",
-        "reported",
+        "derived",
         {
+          "calc": "geo-sidereal-kepler",
           "refs": [
             [
+              "nasa-jpl-parameters",
+              "Planetary Masses: Earth GM; parameter table: mean sidereal day (86,164.09 s)"
+            ],
+            [
+              "nasa-earth-facts",
+              "Bulk parameters: equatorial radius (6,378.137 km)"
+            ],
+            [
+              "nasa-kepler-derivation",
+              "Equation 4, Kepler’s Third Law; negligible secondary mass approximation"
+            ],
+            [
               "nasa-orbit-catalog",
-              "Introductory altitude-and-period example"
+              "Three Classes of Orbit, opening example (a weather satellite about 36,000 km up, one orbit in 23 h 56 min 4 s; the page does not state 35,786 km); corroborates the calculation"
             ]
           ]
         }
       ],
-      "section": "Introductory altitude-and-period example",
-      "scope": "General orbital reference value."
+      "section": "Sidereal day in hours, minutes and seconds; NASA Three Classes of Orbit opening example corroborates",
+      "scope": "The sidereal day, written in hours, minutes and seconds. General orbital value, not a program parameter."
     },
     {
       "id": "molniya-inclination",

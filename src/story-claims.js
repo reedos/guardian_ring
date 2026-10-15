@@ -3,6 +3,7 @@
 // No story claim is an output or performance estimate for a real sensor.
 import { SPACECRAFT_FACTS } from './spacecraft-content.js';
 import { SBIRS_PUBLISHED_CLAIMS } from './sbirs-published.js';
+import { geoAltitudeEvidence, geoPeriodEvidence } from './geo-evidence.js';
 import { ORBIT_ROWS, orbitRow, geoViewAngles, contrastExample, toyPixel, storyNumbers } from './model/story-examples.js';
 const architecture = (key,label,value,ids) => ({
   key:`story:${key}`,group:'story',label,value,basis:'spec',
@@ -16,15 +17,15 @@ export const STORY_CLAIMS = [
   architecture('payload-electronics','ABI signal and control chain','Detector/ROIC, video processing, digitization, packetization, and spacecraft interface',['abi-roic','abi-video','abi-digitize','abi-packets','abi-timing','abi-controller','abi-cce']),
   {
     key: 'story:geo-altitude', group: 'story',
-    label: 'Geostationary altitude', value: '35,786 km', basis: 'reported',
-    ev: { refs: [['noaa-geo-definition', 'Definition paragraph']] },
-    scope: 'General circular equatorial GEO definition; no slot positions.',
+    label: 'Geostationary altitude', value: '35,786 km', basis: 'derived',
+    ev: geoAltitudeEvidence(),
+    scope: 'Calculated from the sidereal day with Kepler’s third law; NOAA states the same altitude. General circular equatorial GEO value; no slot positions.',
   },
   {
     key: 'story:geo-period', group: 'story',
-    label: 'Geosynchronous period', value: '23 h 56 min 4 s', basis: 'reported',
-    ev: { refs: [['nasa-orbit-catalog', 'Introductory altitude-and-period example']] },
-    scope: 'General orbital reference value.',
+    label: 'Geosynchronous period', value: '23 h 56 min 4 s', basis: 'derived',
+    ev: geoPeriodEvidence(),
+    scope: 'The sidereal day, the time Earth takes to turn once relative to the stars, written in hours, minutes and seconds. NASA gives the same period in an opening example. General orbital value, not a program parameter.',
   },
   {
     key: 'story:abi-bands', group: 'story',
@@ -98,6 +99,18 @@ export const STORY_CLAIMS = [
     label: 'Air absorbs in the plume bands', value: 'The air’s own water vapor and carbon dioxide absorb strongly at the band centers where hot exhaust emits, and the loss grows with the length of the path', basis: 'reported',
     ev: { refs: [['nasa-rocket-plume-transmittance-2003', 'PDF p. 1, Abstract (the same molecular species emit and absorb, with closely matching line positions; transmittance losses along the path) and Introduction (attenuation mainly by absorption by atmospheric molecular species, including H2O and CO2); PDF p. 4, Figs. 1a–1b discussion (strong H2O and very strong CO2 absorption at the band centers)']] },
     scope: 'Near-ground test-stand paths in a NASA Stennis study. The story’s comparison of light from the ground with light from hot gas higher up is this site’s qualitative reading of the path-length result, not a finding of the study. No altitude, transmittance value, plume signal or sensor performance is implied.',
+  },
+  {
+    key: 'story:air-path-reading', group: 'story',
+    label: 'Ground light crosses more air than light from hot gas higher up', value: 'More air above a source means more of its plume-band light is absorbed', basis: 'assumed',
+    ev: { assume: 'air-path-reading', refs: [['nasa-rocket-plume-transmittance-2003', 'PDF p. 1, Abstract and Introduction: attenuation by absorption grows along the path (the premise only; the comparison of ground and elevated sources is this site’s reading)']] },
+    scope: 'This site’s qualitative inference from the path-length result in story:air-absorbs-plume-bands. It is not a finding of the NASA study. No altitude, transmittance value, plume signal or sensor performance is implied.',
+  },
+  {
+    key: 'story:molniya-high-latitudes', group: 'story',
+    label: 'Molniya orbit and high latitudes', value: 'A high-inclination, highly elliptical orbit that works well for observing high latitudes and spends more of its 12-hour lap at the far end', basis: 'reported',
+    ev: { refs: [['nasa-orbit-catalog', 'Medium Earth Orbit, Molniya orbit paragraphs: works well for observing high latitudes; high inclination (63.4°) and eccentricity (0.722); slows and spends more time at the far end of the orbit']] },
+    scope: 'NASA’s description of the Molniya orbit class. It is not the orbit of any particular satellite or program, and no coverage, count or sensor performance is implied.',
   },
   {
     key: 'story:next-gen-opir-successor', group: 'story',

@@ -37,6 +37,7 @@ for(const scenario of scenarios){
 for(const [id,lesson] of Object.entries(CINEMATIC_LESSONS))narrative(lesson,`lesson:${id}`,lesson.evidence.map(id=>`cinematic:${id}`).join('; ')+'; cinematic-presentation; cinematic-model-inputs');
 const testMap={
   'orbit-period':'claims-audit.test.ts: differentiated ellipse / polygon swept area; orbits.test.ts: reference period and scaling',
+  'geo-sidereal-kepler':'story-examples.test.ts: circular-orbit speed from v = sqrt(GM/r) times the period recovers the circumference; the altitude and sidereal day print as 35,786 km and 23 h 56 min 4 s',
   'orbit-speed':'claims-audit.test.ts: central-difference velocity from independently propagated positions',
   'orbit-altitude':'claims-audit.test.ts: Cartesian position radius; orbits.test.ts: extrema and quadrature',
   'orbit-slant-range':'claims-audit.test.ts: Cartesian surface-to-space distance',
